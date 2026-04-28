@@ -27,11 +27,11 @@ export default function Header() {
 
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center">
+            <div className="w-9 h-9 bg-[#005E60] rounded-xl flex items-center justify-center">
               <Building2 className="w-5 h-5 text-white" />
             </div>
             <span className="text-xl font-bold text-gray-900">
-              Prop<span className="text-blue-600">Finder</span>
+              Prop<span className="text-[#005E60]">Finder</span>
             </span>
           </Link>
 
@@ -41,7 +41,7 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-[#005E60] hover:bg-[#e6f1f1] rounded-lg transition"
               >
                 {link.label}
               </Link>
@@ -51,7 +51,7 @@ export default function Header() {
           {/* Desktop Auth */}
           <div className="hidden md:flex items-center gap-3">
             {user ? (
-              <button className="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg">
+              <button className="flex items-center gap-2 px-4 py-2 text-sm text-[#8B0000] hover:bg-[#fff0f0] rounded-lg">
                 <LogOut className="w-4 h-4" />
                 Logout
               </button>
@@ -66,7 +66,7 @@ export default function Header() {
 
                 <Link
                   href="/register"
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-semibold transition"
+                  className="bg-[#005E60] hover:bg-[#004a4c] text-white px-5 py-2 rounded-lg text-sm font-semibold transition"
                 >
                   Post Property
                 </Link>
@@ -92,7 +92,7 @@ export default function Header() {
               key={link.href}
               href={link.href}
               onClick={() => setMobileOpen(false)}
-              className="block py-2 text-gray-700"
+              className="block py-2 text-gray-700 hover:text-[#005E60]"
             >
               {link.label}
             </Link>
@@ -101,13 +101,13 @@ export default function Header() {
           <div className="pt-3 border-t flex gap-2">
             <Link
               href="/login"
-              className="flex-1 text-center py-2 border rounded-lg"
+              className="flex-1 text-center py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50"
             >
               Sign In
             </Link>
             <Link
               href="/register"
-              className="flex-1 text-center py-2 bg-blue-600 text-white rounded-lg"
+              className="flex-1 text-center py-2 bg-[#005E60] hover:bg-[#004a4c] text-white rounded-lg font-medium"
             >
               Register
             </Link>
