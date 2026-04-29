@@ -1,8 +1,10 @@
+// app/layout.tsx
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/Layout/Header";
-import Footer from "@/components/Layout/Footer";
+import Header from "../components/Layout/Header";
+import Footer from "../components/Layout/Footer";
+import { Providers } from "./providers"; // ← This imports the file we just created
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,19 +29,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        
-        {/* HEADER */}
         <Header />
-
-        {/* PAGE CONTENT */}
-        <main className="pt-16">
-          {children}
-        </main>
-
-        {/* FOOTER */}
+        
+        <Providers>
+          <main className="pt-16">
+            {children}
+          </main>
+        </Providers>
+        
         <Footer />
-
       </body>
     </html>
   );
+  
 }

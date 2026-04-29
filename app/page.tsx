@@ -1,7 +1,69 @@
-import Hero from "@/components/Home/Hero";
-import Advantages from "../components/Home/Advantages";
+'use client';
+
+import React from 'react';
+import Hero from '../components/Home/Hero';
+import Advantages from '../components/Home/Advantages';
+import PropertyCarousel from '../components/Home/PropertyCarousel';
+import { Property } from '../components/Home/PropertyCard';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../store/store';
+import TopDevelopersCarousel from '@/components/sections/TopDevelopersCarousel';
+import AwardsSection from '@/components/sections/AwardsSection';
+import BlogSection from '@/components/sections/BlogSection';
+import PropertyTypesSection from '@/components/sections/PropertyTypesSection';
+
+const sampleProperties: Property[] = [
+  {
+    name: "Godrej Varanya",
+    builder: "Godrej Properties",
+    location: "Kharghar",
+    priceMin: "2.46",
+    priceMax: "4.66",
+    sizeMin: "725",
+    sizeMax: "1211",
+    launchDate: "Dec 2030",
+    image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&q=80",
+    configs: [
+      { type: "2BHK", sqft: "725", price: "2.46" },
+      { type: "2BHK", sqft: "775", price: "2.62" }
+    ]
+  },
+  {
+    name: "Raymond The Address",
+    builder: "Raymond Realty",
+    location: "Wadala East",
+    priceMin: "2.36",
+    priceMax: "4.48",
+    sizeMin: "696",
+    sizeMax: "1315",
+    launchDate: "Dec 2030",
+    image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80",
+    configs: [
+      { type: "2BHK", sqft: "696", price: "2.36" },
+      { type: "2BHK", sqft: "704", price: "2.40" }
+    ]
+  },
+  {
+    name: "Purva Estrella",
+    builder: "Puravankara Group",
+    location: "Andheri West",
+    priceMin: "3.60",
+    priceMax: "7.86",
+    sizeMin: "750",
+    sizeMax: "1638",
+    launchDate: "Jul 2032",
+    image: "https://images.unsplash.com/photo-1574362848149-11496d93a7c7?w=800&q=80",
+    configs: [
+      { type: "2BHK", sqft: "750", price: "3.60" },
+      { type: "2BHK", sqft: "795", price: "3.81" }
+    ]
+  }
+];
 
 export default function HomePage() {
+  const carousel = useSelector((state: RootState) => state.carousel);
+  console.log('✅ Redux connected:', carousel);
+
   return (
     <main className="min-h-screen">
       {/* Hero Section */}
@@ -10,65 +72,25 @@ export default function HomePage() {
       {/* Spacer to prevent content overlap with absolutely positioned search */}
       <div className="h-64 md:h-80 lg:h-96"></div>
 
-      {/* Featured Properties Section */}
-      <section className="py-16 bg-white">
-        <div className="w-full lg:max-w-[1280px] mx-auto px-4 lg:w-[85%]">
-          <h2 className="text-2xl md:text-3xl font-bold font-montserrat text-[#234E70] mb-8">
-            Featured Properties
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Property Cards - Replace with your component */}
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                <div className="h-48 bg-[#ECF1F8] flex items-center justify-center text-[#9e9e9e]">
-                  Property Image
-                </div>
-                <div className="p-4">
-                  <h3 className="font-semibold text-[#234E70]">Property {i}</h3>
-                  <p className="text-[#0E8744] font-medium">₹75L - ₹1Cr</p>
-                  <p className="text-sm text-gray-600">Kharghar, Navi Mumbai</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Featured Properties Carousel */}
+      <PropertyCarousel 
+        properties={sampleProperties} 
+        onViewMore={() => console.log('View more clicked')} 
+      />
 
-      {/* How It Works Section */}
-      <section className="py-16 bg-[#ECF1F8]">
-        <div className="w-full lg:max-w-[1280px] mx-auto px-4 lg:w-[85%]">
-          <h2 className="text-2xl md:text-3xl font-bold font-montserrat text-[#234E70] mb-8 text-center">
-            How It Works
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-            {[
-              { step: "1", title: "Search", desc: "Find projects by locality, builder or budget" },
-              { step: "2", title: "Connect", desc: "Get direct access to builder sales teams" },
-              { step: "3", title: "Book", desc: "Zero brokerage, best price guaranteed" },
-            ].map((item) => (
-              <div key={item.step} className="p-6 bg-white rounded-xl shadow-sm">
-                <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-[#0E8744] text-white flex items-center justify-center font-bold text-xl">
-                  {item.step}
-                </div>
-                <h3 className="font-semibold text-[#234E70] mb-2">{item.title}</h3>
-                <p className="text-gray-600 text-sm">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+    
 
-     
- <Advantages/>
+      {/* Advantages Section */}
+     <TopDevelopersCarousel/>
+       {/* How It Works Section */}
 
-      {/* Footer */}
-      {/* <footer className="py-8 bg-[#234E70] text-white">
-        <div className="w-full lg:max-w-[1280px] mx-auto px-4 lg:w-[85%] text-center">
-          <p className="text-sm opacity-90">© 2026 Housiey. All rights reserved.</p>
-        </div>
-      </footer> */}
+<PropertyTypesSection/>
+
+
+
+     <section><AwardsSection/></section>
+     {/* <AwardsSection/> */}
+     <BlogSection/>
     </main>
-
-   
   );
 }
