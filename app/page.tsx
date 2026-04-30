@@ -11,6 +11,7 @@ import TopDevelopersCarousel from '@/components/sections/TopDevelopersCarousel';
 import AwardsSection from '@/components/sections/AwardsSection';
 import BlogSection from '@/components/sections/BlogSection';
 import PropertyTypesSection from '@/components/sections/PropertyTypesSection';
+import PropertySearchSection from '@/components/sections/PropertySearchSection';
 
 const sampleProperties: Property[] = [
   {
@@ -68,9 +69,10 @@ export default function HomePage() {
     <main className="min-h-screen">
       {/* Hero Section */}
       <Hero />
+      
 
       {/* Spacer to prevent content overlap with absolutely positioned search */}
-      <div className="h-64 md:h-80 lg:h-96"></div>
+      {/* <div className="h-64 md:h-80 lg:h-96"></div> */}
 
       {/* Featured Properties Carousel */}
       <PropertyCarousel 
@@ -81,10 +83,20 @@ export default function HomePage() {
     
 
       {/* Advantages Section */}
+
+
+
+<Advantages/>
+
+
      <TopDevelopersCarousel/>
        {/* How It Works Section */}
 
 <PropertyTypesSection/>
+
+
+
+{/* <PropertySearchSection/> */}
 
 
 
