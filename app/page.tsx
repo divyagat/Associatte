@@ -12,6 +12,15 @@ import AwardsSection from '@/components/sections/AwardsSection';
 import BlogSection from '@/components/sections/BlogSection';
 import PropertyTypesSection from '@/components/sections/PropertyTypesSection';
 import PropertySearchSection from '@/components/sections/PropertySearchSection';
+import CategorySection from '@/components/sections/CategorySection';
+import TrustFeaturesSection from '@/components/sections/TrustFeaturesSection';
+import InvestmentCtaSection from '@/components/sections/InvestmentCtaSection';
+import ServicesSection from '@/components/sections/ServicesSection';
+import TestimonialsAchievementsSection from '@/components/sections/TestimonialsAchievementsSection';
+import CtaFormSection from '@/components/sections/CtaFormSection';
+import FeaturedProjectsSection from '@/components/sections/FeaturedProjectsSection';
+import NewlyLaunchedProjects from '@/components/sections/NewlyLaunchedProjects';
+import TopSellingProjects from '@/components/sections/TopSellingProjects';
 
 const sampleProperties: Property[] = [
   {
@@ -75,10 +84,10 @@ export default function HomePage() {
       {/* <div className="h-64 md:h-80 lg:h-96"></div> */}
 
       {/* Featured Properties Carousel */}
-      <PropertyCarousel 
+      {/* <PropertyCarousel 
         properties={sampleProperties} 
         onViewMore={() => console.log('View more clicked')} 
-      />
+      /> */}
 
     
 
@@ -86,7 +95,16 @@ export default function HomePage() {
 
 
 
-<Advantages/>
+<CategorySection/>
+
+<NewlyLaunchedProjects/>
+
+<TopSellingProjects/>
+
+
+<TrustFeaturesSection/>
+
+
 
 
      <TopDevelopersCarousel/>
@@ -94,14 +112,28 @@ export default function HomePage() {
 
 <PropertyTypesSection/>
 
-
+<InvestmentCtaSection/>
+{/* <Advantages/> */}
 
 {/* <PropertySearchSection/> */}
 
 
+<ServicesSection/>
 
-     <section><AwardsSection/></section>
+<FeaturedProjectsSection/>
+
+
+     {/* <section><AwardsSection/></section> */}
+
+
+<TestimonialsAchievementsSection/>
+
+
      {/* <AwardsSection/> */}
+
+<CtaFormSection/>
+
+
      <BlogSection/>
     </main>
   );

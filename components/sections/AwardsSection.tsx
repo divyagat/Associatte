@@ -171,22 +171,7 @@ export default function AwardsSection() {
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           className="text-center max-w-4xl mx-auto mb-24"
         >
-          {/* Decorative Crown Badge */}
-          <motion.div 
-            initial={{ scale: 0.8, opacity: 0, rotate: -10 }}
-            whileInView={{ scale: 1, opacity: 1, rotate: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2, duration: 0.6, type: "spring", stiffness: 100 }}
-            className="inline-flex items-center gap-2.5 px-5 py-2.5 bg-gradient-to-r from-[#005E60]/10 via-[#F8C21C]/10 to-[#8B0000]/10 border border-[#005E60]/20 rounded-full mb-8 backdrop-blur-sm"
-          >
-            <Crown className="w-4 h-4 text-[#F8C21C]" />
-            <span className="text-[#005E60] text-[10px] font-bold uppercase tracking-[0.3em]">
-              Hall of Fame
-            </span>
-            <Sparkles className="w-4 h-4 text-[#F8C21C]" />
-          </motion.div>
-
-          {/* Main Heading with Elegant Typography */}
+        
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -194,13 +179,13 @@ export default function AwardsSection() {
             transition={{ delay: 0.3, duration: 0.6 }}
             className="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 font-montserrat leading-[1.1]"
           >
-            <span className="block text-gray-400 text-2xl md:text-3xl font-normal tracking-[0.2em] uppercase mb-2">
+            {/* <span className="block text-gray-400 text-2xl md:text-3xl font-normal tracking-[0.2em] uppercase mb-2">
               Celebrating
             </span>
-            {/* <span className="block">
+            <span className="block">
               Brick by Brick
             </span> */}
-            <span className="block mt-1 relative">
+            <span className="block  relative">
               <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-r from-[#005E60] via-[#007a7c] to-[#8B0000] bg-[length:200%_auto] animate-gradient">
                 Achievements
               </span>
@@ -225,7 +210,7 @@ export default function AwardsSection() {
           </motion.h2>
 
           {/* Description */}
-          <motion.p 
+          {/* <motion.p 
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
@@ -235,7 +220,7 @@ export default function AwardsSection() {
             Industry recognition that validates our unwavering commitment to 
             <span className="text-gray-900 font-semibold border-b-2 border-[#F8C21C]/40">excellence</span> and 
             <span className="text-gray-900 font-semibold border-b-2 border-[#005E60]/40">customer satisfaction</span>.
-          </motion.p>
+          </motion.p> */}
 
           {/* Decorative Divider with Icons */}
           <motion.div 

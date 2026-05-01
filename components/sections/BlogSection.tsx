@@ -1,169 +1,96 @@
 'use client';
 
-import { ArrowRight, Calendar, Clock, Bookmark, Share2, ChevronRight } from 'lucide-react';
+import { ArrowRight, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 
 const blogPosts = [
   {
     id: 1,
-    title: 'Top 10 Real Estate Trends in 2024',
-    excerpt: 'Discover the latest trends shaping the Indian real estate market this year, from sustainable living to smart home integration.',
-    category: 'Market Insights',
-    date: 'Apr 15, 2024',
-    readTime: '5 min read',
-    image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80',
-    author: 'Rajesh Kumar',
-    authorAvatar: 'https://i.pravatar.cc/150?u=rajesh',
-    isFeatured: true,
+    title: 'Ready-to-Move-in vs Under-Construction Projects in Navi Mumbai',
+    category: 'Navi Mumbai',
+    date: 'Apr 2026',
+    image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80',
+    author: 'Pushkar Dake',
+    overlayText: 'READY-TO-MOVE VS UNDER-CONSTRUCTION HOMES IN NAVI MUMBAI',
   },
   {
     id: 2,
-    title: 'How to Choose the Perfect Home',
-    excerpt: 'A comprehensive guide to finding your dream property in Mumbai.',
-    category: 'Home Buying',
-    date: 'Apr 10, 2024',
-    readTime: '8 min read',
-    image: 'https://images.unsplash.com/photo-1600596542815-27b88e35eabd?w=800&q=80',
-    author: 'Priya Sharma',
-    authorAvatar: 'https://i.pravatar.cc/150?u=priya',
+    title: 'Buying Property in Panvel: 2026 Homebuyer Guide',
+    category: 'Panvel',
+    date: 'Apr 2026',
+    image: 'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?w=800&q=80',
+    author: 'Shruti B',
+    overlayText: 'Your Guide to Smart Buying in PANVEL',
   },
   {
     id: 3,
-    title: 'Investment Opportunities in Navi Mumbai',
-    excerpt: 'Why Navi Mumbai is becoming the preferred destination for property investors.',
-    category: 'Investment',
-    date: 'Apr 5, 2024',
-    readTime: '6 min read',
+    title: 'Why Families Are Preferring Kamothe: Livability, Education & More',
+    category: 'Kamothe',
+    date: 'Apr 2026',
+    image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=800&q=80',
+    author: 'Charmi Thakker',
+    overlayText: 'WHY FAMILIES ARE PREFERRING KAMOTHE',
+  },
+  {
+    id: 4,
+    title: 'Investment Opportunities in Kharghar 2026',
+    category: 'Kharghar',
+    date: 'Apr 2026',
     image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80',
-    author: 'Amit Patel',
-    authorAvatar: 'https://i.pravatar.cc/150?u=amit',
+    author: 'Rajesh Kumar',
+    overlayText: 'TOP INVESTMENT PICKS IN KHARGHAR',
   },
 ];
 
 export default function BlogSection() {
-  const [savedPosts, setSavedPosts] = useState<number[]>([]);
+  const [scrollPosition, setScrollPosition] = useState(0);
 
-  const toggleSave = (e: React.MouseEvent, id: number) => {
-    e.stopPropagation();
-    setSavedPosts(prev => 
-      prev.includes(id) ? prev.filter(p => p !== id) : [...prev, id]
-    );
+  const scrollLeft = () => {
+    const container = document.getElementById('blog-carousel');
+    if (container) {
+      container.scrollBy({ left: -340, behavior: 'smooth' });
+      setScrollPosition(scrollPosition - 340);
+    }
   };
 
-  const featuredPost = blogPosts.find(p => p.isFeatured) || blogPosts[0];
-  const regularPosts = blogPosts.filter(p => !p.isFeatured);
+  const scrollRight = () => {
+    const container = document.getElementById('blog-carousel');
+    if (container) {
+      container.scrollBy({ left: 340, behavior: 'smooth' });
+      setScrollPosition(scrollPosition + 340);
+    }
+  };
 
   return (
-    <section className="py-24 bg-white">
+    <section className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-6">
         
-        {/* 🎯 Elegant Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
-          <div>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="h-px w-12 bg-[#8B0000]" />
-              <span className="text-[#8B0000] font-semibold text-sm tracking-[0.2em] uppercase">
-                Editorial
-              </span>
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
-              Insights & <br />
-              <span className="text-[#005E60]">Perspectives</span>
-            </h2>
-          </div>
-          
-          <a 
-            href="/blog" 
-            className="group inline-flex items-center gap-2 text-gray-600 hover:text-[#8B0000] transition-colors"
-          >
-            <span className="font-medium">View Archive</span>
-            <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
-          </a>
+        {/* 🎯 Header with Tabs */}
+        <div className="flex items-center gap-8 mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold text-[#D97941]">
+            Recent Articles
+          </h2>
+          <div className="h-6 w-px bg-gray-300" />
+          <span className="text-lg text-gray-700 font-medium">
+            Knowledge centre
+          </span>
         </div>
 
-        {/* 🌟 Featured Post - Magazine Hero */}
-        {featuredPost && (
-          <article className="group mb-16">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-              {/* Image */}
-              <div className="relative aspect-[4/3] lg:aspect-square rounded-2xl overflow-hidden">
-                <img 
-                  src={featuredPost.image} 
-                  alt={featuredPost.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-tr from-black/40 to-transparent" />
-                
-                {/* Category Badge */}
-                <div className="absolute top-5 left-5">
-                  <span className="px-4 py-2 bg-white/95 backdrop-blur text-[#8B0000] text-xs font-bold uppercase tracking-widest rounded-sm">
-                    {featuredPost.category}
-                  </span>
-                </div>
-              </div>
-
-              {/* Content */}
-              <div className="lg:pl-4">
-                {/* Meta */}
-                <div className="flex items-center gap-4 text-sm text-gray-500 mb-5">
-                  <span className="flex items-center gap-1.5">
-                    <Calendar size={14} className="text-[#005E60]" />
-                    {featuredPost.date}
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <Clock size={14} className="text-[#005E60]" />
-                    {featuredPost.readTime}
-                  </span>
-                </div>
-
-                {/* Title */}
-                <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4 leading-tight group-hover:text-[#005E60] transition-colors">
-                  {featuredPost.title}
-                </h3>
-
-                {/* Excerpt */}
-                <p className="text-gray-600 text-lg leading-relaxed mb-6 line-clamp-3">
-                  {featuredPost.excerpt}
-                </p>
-
-                {/* Author */}
-                <div className="flex items-center gap-4 mb-8">
-                  <img 
-                    src={featuredPost.authorAvatar} 
-                    alt={featuredPost.author}
-                    className="w-12 h-12 rounded-full object-cover ring-2 ring-white shadow"
-                  />
-                  <div>
-                    <p className="font-semibold text-gray-900">{featuredPost.author}</p>
-                    <p className="text-sm text-gray-500">Senior Analyst</p>
-                  </div>
-                </div>
-
-                {/* CTA */}
-                <a 
-                  href={`/blog/${featuredPost.id}`}
-                  className="inline-flex items-center gap-3 px-6 py-3 bg-[#005E60] text-white font-semibold rounded-none hover:bg-[#004a4c] transition-colors"
-                >
-                  Read Full Story
-                  <ArrowRight size={18} />
-                </a>
-              </div>
-            </div>
-          </article>
-        )}
-
-        {/* 📰 Regular Posts Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {regularPosts.map((post) => {
-            const isSaved = savedPosts.includes(post.id);
-            
-            return (
+        {/* 📰 Carousel Container */}
+        <div className="relative">
+          {/* Cards Container */}
+          <div 
+            id="blog-carousel"
+            className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-4"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            {blogPosts.map((post) => (
               <article 
                 key={post.id}
-                className="group cursor-pointer"
+                className="group flex-shrink-0 w-[320px] bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer"
               >
-                {/* Image */}
-                <div className="relative aspect-[16/10] rounded-xl overflow-hidden mb-4">
+                {/* Image Section with Overlays */}
+                <div className="relative aspect-[16/10] overflow-hidden">
                   <img 
                     src={post.image} 
                     alt={post.title}
@@ -171,62 +98,81 @@ export default function BlogSection() {
                     loading="lazy"
                   />
                   
-                  {/* Save Button */}
-                  <button 
-                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleSave(e, post.id); }}
-                    className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-sm hover:shadow transition-all opacity-0 group-hover:opacity-100"
-                    aria-label={isSaved ? "Remove from saved" : "Save post"}
-                  >
-                    <Bookmark 
-                      size={16} 
-                      className={isSaved ? "text-[#8B0000] fill-[#8B0000]" : "text-gray-400"} 
-                    />
-                  </button>
-                </div>
-
-                {/* Content */}
-                <div>
-                  {/* Category */}
-                  <span className="text-[10px] font-bold text-[#005E60] uppercase tracking-wider mb-2 block">
-                    {post.category}
-                  </span>
-
-                  {/* Title */}
-                  <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-[#005E60] transition-colors line-clamp-2">
-                    {post.title}
-                  </h3>
-
-                  {/* Excerpt */}
-                  <p className="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-2">
-                    {post.excerpt}
-                  </p>
-
-                  {/* Footer */}
-                  <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                    <div className="flex items-center gap-2.5">
-                      <img 
-                        src={post.authorAvatar} 
-                        alt={post.author}
-                        className="w-7 h-7 rounded-full object-cover"
-                      />
-                      <span className="text-sm text-gray-600">{post.author}</span>
-                    </div>
-                    <span className="text-xs text-gray-400">{post.readTime}</span>
+                  {/* Dark Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
+                  
+                  {/* Brand Watermark */}
+                  <div className="absolute top-3 right-3">
+                    <span className="text-[10px] font-bold text-white/90 bg-black/30 px-2 py-1 rounded backdrop-blur-sm">
+                      Homebazaar.com
+                    </span>
+                  </div>
+                  
+                  {/* Author Badge */}
+                  <div className="absolute top-3 left-3">
+                    <span className="text-xs font-semibold text-white flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 bg-white rounded-full" />
+                      By {post.author}
+                    </span>
+                  </div>
+                  
+                  {/* Location Tag */}
+                  <div className="absolute top-3 left-1/2 -translate-x-1/2">
+                    <span className="text-sm font-semibold text-white/90">
+                      {post.category}
+                    </span>
+                  </div>
+                  
+                  {/* Bottom Overlay Text */}
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <p className="text-[10px] font-bold text-white uppercase tracking-wide leading-tight">
+                      {post.overlayText}
+                    </p>
                   </div>
                 </div>
+
+                {/* Content Section */}
+                <div className="p-4">
+                  {/* Title */}
+                  <h3 className="text-base font-bold text-gray-900 leading-snug mb-2 group-hover:text-[#D97941] transition-colors line-clamp-2">
+                    {post.title}
+                  </h3>
+                  
+                  {/* Date */}
+                  <p className="text-xs text-gray-500">
+                    Last updated on {post.date}
+                  </p>
+                </div>
               </article>
-            );
-          })}
+            ))}
+          </div>
+
+          {/* Navigation Arrows */}
+          <button
+            onClick={scrollLeft}
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors z-10 group"
+            aria-label="Scroll left"
+          >
+            <ChevronRight size={20} className="text-gray-700 rotate-180 group-hover:text-[#D97941] transition-colors" />
+          </button>
+          
+          <button
+            onClick={scrollRight}
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors z-10 group"
+            aria-label="Scroll right"
+          >
+            <ChevronRight size={20} className="text-gray-700 group-hover:text-[#D97941] transition-colors" />
+          </button>
         </div>
 
-        {/* 🔗 View All - Minimal */}
-        <div className="text-center mt-16">
+        {/* View All Link */}
+        <div className="text-center mt-8">
           <a 
             href="/blog" 
-            className="inline-flex items-center gap-2 text-[#005E60] font-semibold border-b-2 border-[#005E60] pb-1 hover:text-[#8B0000] hover:border-[#8B0000] transition-colors"
+            className="inline-flex items-center gap-2 text-[#D97941] font-semibold hover:text-[#b86435] transition-colors group"
           >
-            Explore All Articles
-            <ArrowRight size={16} />
+            View All Articles
+            <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
           </a>
         </div>
 
