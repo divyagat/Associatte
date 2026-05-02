@@ -2,9 +2,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Header from "../components/Layout/Header";
-import Footer from "../components/Layout/Footer";
-import { Providers } from "./providers"; // ← This imports the file we just created
+
+// ✅ Use direct relative paths instead of @/ alias + barrel
+import Header from "../components/Layout/Header"; // ← Your working nav component
+import Footer from "../components/Layout/Footer";              // ← Adjust path if needed
+import { Providers } from "./providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,18 +30,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        {/* pt-20 because your nav has h-20 (80px) */}
         <Header />
-        
         <Providers>
-          <main className="pt-16">
-            {children}
-          </main>
+          <main className="pt-20 min-h-screen">{children}</main>
         </Providers>
-        
         <Footer />
       </body>
     </html>
   );
-  
 }
