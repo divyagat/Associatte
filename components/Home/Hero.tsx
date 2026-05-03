@@ -5,97 +5,23 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Search, 
-  MapPin, 
-  Home,
-  Building2,
-  Construction,
-  KeyRound,
-  ChevronDown,
-  Handshake,
-  RefreshCcw,
+  MapPin,
   Sparkles,
+  ChevronRight,
 } from 'lucide-react';
 
 export default function HeroSection() {
-  const [activeTab, setActiveTab] = useState<'residential' | 'commercial' | 'underConstruction' | 'readyToMove' | 'rental' | 'reselling'>('residential');
-  const [selectedCity, setSelectedCity] = useState('Mumbai');
-  const [showStickySearch, setShowStickySearch] = useState(false);
-  const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'buy' | 'rent' | 'commercial' | 'pg' | 'plots'>('buy');
   const [searchQuery, setSearchQuery] = useState('');
+  const [showStickySearch, setShowStickySearch] = useState(false);
 
-  const cities = ['Mumbai', 'Pune', 'Bangalore', 'Chennai', 'Delhi NCR', 'Hyderabad'];
-  
-  const locations = [
-    'Navi Mumbai',
-    'Thane',
-    'Central Mumbai',
-    'Western Mumbai',
-    'South Mumbai',
-    'Kalyan Dombivali'
-  ];
-
-  const categories = [
-    { 
-      id: 'residential', 
-      label: 'Residential', 
-      sublabel: 'Buy Homes',
-      icon: Home, 
-      gradient: 'from-amber-400 to-orange-500',
-      bg: 'bg-amber-50',
-      border: 'border-amber-200',
-      text: 'text-amber-600'
-    },
-    { 
-      id: 'commercial', 
-      label: 'Commercial', 
-      sublabel: 'Offices & Shops',
-      icon: Building2, 
-      gradient: 'from-violet-400 to-purple-500',
-      bg: 'bg-violet-50',
-      border: 'border-violet-200',
-      text: 'text-violet-600'
-    },
-    { 
-      id: 'underConstruction', 
-      label: 'Under Construction', 
-      sublabel: 'Pre-Launch Deals',
-      icon: Construction, 
-      gradient: 'from-sky-400 to-blue-500',
-      bg: 'bg-sky-50',
-      border: 'border-sky-200',
-      text: 'text-sky-600'
-    },
-    { 
-      id: 'readyToMove', 
-      label: 'Ready to Move', 
-      sublabel: 'Instant Possession',
-      icon: KeyRound, 
-      gradient: 'from-rose-400 to-red-500',
-      bg: 'bg-rose-50',
-      border: 'border-rose-200',
-      text: 'text-rose-600'
-    },
-    { 
-      id: 'rental', 
-      label: 'Rental', 
-      sublabel: 'Rent Properties',
-      icon: Handshake, 
-      gradient: 'from-emerald-400 to-green-500',
-      bg: 'bg-emerald-50',
-      border: 'border-emerald-200',
-      text: 'text-emerald-600'
-    },
-    { 
-      id: 'reselling', 
-      label: 'Resale', 
-      sublabel: 'Second Hand',
-      icon: RefreshCcw, 
-      gradient: 'from-teal-400 to-cyan-500',
-      bg: 'bg-teal-50',
-      border: 'border-teal-200',
-      text: 'text-teal-600'
-    },
-  ];
+  const tabs = [
+    { id: 'buy', label: 'BUY' },
+    { id: 'rent', label: 'RENT' },
+    { id: 'commercial', label: 'COMMERCIAL' },
+    { id: 'pg', label: 'PG/CO-LIVING' },
+    { id: 'plots', label: 'PLOTS' },
+  ] as const;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -106,230 +32,189 @@ export default function HeroSection() {
   }, []);
 
   const handleSearch = () => {
-    // Implement search logic here
-    console.log({ activeTab, selectedCity, searchQuery });
+    console.log({ activeTab, searchQuery });
   };
 
-  const SearchBar = ({ isSticky = false }: { isSticky?: boolean }) => (
-    <div className={`bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 ${isSticky ? 'p-2' : 'p-5'}`}>
-      
-      {/* Category Tabs - Modern Card Style */}
-      <div className={`${isSticky ? 'mb-2' : 'mb-4'}`}>
-        <div className="overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1">
-          <div className="flex gap-2 min-w-max">
-            {categories.map((category) => {
-              const Icon = category.icon;
-              const isActive = activeTab === category.id;
-              
-              return (
+  return (
+    <section className="relative bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 overflow-hidden min-h-[600px]">
+      {/* City Skyline Background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-purple-900/20 to-blue-900/40" />
+        
+        {/* City buildings silhouette */}
+        <svg className="absolute bottom-0 left-0 right-0 h-64 w-full opacity-20" viewBox="0 0 1440 320" preserveAspectRatio="none">
+          <path fill="currentColor" className="text-slate-900" d="M0,224L80,213.3C160,203,320,181,480,181.3C640,181,800,203,960,224C1120,245,1280,267,1360,277.3L1440,288L1440,320L1360,320C1280,320,1120,320,960,320C800,320,640,320,480,320C320,320,160,320,80,320L0,320Z"></path>
+        </svg>
+        
+        {/* Building shapes */}
+        <div className="absolute bottom-0 left-10 w-16 h-48 bg-slate-800/30 rounded-t-lg" />
+        <div className="absolute bottom-0 left-32 w-20 h-64 bg-slate-800/30 rounded-t-lg" />
+        <div className="absolute bottom-0 left-56 w-14 h-40 bg-slate-800/30 rounded-t-lg" />
+        <div className="absolute bottom-0 right-20 w-24 h-56 bg-slate-800/40 rounded-t-lg" />
+        <div className="absolute bottom-0 right-52 w-16 h-36 bg-slate-800/30 rounded-t-lg" />
+        
+        {/* Decorative circles */}
+        <div className="absolute top-20 left-20 w-32 h-32 bg-white/5 rounded-full blur-2xl" />
+        <div className="absolute top-40 right-40 w-48 h-48 bg-purple-400/10 rounded-full blur-3xl" />
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          
+          {/* Left Content */}
+          <div className="text-center lg:text-left">
+            {/* Main Heading */}
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-4"
+            >
+              Properties to buy in India
+            </motion.h1>
+
+            {/* Subheading */}
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1, duration: 0.5 }}
+              className="text-lg sm:text-xl text-purple-100 mb-8 font-medium"
+            >
+              8K+ listings added daily and 76K+ total verified
+            </motion.p>
+
+            {/* Navigation Tabs */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              className="inline-flex bg-slate-900/80 backdrop-blur-sm rounded-t-xl p-1 mb-0 overflow-x-auto"
+            >
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`px-6 py-3 text-sm font-semibold rounded-t-lg transition-all duration-200 whitespace-nowrap ${
+                    activeTab === tab.id
+                      ? 'text-white border-b-2 border-purple-400 bg-white/10'
+                      : 'text-gray-300 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </motion.div>
+
+            {/* Search Bar */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+              className="bg-white rounded-b-xl rounded-tr-xl shadow-2xl p-2"
+            >
+              <div className="flex flex-col sm:flex-row gap-2">
+                {/* Location Input */}
+                <div className="flex items-center gap-2 px-4 py-3 bg-gray-50 rounded-lg sm:flex-1">
+                  <MapPin className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                  <input
+                    type="text"
+                    placeholder="Search for locality, landmark, project, or builder"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                    className="flex-1 bg-transparent outline-none text-gray-700 placeholder:text-gray-400 text-sm"
+                  />
+                </div>
+
+                {/* Search Button */}
                 <motion.button
-                  key={category.id}
-                  onClick={() => setActiveTab(category.id as any)}
+                  onClick={handleSearch}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className={`relative flex flex-col items-start gap-1.5 px-4 py-2.5 rounded-xl transition-all duration-200 border-2 min-w-[140px] ${
-                    isActive
-                      ? `${category.bg} ${category.border} shadow-lg`
-                      : 'bg-gray-50 border-gray-100 hover:border-gray-200 hover:bg-gray-100'
-                  } ${isSticky ? 'py-2 min-w-[110px]' : ''}`}
+                  className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center gap-2 shadow-lg shadow-purple-600/30"
                 >
-                  {/* Active Indicator */}
-                  {isActive && (
-                    <motion.div
-                      layoutId="activeTabIndicator"
-                      className={`absolute inset-0 rounded-xl bg-gradient-to-r ${category.gradient} opacity-10`}
-                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                    />
-                  )}
-                  
-                  <div className={`relative z-10 flex items-center gap-2`}>
-                    <div className={`p-1.5 rounded-lg ${isActive ? `bg-gradient-to-r ${category.gradient}` : 'bg-white'} shadow-sm`}>
-                      <Icon className={`w-4 h-4 ${isActive ? 'text-white' : category.text}`} />
-                    </div>
-                    <div className="text-left">
-                      <p className={`font-bold ${isSticky ? 'text-[11px]' : 'text-xs'} ${isActive ? 'text-gray-900' : 'text-gray-700'}`}>
-                        {category.label}
-                      </p>
-                      {!isSticky && (
-                        <p className={`text-[10px] ${isActive ? category.text : 'text-gray-400'} font-medium`}>
-                          {category.sublabel}
-                        </p>
-                      )}
+                  <Search className="w-5 h-5" />
+                  <span>Search</span>
+                </motion.button>
+              </div>
+            </motion.div>
+
+            {/* Property Owner Banner */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.5 }}
+              className="mt-6 inline-flex items-center gap-2 bg-slate-900/60 backdrop-blur-sm rounded-full px-4 py-2 border border-white/10"
+            >
+              <Sparkles className="w-4 h-4 text-amber-400" />
+              <span className="text-sm text-gray-200">
+                Are you a Property Owner?{' '}
+                <button className="text-white font-semibold hover:text-purple-300 transition-colors underline underline-offset-2">
+                  Sell / Rent for FREE
+                </button>
+              </span>
+              <ChevronRight className="w-4 h-4 text-gray-400" />
+            </motion.div>
+          </div>
+
+          {/* Right Image */}
+          <motion.div
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+            className="hidden lg:block relative"
+          >
+            <div className="relative">
+              {/* Decorative frame */}
+              <div className="absolute -inset-4 bg-gradient-to-r from-purple-400 to-blue-400 rounded-3xl opacity-30 blur-lg" />
+              
+              {/* Image container */}
+              <div className="relative bg-white/10 backdrop-blur-sm rounded-2xl p-3 border border-white/20">
+                <div className="relative rounded-xl overflow-hidden aspect-[4/3]">
+                  <div className="absolute inset-0 bg-gradient-to-br from-amber-100 to-orange-50" />
+                  {/* Placeholder for couple image */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center p-8">
+                      <div className="w-32 h-32 mx-auto mb-4 rounded-full bg-gradient-to-br from-amber-200 to-orange-300 flex items-center justify-center">
+                        <span className="text-6xl">🏠</span>
+                      </div>
+                      <p className="text-gray-600 font-medium">Couple viewing property</p>
                     </div>
                   </div>
-                </motion.button>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      {/* Search Input Section */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        {/* City Dropdown */}
-        <div className="relative w-full sm:w-48 flex-shrink-0">
-          <motion.button
-            onClick={() => setIsCityDropdownOpen(!isCityDropdownOpen)}
-            whileHover={{ scale: 1.01 }}
-            whileTap={{ scale: 0.99 }}
-            className={`w-full flex items-center justify-between px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl hover:border-blue-400 hover:bg-blue-50/50 transition-all duration-200 ${
-              isSticky ? 'py-2.5 text-xs' : ''
-            } ${isCityDropdownOpen ? 'border-blue-400 bg-blue-50/50' : ''}`}
-          >
-            <div className="flex items-center gap-2 min-w-0">
-              <div className="p-1.5 bg-white rounded-lg shadow-sm">
-                <MapPin className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                  {/* Overlay gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                </div>
               </div>
-              <span className="font-semibold text-gray-800 truncate">{selectedCity}</span>
-            </div>
-            <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 flex-shrink-0 ${isCityDropdownOpen ? 'rotate-180' : ''}`} />
-          </motion.button>
 
-          <AnimatePresence>
-            {isCityDropdownOpen && (
+              {/* Floating elements */}
               <motion.div
-                initial={{ opacity: 0, y: -8, scale: 0.98 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -8, scale: 0.98 }}
-                transition={{ duration: 0.15 }}
-                className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-100 rounded-xl shadow-2xl z-50 overflow-hidden"
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute -top-6 -right-6 bg-white rounded-xl p-3 shadow-xl"
               >
-                <div className="p-2">
-                  {cities.map((city, index) => (
-                    <motion.button
-                      key={city}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.03 }}
-                      onClick={() => {
-                        setSelectedCity(city);
-                        setIsCityDropdownOpen(false);
-                      }}
-                      className={`w-full flex items-center gap-3 text-left px-4 py-2.5 rounded-lg transition-all duration-150 ${
-                        selectedCity === city 
-                          ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md' 
-                          : 'text-gray-700 hover:bg-gray-50'
-                      }`}
-                    >
-                      <MapPin className={`w-4 h-4 flex-shrink-0 ${selectedCity === city ? 'text-white/90' : 'text-gray-400'}`} />
-                      <span className={`font-medium ${selectedCity === city ? 'text-white' : ''}`}>{city}</span>
-                    </motion.button>
-                  ))}
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                  <span className="text-xs font-semibold text-gray-700">Verified Listings</span>
                 </div>
               </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
 
-        {/* Search Input */}
-        <div className="flex-1 relative group">
-          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-            <Search className="w-5 h-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
-          </div>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-            placeholder="Search by location, project, or builder..."
-            className={`w-full pl-11 pr-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-400 focus:bg-white focus:ring-4 focus:ring-blue-100 transition-all duration-200 placeholder:text-gray-400 ${
-              isSticky ? 'py-2.5 text-sm' : 'py-3'
-            }`}
-          />
-        </div>
-
-        {/* Search Button */}
-        <motion.button 
-          onClick={handleSearch}
-          whileHover={{ scale: 1.02, boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.1)" }}
-          whileTap={{ scale: 0.98 }}
-          className={`bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-xl font-bold hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-blue-500/25 flex items-center justify-center gap-2 flex-shrink-0 ${
-            isSticky ? 'text-xs py-2.5' : ''
-          }`}
-        >
-          <Search className={`w-4 h-4 ${isSticky ? 'hidden' : ''}`} />
-          <span>Search</span>
-        </motion.button>
-      </div>
-    </div>
-  );
-
-  return (
-    <section className="relative bg-gradient-to-br from-blue-50 via-white to-indigo-50 overflow-hidden">
-      {/* Decorative Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-200/30 to-purple-200/30 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-amber-200/30 to-pink-200/30 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-blue-100/20 to-cyan-100/20 rounded-full blur-3xl" />
-      </div>
-
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-        <div className="max-w-5xl mx-auto">
-          
-          {/* Hero Header */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-6"
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-gray-200 shadow-sm mb-4">
-              <Sparkles className="w-4 h-4 text-amber-500" />
-              <span className="text-sm font-medium text-gray-700">Trusted by 50,000+ Home Buyers</span>
-            </div>
-            
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
-              Find Your Dream Property in
-            </h1>
-            <div className="flex flex-wrap justify-center gap-2 mt-3">
-              {['Bangalore', 'Chennai', 'Mumbai', 'Pune'].map((city, i) => (
-                <motion.span
-                  key={city}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.2 + i * 0.1 }}
-                  className="px-3 py-1 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 rounded-full text-sm font-semibold border border-blue-200"
-                >
-                  {city}
-                </motion.span>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Main Search Box */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-            className="mb-5"
-          >
-            <SearchBar />
-          </motion.div>
-
-          {/* Location Tags */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.5 }}
-            className="flex flex-wrap justify-center gap-2"
-          >
-            <span className="text-sm text-gray-500 mr-2 flex items-center">Popular:</span>
-            {locations.map((location, index) => (
-              <motion.button
-                key={location}
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 + index * 0.05 }}
-                className={`flex items-center gap-1.5 px-4 py-2 bg-white border border-gray-200 rounded-full text-sm text-gray-700 hover:border-orange-300 hover:bg-orange-50 hover:text-orange-700 transition-all duration-200 shadow-sm hover:shadow-md ${
-                  index === 0 ? 'ring-2 ring-orange-200 border-orange-200 bg-orange-50 text-orange-700' : ''
-                }`}
+              <motion.div
+                animate={{ y: [0, 10, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                className="absolute -bottom-4 -left-4 bg-white rounded-xl p-3 shadow-xl"
               >
-                <MapPin className="w-3.5 h-3.5 text-orange-500" />
-                {location}
-              </motion.button>
-            ))}
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                    <Sparkles className="w-4 h-4 text-purple-600" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-gray-800">76K+</p>
+                    <p className="text-[10px] text-gray-500">Properties</p>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
           </motion.div>
         </div>
       </div>
@@ -342,10 +227,41 @@ export default function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
-            className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-100"
+            className="fixed top-0 left-0 right-0 z-50 bg-white shadow-lg"
           >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-              <SearchBar isSticky />
+              <div className="flex items-center gap-2">
+                <div className="flex gap-1 overflow-x-auto">
+                  {tabs.map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`px-4 py-2 text-xs font-semibold rounded-lg transition-all whitespace-nowrap ${
+                        activeTab === tab.id
+                          ? 'bg-purple-600 text-white'
+                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex-1 flex gap-2">
+                  <div className="flex-1 flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-lg">
+                    <MapPin className="w-4 h-4 text-gray-400" />
+                    <input
+                      type="text"
+                      placeholder="Search locality, project..."
+                      className="flex-1 bg-transparent outline-none text-sm"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                  </div>
+                  <button className="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-semibold">
+                    Search
+                  </button>
+                </div>
+              </div>
             </div>
           </motion.div>
         )}
