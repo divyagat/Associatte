@@ -34,7 +34,7 @@ export default function RootLayout({
         {/* pt-20 because your nav has h-20 (80px) */}
         <Header />
         <Providers>
-          <main className="pt-20 min-h-screen">{children}</main>
+          <main className="min-h-screen">{children}</main>
         </Providers>
         <Footer />
       </body>
