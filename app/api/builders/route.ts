@@ -1,18 +1,29 @@
-import { NextResponse } from "next/server";
+// First, create the API route
+// client/app/api/builders/route.ts
+import { NextResponse } from 'next/server';
+import connectDB from '../../../../server/src/db';
+import Builder from '../../../../server/src/models/Builder';
 
-const builders = [
-  { name:"Mantra", slug:"mantra", city:["pune"] },
-  { name:"Lodha", slug:"lodha", city:["mumbai"] },
-  { name:"Godrej", slug:"godrej", city:["mumbai","pune"] },
-  { name:"Birla", slug:"birla", city:["mumbai","pune"] },
-  { name:"Kumar", slug:"kumar", city:["pune"] },
-  { name:"Today Group", slug:"today-group", city:["pune"] },
-  { name:"L&T", slug:"lnt", city:["mumbai"] },
-  { name:"Runwal Group", slug:"runwal", city:["mumbai"] },
-  { name:"Adani", slug:"adani", city:["mumbai"] },
-  { name:"Mahindra", slug:"mahindra", city:["pune"] }
-];
+export async function GET(
+  request: Request,
+  { params }: { params: { slug: string } }
+) {
+  try {
+    await connectDB();
+    const builder = await Builder.findOne({ slug: params.slug }).lean();
+    
+    if (!builder) {
+      return NextResponse.json(
+        { error: 'Builder not found' },
+        { status: 404 }
+      );
+    }
 
-export async function GET() {
-  return NextResponse.json(builders);
+    return NextResponse.json(JSON.parse(JSON.stringify(builder)));
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'Failed to fetch builder' },
+      { status: 500 }
+    );
+  }
 }
