@@ -6,21 +6,25 @@ import { Building2, Map, Home, TrendingUp } from 'lucide-react';
 
 const categories = [
   {
+    path: '/project-sub/saiword',
     title: 'Apartments in Pune',
     image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400&q=80',
     icon: Building2,
   },
   {
+    path: '/project-sub/saiword',
     title: 'Plots & Land',
     image: 'https://images.unsplash.com/photo-1500382017468-9049fed18f3e?w=400&q=80',
     icon: Map,
   },
   {
+    path: '/project-sub/saiword',
     title: 'Second Homes',
     image: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=400&q=80',
     icon: Home,
   },
   {
+    path: '/project-sub/saiword',
     title: 'Investment Projects',
     image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&q=80',
     icon: TrendingUp,
