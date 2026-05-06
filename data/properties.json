@@ -1,0 +1,238 @@
+[
+  {
+    "slug": "Mantra one Residency",
+    "name": "Mantra one Residency",
+    "location": "pune",
+    "price": "₹80 Lakh onwards",
+    "image": "/projects/mantra.jpg"
+  },
+   {
+    "slug": "Mantra Mayfair",
+    "name": "Mantra Mayfair",
+    "location": "pune",
+    "price": "₹80 Lakh onwards",
+    "image": "/projects/mantra.jpg"
+  },
+   {
+    "slug": "Mantra Meridian",
+    "name": "Mantra Meridian",
+    "location": "pune",
+    "price": "₹80 Lakh onwards",
+    "image": "/projects/mantra.jpg"
+  },
+  {
+    "slug": "Mantra Magnus",
+    "name": "Mantra Magnus",
+    "location": "pune",
+    "price": "₹80 Lakh onwards",
+    "image": "/projects/mantra.jpg"
+  },
+   {
+    "slug": "Mantra Millange",
+    "name": "Mantra Millange",
+    "location": "pune",
+    "price": "₹80 Lakh onwards",
+    "image": "/projects/mantra.jpg"
+  },
+    {
+    "slug": "Mantra codename-paradise",
+    "name": "Mantra codename-paradise",
+    "location": "pune",
+    "price": "₹80 Lakh onwards",
+    "image": "/projects/mantra.jpg"
+  },
+   {
+    "slug": "Lodha Mundhwa",
+    "name": "Lodha Mundhwa",
+    "location": "pune",
+    "price": "₹80 Lakh onwards",
+    "image": "/projects/lodha.jpg"
+  },
+   {
+    "slug": "Birla Punya",
+    "name": "Birla Punya",
+    "location": "pune",
+    "price": "₹80 Lakh onwards",
+    "image": "/projects/birla.jpg"
+  },
+   {
+    "slug": "Birla Evem",
+    "name": "Birla Evem",
+    "location": "pune",
+    "price": "₹80 Lakh onwards",
+    "image": "/projects/birla.jpg"
+  },
+
+    {
+    "slug": "Shapoorji Tree Cloud",
+    "name": "Shapoorji Tree Cloud",
+    "location": "pune",
+    "price": "₹80 Lakh onwards",
+    "image": "/projects/shapoorji.jpg"
+  },
+   {
+    "slug": "Shapoorji Celestia",
+    "name": "Shapoorji Celestia",
+    "location": "pune",
+    "price": "₹80 Lakh onwards",
+    "image": "/projects/shapoorji.jpg"
+  },
+   {
+    "slug": "Shapoorji Wildernest",
+    "name": "Shapoorji Wildernest",
+    "location": "pune",
+    "price": "₹80 Lakh onwards",
+    "image": "/projects/shapoorji.jpg"
+  },
+   {
+    "slug": "Shapoorji Tree Topia",
+    "name": "Shapoorji Tree Topia",
+    "location": "pune",
+    "price": "₹80 Lakh onwards",
+    "image": "/projects/shapoorji.jpg"
+  },
+   {
+    "slug": "Shapoorji Villa",
+    "name": "Shapoorji Villa",
+    "location": "pune",
+    "price": "₹80 Lakh onwards",
+    "image": "/projects/shapoorji.jpg"
+  },
+   {
+    "slug": "Jhamtani Ace-abundance",
+    "name": "Jhamtani Ace-abundance",
+    "location": "pune",
+    "price": "₹80 Lakh onwards",
+    "image": "/projects/jhamtani.jpg"
+  },
+
+  {
+    "slug": "Kumar Prism",
+    "name": "Kumar Prism",
+    "location": "pune",
+    "price": "₹80 Lakh onwards",
+    "image": "/projects/kumar.jpg"
+  },
+    {
+    "slug": "Panchshil 57Avenue",
+    "name": "Panchshil 57Avenue",
+    "location": "pune",
+    "price": "₹80 Lakh onwards",
+    "image": "/projects/panchshil.jpg"
+  },
+    {
+    "slug": "Panchshil Lohegaon Plotting",
+    "name": "Panchshil Lohegaon Plotting",
+    "location": "pune",
+    "price": "₹80 Lakh onwards",
+    "image": "/projects/panchshil.jpg"
+  },
+
+   {
+    "slug": "Tribeca Lulla Nagar",
+    "name": "Tribeca Lulla Nagar",
+    "location": "pune",
+    "price": "₹80 Lakh onwards",
+    "image": "/projects/tribeca.jpg"
+  },
+   {
+    "slug": "Tribeca Trump Tower",
+    "name": "Tribeca Trump Tower",
+    "location": "pune",
+    "price": "₹80 Lakh onwards",
+    "image": "/projects/tribeca.jpg"
+  },
+    {
+    "slug": "Magarpatta City Nova Residency",
+    "name": "Magarpatta City Nova Residency",
+    "location": "pune",
+    "price": "₹80 Lakh onwards",
+    "image": "/projects/magarpatta.jpg"
+  },
+    {
+    "slug": "Magarpatta City Nova Elegance",
+    "name": "Magarpatta City Nova Elegance",
+    "location": "pune",
+    "price": "₹80 Lakh onwards",
+    "image": "/projects/magarpatta.jpg"
+  },
+    {
+    "slug": "Magarpatta City RVC-Hornbill",
+    "name": "Magarpatta City RVC-Hornbill",
+    "location": "pune",
+    "price": "₹80 Lakh onwards",
+    "image": "/projects/magarpatta.jpg"
+  },
+    {
+    "slug": "Magarpatta City RVC-Flamingo",
+    "name": "Magarpatta City RVC-Flamingo",
+    "location": "pune",
+    "price": "₹80 Lakh onwards",
+    "image": "/projects/magarpatta.jpg"
+  },
+
+  {
+    "slug": "Sai-World-One",
+    "name": "Sai World One",
+    "location": "mumbai",
+    "price": "₹95 Lakh onwards",
+    "image": "/projects/sai.jpg"
+  },
+   {
+    "slug": "Sai-World-Empire",
+    "name": "Sai World Empire",
+    "location": "mumbai",
+    "price": "₹95 Lakh onwards",
+    "image": "/projects/sai.jpg"
+  },
+   {
+    "slug": "Sai-World-Dreams",
+    "name": "Sai World Dreams",
+    "location": "mumbai",
+    "price": "₹95 Lakh onwards",
+    "image": "/projects/sai.jpg"
+  },
+   {
+    "slug": "Today Nova-Vista-Nerul",
+    "name": "Today Nova Vista Nerul",
+    "location": "mumbai",
+    "price": "₹95 Lakh onwards",
+    "image": "/projects/nova.jpg"
+  },
+   {
+    "slug": "Today Airoli",
+    "name": "Today Airoli",
+    "location": "mumbai",
+    "price": "₹95 Lakh onwards",
+    "image": "/projects/airoli.jpg"
+  },
+   {
+    "slug": "Today Kharghar",
+    "name": "Today Kharghar",
+    "location": "mumbai",
+    "price": "₹95 Lakh onwards",
+    "image": "/projects/kharghar.jpg"
+  },
+  {
+    "slug": "runwal-gardens",
+    "name": "Runwal Gardens",
+    "location": "kdmc",
+    "price": "₹60 Lakh onwards",
+    "image": "/projects/runwal.jpg"
+  },
+
+   {
+    "slug": "Lodha Premier",
+    "name": "Lodha Premier",
+    "location": "kdmc",
+    "price": "₹60 Lakh onwards",
+    "image": "/projects/lodha.jpg"
+  },
+  {
+    "slug": "Lodha Opulis",
+    "name": "Lodha Opulis",
+    "location": "kdmc",
+    "price": "₹60 Lakh onwards",
+    "image": "/projects/lodha.jpg"
+  }
+]
