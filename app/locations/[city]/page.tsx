@@ -23,7 +23,7 @@ export default async function CityPage({ params }: PageProps) {
 
       <div className="grid md:grid-cols-3 gap-8">
         {cityProjects.map((project: any) => (
-          <Link key={project.slug} href={`/property/${project.slug}`}>
+          <Link key={project.slug} href={`/property/${project.slug}`}> 
             <div className="border rounded-xl overflow-hidden shadow hover:shadow-xl transition">
               
               <Image

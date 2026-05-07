@@ -1,35 +1,13 @@
-"use client";
-import Image from "next/image";
+// client/components/project-page/ProjectHero.tsx
+import type { Project } from '@/types/project';
 
-export default function ProjectHero({ data }: any) {
+export default function ProjectHero({ project }: { project: Project }) {
   return (
-    <section className="bg-white pt-24 pb-10 border-b">
-      <div className="max-w-7xl mx-auto px-4 grid md:grid-cols-2 gap-10">
-        
-        <div>
-          <h1 className="text-3xl font-bold text-gray-800">
-            {data.name}
-          </h1>
-          <p className="text-gray-500 mt-2">
-            {data.locality}, {data.city}
-          </p>
-
-          <div className="mt-4 text-2xl font-semibold text-green-700">
-            ₹ {data.priceFrom}
-          </div>
-
-          <div className="mt-3 flex gap-3">
-            {data.bhk.map((b: string) => (
-              <span key={b} className="px-3 py-1 bg-gray-100 rounded">
-                {b}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        <div className="relative h-[300px]">
-          <Image src={data.images[0]} alt="" fill className="rounded-xl object-cover"/>
-        </div>
+    <section className="relative h-[60vh] rounded-2xl overflow-hidden">
+      <img src={project.image} alt={project.name} className="w-full h-full object-cover" />
+      <div className="absolute bottom-6 left-6 text-white">
+        <h1 className="text-4xl font-bold">{project.name}</h1>
+        <p className="text-lg mt-2">{project.location} • {project.price}</p>
       </div>
     </section>
   );

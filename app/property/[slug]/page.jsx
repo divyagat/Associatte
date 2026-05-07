@@ -1,75 +1,124 @@
-// app/property/[slug]/page.jsx
+// client/app/property/[slug]/page.jsx
+// ✅ Keep 'use client' since your design uses browser features
+// ✅ Your exact design + dynamic data loading
 'use client';
 
+import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useSearchParams, useRouter } from 'next/navigation';
 
-// 🎨 Strategic Color Palette
+// 🎨 Strategic Color Palette (YOUR EXACT COLORS)
 const COLORS = {
-  primary: '#005E60',    // Dark teal - headers, primary buttons, borders
-  accent: '#F8C21C',     // Golden yellow - highlights, badges, hover states  
-  alert: '#8B0000',      // Dark red - prices, urgent info, sale tags
-  bgLight: '#f8fafc',    // Light background
-  textDark: '#1e293b',   // Dark text for readability
-  textMuted: '#64748b',  // Muted text
+  primary: '#005E60',
+  accent: '#F8C21C',
+  alert: '#8B0000',
+  bgLight: '#f8fafc',
+  textDark: '#1e293b',
+  textMuted: '#64748b',
 };
 
-// Property Data
-const propertyData = {
-  title: "Codename Cloud City",
-  rera: true,
-  priceRange: "₹66.00 Lakh - ₹1.54 Cr",
-  pricePerSqft: "₹15.3K - 16.8K/sq.ft",
-  developer: "Today Global",
-  location: { area: "Kharghar", city: "Navi Mumbai" },
-  configurations: [
-    { type: "1 BHK", details: "1 living room, kitchen, 1 bedrooms, 1 bathrooms", area: "429 sq. ft.", price: "₹66.00 L" },
-    { type: "2 BHK", details: "1 living room, kitchen, 2 bedrooms, 2 bathrooms", area: "600 sq. ft.", price: "₹94.50 L" },
-    { type: "2 BHK", details: "1 living room, kitchen, 2 bedrooms, 2 bathrooms", area: "882 sq. ft.", price: "₹1.35 Cr" },
-    { type: "3 BHK", details: "1 living room, kitchen, 3 bedrooms, 3 bathrooms", area: "915 sq. ft.", price: "₹1.54 Cr" }
-  ],
-  floorPlans: [
-    { type: "1 BHK", area: "429 sq. ft." },
-    { type: "2 BHK", area: "600 sq. ft." },
-    { type: "2 BHK", area: "882 sq. ft." }
-  ],
-  about: "Discover Codename Cloud City, a magnificent township in Kharghar, Navi Mumbai, offering luxurious 1, 2, and 3 BHK apartments. Enjoy a future-ready location with excellent connectivity and a plethora of lifestyle amenities.",
-  amenities: [
-    { name: "Children's Play Area", icon: "playground" },
-    { name: "Jogging Track", icon: "jogging" },
-    { name: "Yoga / Meditation", icon: "yoga" },
-    { name: "Swimming Pool", icon: "pool" }
-  ],
-  projectDetails: {
-    location: "Kharghar, Navi Mumbai",
-    possessionDate: "Dec, 2027",
-    developer: "Today Global",
-    products: "1, 2, & 3 BHK",
-    emi: "₹36.7k/month",
-    downPayment: "30%",
-    interestRate: "8.35%",
-    tenure: "25 Yr"
-  },
-  developerInfo: {
-    name: "Today Global",
-    establishmentYear: "2004",
-    listedProjects: "4",
-    description: "Today Global Group, established in 2004 has become a name to be reckoned with as one of the leading developers in Navi Mumbai."
-  },
-  reraNumber: "P52000048037",
-  otherProjectsNaviMumbai: [
-    { title: "Paradise Sai W...", location: "Kharghar, Navi Mumbai", bhk: "2, 3, 4 BHK", area: "790 - 2095 SQ.FT", price: "₹1.17 Cr" },
-    { title: "Today Royal Ai...", location: "Kharghar, Navi Mumbai", bhk: "1, 2 BHK", area: "363 - 590 SQ.FT", price: "₹42.48 Lakh" },
-    { title: "Today Global M...", location: "Kharghar, Navi Mumbai", bhk: "1, 2 BHK", area: "340.03 - 523.36 SQ.FT", price: "₹39.95 Lakh" }
-  ],
-  otherProjectsTodayGlobal: [
-    { title: "Today Global M...", location: "Shilphata, Navi Mumbai", bhk: "1, 2 BHK", area: "340.03 - 523.36 SQ.FT", price: "₹39.95 Lakh" },
-    { title: "Today Anandam ...", location: "Old Panvel, Navi Mumbai", bhk: "2 BHK", area: "429 - 1200 SQ.FT", price: "₹90.00 Lakh" },
-    { title: "Today Codename...", location: "Kharghar, Navi Mumbai", bhk: "1, 2, 3, 4, 5 BHK", area: "429 - 1376 SQ.FT", price: "₹60.09 Lakh" }
-  ]
-};
+// 🔁 Import your properties data
+import properties from '../../../data/properties.json';
 
-// Icons
+// 🔁 Helper: Transform JSON project to match your propertyData structure
+function transformProject(project) {
+  if (!project) return null;
+  
+  return {
+    // Map your JSON fields to your existing propertyData structure
+    title: project.name,
+    rera: !!project.reraNumber,
+    priceRange: project.priceDetails?.range || project.price,
+    pricePerSqft: project.priceDetails?.perSqft,
+    developer: project.developer?.name,
+    location: {
+      area: project.fullLocation?.area || project.location,
+      city: project.fullLocation?.city || (project.location === 'pune' ? 'Pune' : project.location === 'mumbai' ? 'Navi Mumbai' : 'Kalyan')
+    },
+    
+    // Configurations - map from JSON
+    configurations: project.priceDetails?.configurations?.map(config => ({
+      type: config.type,
+      details: config.description || `${config.area} carpet area`,
+      area: config.area,
+      price: config.price
+    })) || [],
+    
+    // Floor Plans - map from JSON
+    floorPlans: project.floorPlans?.map(plan => ({
+      type: plan.type,
+      area: plan.area
+    })) || [],
+    
+    about: project.about,
+    
+    // Amenities - convert array of strings to your {name, icon} format
+    amenities: (project.amenities || []).map(name => {
+      const iconMap = {
+        'Children\'s Play Area': 'playground',
+        'Kids Play Area': 'playground',
+        'Jogging Track': 'jogging',
+        'Yoga / Meditation': 'yoga',
+        'Yoga Deck': 'yoga',
+        'Swimming Pool': 'pool',
+        'Infinity Pool': 'pool',
+        'Clubhouse': 'playground',
+        'Gym': 'jogging',
+        '24/7 Security': 'playground',
+        'Power Backup': 'playground',
+        'Landscaped Gardens': 'playground',
+      };
+      return { name, icon: iconMap[name] || 'playground' };
+    }),
+    
+    projectDetails: {
+      location: `${project.fullLocation?.area || project.location}, ${project.fullLocation?.city || ''}`,
+      possessionDate: project.possessionDate || 'TBA',
+      developer: project.developer?.name,
+      products: project.priceDetails?.configurations?.map(c => c.type).join(', ') || 'TBA',
+      emi: project.emi?.startingFrom || 'TBA',
+      downPayment: project.emi?.downPayment || 'TBA',
+      interestRate: project.emi?.interestRate || 'TBA',
+      tenure: project.emi?.tenure || 'TBA'
+    },
+    
+    developerInfo: {
+      name: project.developer?.name,
+      establishmentYear: project.developer?.established,
+      listedProjects: project.developer?.projectsCount?.toString(),
+      description: project.developer?.description
+    },
+    
+    reraNumber: project.reraNumber,
+    
+    // Similar projects - filter from JSON
+    otherProjectsNaviMumbai: properties
+      .filter(p => p.slug !== project.slug && p.location === project.location)
+      .slice(0, 3)
+      .map(p => ({
+        title: p.name.length > 20 ? p.name.substring(0, 17) + '...' : p.name,
+        location: `${p.fullLocation?.area || p.location}, ${p.fullLocation?.city || ''}`,
+        bhk: p.priceDetails?.configurations?.map(c => c.type).join(', ') || 'TBA',
+        area: p.priceDetails?.configurations?.[0]?.area || 'TBA',
+        price: p.priceDetails?.range?.split(' - ')[0] || p.price
+      })),
+    
+    // Fallback for otherProjectsTodayGlobal (same as above for now)
+    otherProjectsTodayGlobal: properties
+      .filter(p => p.slug !== project.slug && p.developer?.name === project.developer?.name)
+      .slice(0, 3)
+      .map(p => ({
+        title: p.name.length > 20 ? p.name.substring(0, 17) + '...' : p.name,
+        location: `${p.fullLocation?.area || p.location}, ${p.fullLocation?.city || ''}`,
+        bhk: p.priceDetails?.configurations?.map(c => c.type).join(', ') || 'TBA',
+        area: p.priceDetails?.configurations?.[0]?.area || 'TBA',
+        price: p.priceDetails?.range?.split(' - ')[0] || p.price
+      }))
+  };
+}
+
+// Icons (YOUR EXACT ICONS)
 const Icons = {
   Location: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>,
   Calendar: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>,
@@ -85,11 +134,54 @@ const Icons = {
 };
 
 export default function PropertyPage() {
+  const [propertyData, setPropertyData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  
+  // 🔍 Get slug from URL params
+  const slug = searchParams?.get('slug') || (typeof window !== 'undefined' ? window.location.pathname.split('/').pop() : '');
+
+  useEffect(() => {
+    // 🔎 Find project by slug from JSON
+    const project = properties.find((p) => p.slug === slug);
+    
+    if (project) {
+      // ✨ Transform to match your existing propertyData structure
+      setPropertyData(transformProject(project));
+    } else {
+      // 🚫 Show error or redirect if not found
+      console.error('Project not found for slug:', slug);
+      // Optional: router.push('/404');
+    }
+    
+    setLoading(false);
+  }, [slug, router]);
+
+  // 🎨 Your exact getIcon function
   const getIcon = (iconName) => {
-    const iconMap = { playground: <Icons.Playground />, jogging: <Icons.Jogging />, yoga: <Icons.Yoga />, pool: <Icons.Pool /> };
+    const iconMap = { 
+      playground: <Icons.Playground />, 
+      jogging: <Icons.Jogging />, 
+      yoga: <Icons.Yoga />, 
+      pool: <Icons.Pool /> 
+    };
     return iconMap[iconName] || <Icons.Playground />;
   };
 
+  // 🔄 Show loading state while fetching
+  if (loading || !propertyData) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-[#005E60] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading project details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // ✅ Your EXACT JSX below - unchanged except propertyData is now dynamic
   return (
     <>
       <Head>
@@ -106,9 +198,13 @@ export default function PropertyPage() {
             <nav className="flex items-center text-sm text-gray-500 mb-3">
               <Link href="/" className="hover:text-[#F8C21C] transition-colors">Home</Link>
               <Icons.ChevronRight />
-              <Link href="/navi-mumbai" className="hover:text-[#F8C21C] transition-colors">Navi Mumbai</Link>
+              <Link href={`/locations/${propertyData.location.city.toLowerCase()}`} className="hover:text-[#F8C21C] transition-colors capitalize">
+                {propertyData.location.city}
+              </Link>
               <Icons.ChevronRight />
-              <Link href="/kharghar" className="hover:text-[#F8C21C] transition-colors">Kharghar</Link>
+              <Link href={`/locations/${propertyData.location.city.toLowerCase()}/${propertyData.location.area.toLowerCase()}`} className="hover:text-[#F8C21C] transition-colors capitalize">
+                {propertyData.location.area}
+              </Link>
               <Icons.ChevronRight />
               <span className="text-gray-900 font-medium truncate">{propertyData.title}</span>
             </nav>
@@ -320,7 +416,7 @@ export default function PropertyPage() {
                 </h2>
                 <div className="flex flex-col md:flex-row gap-6 items-start">
                   <div className="w-24 h-24 bg-gradient-to-br from-[#005E60] to-[#003d40] rounded-2xl flex items-center justify-center text-white font-bold text-lg shadow-lg flex-shrink-0">
-                    TODAY
+                    {propertyData.developerInfo.name?.substring(0, 5).toUpperCase() || 'BUILDER'}
                   </div>
                   <div className="flex-1">
                     <div className="grid grid-cols-2 gap-4 mb-4">
