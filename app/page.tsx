@@ -95,7 +95,7 @@ export default function HomePage() {
 
 
 
-<CategorySection/>
+
 
 <NewlyLaunchedProjects/>
 
@@ -132,6 +132,8 @@ export default function HomePage() {
      {/* <AwardsSection/> */}
 
 <CtaFormSection/>
+
+<CategorySection/>
 
 
      <BlogSection/>

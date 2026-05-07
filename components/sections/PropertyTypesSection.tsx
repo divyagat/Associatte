@@ -7,13 +7,39 @@ import { useState } from "react";
 import Link from "next/link";
 
 // --- Cities Data ---
+// ✅ UPDATED: Bangalore removed, slugs match your JSON location values
 const cities = [
-  { name: "Mumbai", projects: 48, image: "https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=400&q=80" },
-  { name: "Pune", projects: 31, image: "https://images.unsplash.com/photo-1599661046289-e31897846e41?w=400&q=80" },
-  { name: "Bangalore", projects: 14, image: "https://images.unsplash.com/photo-1596176530529-78163a4f7af2?w=400&q=80" },
-  { name: "KDMC", projects: 24, image: "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=400&q=80" },
-  { name: "Thane", projects: 12, image: "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400&q=80" },
-  { name: "Navi Mumbai", projects: 37, image: "https://images.unsplash.com/photo-1564013799919-ab39cf56b4c1?w=400&q=80" }
+  { 
+    name: "Mumbai", 
+    slug: "mumbai",  // ← Matches JSON: "location": "mumbai"
+    projects: 48, 
+    image: "https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=400&q=80" 
+  },
+  { 
+    name: "Pune", 
+    slug: "pune",  // ← Matches JSON: "location": "pune"
+    projects: 31, 
+    image: "https://images.unsplash.com/photo-1599661046289-e31897846e41?w=400&q=80" 
+  },
+  // ❌ Bangalore removed as requested
+  { 
+    name: "KDMC", 
+    slug: "kdmc",  // ← Matches JSON: "location": "kdmc"
+    projects: 24, 
+    image: "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=400&q=80" 
+  },
+  { 
+    name: "Thane", 
+    slug: "thane", 
+    projects: 12, 
+    image: "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400&q=80" 
+  },
+  { 
+    name: "Navi Mumbai", 
+    slug: "mumbai",  // ← Navi Mumbai projects are in "mumbai" location in your JSON
+    projects: 37, 
+    image: "https://images.unsplash.com/photo-1564013799919-ab39cf56b4c1?w=400&q=80" 
+  }
 ];
 
 export default function PropertyTypesSection() {
@@ -50,7 +76,7 @@ export default function PropertyTypesSection() {
             </h2>
           </div>
           <Link 
-            href="/cities"
+            href="/locations"
             className="group inline-flex items-center gap-2 text-[#005E60] font-semibold hover:text-[#8B0000] transition-colors"
           >
             View All Cities
@@ -58,13 +84,13 @@ export default function PropertyTypesSection() {
           </Link>
         </motion.div>
 
-        {/* City Cards Grid */}
+        {/* City Cards Grid - Now 5 cards instead of 6 */}
         <motion.div 
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4"
+          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4"  // ✅ Updated: lg:grid-cols-5 (was 6)
         >
           {cities.map((city, index) => {
             const isActive = activeCity === city.name;
@@ -78,7 +104,7 @@ export default function PropertyTypesSection() {
                 onMouseLeave={() => setActiveCity(null)}
                 className="group cursor-pointer"
               >
-                <Link href={`/properties?city=${city.name.toLowerCase().replace(' ', '-')}`}>
+                <Link href={`/locations/${city.slug}`}>
                   <div className={`
                     relative aspect-[3/4] rounded-2xl overflow-hidden
                     border-2 transition-all duration-300

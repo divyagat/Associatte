@@ -1,12 +1,12 @@
 // client/app/property/[slug]/page.jsx
-// ✅ Keep 'use client' since your design uses browser features
-// ✅ Your exact design + dynamic data loading
 'use client';
 
 import { useEffect, useState } from 'react';
+// ✅ FIX: Import useParams instead of (or in addition to) useSearchParams
+import { useParams, useRouter } from 'next/navigation';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useSearchParams, useRouter } from 'next/navigation';
+import properties from '../../../data/properties.json';
 
 // 🎨 Strategic Color Palette (YOUR EXACT COLORS)
 const COLORS = {
@@ -18,15 +18,11 @@ const COLORS = {
   textMuted: '#64748b',
 };
 
-// 🔁 Import your properties data
-import properties from '../../../data/properties.json';
-
 // 🔁 Helper: Transform JSON project to match your propertyData structure
 function transformProject(project) {
   if (!project) return null;
   
   return {
-    // Map your JSON fields to your existing propertyData structure
     title: project.name,
     rera: !!project.reraNumber,
     priceRange: project.priceDetails?.range || project.price,
@@ -36,24 +32,17 @@ function transformProject(project) {
       area: project.fullLocation?.area || project.location,
       city: project.fullLocation?.city || (project.location === 'pune' ? 'Pune' : project.location === 'mumbai' ? 'Navi Mumbai' : 'Kalyan')
     },
-    
-    // Configurations - map from JSON
     configurations: project.priceDetails?.configurations?.map(config => ({
       type: config.type,
       details: config.description || `${config.area} carpet area`,
       area: config.area,
       price: config.price
     })) || [],
-    
-    // Floor Plans - map from JSON
     floorPlans: project.floorPlans?.map(plan => ({
       type: plan.type,
       area: plan.area
     })) || [],
-    
     about: project.about,
-    
-    // Amenities - convert array of strings to your {name, icon} format
     amenities: (project.amenities || []).map(name => {
       const iconMap = {
         'Children\'s Play Area': 'playground',
@@ -71,7 +60,6 @@ function transformProject(project) {
       };
       return { name, icon: iconMap[name] || 'playground' };
     }),
-    
     projectDetails: {
       location: `${project.fullLocation?.area || project.location}, ${project.fullLocation?.city || ''}`,
       possessionDate: project.possessionDate || 'TBA',
@@ -82,17 +70,13 @@ function transformProject(project) {
       interestRate: project.emi?.interestRate || 'TBA',
       tenure: project.emi?.tenure || 'TBA'
     },
-    
     developerInfo: {
       name: project.developer?.name,
       establishmentYear: project.developer?.established,
       listedProjects: project.developer?.projectsCount?.toString(),
       description: project.developer?.description
     },
-    
     reraNumber: project.reraNumber,
-    
-    // Similar projects - filter from JSON
     otherProjectsNaviMumbai: properties
       .filter(p => p.slug !== project.slug && p.location === project.location)
       .slice(0, 3)
@@ -103,8 +87,6 @@ function transformProject(project) {
         area: p.priceDetails?.configurations?.[0]?.area || 'TBA',
         price: p.priceDetails?.range?.split(' - ')[0] || p.price
       })),
-    
-    // Fallback for otherProjectsTodayGlobal (same as above for now)
     otherProjectsTodayGlobal: properties
       .filter(p => p.slug !== project.slug && p.developer?.name === project.developer?.name)
       .slice(0, 3)
@@ -118,7 +100,7 @@ function transformProject(project) {
   };
 }
 
-// Icons (YOUR EXACT ICONS)
+// Icons (YOUR EXACT ICONS - keep as-is)
 const Icons = {
   Location: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>,
   Calendar: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>,
@@ -130,29 +112,43 @@ const Icons = {
   Pool: () => <svg className="w-10 h-10 mx-auto mb-2" style={{ color: COLORS.primary }} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>,
   Heart: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>,
   ExternalLink: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>,
-  ChevronRight: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+  ChevronRight: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>,
+  Phone: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>,
+  MessageCircle: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>,
 };
 
 export default function PropertyPage() {
   const [propertyData, setPropertyData] = useState(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  const searchParams = useSearchParams();
   
-  // 🔍 Get slug from URL params
-  const slug = searchParams?.get('slug') || (typeof window !== 'undefined' ? window.location.pathname.split('/').pop() : '');
+  // ✅ FIX: Use useParams() to get the dynamic route parameter
+  const params = useParams();
+  const slug = params?.slug;
 
   useEffect(() => {
+    // ✅ Debug: Log to verify slug is being read correctly
+    console.log('🔍 PropertyPage - slug from useParams:', slug);
+    
+    // Handle empty slug
+    if (!slug) {
+      console.error('❌ No slug found in route params');
+      setLoading(false);
+      return;
+    }
+
     // 🔎 Find project by slug from JSON
     const project = properties.find((p) => p.slug === slug);
     
     if (project) {
+      console.log('✅ Found project:', project.name);
       // ✨ Transform to match your existing propertyData structure
       setPropertyData(transformProject(project));
     } else {
       // 🚫 Show error or redirect if not found
-      console.error('Project not found for slug:', slug);
-      // Optional: router.push('/404');
+      console.error('❌ Project not found for slug:', slug);
+      console.log('📋 Available slugs (first 5):', properties.slice(0, 5).map(p => p.slug));
+      // Optional: router.replace('/404');
     }
     
     setLoading(false);
@@ -170,12 +166,27 @@ export default function PropertyPage() {
   };
 
   // 🔄 Show loading state while fetching
-  if (loading || !propertyData) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-[#005E60] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600">Loading project details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // 🚫 Show 404 if project not found
+  if (!propertyData) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center p-8">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Project Not Found</h1>
+          <p className="text-gray-600 mb-4">The project you're looking for doesn't exist.</p>
+          <Link href="/" className="text-[#005E60] font-medium hover:underline flex items-center justify-center gap-1">
+            <Icons.ChevronRight className="rotate-180" /> Back to Home
+          </Link>
         </div>
       </div>
     );
@@ -200,10 +211,6 @@ export default function PropertyPage() {
               <Icons.ChevronRight />
               <Link href={`/locations/${propertyData.location.city.toLowerCase()}`} className="hover:text-[#F8C21C] transition-colors capitalize">
                 {propertyData.location.city}
-              </Link>
-              <Icons.ChevronRight />
-              <Link href={`/locations/${propertyData.location.city.toLowerCase()}/${propertyData.location.area.toLowerCase()}`} className="hover:text-[#F8C21C] transition-colors capitalize">
-                {propertyData.location.area}
               </Link>
               <Icons.ChevronRight />
               <span className="text-gray-900 font-medium truncate">{propertyData.title}</span>
