@@ -1,15 +1,18 @@
-import Link from "next/link";
+import BuilderCard from './BuilderCard';
+// ✅ Fixed: 2 levels up to reach client/, then into data/
+import properties from '../../data/properties.json';
 
-export default function BuilderProjects({ projects }:any) {
+type Property = typeof properties[number];
+
+export default function BuilderProjects({ projects }: { projects: Property[] }) {
+  if (projects.length === 0) {
+    return <p className="text-center py-12 text-gray-500 text-lg">No projects match your search criteria.</p>;
+  }
+
   return (
-    <div className="max-w-6xl mx-auto py-12 grid md:grid-cols-3 gap-6">
-      {projects.map((p:any)=>(
-        <Link key={p.slug} href={`/project/${p.slug}`}>
-          <div className="border p-5 rounded-xl hover:shadow">
-            <h3 className="font-semibold">{p.name}</h3>
-            <p className="text-gray-500">{p.city}</p>
-          </div>
-        </Link>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {projects.map((project) => (
+        <BuilderCard key={project.slug} project={project} />
       ))}
     </div>
   );
