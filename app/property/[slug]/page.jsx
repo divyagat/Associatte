@@ -2,11 +2,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-// ✅ FIX: Import useParams instead of (or in addition to) useSearchParams
 import { useParams, useRouter } from 'next/navigation';
 import Head from 'next/head';
 import Link from 'next/link';
 import properties from '../../../data/properties.json';
+import EnquiryPopup from '@/components/common/EnquiryPopup';
 
 // 🎨 Strategic Color Palette (YOUR EXACT COLORS)
 const COLORS = {
@@ -24,10 +24,12 @@ function transformProject(project) {
   
   return {
     title: project.name,
+    slug: project.slug,
     rera: !!project.reraNumber,
     priceRange: project.priceDetails?.range || project.price,
     pricePerSqft: project.priceDetails?.perSqft,
     developer: project.developer?.name,
+    image: project.image,
     location: {
       area: project.fullLocation?.area || project.location,
       city: project.fullLocation?.city || (project.location === 'pune' ? 'Pune' : project.location === 'mumbai' ? 'Navi Mumbai' : 'Kalyan')
@@ -120,41 +122,35 @@ const Icons = {
 export default function PropertyPage() {
   const [propertyData, setPropertyData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showPopup, setShowPopup] = useState(false); // Enquiry Popup
+  const [showEmiPopup, setShowEmiPopup] = useState(false); // EMI Calculator Popup
   const router = useRouter();
   
-  // ✅ FIX: Use useParams() to get the dynamic route parameter
   const params = useParams();
   const slug = params?.slug;
 
   useEffect(() => {
-    // ✅ Debug: Log to verify slug is being read correctly
     console.log('🔍 PropertyPage - slug from useParams:', slug);
     
-    // Handle empty slug
     if (!slug) {
       console.error('❌ No slug found in route params');
       setLoading(false);
       return;
     }
 
-    // 🔎 Find project by slug from JSON
     const project = properties.find((p) => p.slug === slug);
     
     if (project) {
       console.log('✅ Found project:', project.name);
-      // ✨ Transform to match your existing propertyData structure
       setPropertyData(transformProject(project));
     } else {
-      // 🚫 Show error or redirect if not found
       console.error('❌ Project not found for slug:', slug);
       console.log('📋 Available slugs (first 5):', properties.slice(0, 5).map(p => p.slug));
-      // Optional: router.replace('/404');
     }
     
     setLoading(false);
   }, [slug, router]);
 
-  // 🎨 Your exact getIcon function
   const getIcon = (iconName) => {
     const iconMap = { 
       playground: <Icons.Playground />, 
@@ -165,7 +161,40 @@ export default function PropertyPage() {
     return iconMap[iconName] || <Icons.Playground />;
   };
 
-  // 🔄 Show loading state while fetching
+  // ✅ Smooth scroll to section
+  const scrollToSection = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      const headerOffset = 80;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const handleEnquirySubmit = async (payload) => {
+    try {
+      const response = await fetch('/api/enquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...payload,
+          projectId: propertyData?.slug,
+          projectImage: propertyData?.image,
+        }),
+      });
+      
+      if (!response.ok) throw new Error('Submission failed');
+      console.log('✅ Enquiry submitted for:', propertyData?.title);
+    } catch (error) {
+      console.error('❌ Error:', error);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -177,7 +206,6 @@ export default function PropertyPage() {
     );
   }
 
-  // 🚫 Show 404 if project not found
   if (!propertyData) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -192,7 +220,6 @@ export default function PropertyPage() {
     );
   }
 
-  // ✅ Your EXACT JSX below - unchanged except propertyData is now dynamic
   return (
     <>
       <Head>
@@ -202,10 +229,9 @@ export default function PropertyPage() {
 
       <div className="min-h-screen bg-gray-50">
         
-        {/* 🔝 Header Section - Clean & Professional */}
+        {/* 🔝 Header Section */}
         <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
           <div className="max-w-7xl mx-auto px-4 py-3">
-            {/* Breadcrumb */}
             <nav className="flex items-center text-sm text-gray-500 mb-3">
               <Link href="/" className="hover:text-[#F8C21C] transition-colors">Home</Link>
               <Icons.ChevronRight />
@@ -216,7 +242,6 @@ export default function PropertyPage() {
               <span className="text-gray-900 font-medium truncate">{propertyData.title}</span>
             </nav>
             
-            {/* Title & Price Row */}
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
               <div>
                 <div className="flex items-center gap-3">
@@ -235,11 +260,10 @@ export default function PropertyPage() {
           </div>
         </header>
 
-        {/* 🖼️ Hero Section - Modern Card Layout */}
+        {/* 🖼️ Hero Section */}
         <section className="bg-white border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 py-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Main Image/Video */}
               <div className="lg:col-span-2">
                 <div className="relative aspect-video bg-gradient-to-br from-[#005E60] to-[#003d40] rounded-2xl overflow-hidden group">
                   <div className="absolute inset-0 flex items-center justify-center">
@@ -255,8 +279,6 @@ export default function PropertyPage() {
                   </div>
                 </div>
               </div>
-              
-              {/* Thumbnail Gallery */}
               <div className="grid grid-cols-2 gap-3">
                 {[1, 2, 3, 4].map((item) => (
                   <div key={item} className={`aspect-square rounded-xl overflow-hidden cursor-pointer transition-all hover:ring-2 hover:ring-[#F8C21C] ${item === 1 ? 'ring-2 ring-[#005E60]' : ''}`}>
@@ -270,22 +292,17 @@ export default function PropertyPage() {
           </div>
         </section>
 
-        {/* 📋 Navigation Tabs - Clean & Sticky */}
+        {/* 📋 Navigation Tabs */}
         <nav className="bg-white border-b border-gray-200 sticky top-16 z-30">
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex gap-1 overflow-x-auto py-2 scrollbar-hide">
-              {['Overview', 'Configurations', 'Floor Plans', 'Amenities', 'Location', 'Developer', 'Brochure'].map((tab, index) => (
-                <button
-                  key={tab}
-                  className={`px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
-                    index === 0 
-                      ? 'bg-[#005E60] text-white shadow-sm' 
-                      : 'text-gray-600 hover:text-[#005E60] hover:bg-gray-100'
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
+              <button onClick={() => scrollToSection('overview')} className={`px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all bg-[#005E60] text-white shadow-sm`}>Overview</button>
+              <button onClick={() => scrollToSection('configurations')} className={`px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all text-gray-600 hover:text-[#005E60] hover:bg-gray-100`}>Configurations</button>
+              <button onClick={() => scrollToSection('floor-plans')} className={`px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all text-gray-600 hover:text-[#005E60] hover:bg-gray-100`}>Floor Plans</button>
+              <button onClick={() => scrollToSection('amenities')} className={`px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all text-gray-600 hover:text-[#005E60] hover:bg-gray-100`}>Amenities</button>
+              <button onClick={() => scrollToSection('location')} className={`px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all text-gray-600 hover:text-[#005E60] hover:bg-gray-100`}>Location</button>
+              <button onClick={() => scrollToSection('developer')} className={`px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all text-gray-600 hover:text-[#005E60] hover:bg-gray-100`}>Developer</button>
+              <button onClick={() => scrollToSection('brochure')} className={`px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all text-gray-600 hover:text-[#005E60] hover:bg-gray-100`}>Brochure</button>
             </div>
           </div>
         </nav>
@@ -293,26 +310,17 @@ export default function PropertyPage() {
         {/* 📦 Main Content */}
         <main className="max-w-7xl mx-auto px-4 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
-            {/* ← Left Column (Main Content) */}
             <div className="lg:col-span-2 space-y-6">
-              
-              {/* 🏠 Configurations */}
-              <section className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+              <section id="configurations" className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden scroll-mt-24">
                 <div className="p-6 border-b border-gray-100">
-                  <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                    <span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>
-                    Available Configurations
-                  </h2>
+                  <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2"><span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>Available Configurations</h2>
                 </div>
                 <div className="divide-y divide-gray-100">
                   {propertyData.configurations.map((config, index) => (
                     <div key={index} className="p-5 hover:bg-[#005E60]/5 transition-colors">
                       <div className="flex items-start justify-between">
                         <div className="flex items-start gap-4">
-                          <div className="w-12 h-12 bg-[#005E60]/10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ color: COLORS.primary }}>
-                            <Icons.Home />
-                          </div>
+                          <div className="w-12 h-12 bg-[#005E60]/10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ color: COLORS.primary }}><Icons.Home /></div>
                           <div>
                             <h3 className="font-bold text-gray-900 text-lg">{config.type}</h3>
                             <p className="text-sm text-gray-600 mt-0.5">{config.details}</p>
@@ -321,9 +329,7 @@ export default function PropertyPage() {
                         </div>
                         <div className="text-right">
                           <div className="text-lg font-bold" style={{ color: COLORS.alert }}>{config.price}</div>
-                          <button className="mt-2 px-4 py-1.5 text-sm font-medium text-[#005E60] border border-[#005E60] rounded-lg hover:bg-[#005E60] hover:text-white transition-colors">
-                            View Details
-                          </button>
+                          <button className="mt-2 px-4 py-1.5 text-sm font-medium text-[#005E60] border border-[#005E60] rounded-lg hover:bg-[#005E60] hover:text-white transition-colors">View Details</button>
                         </div>
                       </div>
                     </div>
@@ -331,96 +337,61 @@ export default function PropertyPage() {
                 </div>
               </section>
 
-              {/* 📐 Floor Plans */}
-              <section className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+              <section id="floor-plans" className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden scroll-mt-24">
                 <div className="p-6 border-b border-gray-100">
-                  <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                    <span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>
-                    Floor Plans
-                  </h2>
+                  <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2"><span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>Floor Plans</h2>
                 </div>
                 <div className="p-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {propertyData.floorPlans.map((plan, index) => (
-                      <button
-                        key={index}
-                        className={`p-4 rounded-xl border-2 text-left transition-all ${
-                          index === 0 
-                            ? 'border-[#F8C21C] bg-[#F8C21C]/10' 
-                            : 'border-gray-200 hover:border-[#005E60]/50 hover:bg-gray-50'
-                        }`}
-                      >
+                      <button key={index} className={`p-4 rounded-xl border-2 text-left transition-all ${index === 0 ? 'border-[#F8C21C] bg-[#F8C21C]/10' : 'border-gray-200 hover:border-[#005E60]/50 hover:bg-gray-50'}`}>
                         <div className={`font-semibold ${index === 0 ? 'text-[#005E60]' : 'text-gray-900'}`}>{plan.type}</div>
                         <div className="text-sm text-gray-600">{plan.area}</div>
                       </button>
                     ))}
                   </div>
                   <div className="mt-6 aspect-video bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center">
-                    <button className="px-6 py-3 bg-[#F8C21C] text-[#005E60] font-semibold rounded-xl hover:bg-[#e6b418] transition-colors shadow-lg">
-                      Login to Download Floor Plan
-                    </button>
+                    <button className="px-6 py-3 bg-[#F8C21C] text-[#005E60] font-semibold rounded-xl hover:bg-[#e6b418] transition-colors shadow-lg">Login to Download Floor Plan</button>
                   </div>
                 </div>
               </section>
 
-              {/* ℹ️ About Project */}
-              <section className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>
-                  About {propertyData.title}
-                </h2>
+              <section id="overview" className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 scroll-mt-24">
+                <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2"><span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>About {propertyData.title}</h2>
                 <p className="text-gray-700 leading-relaxed">{propertyData.about}</p>
               </section>
 
-              {/* 🎯 Amenities */}
-              <section className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+              <section id="amenities" className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden scroll-mt-24">
                 <div className="p-6 border-b border-gray-100">
-                  <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                    <span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>
-                    Premium Amenities
-                  </h2>
+                  <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2"><span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>Premium Amenities</h2>
                 </div>
                 <div className="p-6 grid grid-cols-2 md:grid-cols-4 gap-6">
                   {propertyData.amenities.map((amenity, index) => (
                     <div key={index} className="text-center p-4 rounded-xl hover:bg-[#005E60]/5 transition-colors group">
-                      <div className="w-14 h-14 mx-auto mb-3 bg-[#005E60]/10 rounded-full flex items-center justify-center group-hover:bg-[#005E60] group-hover:text-white transition-colors" style={{ color: COLORS.primary }}>
-                        {getIcon(amenity.icon)}
-                      </div>
+                      <div className="w-14 h-14 mx-auto mb-3 bg-[#005E60]/10 rounded-full flex items-center justify-center group-hover:bg-[#005E60] group-hover:text-white transition-colors" style={{ color: COLORS.primary }}>{getIcon(amenity.icon)}</div>
                       <div className="text-sm font-medium text-gray-800">{amenity.name}</div>
                     </div>
                   ))}
                 </div>
               </section>
 
-              {/* 🗺️ Location */}
-              <section className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>
-                  Location & Connectivity
-                </h2>
+              <section id="location" className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 scroll-mt-24">
+                <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2"><span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>Location & Connectivity</h2>
                 <div className="aspect-video bg-gray-200 rounded-xl flex items-center justify-center mb-4">
                   <div className="text-center">
-                    <div className="w-16 h-16 bg-[#005E60]/10 rounded-full flex items-center justify-center mx-auto mb-3" style={{ color: COLORS.primary }}>
-                      <Icons.Location />
-                    </div>
+                    <div className="w-16 h-16 bg-[#005E60]/10 rounded-full flex items-center justify-center mx-auto mb-3" style={{ color: COLORS.primary }}><Icons.Location /></div>
                     <p className="text-gray-600">Interactive map loading...</p>
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {['Schools', 'Hospitals', 'Malls', 'Metro', 'Airport'].map((tag) => (
-                    <span key={tag} className="px-3 py-1.5 bg-gray-100 text-gray-700 text-sm rounded-full hover:bg-[#005E60] hover:text-white transition-colors cursor-pointer">
-                      {tag}
-                    </span>
+                    <span key={tag} className="px-3 py-1.5 bg-gray-100 text-gray-700 text-sm rounded-full hover:bg-[#005E60] hover:text-white transition-colors cursor-pointer">{tag}</span>
                   ))}
                 </div>
               </section>
 
-              {/* 👨‍💼 Developer Info */}
-              <section className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                  <span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>
-                  About {propertyData.developerInfo.name}
-                </h2>
+              <section id="developer" className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 scroll-mt-24">
+                <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2"><span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>About {propertyData.developerInfo.name}</h2>
                 <div className="flex flex-col md:flex-row gap-6 items-start">
                   <div className="w-24 h-24 bg-gradient-to-br from-[#005E60] to-[#003d40] rounded-2xl flex items-center justify-center text-white font-bold text-lg shadow-lg flex-shrink-0">
                     {propertyData.developerInfo.name?.substring(0, 5).toUpperCase() || 'BUILDER'}
@@ -442,12 +413,8 @@ export default function PropertyPage() {
                 </div>
               </section>
 
-              {/* 📄 RERA Info */}
-              <section className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>
-                  RERA Details
-                </h2>
+              <section id="brochure" className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 scroll-mt-24">
+                <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2"><span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>RERA Details</h2>
                 <div className="bg-[#005E60]/5 border border-[#005E60]/20 rounded-xl p-4">
                   <div className="font-mono font-semibold text-gray-900">{propertyData.reraNumber}</div>
                   <div className="text-sm text-gray-600 mt-1">Registered with MahaRERA</div>
@@ -455,11 +422,9 @@ export default function PropertyPage() {
               </section>
             </div>
 
-            {/* → Right Sidebar (Sticky) */}
+            {/* → Right Sidebar */}
             <aside className="lg:col-span-1">
               <div className="sticky top-32 space-y-6">
-                
-                {/* 📊 Quick Facts Card */}
                 <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
                   <h3 className="font-semibold text-gray-900 mb-4">Project Highlights</h3>
                   <div className="space-y-3">
@@ -470,9 +435,7 @@ export default function PropertyPage() {
                       { icon: Icons.Home, label: "Configurations", value: propertyData.projectDetails.products }
                     ].map((item, index) => (
                       <div key={index} className="flex items-start gap-3">
-                        <div className="w-8 h-8 bg-[#005E60]/10 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={{ color: COLORS.primary }}>
-                          <item.icon />
-                        </div>
+                        <div className="w-8 h-8 bg-[#005E60]/10 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={{ color: COLORS.primary }}><item.icon /></div>
                         <div>
                           <div className="text-xs text-gray-500">{item.label}</div>
                           <div className="text-sm font-medium text-gray-900">{item.value}</div>
@@ -489,7 +452,6 @@ export default function PropertyPage() {
                     <div className="text-3xl font-bold">{propertyData.projectDetails.emi}</div>
                     <div className="text-sm text-white/70">per month</div>
                   </div>
-                  
                   <div className="grid grid-cols-3 gap-2 mb-5">
                     <div className="bg-white/10 rounded-lg p-2 text-center">
                       <div className="font-semibold">{propertyData.projectDetails.downPayment}</div>
@@ -505,39 +467,41 @@ export default function PropertyPage() {
                     </div>
                   </div>
                   
-                  <button className="w-full py-3 bg-[#F8C21C] text-[#005E60] font-bold rounded-xl hover:bg-[#e6b418] transition-colors shadow-lg mb-3">
+                  {/* ✅ Calculate EMI Button - Triggers Calculator Popup */}
+                  <button 
+                    onClick={() => setShowEmiPopup(true)}
+                    className="w-full py-3 bg-[#F8C21C] text-[#005E60] font-bold rounded-xl hover:bg-[#e6b418] transition-colors shadow-lg mb-3"
+                  >
                     Calculate EMI
                   </button>
-                  <button className="w-full py-3 bg-white/10 text-white font-semibold rounded-xl hover:bg-white/20 transition-colors border border-white/20">
+                  
+                  {/* ✅ Download Brochure Button - Triggers Enquiry Popup */}
+                  <button 
+                    onClick={() => setShowPopup(true)}
+                    className="w-full py-3 bg-white/10 text-white font-semibold rounded-xl hover:bg-white/20 transition-colors border border-white/20"
+                  >
                     Download Brochure
                   </button>
                 </div>
 
-                {/* ❤️ Save Property */}
                 <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="font-semibold text-gray-900">Save for Later</div>
                       <div className="text-sm text-gray-600">Get price alerts & updates</div>
                     </div>
-                    <button className="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center text-gray-400 hover:border-[#8B0000] hover:text-[#8B0000] transition-colors">
-                      <Icons.Heart />
-                    </button>
+                    <button className="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center text-gray-400 hover:border-[#8B0000] hover:text-[#8B0000] transition-colors"><Icons.Heart /></button>
                   </div>
                 </div>
 
-                {/* 📞 Contact Card */}
                 <div className="bg-white rounded-2xl border-2 border-[#F8C21C] shadow-lg p-5">
                   <div className="text-center mb-4">
                     <div className="text-sm text-gray-600">Interested?</div>
                     <div className="text-lg font-bold text-gray-900">Get a Callback</div>
                   </div>
-                  <button className="w-full py-3 bg-[#F8C21C] text-[#005E60] font-bold rounded-xl hover:bg-[#e6b418] transition-colors shadow-md">
-                    Request Callback
-                  </button>
+                  <button onClick={() => setShowPopup(true)} className="w-full py-3 bg-[#F8C21C] text-[#005E60] font-bold rounded-xl hover:bg-[#e6b418] transition-colors shadow-md">Request Callback</button>
                   <p className="text-xs text-gray-500 text-center mt-3">We'll connect you with a relationship manager</p>
                 </div>
-
               </div>
             </aside>
           </div>
@@ -546,32 +510,19 @@ export default function PropertyPage() {
         {/* 🔻 Other Projects Section */}
         <section className="bg-white border-t border-gray-200 py-12">
           <div className="max-w-7xl mx-auto px-4">
-            <h2 className="text-2xl font-bold text-gray-900 mb-8 flex items-center gap-2">
-              <span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>
-              Similar Projects in {propertyData.location.city}
-            </h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-8 flex items-center gap-2"><span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>Similar Projects in {propertyData.location.city}</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {propertyData.otherProjectsNaviMumbai.map((project, index) => (
                 <div key={index} className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden hover:shadow-lg transition-shadow group">
                   <div className="aspect-video bg-gradient-to-br from-[#005E60] to-[#003d40] relative">
-                    <div className="absolute top-3 left-3 px-2.5 py-1 bg-[#F8C21C] text-[#005E60] text-xs font-bold rounded">
-                      New Launch
-                    </div>
+                    <div className="absolute top-3 left-3 px-2.5 py-1 bg-[#F8C21C] text-[#005E60] text-xs font-bold rounded">New Launch</div>
                   </div>
                   <div className="p-5">
                     <h3 className="font-bold text-gray-900 group-hover:text-[#005E60] transition-colors">{project.title}</h3>
-                    <p className="text-sm text-gray-600 mt-1 flex items-center gap-1">
-                      <Icons.Location /> {project.location}
-                    </p>
+                    <p className="text-sm text-gray-600 mt-1 flex items-center gap-1"><Icons.Location /> {project.location}</p>
                     <div className="mt-3 flex items-center justify-between">
-                      <div>
-                        <div className="text-sm text-gray-600">{project.bhk}</div>
-                        <div className="text-xs text-gray-500">{project.area}</div>
-                      </div>
-                      <div className="text-right">
-                        <div className="font-bold" style={{ color: COLORS.alert }}>{project.price}</div>
-                        <button className="text-xs text-[#005E60] font-medium hover:underline">View →</button>
-                      </div>
+                      <div><div className="text-sm text-gray-600">{project.bhk}</div><div className="text-xs text-gray-500">{project.area}</div></div>
+                      <div className="text-right"><div className="font-bold" style={{ color: COLORS.alert }}>{project.price}</div><button className="text-xs text-[#005E60] font-medium hover:underline">View →</button></div>
                     </div>
                   </div>
                 </div>
@@ -580,22 +531,117 @@ export default function PropertyPage() {
           </div>
         </section>
 
-        {/* ⚠️ Disclaimer */}
         <footer className="bg-gray-100 border-t border-gray-200 py-8">
           <div className="max-w-7xl mx-auto px-4">
             <div className="bg-white rounded-xl border border-gray-200 p-5">
-              <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
-                <span className="text-[#8B0000]">*</span> Important Notice
-              </h4>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                All information is indicative and subject to change. Prices, availability, and specifications are not guaranteed. 
-                Please verify all details with the builder before making any decision. RERA registration does not guarantee project completion.
-              </p>
+              <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2"><span className="text-[#8B0000]">*</span> Important Notice</h4>
+              <p className="text-sm text-gray-600 leading-relaxed">All information is indicative and subject to change. Prices, availability, and specifications are not guaranteed. Please verify all details with the builder before making any decision. RERA registration does not guarantee project completion.</p>
             </div>
           </div>
         </footer>
-
       </div>
+
+      {/* ✅ Dynamic Enquiry Popup (For Brochure & Callback) */}
+      <EnquiryPopup
+        isOpen={showPopup}
+        onClose={() => setShowPopup(false)}
+        projectName={propertyData.title}
+        projectImage={propertyData.image}
+        projectTagline={`Get pricing & floor plans for ${propertyData.title}`}
+        theme="gradient"
+        trackingData={{ source: 'property_detail', campaign: propertyData.slug || 'unknown', medium: 'organic' }}
+        onSubmit={handleEnquirySubmit}
+      />
+
+      {/* 🧮 EMI Calculator Popup */}
+      {showEmiPopup && <EmiCalculatorPopup onClose={() => setShowEmiPopup(false)} />}
     </>
+  );
+}
+
+// 🧮 EMI Calculator Popup Component
+function EmiCalculatorPopup({ onClose }) {
+  const [loanAmount, setLoanAmount] = useState(5000000);
+  const [rate, setRate] = useState(8.5);
+  const [tenure, setTenure] = useState(20);
+
+  const calculateEMI = () => {
+    const principal = loanAmount;
+    const monthlyRate = rate / 12 / 100;
+    const months = tenure * 12;
+    
+    if (monthlyRate === 0) return principal / months;
+    const emi = (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) / (Math.pow(1 + monthlyRate, months) - 1);
+    return emi;
+  };
+
+  const emi = calculateEMI();
+  const totalPayment = emi * tenure * 12;
+  const totalInterest = totalPayment - loanAmount;
+
+  const formatCurrency = (val) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(val);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md" onClick={onClose}>
+      <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden animate-in fade-in zoom-in-95 duration-300 border border-gray-200/50" onClick={e => e.stopPropagation()}>
+        <div className="bg-gradient-to-r from-[#005E60] to-[#004a4d] text-white px-6 py-4 flex items-center justify-between">
+          <h3 className="text-lg font-bold">EMI Calculator</h3>
+          <button onClick={onClose} className="p-1.5 hover:bg-white/10 rounded-lg transition-colors">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+        </div>
+        
+        <div className="p-6 space-y-6">
+          {/* Loan Amount */}
+          <div>
+            <div className="flex justify-between mb-2">
+              <label className="text-sm font-medium text-gray-700">Loan Amount</label>
+              <span className="text-sm font-semibold text-[#005E60]">{formatCurrency(loanAmount)}</span>
+            </div>
+            <input type="range" min="1000000" max="20000000" step="100000" value={loanAmount} onChange={e => setLoanAmount(Number(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#005E60]" />
+          </div>
+
+          {/* Interest Rate */}
+          <div>
+            <div className="flex justify-between mb-2">
+              <label className="text-sm font-medium text-gray-700">Interest Rate (% p.a)</label>
+              <span className="text-sm font-semibold text-[#005E60]">{rate}%</span>
+            </div>
+            <input type="range" min="5" max="15" step="0.1" value={rate} onChange={e => setRate(Number(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#005E60]" />
+          </div>
+
+          {/* Tenure */}
+          <div>
+            <div className="flex justify-between mb-2">
+              <label className="text-sm font-medium text-gray-700">Tenure (Years)</label>
+              <span className="text-sm font-semibold text-[#005E60]">{tenure} Yr</span>
+            </div>
+            <input type="range" min="1" max="30" step="1" value={tenure} onChange={e => setTenure(Number(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#005E60]" />
+          </div>
+
+          {/* Results */}
+          <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-5 border border-gray-200">
+            <div className="text-center mb-4">
+              <p className="text-sm text-gray-600 mb-1">Monthly EMI</p>
+              <p className="text-3xl font-bold text-[#005E60]">{formatCurrency(emi)}</p>
+            </div>
+            <div className="grid grid-cols-2 gap-4 text-center">
+              <div className="bg-white p-3 rounded-xl shadow-sm">
+                <p className="text-xs text-gray-500">Total Interest</p>
+                <p className="font-semibold text-gray-900">{formatCurrency(totalInterest)}</p>
+              </div>
+              <div className="bg-white p-3 rounded-xl shadow-sm">
+                <p className="text-xs text-gray-500">Total Payment</p>
+                <p className="font-semibold text-gray-900">{formatCurrency(totalPayment)}</p>
+              </div>
+            </div>
+          </div>
+
+          <button onClick={onClose} className="w-full py-3 bg-[#F8C21C] text-[#8B0000] font-bold rounded-xl hover:bg-[#e6b418] transition-colors shadow-lg">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
