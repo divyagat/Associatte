@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo, useRef, memo, useDeferredValue } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef, useDeferredValue } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { 
@@ -17,11 +17,6 @@ import { FilterPanel } from './Hero/FilterPanel';
 import { StickySearchBar } from './Hero/StickySearchBar';
 
 // Types
-interface HeroProps {
-  initialCity?: string;
-  onSearch?: (params: { tab: string; city: string; query: string; filters?: SearchFilters }) => void;
-}
-
 export interface SearchFilters {
   bhk?: string[];
   priceRange?: { min: number; max: number };
@@ -32,14 +27,20 @@ export interface SearchFilters {
   locality?: string;
 }
 
+interface HeroProps {
+  initialCity?: string;
+  onSearch?: (params: { tab: string; city: string; query: string; filters?: SearchFilters }) => void;
+  onFilterChange?: (data: { city: string; filters: SearchFilters }) => void;
+}
+
 // 🎨 Associatte Brand Colors
 const BRAND = {
-  green: '#005E60',    // Primary
-  red: '#8B0000',      // Accent/Alert
-  yellow: '#F8C21C',   // Highlight
+  green: '#005E60',
+  red: '#8B0000',
+  yellow: '#F8C21C',
 } as const;
 
-// 🗺️ Only Pune & Mumbai (Your Target Markets)
+// 🗺️ Only Pune & Mumbai
 const CITIES = [
   { 
     name: 'Pune', 
@@ -57,7 +58,7 @@ const CITIES = [
   },
 ] as const;
 
-// 🔍 Search suggestions focused on your markets
+// 🔍 Search suggestions
 const SEARCH_SUGGESTIONS = [
   '3 BHK in Kharghar', 
   'Mantra Codename Paradise Sus',
@@ -69,7 +70,7 @@ const SEARCH_SUGGESTIONS = [
   'Plots in Panvel',
 ] as const;
 
-// 🗂️ Categories with Associatte brand colors
+// 🗂️ Categories
 const CATEGORIES = [
   { id: 'residential', label: 'Residential', icon: Home, color: BRAND.green, gradient: `from-[${BRAND.green}] to-[#004a4d]` },
   { id: 'commercial', label: 'Commercial', icon: Building2, color: BRAND.red, gradient: `from-[${BRAND.red}] to-[#6a0000]` },
@@ -88,43 +89,27 @@ const PRICE_RANGES = [
   { label: 'Above ₹2Cr', min: 20000000, max: Infinity },
 ] as const;
 
-// 🗺️ Locality to City mapping for auto-switching
+// 🗺️ Locality to City mapping
 const LOCALITY_CITY_MAP: Record<string, string> = {
-  // Pune localities
-  'Wakad': 'pune',
-  'Hinjewadi': 'pune',
-  'Baner': 'pune',
-  'Kharadi': 'pune',
-  'Sus': 'pune',
-  'Viman Nagar': 'pune',
-  'Kondhwa': 'pune',
-  'Magarpatta': 'pune',
-  // Mumbai localities
-  'Kharghar': 'mumbai',
-  'Panvel': 'mumbai',
-  'Thane': 'mumbai',
-  'Andheri': 'mumbai',
-  'Bandra': 'mumbai',
-  'Worli': 'mumbai',
-  'Navi Mumbai': 'mumbai',
+  'Wakad': 'pune', 'Hinjewadi': 'pune', 'Baner': 'pune', 'Kharadi': 'pune',
+  'Sus': 'pune', 'Viman Nagar': 'pune', 'Kondhwa': 'pune', 'Magarpatta': 'pune',
+  'Kharghar': 'mumbai', 'Panvel': 'mumbai', 'Thane': 'mumbai', 'Andheri': 'mumbai',
+  'Bandra': 'mumbai', 'Worli': 'mumbai', 'Navi Mumbai': 'mumbai',
 };
 
 // Custom hook for debouncing
 function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
-
   useEffect(() => {
     const handler = setTimeout(() => setDebouncedValue(value), delay);
     return () => clearTimeout(handler);
   }, [value, delay]);
-
   return debouncedValue;
 }
 
-// Custom hook for mouse position using CSS variables (no re-renders)
+// Custom hook for mouse position
 function useMousePosition() {
   const mouseRef = useRef({ x: 0, y: 0 });
-
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       mouseRef.current = { x: e.clientX, y: e.clientY };
@@ -133,23 +118,17 @@ function useMousePosition() {
       document.documentElement.style.setProperty('--mouse-x-pct', `${(e.clientX / window.innerWidth) * 100}%`);
       document.documentElement.style.setProperty('--mouse-y-pct', `${(e.clientY / window.innerHeight) * 100}%`);
     };
-
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
-
   return mouseRef;
 }
 
-// Custom hook for scroll position with requestAnimationFrame
+// Custom hook for scroll position
 function useScrollPosition(callback: (scrollY: number) => void, threshold: number) {
   const callbackRef = useRef(callback);
   const tickingRef = useRef(false);
-
-  useEffect(() => {
-    callbackRef.current = callback;
-  }, [callback]);
-
+  useEffect(() => { callbackRef.current = callback; }, [callback]);
   useEffect(() => {
     const handleScroll = () => {
       if (!tickingRef.current) {
@@ -160,17 +139,15 @@ function useScrollPosition(callback: (scrollY: number) => void, threshold: numbe
         tickingRef.current = true;
       }
     };
-
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 }
 
-export default function Hero({ initialCity = 'Pune', onSearch }: HeroProps) {
+export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }: HeroProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   
-  // ✅ Initialize city from URL param or prop
   const [selectedCity, setSelectedCity] = useState(() => {
     const urlCity = searchParams?.get('city');
     if (urlCity && CITIES.some(c => c.slug === urlCity.toLowerCase())) {
@@ -179,7 +156,6 @@ export default function Hero({ initialCity = 'Pune', onSearch }: HeroProps) {
     return initialCity;
   });
   
-  // Essential state only
   const [activeTab, setActiveTab] = useState<'residential' | 'commercial' | 'underConstruction' | 'readyToMove'>(
     () => (searchParams?.get('tab') as any) || 'residential'
   );
@@ -204,77 +180,48 @@ export default function Hero({ initialCity = 'Pune', onSearch }: HeroProps) {
   const [isSearching, setIsSearching] = useState(false);
   const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
 
-  // Refs for visual-only updates
   const mouseRef = useMousePosition();
   const dropdownCloseTimer = useRef<NodeJS.Timeout | null>(null);
-  const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Scroll transforms
   const { scrollY } = useScroll();
   const heroOpacity = useTransform(scrollY, [0, 500], [1, 0.97]);
   const heroScale = useTransform(scrollY, [0, 500], [1, 0.99]);
 
-  // Deferred values for non-critical UI
-  const deferredSearchQuery = useDeferredValue(searchQuery);
   const debouncedSearchQuery = useDebounce(searchQuery, 250);
 
-  // Optimized scroll handler
-  useScrollPosition((scrollY) => {
-    setShowStickySearch(scrollY > 120);
-  }, 120);
+  useScrollPosition((scrollY) => setShowStickySearch(scrollY > 120), 120);
 
-  // Cleanup timers
   useEffect(() => {
-    return () => {
-      if (dropdownCloseTimer.current) clearTimeout(dropdownCloseTimer.current);
-    };
+    return () => { if (dropdownCloseTimer.current) clearTimeout(dropdownCloseTimer.current); };
   }, []);
 
-  // ✅ Update URL when city changes (without page reload)
+  // ✅ Notify parent when filters or city change
+  useEffect(() => {
+    onFilterChange?.({ city: selectedCity.toLowerCase(), filters });
+  }, [selectedCity, filters, onFilterChange]);
+
   const updateCityInURL = useCallback((cityName: string) => {
     const citySlug = CITIES.find(c => c.name === cityName)?.slug || 'pune';
     const queryParams = new URLSearchParams(window.location.search);
     queryParams.set('city', citySlug);
-    
-    // Use replaceState to avoid adding to browser history
     window.history.replaceState({}, '', `?${queryParams.toString()}`);
   }, []);
 
-  // City dropdown handling
   const handleCityDropdownOpen = useCallback((isOpen: boolean) => {
     if (dropdownCloseTimer.current) clearTimeout(dropdownCloseTimer.current);
-    
-    if (isOpen) {
-      setIsCityDropdownOpen(true);
-    } else {
-      dropdownCloseTimer.current = setTimeout(() => {
-        setIsCityDropdownOpen(false);
-      }, 100);
-    }
+    if (isOpen) setIsCityDropdownOpen(true);
+    else dropdownCloseTimer.current = setTimeout(() => setIsCityDropdownOpen(false), 100);
   }, []);
 
-  // ✅ Handle city change with URL update
   const handleCityChange = useCallback((newCity: string) => {
     setSelectedCity(newCity);
     updateCityInURL(newCity);
-    
-    // Optional: Reset search query when city changes for cleaner UX
-    // setSearchQuery('');
   }, [updateCityInURL]);
 
-  // Search handler
   const handleSearch = useCallback(async () => {
     if (isSearching) return;
-    
     setIsSearching(true);
-    
-    const params = {
-      tab: activeTab,
-      city: selectedCity,
-      query: searchQuery.trim(),
-      filters: Object.keys(filters).length > 0 ? filters : undefined
-    };
-    
+    const params = { tab: activeTab, city: selectedCity, query: searchQuery.trim(), filters: Object.keys(filters).length > 0 ? filters : undefined };
     const queryParams = new URLSearchParams();
     queryParams.append('city', CITIES.find(c => c.name === selectedCity)?.slug || 'pune');
     queryParams.append('tab', activeTab);
@@ -287,32 +234,22 @@ export default function Hero({ initialCity = 'Pune', onSearch }: HeroProps) {
       queryParams.append('maxPrice', filters.priceRange.max === Infinity ? '999999999' : filters.priceRange.max.toString());
     }
     if (filters.locality) queryParams.append('locality', filters.locality);
-    
     try {
       await router.push(`/properties?${queryParams.toString()}`, { scroll: false });
       onSearch?.(params);
       setIsCityDropdownOpen(false);
-    } catch (error) {
-      console.error('Search navigation error:', error);
-    } finally {
-      setTimeout(() => setIsSearching(false), 200);
-    }
+    } catch (error) { console.error('Search navigation error:', error); }
+    finally { setTimeout(() => setIsSearching(false), 200); }
   }, [activeTab, selectedCity, searchQuery, filters, onSearch, router, isSearching]);
 
-  // Filtered suggestions
   const filteredSuggestions = useMemo(() => {
     if (!debouncedSearchQuery) return SEARCH_SUGGESTIONS.slice(0, 4);
-    return SEARCH_SUGGESTIONS.filter(s => 
-      s.toLowerCase().includes(debouncedSearchQuery.toLowerCase())
-    ).slice(0, 4);
+    return SEARCH_SUGGESTIONS.filter(s => s.toLowerCase().includes(debouncedSearchQuery.toLowerCase())).slice(0, 4);
   }, [debouncedSearchQuery]);
 
-  // ✅ Smart suggestion parsing with city auto-switch
   const handleSuggestionClick = useCallback((suggestion: string) => {
     setSearchQuery(suggestion);
-    
     const newFilters: SearchFilters = { ...filters };
-    
     if (suggestion.includes('BHK')) {
       const bhkMatch = suggestion.match(/(\d+\s*[RB]HK)/i);
       if (bhkMatch) newFilters.bhk = [bhkMatch[0].toUpperCase()];
@@ -324,219 +261,88 @@ export default function Hero({ initialCity = 'Pune', onSearch }: HeroProps) {
         newFilters.priceRange = { min: 0, max: value };
       }
     }
-    
-    // ✅ Auto-switch city based on suggestion
     const cityMatch = CITIES.find(c => suggestion.toLowerCase().includes(c.name.toLowerCase()));
-    if (cityMatch) {
-      handleCityChange(cityMatch.name);
-    }
-    
-    // ✅ Also check locality-based city switch
-    const localityMatch = Object.keys(LOCALITY_CITY_MAP).find(loc => 
-      suggestion.toLowerCase().includes(loc.toLowerCase())
-    );
+    if (cityMatch) handleCityChange(cityMatch.name);
+    const localityMatch = Object.keys(LOCALITY_CITY_MAP).find(loc => suggestion.toLowerCase().includes(loc.toLowerCase()));
     if (localityMatch) {
       const targetCity = CITIES.find(c => c.slug === LOCALITY_CITY_MAP[localityMatch]);
-      if (targetCity) {
-        handleCityChange(targetCity.name);
-      }
+      if (targetCity) handleCityChange(targetCity.name);
     }
-    
     setFilters(newFilters);
     setTimeout(handleSearch, 50);
   }, [filters, handleSearch, handleCityChange]);
 
-  // Clear filters
-  const handleClearFilters = useCallback(() => {
-    setFilters({});
-    setShowFilters(false);
-  }, []);
+  const handleClearFilters = useCallback(() => { setFilters({}); setShowFilters(false); }, []);
+  const handleApplyFilters = useCallback(() => { handleSearch(); setShowFilters(false); }, [handleSearch]);
 
-  // Apply filters
-  const handleApplyFilters = useCallback(() => {
-    handleSearch();
-    setShowFilters(false);
-  }, [handleSearch]);
-
-  // ✅ Handle locality click with auto city switch
   const handleLocalityClick = useCallback((locality: string) => {
     setSearchQuery(locality);
-    
-    // ✅ Auto-switch city if locality belongs to other city
     const targetCitySlug = LOCALITY_CITY_MAP[locality];
     if (targetCitySlug) {
       const targetCity = CITIES.find(c => c.slug === targetCitySlug);
-      if (targetCity && targetCity.name !== selectedCity) {
-        handleCityChange(targetCity.name);
-      }
+      if (targetCity && targetCity.name !== selectedCity) handleCityChange(targetCity.name);
     }
-    
     handleSearch();
   }, [selectedCity, handleCityChange, handleSearch]);
 
-  // Memoized props for child components
   const searchBarProps = useMemo(() => ({
-    activeTab,
-    selectedCity,
-    searchQuery,
-    filters,
-    isCityDropdownOpen,
-    showSuggestions: !!searchQuery && filteredSuggestions.length > 0,
-    filteredSuggestions,
-    categories: CATEGORIES,
-    cities: CITIES,
-    isSearching,
-    onTabChange: setActiveTab,
-    onCityChange: handleCityChange, // ✅ Use new handler
-    onSearchQueryChange: setSearchQuery,
-    onCityDropdownToggle: handleCityDropdownOpen,
-    onSuggestionClick: handleSuggestionClick,
-    onFilterToggle: () => setShowFilters(true),
-    onSearch: handleSearch,
-  }), [
     activeTab, selectedCity, searchQuery, filters, isCityDropdownOpen,
-    filteredSuggestions.length, isSearching,
-    handleCityDropdownOpen, handleSuggestionClick, handleSearch, handleCityChange
-  ]);
+    showSuggestions: !!searchQuery && filteredSuggestions.length > 0,
+    filteredSuggestions, categories: CATEGORIES, cities: CITIES, isSearching,
+    onTabChange: setActiveTab, onCityChange: handleCityChange,
+    onSearchQueryChange: setSearchQuery, onCityDropdownToggle: handleCityDropdownOpen,
+    onSuggestionClick: handleSuggestionClick, onFilterToggle: () => setShowFilters(true),
+    onSearch: handleSearch,
+  }), [activeTab, selectedCity, searchQuery, filters, isCityDropdownOpen, filteredSuggestions.length, isSearching, handleCityDropdownOpen, handleSuggestionClick, handleSearch, handleCityChange]);
 
   const stickySearchProps = useMemo(() => ({
-    activeTab,
-    selectedCity,
-    searchQuery,
-    categories: CATEGORIES,
-    isSearching,
-    onTabChange: setActiveTab,
-    onSearchQueryChange: setSearchQuery,
-    onSearch: handleSearch,
+    activeTab, selectedCity, searchQuery, categories: CATEGORIES, isSearching,
+    onTabChange: setActiveTab, onSearchQueryChange: setSearchQuery, onSearch: handleSearch,
   }), [activeTab, selectedCity, searchQuery, isSearching, handleSearch]);
 
   const filterPanelProps = useMemo(() => ({
-    filters,
-    bhkOptions: BHK_OPTIONS,
-    builderOptions: BUILDER_OPTIONS,
-    propertyTypes: PROPERTY_TYPES,
-    priceRanges: PRICE_RANGES,
-    onFilterChange: setFilters,
-    onClear: handleClearFilters,
-    onApply: handleApplyFilters,
-    onClose: () => setShowFilters(false),
+    filters, bhkOptions: BHK_OPTIONS, builderOptions: BUILDER_OPTIONS,
+    propertyTypes: PROPERTY_TYPES, priceRanges: PRICE_RANGES,
+    onFilterChange: setFilters, onClear: handleClearFilters,
+    onApply: handleApplyFilters, onClose: () => setShowFilters(false),
   }), [filters, handleClearFilters, handleApplyFilters]);
 
-  // Get current city data
-  const currentCity = useMemo(() => 
-    CITIES.find(c => c.name === selectedCity) || CITIES[0], 
-    [selectedCity]
-  );
+  const currentCity = useMemo(() => CITIES.find(c => c.name === selectedCity) || CITIES[0], [selectedCity]);
 
   return (
-    <motion.section 
-      style={{ opacity: heroOpacity, scale: heroScale }} 
-      className="relative min-h-[400px] lg:min-h-[440px] overflow-hidden will-change-transform"
-    >
-      {/* CSS-driven animated background */}
+    <motion.section style={{ opacity: heroOpacity, scale: heroScale }} className="relative min-h-[400px] lg:min-h-[440px] overflow-hidden will-change-transform">
       <AnimatedBackground mouseRef={mouseRef} />
-
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-10">
         <div className="grid lg:grid-cols-12 gap-8 items-end">
-          
-          {/* Left: Branding + Headline */}
-          <motion.div 
-            className="lg:col-span-5 text-center lg:text-left"
-            initial={{ opacity: 0, y: 16 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            transition={{ duration: 0.5, ease: "easeOut" }}
-          >
-            <motion.div 
-              className="inline-flex items-center gap-2 px-3.5 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/15 mb-5" 
-              whileHover={{ scale: 1.015 }} 
-              whileTap={{ scale: 0.99 }}
-            >
+          <motion.div className="lg:col-span-5 text-center lg:text-left" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: "easeOut" }}>
+            <motion.div className="inline-flex items-center gap-2 px-3.5 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/15 mb-5" whileHover={{ scale: 1.015 }} whileTap={{ scale: 0.99 }}>
               <Sparkles className="w-4 h-4" style={{ color: BRAND.yellow }} />
-              <span className="text-xs font-semibold text-white/90 tracking-wide">
-                Verified Projects in Pune & Mumbai
-              </span>
+              <span className="text-xs font-semibold text-white/90 tracking-wide">Verified Projects in Pune & Mumbai</span>
             </motion.div>
-            
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-[1.08] mb-4">
               <span className="block">Find Your Dream Home in</span>
-              <motion.span 
-                className="block"
-                style={{ color: BRAND.yellow }}
-              >
-                {selectedCity}
-              </motion.span>
+              <motion.span className="block" style={{ color: BRAND.yellow }}>{selectedCity}</motion.span>
             </h1>
-            
-            <motion.p 
-              className="text-sm sm:text-base text-slate-300 mb-6 max-w-sm mx-auto lg:mx-0 leading-relaxed"
-              initial={{ opacity: 0 }} 
-              animate={{ opacity: 1 }} 
-              transition={{ delay: 0.15 }}
-            >
+            <motion.p className="text-sm sm:text-base text-slate-300 mb-6 max-w-sm mx-auto lg:mx-0 leading-relaxed" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}>
               Explore <span className="text-white font-medium">{currentCity.projects}+ verified properties</span> from trusted builders in {currentCity.localities.slice(0, 3).join(', ')} & more
             </motion.p>
-
-            {/* ✅ Locality Buttons with Auto City Switch */}
-            <motion.div 
-              className="flex flex-wrap justify-center lg:justify-start gap-2"
-              initial={{ opacity: 0 }} 
-              animate={{ opacity: 1 }} 
-              transition={{ delay: 0.25 }}
-            >
+            <motion.div className="flex flex-wrap justify-center lg:justify-start gap-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}>
               {currentCity.localities.slice(0, 4).map((loc, i) => (
-                <motion.button
-                  key={loc}
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.35 + i * 0.03 }}
-                  whileHover={{ scale: 1.04 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => handleLocalityClick(loc)} // ✅ Use new handler
-                  className="px-3.5 py-2 text-xs font-medium text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-full transition-all duration-200 backdrop-blur-sm"
-                  style={{ 
-                    borderColor: `rgba(0, 94, 96, 0.3)`,
-                  }}
-                >
-                  {loc}
-                </motion.button>
+                <motion.button key={loc} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 + i * 0.03 }} whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.98 }} onClick={() => handleLocalityClick(loc)} className="px-3.5 py-2 text-xs font-medium text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-full transition-all duration-200 backdrop-blur-sm" style={{ borderColor: `rgba(0, 94, 96, 0.3)` }}>{loc}</motion.button>
               ))}
             </motion.div>
           </motion.div>
-
-          {/* Right: Search Card */}
-          <motion.div 
-            className="lg:col-span-7"
-            initial={{ opacity: 0, y: 18 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            transition={{ delay: 0.1, duration: 0.5, ease: "easeOut" }}
-          >
+          <motion.div className="lg:col-span-7" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.5, ease: "easeOut" }}>
             <SearchBar {...searchBarProps} />
           </motion.div>
         </div>
       </div>
-
-      {/* Bottom fade */}
       <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-slate-950 via-slate-950/95 to-transparent pointer-events-none" />
-
-      {/* Sticky Search Bar */}
-      <AnimatePresence>
-        {showStickySearch && (
-          <StickySearchBar {...stickySearchProps} />
-        )}
-      </AnimatePresence>
-
-      {/* Filter Panel Overlay */}
+      <AnimatePresence>{showStickySearch && <StickySearchBar {...stickySearchProps} />}</AnimatePresence>
       <AnimatePresence>
         {showFilters && (
           <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowFilters(false)}
-              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[55]"
-              aria-hidden="true"
-            />
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowFilters(false)} className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[55]" aria-hidden="true" />
             <FilterPanel {...filterPanelProps} />
           </>
         )}

@@ -1,14 +1,12 @@
 // app/page.tsx
 'use client';
 
-import React, { memo, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import Head from 'next/head';
-import { useSearchParams } from 'next/navigation'; // ✅ Read URL params
-import { useSelector } from 'react-redux';
-import type { RootState } from '../store/store';
+import { useSearchParams } from 'next/navigation';
 
-// 🧩 Section Imports
-import Hero from '../components/Home/Hero';
+// 🧩 Component Imports
+import Hero, { SearchFilters } from '@/components/Home/Hero';
 import NewlyLaunchedProjects from '@/components/sections/NewlyLaunchedProjects';
 import TopSellingProjects from '@/components/sections/TopSellingProjects';
 import TrustFeaturesSection from '@/components/sections/TrustFeaturesSection';
@@ -22,9 +20,8 @@ import InvestmentCtaSection from '@/components/sections/InvestmentCtaSection';
 import CtaFormSection from '@/components/sections/CtaFormSection';
 import BlogSection from '@/components/sections/BlogSection';
 
-// 📦 Your Project Data
-import projectsData from '../data/properties.json';
-import type { Property } from '../types';
+// 📦 Project Data (if using JSON)
+// import projectsData from '@/data/properties.json';
 
 // 🗺️ Location Configuration
 const LOCATION_CONFIG = {
@@ -38,8 +35,6 @@ const LOCATION_CONFIG = {
     metaKeywords: 'properties in Pune, flats in Wakad, 3 BHK Hinjewadi, Mantra Codename Paradise, Sus real estate, Associatte PropTech',
     featuredLocalities: ['Wakad', 'Hinjewadi', 'Baner', 'Sus', 'Kharadi'],
     priceRange: { min: '₹75L', max: '₹4.5Cr' },
-    // Projects of interest for Pune
-    featuredSlugs: ['mantra-codename-paradise', 'mantra-one-residency', 'lodha-mundhwa', 'shapoorji-tree-cloud'],
   },
   mumbai: {
     name: 'Mumbai',
@@ -51,66 +46,13 @@ const LOCATION_CONFIG = {
     metaKeywords: 'properties in Mumbai, flats in Kharghar, 3 BHK Panvel, Sai World Empire, Navi Mumbai real estate, Associatte PropTech',
     featuredLocalities: ['Kharghar', 'Panvel', 'Thane', 'Andheri', 'Navi Mumbai'],
     priceRange: { min: '₹75L', max: '₹4.5Cr' },
-    // Projects of interest for Mumbai
-    featuredSlugs: ['sai-world-empire', 'sai-world-one', 'today-kharghar', 'today-nova-vista-nerul'],
   },
 } as const;
 
 type CitySlug = keyof typeof LOCATION_CONFIG;
 
-// 🔍 Filter helpers
-const filterByCity = (projects: Property[], city: CitySlug) => {
-  const cityMap: Record<CitySlug, string[]> = {
-    pune: ['pune'],
-    mumbai: ['mumbai'], // Your data uses 'mumbai' for Navi Mumbai projects
-  };
-  return projects.filter(p => cityMap[city].includes(p.location.toLowerCase()));
-};
-
-const getNewlyLaunched = (projects: Property[]) => 
-  projects.filter(p => {
-    const year = parseInt(p.possessionDate?.split(' ')[1] || '2030');
-    return year >= 2026;
-  }).slice(0, 6);
-
-const getTopSelling = (projects: Property[]) => {
-  const premiumBuilders = ['Lodha Group', 'Shapoorji Pallonji', 'Panchshil Realty', 'Tribeca Developers', 'Paradise Group', 'Today Global'];
-  return projects
-    .filter(p => 
-      premiumBuilders.includes(p.developer.name) || 
-      p.priceDetails.range.includes('1.5 Cr') ||
-      p.priceDetails.range.includes('2 Cr') ||
-      p.priceDetails.range.includes('3 Cr')
-    )
-    .slice(0, 6);
-};
-
-const getFeaturedProjects = (projects: Property[], city: CitySlug) => {
-  const config = LOCATION_CONFIG[city];
-  const featured = projects.filter(p => config.featuredSlugs.includes(p.slug));
-  const remaining = projects
-    .filter(p => !config.featuredSlugs.includes(p.slug))
-    .slice(0, Math.max(0, 4 - featured.length));
-  
-  return [...featured, ...remaining].slice(0, 4);
-};
-
-const getUniqueBuilders = (projects: Property[]) => {
-  const builders = new Map<string, { name: string; projects: number; image: string }>();
-  projects.forEach(p => {
-    if (!builders.has(p.developer.name)) {
-      builders.set(p.developer.name, {
-        name: p.developer.name,
-        projects: p.developer.projectsCount,
-        image: `/builders/${p.developer.name.toLowerCase().replace(/\s+/g, '-')}.jpg`
-      });
-    }
-  });
-  return Array.from(builders.values()).slice(0, 8);
-};
-
 // 🎯 Dynamic SEO Component
-const HomePageSEO = memo(({ city }: { city: CitySlug }) => {
+const HomePageSEO = ({ city }: { city: CitySlug }) => {
   const config = LOCATION_CONFIG[city];
   
   return (
@@ -120,86 +62,43 @@ const HomePageSEO = memo(({ city }: { city: CitySlug }) => {
       <meta name="keywords" content={config.metaKeywords} />
       <meta name="author" content="Associatte PropTech Pvt Ltd" />
       <meta name="robots" content="index, follow" />
-      
-      {/* Open Graph */}
       <meta property="og:title" content={config.metaTitle} />
       <meta property="og:description" content={config.metaDescription} />
       <meta property="og:image" content="https://propfinder.in/og-image.jpg" />
       <meta property="og:type" content="website" />
       <meta property="og:locale" content="en_IN" />
       <meta property="og:url" content={`https://propfinder.in?city=${city}`} />
-      
-      {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={config.metaTitle} />
       <meta name="twitter:description" content={config.metaDescription} />
-      
-      {/* Canonical */}
       <link rel="canonical" href={`https://propfinder.in?city=${city}`} />
-      
-      {/* Structured Data - Organization */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "RealEstateAgent",
-            "name": "Associatte PropTech Pvt Ltd",
-            "url": "https://propfinder.in",
-            "logo": "https://propfinder.in/logo.png",
-            "description": config.metaDescription,
-            "address": { "@type": "PostalAddress", "addressCountry": "IN", "addressRegion": "Maharashtra" },
-            "contactPoint": {
-              "@type": "ContactPoint",
-              "telephone": "+91-8743563546",
-              "contactType": "customer service",
-              "areaServed": "IN"
-            }
-          })
-        }}
-      />
     </Head>
   );
-});
-HomePageSEO.displayName = 'HomePageSEO';
+};
 
 // 🏠 Main HomePage Component
-const HomePage = memo(() => {
-  const searchParams = useSearchParams(); // ✅ Read ?city= param
+export default function HomePage() {
+  const searchParams = useSearchParams();
   const cityParam = (searchParams?.get('city') || 'pune') as CitySlug;
   const city: CitySlug = LOCATION_CONFIG[cityParam] ? cityParam : 'pune';
   const config = LOCATION_CONFIG[city];
   
-  // ✅ Redux (if needed)
-  const carouselData = useSelector((state: RootState) => state.carousel);
-  
-  // 🎯 Process data with useMemo (re-compute only when city changes)
-  const {
-    cityProjects,
-    newlyLaunched,
-    topSelling,
-    featured,
-    builders,
-    stats
-  } = useMemo(() => {
-    const filtered = filterByCity(projectsData, city);
-    
-    return {
-      cityProjects: filtered,
-      newlyLaunched: getNewlyLaunched(filtered),
-      topSelling: getTopSelling(filtered),
-      featured: getFeaturedProjects(filtered, city),
-      builders: getUniqueBuilders(filtered),
-      stats: {
-        total: filtered.length,
-        minPrice: filtered.length ? Math.min(...filtered.map(p => 
-          parseFloat(p.priceDetails.range.split(' - ')[0].replace(/[^\d.]/g, ''))
-        )) : 75,
-        builders: new Set(filtered.map(p => p.developer.name)).size,
-        localities: new Set(filtered.map(p => p.fullLocation.area)).size,
-      }
-    };
-  }, [city]); // ✅ Re-compute only when city changes
+  // ✅ State to hold filters from Hero
+  const [heroFilters, setHeroFilters] = useState<{ city: string; filters: SearchFilters }>({
+    city: 'pune',
+    filters: {}
+  });
+
+  // ✅ Callback to receive filter updates from Hero
+  const handleFilterChange = useCallback((data: { city: string; filters: SearchFilters }) => {
+    setHeroFilters(data);
+  }, []);
+
+  // ✅ Memoize props for NewlyLaunchedProjects
+  const newlyLaunchedProps = useMemo(() => ({
+    selectedCity: heroFilters.city as 'pune' | 'mumbai',
+    filters: heroFilters.filters
+  }), [heroFilters.city, heroFilters.filters]);
 
   return (
     <>
@@ -208,48 +107,35 @@ const HomePage = memo(() => {
       
       <main className="min-h-screen bg-slate-50">
         
-        {/* 🌟 Hero Section - Dynamic Content */}
+        {/* 🌟 Hero Section - Passes filter updates via onFilterChange */}
         <Hero 
           initialCity={config.name}
-          cityConfig={config}
-          stats={stats}
+          onFilterChange={handleFilterChange}
           onSearch={(params) => {
-            // Update URL with filters
             const queryParams = new URLSearchParams(window.location.search);
-            queryParams.set('city', city);
+            queryParams.set('city', params.city.toLowerCase());
             if (params.query) queryParams.set('q', params.query);
             if (params.filters?.bhk?.length) queryParams.set('bhk', params.filters.bhk.join(','));
             window.history.replaceState({}, '', `?${queryParams.toString()}`);
           }}
         />
         
-        {/* 🚀 Newly Launched - Location Specific */}
+        {/* 🚀 Newly Launched Projects - STANDALONE SECTION with filters */}
         <section className="py-12 md:py-16" aria-labelledby="newly-launched-heading">
           <NewlyLaunchedProjects 
-            projects={newlyLaunched}
-            city={config.name}
-            onViewMore={() => console.log('View newly launched in', config.name)}
+            selectedCity={newlyLaunchedProps.selectedCity}
+            filters={newlyLaunchedProps.filters}
           />
         </section>
         
-        {/* 🔥 Top Selling - Location Specific */}
+        {/* 🔥 Top Selling Projects */}
         <section className="py-12 md:py-16 bg-white" aria-labelledby="top-selling-heading">
-          <TopSellingProjects 
-            projects={topSelling}
-            city={config.name}
-            onViewMore={() => console.log('View top selling in', config.name)}
-          />
+          <TopSellingProjects city={config.name} />
         </section>
         
-        {/* 🏢 Trusted Developers - Location Specific */}
+        {/* 🏢 Trusted Developers */}
         <section className="py-12 md:py-16" aria-labelledby="developers-heading">
-          <TopDevelopersCarousel 
-            builders={builders.filter(b => 
-              cityProjects.some(p => p.developer.name === b.name)
-            )}
-            city={config.name}
-            onViewAll={() => console.log('View all builders in', config.name)}
-          />
+          <TopDevelopersCarousel city={config.name} />
         </section>
         
         {/* ✅ Trust Signals */}
@@ -257,27 +143,15 @@ const HomePage = memo(() => {
           <TrustFeaturesSection city={config.name} />
         </section>
         
-        {/* 🔍 Property Discovery - Location Specific */}
+        {/* 🔍 Property Types */}
         <section className="py-12 md:py-16" aria-labelledby="types-heading">
-          <PropertyTypesSection 
-            city={config.name}
-            types={[
-              { id: '2bhk', label: '2 BHK', count: cityProjects.filter(p => p.priceDetails.configurations.some(c => c.type.includes('2 BHK'))).length },
-              { id: '3bhk', label: '3 BHK', count: cityProjects.filter(p => p.priceDetails.configurations.some(c => c.type.includes('3 BHK'))).length },
-              { id: 'ready', label: 'Ready to Move', count: cityProjects.filter(p => p.possessionDate.toLowerCase().includes('ready')).length },
-              { id: 'under', label: 'Under Construction', count: cityProjects.filter(p => !p.possessionDate.toLowerCase().includes('ready')).length }
-            ]}
-          />
+          <PropertyTypesSection city={config.name} />
         </section>
         
+        {/* 📂 Categories */}
         <section className="py-12 md:py-16 bg-white" aria-labelledby="categories-heading">
           <CategorySection 
             city={config.name}
-            categories={[
-              { id: config.slug, label: config.name, projects: cityProjects.length },
-              { id: 'localities', label: 'Localities', projects: stats.localities },
-              { id: 'builders', label: 'Builders', projects: stats.builders },
-            ]}
             featuredLocalities={config.featuredLocalities}
           />
         </section>
@@ -287,34 +161,22 @@ const HomePage = memo(() => {
           <ServicesSection city={config.name} />
         </section>
         
-        {/* 🏆 Featured Projects - Your Interests + Location */}
+        {/* 🏆 Featured Projects */}
         <section className="py-12 md:py-16 bg-white" aria-labelledby="featured-heading">
-          <FeaturedProjectsSection 
-            projects={featured}
-            city={config.name}
-            onViewMore={() => console.log('View featured in', config.name)}
-          />
+          <FeaturedProjectsSection city={config.name} />
         </section>
         
-        {/* 💬 Social Proof */}
+        {/* 💬 Testimonials */}
         <section className="py-12 md:py-16" aria-labelledby="testimonials-heading">
           <TestimonialsAchievementsSection city={config.name} />
         </section>
         
-        {/* 📈 Investment CTA - Brand Gradient + Location */}
+        {/* 📈 Investment CTA */}
         <section className="py-12 md:py-16 bg-gradient-to-br from-[#005E60] to-[#004a4d]" aria-labelledby="investment-heading">
-          <InvestmentCtaSection 
-            city={config.name}
-            stats={{
-              projects: stats.total,
-              builders: stats.builders,
-              cities: 2,
-              satisfied: '500+'
-            }}
-          />
+          <InvestmentCtaSection city={config.name} />
         </section>
         
-        {/* 📝 Lead Capture - Location Specific */}
+        {/* 📝 Lead Capture */}
         <section className="py-12 md:py-16 bg-white" aria-labelledby="contact-heading">
           <CtaFormSection 
             city={config.name}
@@ -324,53 +186,12 @@ const HomePage = memo(() => {
           />
         </section>
         
-        {/* 📰 Blog / Insights - Location Specific */}
+        {/* 📰 Blog */}
         <section className="py-12 md:py-16" aria-labelledby="blog-heading">
-          <BlogSection 
-            city={config.name}
-            posts={config.slug === 'pune' ? [
-              {
-                title: "Why Wakad is the Next Hotspot for Property Investment",
-                excerpt: "With IT park expansion and metro connectivity, Wakad offers excellent growth potential...",
-                image: "/blog/wakad-investment.jpg",
-                date: "May 2024",
-                slug: "wakad-investment-guide",
-                city: 'pune'
-              },
-              {
-                title: "Mantra Codename Paradise: Complete Review",
-                excerpt: "Everything you need to know about Mantra's new project in Sus, Pune...",
-                image: "/blog/mantra-codename-review.jpg",
-                date: "Apr 2024",
-                slug: "mantra-codename-paradise-review",
-                city: 'pune'
-              }
-            ] : [
-              {
-                title: "Why Kharghar is the Next Hotspot for Property Investment",
-                excerpt: "With the upcoming Navi Mumbai Airport and metro connectivity, Kharghar offers excellent growth potential...",
-                image: "/blog/kharghar-investment.jpg",
-                date: "May 2024",
-                slug: "kharghar-investment-guide",
-                city: 'mumbai'
-              },
-              {
-                title: "Sai World Empire Kharghar: Complete Review",
-                excerpt: "Everything you need to know about Paradise Group's premium project in Kharghar...",
-                image: "/blog/sai-world-empire-review.jpg",
-                date: "Apr 2024",
-                slug: "sai-world-empire-review",
-                city: 'mumbai'
-              }
-            ]}
-          />
+          <BlogSection city={config.name} />
         </section>
         
       </main>
     </>
   );
-});
-
-HomePage.displayName = 'HomePage';
-
-export default HomePage;
+}
