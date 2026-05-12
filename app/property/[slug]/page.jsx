@@ -119,11 +119,68 @@ const Icons = {
   MessageCircle: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>,
 };
 
+// 🏠 Property Schema Component (JSON-LD)
+function PropertySchema({ property }) {
+  if (!property) return null;
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": property.title,
+    "image": property.image ? [property.image] : [],
+    "description": property.about,
+    "brand": {
+      "@type": "Brand",
+      "name": property.developer
+    },
+    "provider": {
+      "@type": "Organization",
+      "name": "Associatte PropTech Pvt Ltd",
+      "url": "https://propfinder.in",
+      "logo": "https://propfinder.in/logo.png"
+    },
+    "offers": {
+      "@type": "Offer",
+      "priceCurrency": "INR",
+      "price": property.priceRange?.replace(/[^\d.]/g, '') * 10000000 || 0,
+      "availability": property.projectDetails?.possessionDate === 'Ready to Move' 
+        ? "https://schema.org/InStock" 
+        : "https://schema.org/PreOrder",
+      "url": `https://propfinder.in/property/${property.slug}`
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": property.location.area,
+      "addressLocality": property.location.city,
+      "addressRegion": "Maharashtra",
+      "addressCountry": "IN"
+    },
+    "floorSize": {
+      "@type": "QuantitativeValue",
+      "value": property.configurations?.[0]?.area?.replace(/[^\d]/g, '') || 0,
+      "unitCode": "FTK"
+    },
+    "numberOfRooms": property.configurations?.[0]?.type?.match(/\d+/)?.[0] || 0,
+    "amenityFeature": property.amenities?.map(amenity => ({
+      "@type": "LocationFeatureSpecification",
+      "name": amenity.name,
+      "value": true
+    })) || []
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
+}
+
 export default function PropertyPage() {
   const [propertyData, setPropertyData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [showPopup, setShowPopup] = useState(false); // Enquiry Popup
-  const [showEmiPopup, setShowEmiPopup] = useState(false); // EMI Calculator Popup
+  const [showPopup, setShowPopup] = useState(false);
+  const [showEmiPopup, setShowEmiPopup] = useState(false);
   const router = useRouter();
   
   const params = useParams();
@@ -161,7 +218,6 @@ export default function PropertyPage() {
     return iconMap[iconName] || <Icons.Playground />;
   };
 
-  // ✅ Smooth scroll to section
   const scrollToSection = (id) => {
     const element = document.getElementById(id);
     if (element) {
@@ -220,11 +276,47 @@ export default function PropertyPage() {
     );
   }
 
+  // 🔹 Generate SEO metadata
+  const seoTitle = `${propertyData.title} - ${propertyData.configurations?.[0]?.type || ''} in ${propertyData.location.area}, ${propertyData.location.city} | PropFinder`;
+  const seoDescription = `${propertyData.title} by ${propertyData.developer}. ${propertyData.configurations?.[0]?.type} starting ₹${propertyData.priceRange}. ${propertyData.about?.substring(0, 150)}...`;
+  const canonicalUrl = `https://propfinder.in/property/${propertyData.slug}`;
+
   return (
     <>
+      {/* 🎯 ENHANCED SEO HEAD SECTION */}
       <Head>
-        <title>{propertyData.title} - {propertyData.location.area}, {propertyData.location.city}</title>
-        <meta name="description" content={propertyData.about} />
+        {/* Primary Meta Tags */}
+        <title>{seoTitle}</title>
+        <meta name="description" content={seoDescription} />
+        <meta name="keywords" content={`${propertyData.title}, ${propertyData.bhk} BHK ${propertyData.location.area}, ${propertyData.developer}, property in ${propertyData.location.city}, PropFinder, Associatte PropTech`} />
+        <meta name="author" content="Associatte PropTech Pvt Ltd" />
+        <meta name="robots" content="index, follow" />
+        
+        {/* Canonical URL */}
+        <link rel="canonical" href={canonicalUrl} />
+        
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:title" content={seoTitle} />
+        <meta property="og:description" content={seoDescription} />
+        <meta property="og:image" content={propertyData.image || 'https://propfinder.in/og-image.jpg'} />
+        <meta property="og:site_name" content="PropFinder" />
+        <meta property="og:locale" content="en_IN" />
+        
+        {/* Twitter */}
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content={canonicalUrl} />
+        <meta property="twitter:title" content={seoTitle} />
+        <meta property="twitter:description" content={seoDescription} />
+        <meta property="twitter:image" content={propertyData.image || 'https://propfinder.in/og-image.jpg'} />
+        
+        {/* Additional SEO Tags */}
+        <meta name="geo.region" content="IN-MH" />
+        <meta name="geo.placename" content={`${propertyData.location.area}, ${propertyData.location.city}`} />
+        
+        {/* Property Schema (JSON-LD) */}
+        <PropertySchema property={propertyData} />
       </Head>
 
       <div className="min-h-screen bg-gray-50">
@@ -232,14 +324,19 @@ export default function PropertyPage() {
         {/* 🔝 Header Section */}
         <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
           <div className="max-w-7xl mx-auto px-4 py-3">
-            <nav className="flex items-center text-sm text-gray-500 mb-3">
+            {/* ✅ Breadcrumbs for SEO */}
+            <nav className="flex items-center text-sm text-gray-500 mb-3" aria-label="Breadcrumb">
               <Link href="/" className="hover:text-[#F8C21C] transition-colors">Home</Link>
               <Icons.ChevronRight />
               <Link href={`/locations/${propertyData.location.city.toLowerCase()}`} className="hover:text-[#F8C21C] transition-colors capitalize">
                 {propertyData.location.city}
               </Link>
               <Icons.ChevronRight />
-              <span className="text-gray-900 font-medium truncate">{propertyData.title}</span>
+              <Link href={`/locations/${propertyData.location.city.toLowerCase()}/${propertyData.location.area.toLowerCase().replace(/\s+/g, '-')}`} className="hover:text-[#F8C21C] transition-colors">
+                {propertyData.location.area}
+              </Link>
+              <Icons.ChevronRight />
+              <span className="text-gray-900 font-medium truncate" aria-current="page">{propertyData.title}</span>
             </nav>
             
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
@@ -467,7 +564,6 @@ export default function PropertyPage() {
                     </div>
                   </div>
                   
-                  {/* ✅ Calculate EMI Button - Triggers Calculator Popup */}
                   <button 
                     onClick={() => setShowEmiPopup(true)}
                     className="w-full py-3 bg-[#F8C21C] text-[#005E60] font-bold rounded-xl hover:bg-[#e6b418] transition-colors shadow-lg mb-3"
@@ -475,7 +571,6 @@ export default function PropertyPage() {
                     Calculate EMI
                   </button>
                   
-                  {/* ✅ Download Brochure Button - Triggers Enquiry Popup */}
                   <button 
                     onClick={() => setShowPopup(true)}
                     className="w-full py-3 bg-white/10 text-white font-semibold rounded-xl hover:bg-white/20 transition-colors border border-white/20"
@@ -541,7 +636,7 @@ export default function PropertyPage() {
         </footer>
       </div>
 
-      {/* ✅ Dynamic Enquiry Popup (For Brochure & Callback) */}
+      {/* ✅ Dynamic Enquiry Popup */}
       <EnquiryPopup
         isOpen={showPopup}
         onClose={() => setShowPopup(false)}
@@ -592,7 +687,6 @@ function EmiCalculatorPopup({ onClose }) {
         </div>
         
         <div className="p-6 space-y-6">
-          {/* Loan Amount */}
           <div>
             <div className="flex justify-between mb-2">
               <label className="text-sm font-medium text-gray-700">Loan Amount</label>
@@ -601,7 +695,6 @@ function EmiCalculatorPopup({ onClose }) {
             <input type="range" min="1000000" max="20000000" step="100000" value={loanAmount} onChange={e => setLoanAmount(Number(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#005E60]" />
           </div>
 
-          {/* Interest Rate */}
           <div>
             <div className="flex justify-between mb-2">
               <label className="text-sm font-medium text-gray-700">Interest Rate (% p.a)</label>
@@ -610,7 +703,6 @@ function EmiCalculatorPopup({ onClose }) {
             <input type="range" min="5" max="15" step="0.1" value={rate} onChange={e => setRate(Number(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#005E60]" />
           </div>
 
-          {/* Tenure */}
           <div>
             <div className="flex justify-between mb-2">
               <label className="text-sm font-medium text-gray-700">Tenure (Years)</label>
@@ -619,7 +711,6 @@ function EmiCalculatorPopup({ onClose }) {
             <input type="range" min="1" max="30" step="1" value={tenure} onChange={e => setTenure(Number(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#005E60]" />
           </div>
 
-          {/* Results */}
           <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-5 border border-gray-200">
             <div className="text-center mb-4">
               <p className="text-sm text-gray-600 mb-1">Monthly EMI</p>

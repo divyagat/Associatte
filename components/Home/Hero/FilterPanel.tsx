@@ -2,7 +2,7 @@
 
 import { memo, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { X } from 'lucide-react';
+import { X, MapPin } from 'lucide-react';
 import type { SearchFilters } from '../Hero';
 
 interface FilterPanelProps {
@@ -16,6 +16,13 @@ interface FilterPanelProps {
   onApply: () => void;
   onClose: () => void;
 }
+
+// 🔒 STRICT: Only Mumbai & Pune allowed - hardcoded
+const ALLOWED_LOCATIONS = ['Mumbai', 'Pune'] as const;
+
+// 🎨 Brand Colors
+const BRAND_GREEN = '#005E60';
+const BRAND_RED = '#8B0000';
 
 export const FilterPanel = memo(({
   filters,
@@ -53,9 +60,22 @@ export const FilterPanel = memo(({
     onFilterChange({ ...filters, propertyType: updated.length ? updated : undefined });
   }, [filters, onFilterChange]);
 
+  // ✅ FIX: Location toggle - set or clear locality string (not array)
+  const toggleLocation = useCallback((loc: string) => {
+    // Only allow Mumbai/Pune
+    if (!ALLOWED_LOCATIONS.includes(loc as any)) return;
+    
+    // Toggle: if same as current, clear it; otherwise set it
+    const newLocality = filters.locality === loc ? undefined : loc;
+    onFilterChange({ ...filters, locality: newLocality });
+  }, [filters, onFilterChange]);
+
   const setPriceRange = useCallback((min: number, max: number) => {
     onFilterChange({ ...filters, priceRange: { min, max } });
   }, [filters, onFilterChange]);
+
+  // ✅ Helper: Check if location is active
+  const isLocationActive = (loc: string) => filters.locality === loc;
 
   return (
     <motion.div
@@ -68,18 +88,51 @@ export const FilterPanel = memo(({
       aria-modal="true"
     >
       <div className="p-6">
+        {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-bold text-slate-800">Filters</h3>
           <button 
             onClick={onClose} 
-            className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+            className="p-2 rounded-lg hover:bg-red-50 transition-colors"
             aria-label="Close filters"
           >
-            <X className="w-5 h-5 text-slate-500" />
+            <X className="w-5 h-5" style={{ color: BRAND_RED }} />
           </button>
         </div>
 
-        {/* BHK Filter */}
+        {/* 📍 Location Filter - Mumbai & Pune Only */}
+        <div className="mb-6">
+          <label className="block text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2">
+            <MapPin className="w-4 h-4" style={{ color: BRAND_GREEN }} /> Location
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {ALLOWED_LOCATIONS.map(loc => (
+              <button
+                key={loc}
+                onClick={() => toggleLocation(loc)}
+                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all border ${
+                  isLocationActive(loc)
+                    ? 'text-white border-transparent shadow-md'
+                    : 'bg-slate-50 text-slate-600 border-slate-200 hover:border-slate-300'
+                }`}
+                style={{
+                  backgroundColor: isLocationActive(loc) ? BRAND_GREEN : undefined,
+                  borderColor: isLocationActive(loc) ? BRAND_GREEN : undefined
+                }}
+                aria-pressed={isLocationActive(loc)}
+              >
+                {loc}
+              </button>
+            ))}
+          </div>
+          {filters.locality && (
+            <p className="text-xs text-slate-500 mt-2">
+              Filtering: <span className="font-medium" style={{ color: BRAND_GREEN }}>{filters.locality}</span>
+            </p>
+          )}
+        </div>
+
+        {/* 🏠 BHK Filter */}
         <div className="mb-6">
           <label className="block text-sm font-semibold text-slate-700 mb-3">BHK Type</label>
           <div className="flex flex-wrap gap-2">
@@ -87,11 +140,15 @@ export const FilterPanel = memo(({
               <button
                 key={bhk}
                 onClick={() => toggleBhk(bhk)}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all border ${
                   filters.bhk?.includes(bhk)
-                    ? 'bg-indigo-600 text-white'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    ? 'text-white border-transparent shadow-md'
+                    : 'bg-slate-50 text-slate-600 border-slate-200 hover:border-slate-300'
                 }`}
+                style={{
+                  backgroundColor: filters.bhk?.includes(bhk) ? BRAND_GREEN : undefined,
+                  borderColor: filters.bhk?.includes(bhk) ? BRAND_GREEN : undefined
+                }}
                 aria-pressed={filters.bhk?.includes(bhk)}
               >
                 {bhk}
@@ -100,44 +157,57 @@ export const FilterPanel = memo(({
           </div>
         </div>
 
-        {/* Price Range */}
+        {/* 💰 Price Range */}
         <div className="mb-6">
           <label className="block text-sm font-semibold text-slate-700 mb-3">Budget</label>
-          <div className="space-y-2">
-            {priceRanges.map(range => (
-              <label key={range.label} className="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="radio"
-                  name="priceRange"
-                  checked={filters.priceRange?.min === range.min && filters.priceRange?.max === range.max}
-                  onChange={() => setPriceRange(range.min, range.max)}
-                  className="w-4 h-4 text-indigo-600 border-slate-300 focus:ring-indigo-500"
-                />
-                <span className="text-sm text-slate-600">{range.label}</span>
-              </label>
-            ))}
+          <div className="space-y-2.5">
+            {priceRanges.map(range => {
+              const isSelected = filters.priceRange?.min === range.min && filters.priceRange?.max === range.max;
+              return (
+                <label key={range.label} className="flex items-center gap-3 cursor-pointer group">
+                  <input
+                    type="radio"
+                    name="priceRange"
+                    checked={isSelected}
+                    onChange={() => setPriceRange(range.min, range.max)}
+                    className="w-4 h-4 border-slate-300 focus:ring-2"
+                    style={{
+                      accentColor: BRAND_GREEN,
+                      boxShadow: isSelected ? `0 0 0 2px ${BRAND_GREEN}30` : undefined
+                    }}
+                  />
+                  <span className={`text-sm transition-colors ${isSelected ? 'font-medium text-slate-800' : 'text-slate-600 group-hover:text-slate-800'}`}>
+                    {range.label}
+                  </span>
+                </label>
+              );
+            })}
           </div>
         </div>
 
-        {/* Builders */}
+        {/* 🏗️ Builders */}
         <div className="mb-6">
           <label className="block text-sm font-semibold text-slate-700 mb-3">Builders</label>
-          <div className="space-y-2 max-h-40 overflow-y-auto pr-2">
+          <div className="space-y-2 max-h-36 overflow-y-auto pr-2 scrollbar-thin">
             {builderOptions.map(builder => (
-              <label key={builder} className="flex items-center gap-3 cursor-pointer">
+              <label key={builder} className="flex items-center gap-3 cursor-pointer group">
                 <input
                   type="checkbox"
                   checked={filters.builder?.includes(builder)}
                   onChange={() => toggleBuilder(builder)}
-                  className="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500"
+                  className="w-4 h-4 rounded border-slate-300 focus:ring-2"
+                  style={{
+                    accentColor: BRAND_GREEN,
+                    boxShadow: filters.builder?.includes(builder) ? `0 0 0 2px ${BRAND_GREEN}30` : undefined
+                  }}
                 />
-                <span className="text-sm text-slate-600">{builder}</span>
+                <span className="text-sm text-slate-600 group-hover:text-slate-800 transition-colors">{builder}</span>
               </label>
             ))}
           </div>
         </div>
 
-        {/* Property Type */}
+        {/* 🏢 Property Type */}
         <div className="mb-6">
           <label className="block text-sm font-semibold text-slate-700 mb-3">Property Type</label>
           <div className="flex flex-wrap gap-2">
@@ -145,11 +215,16 @@ export const FilterPanel = memo(({
               <button
                 key={type}
                 onClick={() => togglePropertyType(type)}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all border ${
                   filters.propertyType?.includes(type)
-                    ? 'bg-indigo-600 text-white'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    ? 'text-white border-transparent shadow-md'
+                    : 'bg-slate-50 text-slate-600 border-slate-200 hover:border-slate-300'
                 }`}
+                style={{
+                  backgroundColor: filters.propertyType?.includes(type) ? BRAND_GREEN : undefined,
+                  borderColor: filters.propertyType?.includes(type) ? BRAND_GREEN : undefined
+                }}
+                aria-pressed={filters.propertyType?.includes(type)}
               >
                 {type}
               </button>
@@ -157,19 +232,25 @@ export const FilterPanel = memo(({
           </div>
         </div>
 
-        {/* Action Buttons */}
+        {/* ✅ Action Buttons */}
         <div className="flex gap-3 pt-4 border-t border-slate-100 sticky bottom-0 bg-white pb-2">
           <button
             onClick={onClear}
-            className="flex-1 px-4 py-2.5 border border-slate-300 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-colors"
+            className="flex-1 px-4 py-2.5 border border-slate-200 rounded-xl text-sm font-semibold transition-colors hover:bg-red-50"
+            style={{ color: BRAND_RED }}
           >
             Clear All
           </button>
+          
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={onApply}
-            className="flex-1 px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl text-sm font-semibold shadow-lg shadow-indigo-500/30"
+            className="flex-1 px-4 py-2.5 text-white rounded-xl text-sm font-semibold shadow-lg transition-colors"
+            style={{ 
+              backgroundColor: BRAND_GREEN,
+              boxShadow: `0 4px 14px 0 ${BRAND_GREEN}40`
+            }}
           >
             Apply Filters
           </motion.button>

@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback, useMemo, useRef, memo, useDeferredValue } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
-import Image from 'next/image';
 import { 
   Search, MapPin, Home, Building2, Construction, KeyRound, 
   ChevronDown, Handshake, RefreshCcw, ArrowRight, Sparkles, 
@@ -16,6 +15,7 @@ import { AnimatedBackground } from './Hero/AnimatedBackground';
 import { SearchBar } from './Hero/SearchBar';
 import { FilterPanel } from './Hero/FilterPanel';
 import { StickySearchBar } from './Hero/StickySearchBar';
+
 // Types
 interface HeroProps {
   initialCity?: string;
@@ -32,47 +32,82 @@ export interface SearchFilters {
   locality?: string;
 }
 
-// Constants (moved outside to prevent re-creation)
-const COLORS = {
-  primary: 'oklch(0.55 0.22 270)',
-  primaryHover: 'oklch(0.5 0.24 270)',
-  accent: 'oklch(0.7 0.18 180)',
+// 🎨 Associatte Brand Colors
+const BRAND = {
+  green: '#005E60',    // Primary
+  red: '#8B0000',      // Accent/Alert
+  yellow: '#F8C21C',   // Highlight
 } as const;
 
+// 🗺️ Only Pune & Mumbai (Your Target Markets)
 const CITIES = [
-  { name: 'Mumbai', projects: 2847, localities: ['Andheri', 'Bandra', 'Powai', 'Worli', 'Kharghar', 'Thane'] },
-  { name: 'Pune', projects: 1923, localities: ['Hinjewadi', 'Wakad', 'Baner', 'Kharadi', 'Viman Nagar', 'Kondhwa'] },
-  { name: 'Bangalore', projects: 2156, localities: ['Whitefield', 'Electronic City', 'Koramangala', 'Indiranagar', 'HSR Layout'] },
-  { name: 'Chennai', projects: 1432, localities: ['OMR', 'T Nagar', 'Adyar', 'Velachery', 'Anna Nagar'] },
-  { name: 'Delhi NCR', projects: 3201, localities: ['Gurgaon', 'Noida', 'Dwarka', 'Rohini', 'Faridabad'] },
-  { name: 'Hyderabad', projects: 1678, localities: ['Gachibowli', 'Hitech City', 'Kondapur', 'Madhapur', 'Secunderabad'] },
+  { 
+    name: 'Pune', 
+    projects: 1923, 
+    localities: ['Wakad', 'Hinjewadi', 'Baner', 'Kharadi', 'Sus', 'Viman Nagar', 'Kondhwa', 'Magarpatta'],
+    description: 'IT hub with premium projects in Wakad, Hinjewadi & Baner',
+    slug: 'pune'
+  },
+  { 
+    name: 'Mumbai', 
+    projects: 2847, 
+    localities: ['Kharghar', 'Panvel', 'Thane', 'Andheri', 'Bandra', 'Worli', 'Navi Mumbai'],
+    description: 'Premium properties in Kharghar, Panvel & Navi Mumbai',
+    slug: 'mumbai'
+  },
 ] as const;
 
+// 🔍 Search suggestions focused on your markets
 const SEARCH_SUGGESTIONS = [
-  '3 BHK in Kharghar', 'Luxury villas Pune', 'Commercial space Mumbai', 
-  'Ready to move Bangalore', 'Plots under 50L', 'Godrej Properties', 
-  'Lodha Group', '2 BHK under 80L', '4 BHK penthouse', 'Studio apartments'
+  '3 BHK in Kharghar', 
+  'Mantra Codename Paradise Sus',
+  'Sai World Empire Kharghar',
+  '2 BHK under 1 Cr Pune',
+  'Ready to move Wakad',
+  'Lodha Group Mumbai',
+  'Shapoorji Pallonji Pune',
+  'Plots in Panvel',
 ] as const;
 
+// 🗂️ Categories with Associatte brand colors
 const CATEGORIES = [
-  { id: 'residential', label: 'Buy', icon: Home, color: '#6366f1', gradient: 'from-indigo-500 to-violet-600' },
-  { id: 'commercial', label: 'Commercial', icon: Building2, color: '#8b5cf6', gradient: 'from-violet-500 to-purple-600' },
-  { id: 'underConstruction', label: 'Pre-Launch', icon: Construction, color: '#06b6d4', gradient: 'from-cyan-500 to-teal-600' },
-  { id: 'readyToMove', label: 'Ready', icon: KeyRound, color: '#f43f5e', gradient: 'from-rose-500 to-pink-600' },
-  { id: 'rental', label: 'Rent', icon: Handshake, color: '#10b981', gradient: 'from-emerald-500 to-green-600' },
-  { id: 'reselling', label: 'Resale', icon: RefreshCcw, color: '#f59e0b', gradient: 'from-amber-500 to-orange-600' },
+  { id: 'residential', label: 'Residential', icon: Home, color: BRAND.green, gradient: `from-[${BRAND.green}] to-[#004a4d]` },
+  { id: 'commercial', label: 'Commercial', icon: Building2, color: BRAND.red, gradient: `from-[${BRAND.red}] to-[#6a0000]` },
+  { id: 'underConstruction', label: 'Pre-Launch', icon: Construction, color: BRAND.yellow, gradient: `from-[${BRAND.yellow}] to-[#d4a017]` },
+  { id: 'readyToMove', label: 'Ready', icon: KeyRound, color: BRAND.green, gradient: `from-[${BRAND.green}] to-[#004a4d]` },
 ] as const;
 
+// 🔧 Filter options
 const BHK_OPTIONS = ['1 RK', '1 BHK', '2 BHK', '3 BHK', '4 BHK', '4+ BHK'] as const;
-const BUILDER_OPTIONS = ['Lodha Group', 'Godrej Properties', 'Prestige Group', 'Sobha Ltd', 'Brigade Group', 'DLF', 'Oberoi Realty', 'Tata Housing'] as const;
-const PROPERTY_TYPES = ['Apartment', 'Villa', 'Plot', 'Studio', 'Penthouse', 'Office Space', 'Shop'] as const;
+const BUILDER_OPTIONS = ['Mantra Developers', 'Lodha Group', 'Shapoorji Pallonji', 'Paradise Group', 'Today Global', 'Birla Estates', 'Panchshil Realty'] as const;
+const PROPERTY_TYPES = ['Apartment', 'Villa', 'Plot', 'Studio', 'Penthouse', 'Office Space'] as const;
 const PRICE_RANGES = [
-  { label: 'Under ₹50L', min: 0, max: 5000000 },
-  { label: '₹50L - ₹1Cr', min: 5000000, max: 10000000 },
+  { label: 'Under ₹75L', min: 0, max: 7500000 },
+  { label: '₹75L - ₹1Cr', min: 7500000, max: 10000000 },
   { label: '₹1Cr - ₹2Cr', min: 10000000, max: 20000000 },
-  { label: '₹2Cr - ₹5Cr', min: 20000000, max: 50000000 },
-  { label: 'Above ₹5Cr', min: 50000000, max: Infinity },
+  { label: 'Above ₹2Cr', min: 20000000, max: Infinity },
 ] as const;
+
+// 🗺️ Locality to City mapping for auto-switching
+const LOCALITY_CITY_MAP: Record<string, string> = {
+  // Pune localities
+  'Wakad': 'pune',
+  'Hinjewadi': 'pune',
+  'Baner': 'pune',
+  'Kharadi': 'pune',
+  'Sus': 'pune',
+  'Viman Nagar': 'pune',
+  'Kondhwa': 'pune',
+  'Magarpatta': 'pune',
+  // Mumbai localities
+  'Kharghar': 'mumbai',
+  'Panvel': 'mumbai',
+  'Thane': 'mumbai',
+  'Andheri': 'mumbai',
+  'Bandra': 'mumbai',
+  'Worli': 'mumbai',
+  'Navi Mumbai': 'mumbai',
+};
 
 // Custom hook for debouncing
 function useDebounce<T>(value: T, delay: number): T {
@@ -93,7 +128,6 @@ function useMousePosition() {
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       mouseRef.current = { x: e.clientX, y: e.clientY };
-      // Update CSS variables for GPU-accelerated transforms
       document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
       document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
       document.documentElement.style.setProperty('--mouse-x-pct', `${(e.clientX / window.innerWidth) * 100}%`);
@@ -132,15 +166,23 @@ function useScrollPosition(callback: (scrollY: number) => void, threshold: numbe
   }, []);
 }
 
-export default function Hero({ initialCity = 'Mumbai', onSearch }: HeroProps) {
+export default function Hero({ initialCity = 'Pune', onSearch }: HeroProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   
-  // Essential state only (minimal re-renders)
-  const [activeTab, setActiveTab] = useState<'residential' | 'commercial' | 'underConstruction' | 'readyToMove' | 'rental' | 'reselling'>(
+  // ✅ Initialize city from URL param or prop
+  const [selectedCity, setSelectedCity] = useState(() => {
+    const urlCity = searchParams?.get('city');
+    if (urlCity && CITIES.some(c => c.slug === urlCity.toLowerCase())) {
+      return CITIES.find(c => c.slug === urlCity.toLowerCase())?.name || initialCity;
+    }
+    return initialCity;
+  });
+  
+  // Essential state only
+  const [activeTab, setActiveTab] = useState<'residential' | 'commercial' | 'underConstruction' | 'readyToMove'>(
     () => (searchParams?.get('tab') as any) || 'residential'
   );
-  const [selectedCity, setSelectedCity] = useState(() => searchParams?.get('city') || initialCity);
   const [showStickySearch, setShowStickySearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState(() => searchParams?.get('q') || '');
   const [filters, setFilters] = useState<SearchFilters>(() => {
@@ -162,43 +204,45 @@ export default function Hero({ initialCity = 'Mumbai', onSearch }: HeroProps) {
   const [isSearching, setIsSearching] = useState(false);
   const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
 
-  // Refs for visual-only updates (no re-renders)
+  // Refs for visual-only updates
   const mouseRef = useMousePosition();
   const dropdownCloseTimer = useRef<NodeJS.Timeout | null>(null);
-  const suggestionsTimer = useRef<NodeJS.Timeout | null>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Scroll transforms - optimized with lower sensitivity
+  // Scroll transforms
   const { scrollY } = useScroll();
   const heroOpacity = useTransform(scrollY, [0, 500], [1, 0.97]);
   const heroScale = useTransform(scrollY, [0, 500], [1, 0.99]);
 
   // Deferred values for non-critical UI
   const deferredSearchQuery = useDeferredValue(searchQuery);
-  const deferredFilters = useDeferredValue(filters);
-
-  // Debounced search query for suggestions/heavy operations
   const debouncedSearchQuery = useDebounce(searchQuery, 250);
 
-  // Optimized scroll handler using requestAnimationFrame
+  // Optimized scroll handler
   useScrollPosition((scrollY) => {
     setShowStickySearch(scrollY > 120);
   }, 120);
 
-  // Cleanup timers on unmount
+  // Cleanup timers
   useEffect(() => {
     return () => {
       if (dropdownCloseTimer.current) clearTimeout(dropdownCloseTimer.current);
-      if (suggestionsTimer.current) clearTimeout(suggestionsTimer.current);
     };
   }, []);
 
-  // FIXED: Proper dropdown close handling
+  // ✅ Update URL when city changes (without page reload)
+  const updateCityInURL = useCallback((cityName: string) => {
+    const citySlug = CITIES.find(c => c.name === cityName)?.slug || 'pune';
+    const queryParams = new URLSearchParams(window.location.search);
+    queryParams.set('city', citySlug);
+    
+    // Use replaceState to avoid adding to browser history
+    window.history.replaceState({}, '', `?${queryParams.toString()}`);
+  }, []);
+
+  // City dropdown handling
   const handleCityDropdownOpen = useCallback((isOpen: boolean) => {
-    if (dropdownCloseTimer.current) {
-      clearTimeout(dropdownCloseTimer.current);
-      dropdownCloseTimer.current = null;
-    }
+    if (dropdownCloseTimer.current) clearTimeout(dropdownCloseTimer.current);
     
     if (isOpen) {
       setIsCityDropdownOpen(true);
@@ -209,7 +253,16 @@ export default function Hero({ initialCity = 'Mumbai', onSearch }: HeroProps) {
     }
   }, []);
 
-  // Optimized search handler
+  // ✅ Handle city change with URL update
+  const handleCityChange = useCallback((newCity: string) => {
+    setSelectedCity(newCity);
+    updateCityInURL(newCity);
+    
+    // Optional: Reset search query when city changes for cleaner UX
+    // setSearchQuery('');
+  }, [updateCityInURL]);
+
+  // Search handler
   const handleSearch = useCallback(async () => {
     if (isSearching) return;
     
@@ -223,7 +276,7 @@ export default function Hero({ initialCity = 'Mumbai', onSearch }: HeroProps) {
     };
     
     const queryParams = new URLSearchParams();
-    queryParams.append('city', selectedCity);
+    queryParams.append('city', CITIES.find(c => c.name === selectedCity)?.slug || 'pune');
     queryParams.append('tab', activeTab);
     if (searchQuery.trim()) queryParams.append('q', searchQuery.trim());
     if (filters.bhk?.length) queryParams.append('bhk', filters.bhk.join(','));
@@ -246,7 +299,7 @@ export default function Hero({ initialCity = 'Mumbai', onSearch }: HeroProps) {
     }
   }, [activeTab, selectedCity, searchQuery, filters, onSearch, router, isSearching]);
 
-  // Filtered suggestions using debounced query
+  // Filtered suggestions
   const filteredSuggestions = useMemo(() => {
     if (!debouncedSearchQuery) return SEARCH_SUGGESTIONS.slice(0, 4);
     return SEARCH_SUGGESTIONS.filter(s => 
@@ -254,7 +307,7 @@ export default function Hero({ initialCity = 'Mumbai', onSearch }: HeroProps) {
     ).slice(0, 4);
   }, [debouncedSearchQuery]);
 
-  // Smart suggestion parsing
+  // ✅ Smart suggestion parsing with city auto-switch
   const handleSuggestionClick = useCallback((suggestion: string) => {
     setSearchQuery(suggestion);
     
@@ -271,12 +324,27 @@ export default function Hero({ initialCity = 'Mumbai', onSearch }: HeroProps) {
         newFilters.priceRange = { min: 0, max: value };
       }
     }
+    
+    // ✅ Auto-switch city based on suggestion
     const cityMatch = CITIES.find(c => suggestion.toLowerCase().includes(c.name.toLowerCase()));
-    if (cityMatch) setSelectedCity(cityMatch.name);
+    if (cityMatch) {
+      handleCityChange(cityMatch.name);
+    }
+    
+    // ✅ Also check locality-based city switch
+    const localityMatch = Object.keys(LOCALITY_CITY_MAP).find(loc => 
+      suggestion.toLowerCase().includes(loc.toLowerCase())
+    );
+    if (localityMatch) {
+      const targetCity = CITIES.find(c => c.slug === LOCALITY_CITY_MAP[localityMatch]);
+      if (targetCity) {
+        handleCityChange(targetCity.name);
+      }
+    }
     
     setFilters(newFilters);
     setTimeout(handleSearch, 50);
-  }, [filters, handleSearch]);
+  }, [filters, handleSearch, handleCityChange]);
 
   // Clear filters
   const handleClearFilters = useCallback(() => {
@@ -290,7 +358,23 @@ export default function Hero({ initialCity = 'Mumbai', onSearch }: HeroProps) {
     setShowFilters(false);
   }, [handleSearch]);
 
-  // Memoized props for child components to prevent unnecessary re-renders
+  // ✅ Handle locality click with auto city switch
+  const handleLocalityClick = useCallback((locality: string) => {
+    setSearchQuery(locality);
+    
+    // ✅ Auto-switch city if locality belongs to other city
+    const targetCitySlug = LOCALITY_CITY_MAP[locality];
+    if (targetCitySlug) {
+      const targetCity = CITIES.find(c => c.slug === targetCitySlug);
+      if (targetCity && targetCity.name !== selectedCity) {
+        handleCityChange(targetCity.name);
+      }
+    }
+    
+    handleSearch();
+  }, [selectedCity, handleCityChange, handleSearch]);
+
+  // Memoized props for child components
   const searchBarProps = useMemo(() => ({
     activeTab,
     selectedCity,
@@ -303,7 +387,7 @@ export default function Hero({ initialCity = 'Mumbai', onSearch }: HeroProps) {
     cities: CITIES,
     isSearching,
     onTabChange: setActiveTab,
-    onCityChange: setSelectedCity,
+    onCityChange: handleCityChange, // ✅ Use new handler
     onSearchQueryChange: setSearchQuery,
     onCityDropdownToggle: handleCityDropdownOpen,
     onSuggestionClick: handleSuggestionClick,
@@ -312,14 +396,14 @@ export default function Hero({ initialCity = 'Mumbai', onSearch }: HeroProps) {
   }), [
     activeTab, selectedCity, searchQuery, filters, isCityDropdownOpen,
     filteredSuggestions.length, isSearching,
-    handleCityDropdownOpen, handleSuggestionClick, handleSearch
+    handleCityDropdownOpen, handleSuggestionClick, handleSearch, handleCityChange
   ]);
 
   const stickySearchProps = useMemo(() => ({
     activeTab,
     selectedCity,
     searchQuery,
-    categories: CATEGORIES.slice(0, 4),
+    categories: CATEGORIES,
     isSearching,
     onTabChange: setActiveTab,
     onSearchQueryChange: setSearchQuery,
@@ -338,12 +422,18 @@ export default function Hero({ initialCity = 'Mumbai', onSearch }: HeroProps) {
     onClose: () => setShowFilters(false),
   }), [filters, handleClearFilters, handleApplyFilters]);
 
+  // Get current city data
+  const currentCity = useMemo(() => 
+    CITIES.find(c => c.name === selectedCity) || CITIES[0], 
+    [selectedCity]
+  );
+
   return (
     <motion.section 
       style={{ opacity: heroOpacity, scale: heroScale }} 
       className="relative min-h-[400px] lg:min-h-[440px] overflow-hidden will-change-transform"
     >
-      {/* CSS-driven animated background - no JS re-renders */}
+      {/* CSS-driven animated background */}
       <AnimatedBackground mouseRef={mouseRef} />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-10">
@@ -361,27 +451,19 @@ export default function Hero({ initialCity = 'Mumbai', onSearch }: HeroProps) {
               whileHover={{ scale: 1.015 }} 
               whileTap={{ scale: 0.99 }}
             >
-              <motion.div 
-                animate={{ rotate: 360 }} 
-                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-              >
-                <Sparkles className="w-4 h-4 text-amber-300" />
-              </motion.div>
+              <Sparkles className="w-4 h-4" style={{ color: BRAND.yellow }} />
               <span className="text-xs font-semibold text-white/90 tracking-wide">
-                Trusted by 50,000+ families
+                Verified Projects in Pune & Mumbai
               </span>
             </motion.div>
             
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-[1.08] mb-4">
-              <span className="block">Discover Your</span>
+              <span className="block">Find Your Dream Home in</span>
               <motion.span 
-                className="block bg-gradient-to-r from-indigo-300 via-purple-300 to-cyan-300 bg-clip-text text-transparent"
-                initial={{ backgroundPosition: '0% 50%' }}
-                animate={{ backgroundPosition: '100% 50%' }}
-                transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-                style={{ backgroundSize: '200% 200%' }}
+                className="block"
+                style={{ color: BRAND.yellow }}
               >
-                Perfect Home
+                {selectedCity}
               </motion.span>
             </h1>
             
@@ -391,16 +473,17 @@ export default function Hero({ initialCity = 'Mumbai', onSearch }: HeroProps) {
               animate={{ opacity: 1 }} 
               transition={{ delay: 0.15 }}
             >
-              Explore <span className="text-white font-medium">10,000+ verified properties</span> from India&apos;s most trusted builders
+              Explore <span className="text-white font-medium">{currentCity.projects}+ verified properties</span> from trusted builders in {currentCity.localities.slice(0, 3).join(', ')} & more
             </motion.p>
 
+            {/* ✅ Locality Buttons with Auto City Switch */}
             <motion.div 
               className="flex flex-wrap justify-center lg:justify-start gap-2"
               initial={{ opacity: 0 }} 
               animate={{ opacity: 1 }} 
               transition={{ delay: 0.25 }}
             >
-              {CITIES.find(c => c.name === selectedCity)?.localities.slice(0, 4).map((loc, i) => (
+              {currentCity.localities.slice(0, 4).map((loc, i) => (
                 <motion.button
                   key={loc}
                   initial={{ opacity: 0, y: 6 }}
@@ -408,8 +491,11 @@ export default function Hero({ initialCity = 'Mumbai', onSearch }: HeroProps) {
                   transition={{ delay: 0.35 + i * 0.03 }}
                   whileHover={{ scale: 1.04 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={() => { setSearchQuery(loc); handleSearch(); }}
-                  className="px-3.5 py-2 text-xs font-medium text-slate-300 hover:text-white bg-white/5 hover:bg-indigo-500/18 border border-white/10 rounded-full transition-all duration-200 backdrop-blur-sm"
+                  onClick={() => handleLocalityClick(loc)} // ✅ Use new handler
+                  className="px-3.5 py-2 text-xs font-medium text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-full transition-all duration-200 backdrop-blur-sm"
+                  style={{ 
+                    borderColor: `rgba(0, 94, 96, 0.3)`,
+                  }}
                 >
                   {loc}
                 </motion.button>
