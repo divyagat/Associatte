@@ -1,8 +1,9 @@
+// @/components/Home/Hero.tsx
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, useRef, useDeferredValue } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { 
   Search, MapPin, Home, Building2, Construction, KeyRound, 
   ChevronDown, Handshake, RefreshCcw, ArrowRight, Sparkles, 
@@ -40,7 +41,7 @@ const BRAND = {
   yellow: '#F8C21C',
 } as const;
 
-// 🗺️ Only Pune & Mumbai
+// 🗺️ Updated: Pune, Mumbai & KDMC
 const CITIES = [
   { 
     name: 'Pune', 
@@ -56,9 +57,21 @@ const CITIES = [
     description: 'Premium properties in Kharghar, Panvel & Navi Mumbai',
     slug: 'mumbai'
   },
+  // ✅ NEW: KDMC (Kalyan-Dombivli Municipal Corporation)
+  { 
+    name: 'KDMC', 
+    projects: 487, 
+    localities: ['Kalyan', 'Dombivli', 'Ulhasnagar', 'Ambarnath', 'Badlapur', 'Shil Phata', 'Murbad'],
+    description: 'Affordable & premium projects in Kalyan-Dombivli belt',
+    slug: 'kdmc'
+  },
 ] as const;
 
-// 🔍 Search suggestions
+// Export city slugs for type safety
+export type CitySlug = typeof CITIES[number]['slug'];
+export type CityName = typeof CITIES[number]['name'];
+
+// 🔍 Search suggestions - Updated with KDMC
 const SEARCH_SUGGESTIONS = [
   '3 BHK in Kharghar', 
   'Mantra Codename Paradise Sus',
@@ -68,6 +81,11 @@ const SEARCH_SUGGESTIONS = [
   'Lodha Group Mumbai',
   'Shapoorji Pallonji Pune',
   'Plots in Panvel',
+  // ✅ KDMC suggestions
+  '2 BHK in Kalyan',
+  'Affordable homes Dombivli',
+  'Paradise Sai World Empire KDMC',
+  'Plots in Badlapur',
 ] as const;
 
 // 🗂️ Categories
@@ -89,12 +107,17 @@ const PRICE_RANGES = [
   { label: 'Above ₹2Cr', min: 20000000, max: Infinity },
 ] as const;
 
-// 🗺️ Locality to City mapping
-const LOCALITY_CITY_MAP: Record<string, string> = {
+// 🗺️ Updated: Locality to City mapping with KDMC
+const LOCALITY_CITY_MAP: Record<string, CitySlug> = {
+  // Pune localities
   'Wakad': 'pune', 'Hinjewadi': 'pune', 'Baner': 'pune', 'Kharadi': 'pune',
   'Sus': 'pune', 'Viman Nagar': 'pune', 'Kondhwa': 'pune', 'Magarpatta': 'pune',
+  // Mumbai localities
   'Kharghar': 'mumbai', 'Panvel': 'mumbai', 'Thane': 'mumbai', 'Andheri': 'mumbai',
   'Bandra': 'mumbai', 'Worli': 'mumbai', 'Navi Mumbai': 'mumbai',
+  // ✅ KDMC localities
+  'Kalyan': 'kdmc', 'Dombivli': 'kdmc', 'Ulhasnagar': 'kdmc', 
+  'Ambarnath': 'kdmc', 'Badlapur': 'kdmc', 'Shil Phata': 'kdmc', 'Murbad': 'kdmc',
 };
 
 // Custom hook for debouncing
@@ -147,13 +170,25 @@ function useScrollPosition(callback: (scrollY: number) => void, threshold: numbe
 export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }: HeroProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const pathname = usePathname(); // ✅ NEW: Get current path
   
-  const [selectedCity, setSelectedCity] = useState(() => {
+  // ✅ Initialize city from path (/locations/[city]) OR fallback to query param/initialCity
+  const [selectedCity, setSelectedCity] = useState<CityName>(() => {
+    // First, check if we're on a /locations/[city] path
+    const locationMatch = pathname?.match(/^\/locations\/(pune|mumbai|kdmc)$/i);
+    if (locationMatch) {
+      const slug = locationMatch[1].toLowerCase() as CitySlug;
+      const city = CITIES.find(c => c.slug === slug);
+      if (city) return city.name;
+    }
+    
+    // Fallback: check query param (for /properties?city=...)
     const urlCity = searchParams?.get('city');
     if (urlCity && CITIES.some(c => c.slug === urlCity.toLowerCase())) {
       return CITIES.find(c => c.slug === urlCity.toLowerCase())?.name || initialCity;
     }
-    return initialCity;
+    
+    return initialCity as CityName;
   });
   
   const [activeTab, setActiveTab] = useState<'residential' | 'commercial' | 'underConstruction' | 'readyToMove'>(
@@ -200,12 +235,13 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
     onFilterChange?.({ city: selectedCity.toLowerCase(), filters });
   }, [selectedCity, filters, onFilterChange]);
 
-  const updateCityInURL = useCallback((cityName: string) => {
-    const citySlug = CITIES.find(c => c.name === cityName)?.slug || 'pune';
-    const queryParams = new URLSearchParams(window.location.search);
-    queryParams.set('city', citySlug);
-    window.history.replaceState({}, '', `?${queryParams.toString()}`);
-  }, []);
+  // ✅ NEW: Navigate to /locations/[city] for city browsing
+  const navigateToLocation = useCallback((cityName: CityName) => {
+    const citySlug = CITIES.find(c => c.name === cityName)?.slug;
+    if (citySlug) {
+      router.push(`/locations/${citySlug}`);
+    }
+  }, [router]);
 
   const handleCityDropdownOpen = useCallback((isOpen: boolean) => {
     if (dropdownCloseTimer.current) clearTimeout(dropdownCloseTimer.current);
@@ -213,19 +249,47 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
     else dropdownCloseTimer.current = setTimeout(() => setIsCityDropdownOpen(false), 100);
   }, []);
 
-  const handleCityChange = useCallback((newCity: string) => {
+  // ✅ UPDATED: Navigate to /locations/[city] instead of updating query params
+  const handleCityChange = useCallback((newCity: CityName) => {
     setSelectedCity(newCity);
-    updateCityInURL(newCity);
-  }, [updateCityInURL]);
+    navigateToLocation(newCity); // ✅ Path-based navigation
+  }, [navigateToLocation]);
 
+  // ✅ UPDATED: Smart navigation - /locations/[city] for browsing, /properties?... for search
   const handleSearch = useCallback(async () => {
     if (isSearching) return;
     setIsSearching(true);
-    const params = { tab: activeTab, city: selectedCity, query: searchQuery.trim(), filters: Object.keys(filters).length > 0 ? filters : undefined };
+    
+    const citySlug = CITIES.find(c => c.name === selectedCity)?.slug || 'pune';
+    const hasSearchQuery = searchQuery.trim().length > 0;
+    const hasFilters = Object.keys(filters).length > 0;
+    
+    // ✅ Case 1: Only city selected → Go to /locations/[city]
+    if (!hasSearchQuery && !hasFilters) {
+      try {
+        await router.push(`/locations/${citySlug}`);
+        onSearch?.({ tab: activeTab, city: selectedCity, query: '', filters: undefined });
+      } catch (error) {
+        console.error('Location navigation error:', error);
+      } finally {
+        setTimeout(() => setIsSearching(false), 200);
+      }
+      return;
+    }
+    
+    // ✅ Case 2: Search query or filters → Go to /properties?...
+    const params = { 
+      tab: activeTab, 
+      city: selectedCity, 
+      query: searchQuery.trim(), 
+      filters: hasFilters ? filters : undefined 
+    };
+    
     const queryParams = new URLSearchParams();
-    queryParams.append('city', CITIES.find(c => c.name === selectedCity)?.slug || 'pune');
+    queryParams.append('city', citySlug);
     queryParams.append('tab', activeTab);
-    if (searchQuery.trim()) queryParams.append('q', searchQuery.trim());
+    
+    if (hasSearchQuery) queryParams.append('q', searchQuery.trim());
     if (filters.bhk?.length) queryParams.append('bhk', filters.bhk.join(','));
     if (filters.builder?.length) queryParams.append('builder', filters.builder.join(','));
     if (filters.propertyType?.length) queryParams.append('type', filters.propertyType.join(','));
@@ -234,12 +298,16 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
       queryParams.append('maxPrice', filters.priceRange.max === Infinity ? '999999999' : filters.priceRange.max.toString());
     }
     if (filters.locality) queryParams.append('locality', filters.locality);
+    
     try {
       await router.push(`/properties?${queryParams.toString()}`, { scroll: false });
       onSearch?.(params);
       setIsCityDropdownOpen(false);
-    } catch (error) { console.error('Search navigation error:', error); }
-    finally { setTimeout(() => setIsSearching(false), 200); }
+    } catch (error) {
+      console.error('Search navigation error:', error);
+    } finally {
+      setTimeout(() => setIsSearching(false), 200);
+    }
   }, [activeTab, selectedCity, searchQuery, filters, onSearch, router, isSearching]);
 
   const filteredSuggestions = useMemo(() => {
@@ -250,10 +318,12 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
   const handleSuggestionClick = useCallback((suggestion: string) => {
     setSearchQuery(suggestion);
     const newFilters: SearchFilters = { ...filters };
+    
     if (suggestion.includes('BHK')) {
       const bhkMatch = suggestion.match(/(\d+\s*[RB]HK)/i);
       if (bhkMatch) newFilters.bhk = [bhkMatch[0].toUpperCase()];
     }
+    
     if (suggestion.toLowerCase().includes('under') || suggestion.toLowerCase().includes('below')) {
       const priceMatch = suggestion.match(/₹?([\d.]+)\s*([LC])/i);
       if (priceMatch) {
@@ -261,16 +331,38 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
         newFilters.priceRange = { min: 0, max: value };
       }
     }
+    
+    // Check for city name in suggestion
     const cityMatch = CITIES.find(c => suggestion.toLowerCase().includes(c.name.toLowerCase()));
-    if (cityMatch) handleCityChange(cityMatch.name);
-    const localityMatch = Object.keys(LOCALITY_CITY_MAP).find(loc => suggestion.toLowerCase().includes(loc.toLowerCase()));
-    if (localityMatch) {
-      const targetCity = CITIES.find(c => c.slug === LOCALITY_CITY_MAP[localityMatch]);
-      if (targetCity) handleCityChange(targetCity.name);
+    if (cityMatch) {
+      // If only city mentioned (no other filters), go to location page
+      if (!newFilters.bhk?.length && !newFilters.priceRange) {
+        navigateToLocation(cityMatch.name);
+        return;
+      }
+      handleCityChange(cityMatch.name);
     }
+    
+    // Check for locality in suggestion
+    const localityMatch = Object.keys(LOCALITY_CITY_MAP).find(loc => 
+      suggestion.toLowerCase().includes(loc.toLowerCase())
+    );
+    if (localityMatch) {
+      const targetCitySlug = LOCALITY_CITY_MAP[localityMatch];
+      const targetCity = CITIES.find(c => c.slug === targetCitySlug);
+      if (targetCity) {
+        // If only locality mentioned, go to location page
+        if (!newFilters.bhk?.length && !newFilters.priceRange) {
+          navigateToLocation(targetCity.name);
+          return;
+        }
+        handleCityChange(targetCity.name);
+      }
+    }
+    
     setFilters(newFilters);
     setTimeout(handleSearch, 50);
-  }, [filters, handleSearch, handleCityChange]);
+  }, [filters, handleSearch, handleCityChange, navigateToLocation]);
 
   const handleClearFilters = useCallback(() => { setFilters({}); setShowFilters(false); }, []);
   const handleApplyFilters = useCallback(() => { handleSearch(); setShowFilters(false); }, [handleSearch]);
@@ -280,10 +372,14 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
     const targetCitySlug = LOCALITY_CITY_MAP[locality];
     if (targetCitySlug) {
       const targetCity = CITIES.find(c => c.slug === targetCitySlug);
-      if (targetCity && targetCity.name !== selectedCity) handleCityChange(targetCity.name);
+      if (targetCity) {
+        // ✅ Navigate directly to location page for locality clicks
+        navigateToLocation(targetCity.name);
+        return;
+      }
     }
     handleSearch();
-  }, [selectedCity, handleCityChange, handleSearch]);
+  }, [handleSearch, navigateToLocation]);
 
   const searchBarProps = useMemo(() => ({
     activeTab, selectedCity, searchQuery, filters, isCityDropdownOpen,
@@ -317,7 +413,7 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
           <motion.div className="lg:col-span-5 text-center lg:text-left" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: "easeOut" }}>
             <motion.div className="inline-flex items-center gap-2 px-3.5 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/15 mb-5" whileHover={{ scale: 1.015 }} whileTap={{ scale: 0.99 }}>
               <Sparkles className="w-4 h-4" style={{ color: BRAND.yellow }} />
-              <span className="text-xs font-semibold text-white/90 tracking-wide">Verified Projects in Pune & Mumbai</span>
+              <span className="text-xs font-semibold text-white/90 tracking-wide">Verified Projects in Pune, Mumbai & KDMC</span>
             </motion.div>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-[1.08] mb-4">
               <span className="block">Find Your Dream Home in</span>

@@ -23,7 +23,7 @@ import BlogSection from '@/components/sections/BlogSection';
 // 📦 Project Data (if using JSON)
 // import projectsData from '@/data/properties.json';
 
-// 🗺️ Location Configuration
+// 🗺️ Location Configuration - UPDATED with KDMC
 const LOCATION_CONFIG = {
   pune: {
     name: 'Pune',
@@ -46,6 +46,18 @@ const LOCATION_CONFIG = {
     metaKeywords: 'properties in Mumbai, flats in Kharghar, 3 BHK Panvel, Sai World Empire, Navi Mumbai real estate, Associatte PropTech',
     featuredLocalities: ['Kharghar', 'Panvel', 'Thane', 'Andheri', 'Navi Mumbai'],
     priceRange: { min: '₹75L', max: '₹4.5Cr' },
+  },
+  // ✅ ADD KDMC HERE:
+  kdmc: {
+    name: 'KDMC',
+    slug: 'kdmc',
+    heroTitle: 'Find Your Dream Home in Kalyan-Dombivli',
+    heroSubtitle: 'Explore affordable & premium projects in Kalyan, Dombivli, Badlapur & Ulhasnagar',
+    metaTitle: 'Properties in KDMC | 2, 3 BHK Flats Starting ₹40L | Associatte PropTech',
+    metaDescription: 'Find verified 2, 3 BHK properties in Kalyan-Dombivli (KDMC). Browse projects by Paradise Group, Today Global & more. RERA registered, transparent pricing.',
+    metaKeywords: 'properties in KDMC, flats in Kalyan, 2 BHK Dombivli, affordable homes Kalyan-Dombivli, Paradise Sai World Empire, Associatte PropTech',
+    featuredLocalities: ['Kalyan', 'Dombivli', 'Ulhasnagar', 'Badlapur', 'Ambarnath'],
+    priceRange: { min: '₹40L', max: '₹1.5Cr' },
   },
 } as const;
 

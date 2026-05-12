@@ -1,3 +1,4 @@
+// @/components/Home/Hero/SearchBar.tsx
 'use client';
 
 import { memo, useCallback } from 'react';
@@ -27,7 +28,7 @@ interface SearchBarProps {
   showSuggestions: boolean;
   filteredSuggestions: readonly string[];
   categories: readonly Category[];
-  cities?: readonly City[];
+  cities: readonly City[]; // ✅ REQUIRED - NO ? NO DEFAULT
   isSearching: boolean;
   onTabChange: (tab: string) => void;
   onCityChange: (city: string) => void;
@@ -42,14 +43,12 @@ export const SearchBar = memo(({
   activeTab,
   selectedCity,
   searchQuery,
+  filters,
   isCityDropdownOpen,
   showSuggestions,
   filteredSuggestions,
   categories,
-  cities = [
-    { name: 'Mumbai', projects: 245, localities: ['Kharghar', 'Panvel', 'Thane'], slug: 'mumbai' },
-    { name: 'Pune', projects: 189, localities: ['Sus', 'Hinjewadi', 'Wakad'], slug: 'pune' }
-  ],
+  cities, // ✅ NO DEFAULT VALUE - must come from Hero
   isSearching,
   onTabChange,
   onCityChange,
@@ -63,7 +62,6 @@ export const SearchBar = memo(({
   const handleCitySelect = useCallback((city: string) => {
     onCityChange(city);
     onCityDropdownToggle(false);
-    // Don't auto-search - let user click button for better UX
   }, [onCityChange, onCityDropdownToggle]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -163,11 +161,6 @@ export const SearchBar = memo(({
         <div className="flex-1 relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
           <input
-            ref={(el) => {
-              if (el && typeof window !== 'undefined') {
-                (el as any)._isSearchInput = true;
-              }
-            }}
             type="text"
             value={searchQuery}
             onChange={(e) => onSearchQueryChange(e.target.value)}

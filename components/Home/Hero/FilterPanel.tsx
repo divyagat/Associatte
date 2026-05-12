@@ -1,6 +1,7 @@
+// @/components/Home/Hero/FilterPanel.tsx
 'use client';
 
-import { memo, useCallback } from 'react';
+import { memo, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { X, MapPin } from 'lucide-react';
 import type { SearchFilters } from '../Hero';
@@ -15,14 +16,21 @@ interface FilterPanelProps {
   onClear: () => void;
   onApply: () => void;
   onClose: () => void;
+  currentPageLocation?: 'pune' | 'mumbai' | 'kdmc';
 }
 
-// 🔒 STRICT: Only Mumbai & Pune allowed - hardcoded
-const ALLOWED_LOCATIONS = ['Mumbai', 'Pune'] as const;
-
-// 🎨 Brand Colors
 const BRAND_GREEN = '#005E60';
 const BRAND_RED = '#8B0000';
+
+// ✅ KDMC MUST BE HERE
+const ALLOWED_LOCATIONS = ['Mumbai', 'Pune', 'KDMC'] as const;
+export type AllowedLocation = typeof ALLOWED_LOCATIONS[number];
+
+const LOCATION_SLUG_MAP: Record<AllowedLocation, string> = {
+  'Mumbai': 'mumbai',
+  'Pune': 'pune',
+  'KDMC': 'kdmc',
+};
 
 export const FilterPanel = memo(({
   filters,
@@ -34,8 +42,13 @@ export const FilterPanel = memo(({
   onClear,
   onApply,
   onClose,
+  currentPageLocation,
 }: FilterPanelProps) => {
   
+  useEffect(() => {
+    console.log('✅ FilterPanel ALLOWED_LOCATIONS:', ALLOWED_LOCATIONS);
+  }, []);
+
   const toggleBhk = useCallback((bhk: string) => {
     const current = filters.bhk || [];
     const updated = current.includes(bhk) 
@@ -60,22 +73,24 @@ export const FilterPanel = memo(({
     onFilterChange({ ...filters, propertyType: updated.length ? updated : undefined });
   }, [filters, onFilterChange]);
 
-  // ✅ FIX: Location toggle - set or clear locality string (not array)
-  const toggleLocation = useCallback((loc: string) => {
-    // Only allow Mumbai/Pune
-    if (!ALLOWED_LOCATIONS.includes(loc as any)) return;
-    
-    // Toggle: if same as current, clear it; otherwise set it
-    const newLocality = filters.locality === loc ? undefined : loc;
+  const toggleLocation = useCallback((loc: AllowedLocation) => {
+    if (currentPageLocation) return;
+    const slug = LOCATION_SLUG_MAP[loc];
+    const newLocality = filters.locality === slug ? undefined : slug;
     onFilterChange({ ...filters, locality: newLocality });
-  }, [filters, onFilterChange]);
+  }, [filters, onFilterChange, currentPageLocation]);
 
   const setPriceRange = useCallback((min: number, max: number) => {
     onFilterChange({ ...filters, priceRange: { min, max } });
   }, [filters, onFilterChange]);
 
-  // ✅ Helper: Check if location is active
-  const isLocationActive = (loc: string) => filters.locality === loc;
+  const isLocationActive = (loc: AllowedLocation) => 
+    filters.locality === LOCATION_SLUG_MAP[loc];
+
+  const getActiveLocationName = () => {
+    if (!filters.locality) return null;
+    return (Object.entries(LOCATION_SLUG_MAP).find(([_, slug]) => slug === filters.locality)?.[0]) || null;
+  };
 
   return (
     <motion.div
@@ -88,49 +103,46 @@ export const FilterPanel = memo(({
       aria-modal="true"
     >
       <div className="p-6">
-        {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-bold text-slate-800">Filters</h3>
-          <button 
-            onClick={onClose} 
-            className="p-2 rounded-lg hover:bg-red-50 transition-colors"
-            aria-label="Close filters"
-          >
+          <button onClick={onClose} className="p-2 rounded-lg hover:bg-red-50 transition-colors" aria-label="Close filters">
             <X className="w-5 h-5" style={{ color: BRAND_RED }} />
           </button>
         </div>
 
-        {/* 📍 Location Filter - Mumbai & Pune Only */}
-        <div className="mb-6">
-          <label className="block text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2">
-            <MapPin className="w-4 h-4" style={{ color: BRAND_GREEN }} /> Location
-          </label>
-          <div className="flex flex-wrap gap-2">
-            {ALLOWED_LOCATIONS.map(loc => (
-              <button
-                key={loc}
-                onClick={() => toggleLocation(loc)}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all border ${
-                  isLocationActive(loc)
-                    ? 'text-white border-transparent shadow-md'
-                    : 'bg-slate-50 text-slate-600 border-slate-200 hover:border-slate-300'
-                }`}
-                style={{
-                  backgroundColor: isLocationActive(loc) ? BRAND_GREEN : undefined,
-                  borderColor: isLocationActive(loc) ? BRAND_GREEN : undefined
-                }}
-                aria-pressed={isLocationActive(loc)}
-              >
-                {loc}
-              </button>
-            ))}
+        {/* 📍 Location Filter */}
+        {!currentPageLocation && (
+          <div className="mb-6">
+            <label className="block text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2">
+              <MapPin className="w-4 h-4" style={{ color: BRAND_GREEN }} /> Location
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {ALLOWED_LOCATIONS.map(loc => (
+                <button
+                  key={loc}
+                  onClick={() => toggleLocation(loc)}
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all border ${
+                    isLocationActive(loc)
+                      ? 'text-white border-transparent shadow-md'
+                      : 'bg-slate-50 text-slate-600 border-slate-200 hover:border-slate-300'
+                  }`}
+                  style={{
+                    backgroundColor: isLocationActive(loc) ? BRAND_GREEN : undefined,
+                    borderColor: isLocationActive(loc) ? BRAND_GREEN : undefined
+                  }}
+                  aria-pressed={isLocationActive(loc)}
+                >
+                  {loc} {/* ✅ Will show "KDMC" */}
+                </button>
+              ))}
+            </div>
+            {filters.locality && (
+              <p className="text-xs text-slate-500 mt-2">
+                Filtering: <span className="font-medium" style={{ color: BRAND_GREEN }}>{getActiveLocationName()}</span>
+              </p>
+            )}
           </div>
-          {filters.locality && (
-            <p className="text-xs text-slate-500 mt-2">
-              Filtering: <span className="font-medium" style={{ color: BRAND_GREEN }}>{filters.locality}</span>
-            </p>
-          )}
-        </div>
+        )}
 
         {/* 🏠 BHK Filter */}
         <div className="mb-6">
@@ -171,10 +183,7 @@ export const FilterPanel = memo(({
                     checked={isSelected}
                     onChange={() => setPriceRange(range.min, range.max)}
                     className="w-4 h-4 border-slate-300 focus:ring-2"
-                    style={{
-                      accentColor: BRAND_GREEN,
-                      boxShadow: isSelected ? `0 0 0 2px ${BRAND_GREEN}30` : undefined
-                    }}
+                    style={{ accentColor: BRAND_GREEN }}
                   />
                   <span className={`text-sm transition-colors ${isSelected ? 'font-medium text-slate-800' : 'text-slate-600 group-hover:text-slate-800'}`}>
                     {range.label}
@@ -196,10 +205,7 @@ export const FilterPanel = memo(({
                   checked={filters.builder?.includes(builder)}
                   onChange={() => toggleBuilder(builder)}
                   className="w-4 h-4 rounded border-slate-300 focus:ring-2"
-                  style={{
-                    accentColor: BRAND_GREEN,
-                    boxShadow: filters.builder?.includes(builder) ? `0 0 0 2px ${BRAND_GREEN}30` : undefined
-                  }}
+                  style={{ accentColor: BRAND_GREEN }}
                 />
                 <span className="text-sm text-slate-600 group-hover:text-slate-800 transition-colors">{builder}</span>
               </label>
