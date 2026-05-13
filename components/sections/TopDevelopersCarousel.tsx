@@ -1,78 +1,68 @@
+// client/components/sections/TopDevelopersCarousel.tsx
 'use client';
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState, useEffect, useMemo, useRef } from 'react';
 import properties from '../../data/properties.json';
+// ✅ Import shared slug utilities
+import { 
+  getBuilderSlug, 
+  getBuilderYears, 
+  getBuilderLogo,
+  BUILDER_PRIMARY_SLUGS 
+} from '@/lib/builder-slugs';
+
+// ✅ Fallback slug generator (only if not in shared map)
+const toSlug = (str: string) => 
+  str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 
 interface Developer {
-  id: string;
+  id: string;           // Internal unique ID
+  name: string;         // Display name
+  slug: string;         // ✅ Navigation slug (matches builder page)
   years: string;
-  name: string;
   projects: number;
   logo: string;
-  slug: string;
 }
-
-const toSlug = (str: string) => 
-  str.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
-
-const getYears = (name: string): string => {
-  const map: Record<string, string> = {
-    'mantra developers': '14y +',
-    'lodha group': '47y +',
-    'godrej properties': '30y +',
-    'birla estates': '8y +',
-    'shapoorji pallonji': '155y +',
-    'jhamtani group': '19y +',
-    'panchshil realty': '21y +',
-    'tribeca developers': '9y +',
-    'paradise group': '29y +',
-    'today global': '20y +',
-    'magarpatta city': '24y +',
-    'runwal group': '46y +',
-    'l&t realty': '75y +',
-    'mahindra lifespaces': '25y +',
-    'majestique': '15y +',
-  };
-  return map[name.toLowerCase()] || '10y +';
-};
-
-const getLogo = (name: string): string => {
-  const slug = toSlug(name);
-  return `/logos/${slug}.png`;
-};
 
 export default function TopDevelopersCarousel() {
   const [offset, setOffset] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const trackRef = useRef<HTMLDivElement>(null);
 
-  // 🔄 Extract unique developers from properties.json
+  // 🔄 Extract & aggregate developers from properties.json
   const developers: Developer[] = useMemo(() => {
     const devMap = new Map<string, Developer>();
     
     properties.forEach((p: any) => {
-      const name = p.developer.name;
-      const slug = toSlug(name);
+      const name = p.developer?.name;
+      if (!name) return;
       
-      if (!devMap.has(slug)) {
-        devMap.set(slug, {
-          id: slug,
+      // ✅ Use shared utilities for consistency
+      const navSlug = getBuilderSlug(name);
+      const internalId = toSlug(name);
+      
+      if (!devMap.has(internalId)) {
+        devMap.set(internalId, {
+          id: internalId,
           name,
-          slug,
-          years: getYears(name),
+          slug: navSlug,  // ✅ Matches builder page routing
+          years: getBuilderYears(name),  // ✅ Shared logic
           projects: 0,
-          logo: getLogo(name),
+          logo: getBuilderLogo(name),  // ✅ Shared logo path
         });
       }
-      const dev = devMap.get(slug)!;
+      const dev = devMap.get(internalId)!;
       dev.projects += 1;
     });
     
-    return Array.from(devMap.values()).sort((a, b) => b.projects - a.projects);
+    // Sort by project count (descending)
+    return Array.from(devMap.values())
+      .filter(d => d.name && d.slug)  // ✅ Defensive: filter invalid entries
+      .sort((a, b) => b.projects - a.projects);
   }, []);
 
-  // Duplicate cards for seamless infinite scroll
+  // Duplicate for seamless infinite scroll
   const extendedDevelopers = useMemo(() => {
     if (developers.length <= 4) return developers;
     return [...developers, ...developers.slice(0, 4)];
@@ -81,12 +71,9 @@ export default function TopDevelopersCarousel() {
   const CARD_WIDTH = 280;
   const GAP = 24;
   const STEP = CARD_WIDTH + GAP;
-  
-  // 🐌 SMOOTH SLOW SPEED (adjust this value to change pace)
-  // 0.08 = ~80px per second (~3.8s per card)
-  const SPEED = 0.08; 
+  const SPEED = 0.08; // ~80px/sec for smooth slow scroll
 
-  // 🔄 Continuous auto-scroll animation
+  // 🔄 Auto-scroll animation
   useEffect(() => {
     if (isPaused || developers.length <= 4) return;
     
@@ -100,10 +87,7 @@ export default function TopDevelopersCarousel() {
       
       setOffset(prev => {
         const newOffset = prev + SPEED * delta;
-        // Reset when we've scrolled past the original set (seamless loop)
-        if (newOffset >= STEP * developers.length) {
-          return 0;
-        }
+        if (newOffset >= STEP * developers.length) return 0;
         return newOffset;
       });
       
@@ -111,40 +95,41 @@ export default function TopDevelopersCarousel() {
     };
     
     animationFrame = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animationFrame);
+    return () => {
+      if (animationFrame) cancelAnimationFrame(animationFrame);
+    };
   }, [isPaused, developers.length]);
 
-  // Manual navigation (optional)
+  // Manual navigation
   const scrollByCards = (direction: 'left' | 'right') => {
     const container = trackRef.current?.parentElement;
     if (!container) return;
-    
     const scrollAmount = direction === 'left' ? -STEP : STEP;
     container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
   };
 
-  if (developers.length === 0) return null;
+  // ✅ Defensive: return null if no developers
+  if (!developers || developers.length === 0) return null;
 
   return (
     <section 
-      className="py-16 bg-white overflow-hidden"
+      className="py-12 lg:py-16 bg-white overflow-hidden"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
       <div className="max-w-7xl mx-auto px-4">
         
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-6 lg:mb-8">
           <div>
             <span className="text-[#005E60] text-xs font-bold uppercase tracking-wider block mb-2">
               Trusted Builders
             </span>
             <h2 className="text-2xl md:text-3xl font-bold text-[#8B0000]">
-              Top Developers in Pune & Mumbai
+              Top Developers in Pune, Mumbai & KDMC
             </h2>
           </div>
           
-          {/* Manual Navigation */}
           {developers.length > 4 && (
             <div className="flex items-center gap-2">
               <button 
@@ -179,6 +164,7 @@ export default function TopDevelopersCarousel() {
             {extendedDevelopers.map((dev, idx) => (
               <a
                 key={`${dev.id}-${idx}`} 
+                // ✅ href uses navigation slug that matches builder page
                 href={`/builders/${dev.slug}`}
                 className="min-w-[280px] w-[280px] bg-white rounded-xl border-l-4 border-[#005E60] shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden block flex-shrink-0"
               >

@@ -1,74 +1,89 @@
+// client/components/builder-page/BuilderProjectsList.tsx
 'use client';
 
-import BuilderProjectCard from './BuilderProjectCard';
-import HelpSidebar from './HelpSidebar';
+import BuilderHero from './BuilderHero';
+import BuilderProjects from './BuilderProjects'; // ✅ For /builders/[slug] - shows projects
+// import BuilderSearchContainer from './BuilderSearchContainer'; // ✅ For /builders - shows builder cards
 
-type Property = {
-  slug: string;
-  name: string;
-  location: string;
-  price: string;
-  image: string;
-  fullLocation: { area: string; city: string; state: string; pincode: string; landmark: string };
-  priceDetails: { range: string; perSqft: string; configurations: Array<{ type: string; area: string; price: string; description: string }> };
-  developer: { name: string; established: string; projectsCount: number; description: string };
-  about: string;
-  amenities: string[];
-  floorPlans: Array<{ type: string; area: string; image: string; downloadUrl: string }>;
-  possessionDate: string;
-  reraNumber: string;
-  gallery: string[];
-  mapCoords: { lat: number; lng: number };
-  nearbyPlaces: Array<{ type: string; name: string; distance: string }>;
-  emi: { startingFrom: string; downPayment: string; interestRate: string; tenure: string };
-};
+interface BuilderProjectsListProps {
+  initialSlug: string;
+  initialProjects?: any[];
+}
 
 export default function BuilderProjectsList({ 
   initialSlug, 
-  initialProjects 
-}: { 
-  initialSlug: string; 
-  initialProjects: Property[] 
-}) {
-  const builderName = initialProjects[0]?.developer.name || initialSlug;
-  const locationDisplay = initialSlug === 'pune' ? 'Pune' : initialSlug === 'mumbai' ? 'Mumbai' : initialSlug === 'kdmc' ? 'Kalyan-Dombivli' : initialSlug;
+  initialProjects = [] 
+}: BuilderProjectsListProps) {
   
+  const projects = Array.isArray(initialProjects) ? initialProjects : [];
+  const isLocationPage = ['pune', 'mumbai', 'kdmc'].includes(initialSlug);
+  
+  // 🔍 Debug
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[BuilderProjectsList]', { 
+      slug: initialSlug, 
+      isLocationPage, 
+      projectCount: projects.length 
+    });
+  }
+  
+  if (projects.length === 0) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-16 text-center">
+        <p className="text-gray-500 text-lg mb-4">No projects found.</p>
+        <a href="/builders" className="text-[#005E60] hover:underline">← Back to builders</a>
+      </div>
+    );
+  }
+  
+  // ✅ Builder detail page (/builders/[slug]) → Show projects with BuilderProjects
+  if (!isLocationPage) {
+    return (
+      <>
+        <BuilderHero 
+          builderName={projects[0]?.developer?.name || initialSlug} 
+          projectCount={projects.length}
+          slug={initialSlug}
+        />
+        <BuilderProjects slug={initialSlug} projects={projects} />
+      </>
+    );
+  }
+  
+  // ✅ Location page (/builders?location=pune) → Show builder cards (if needed)
+  // Uncomment if you want location-based builder listing:
+  /*
   return (
-    <main className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          <div className="flex items-center gap-3 mb-2">
-            <span className="bg-[#F8C21C] text-[#8B0000] px-3 py-1 rounded text-sm font-bold">
-              {initialProjects.length} Properties
-            </span>
-            <span className="bg-[#005E60] text-white px-3 py-1 rounded text-sm font-semibold">
-              {locationDisplay}
-            </span>
-          </div>
-          <h1 className="text-3xl font-bold text-gray-900 capitalize mb-1">
-            {builderName} Projects
-          </h1>
-          <p className="text-gray-600">
-            Find your dream home in {locationDisplay}
-          </p>
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          <div className="flex-1 space-y-6">
-            {initialProjects.map((project) => (
-              <BuilderProjectCard key={project.slug} project={project} />
-            ))}
-          </div>
-
-          <div className="lg:w-80">
-            <HelpSidebar />
-          </div>
-        </div>
-      </div>
-    </main>
+    <BuilderSearchContainer 
+      initialBuilders={transformProjectsToBuilders(projects)} 
+      initialQuery="" 
+      initialLocation={initialSlug} 
+    />
   );
+  */
+  
+  // Default fallback
+  return <BuilderProjects slug={initialSlug} projects={projects} />;
 }
+
+// Optional: Helper to transform projects → builder summaries (if needed for location pages)
+/*
+const transformProjectsToBuilders = (projects: any[]) => {
+  const map = new Map();
+  projects.forEach(p => {
+    const name = p.developer?.name;
+    if (!name) return;
+    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    if (!map.has(slug)) {
+      map.set(slug, {
+        id: slug, name, slug, years: '10y +',
+        logo: `/logos/${slug}.png`, totalProjects: 0, locations: [] as string[],
+      });
+    }
+    const b = map.get(slug);
+    b.totalProjects += 1;
+    if (p.location && !b.locations.includes(p.location)) b.locations.push(p.location);
+  });
+  return Array.from(map.values());
+};
+*/
