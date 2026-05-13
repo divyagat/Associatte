@@ -1,14 +1,12 @@
 // @/components/Home/Hero.tsx
 'use client';
 
-import { useState, useEffect, useCallback, useMemo, useRef, useDeferredValue } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { 
   Search, MapPin, Home, Building2, Construction, KeyRound, 
-  ChevronDown, Handshake, RefreshCcw, ArrowRight, Sparkles, 
-  CheckCircle2, TrendingUp, Users, X, SlidersHorizontal, Filter,
-  Loader2
+  ChevronDown, Sparkles, CheckCircle2, Loader2, X, Filter
 } from 'lucide-react';
 
 // Import memoized child components
@@ -41,8 +39,8 @@ const BRAND = {
   yellow: '#F8C21C',
 } as const;
 
-// 🗺️ Updated: Pune, Mumbai & KDMC
-const CITIES = [
+// 🗺️ Cities Data with KDMC Support
+export const CITIES = [
   { 
     name: 'Pune', 
     projects: 1923, 
@@ -57,7 +55,6 @@ const CITIES = [
     description: 'Premium properties in Kharghar, Panvel & Navi Mumbai',
     slug: 'mumbai'
   },
-  // ✅ NEW: KDMC (Kalyan-Dombivli Municipal Corporation)
   { 
     name: 'KDMC', 
     projects: 487, 
@@ -67,11 +64,10 @@ const CITIES = [
   },
 ] as const;
 
-// Export city slugs for type safety
 export type CitySlug = typeof CITIES[number]['slug'];
 export type CityName = typeof CITIES[number]['name'];
 
-// 🔍 Search suggestions - Updated with KDMC
+// 🔍 Search suggestions
 const SEARCH_SUGGESTIONS = [
   '3 BHK in Kharghar', 
   'Mantra Codename Paradise Sus',
@@ -81,11 +77,8 @@ const SEARCH_SUGGESTIONS = [
   'Lodha Group Mumbai',
   'Shapoorji Pallonji Pune',
   'Plots in Panvel',
-  // ✅ KDMC suggestions
-  '2 BHK in Kalyan',
+  '1 BHK in Kalyan',
   'Affordable homes Dombivli',
-  'Paradise Sai World Empire KDMC',
-  'Plots in Badlapur',
 ] as const;
 
 // 🗂️ Categories
@@ -107,12 +100,12 @@ const PRICE_RANGES = [
   { label: 'Above ₹2Cr', min: 20000000, max: Infinity },
 ] as const;
 
-// 🗺️ Updated: Locality to City mapping with KDMC
-const LOCALITY_CITY_MAP: Record<string, CitySlug> = {
-  // Pune localities
+// 🗺️ Locality to City mapping (CRITICAL for KDMC)
+export const LOCALITY_CITY_MAP: Record<string, CitySlug> = {
+  // Pune
   'Wakad': 'pune', 'Hinjewadi': 'pune', 'Baner': 'pune', 'Kharadi': 'pune',
   'Sus': 'pune', 'Viman Nagar': 'pune', 'Kondhwa': 'pune', 'Magarpatta': 'pune',
-  // Mumbai localities
+  // Mumbai
   'Kharghar': 'mumbai', 'Panvel': 'mumbai', 'Thane': 'mumbai', 'Andheri': 'mumbai',
   'Bandra': 'mumbai', 'Worli': 'mumbai', 'Navi Mumbai': 'mumbai',
   // ✅ KDMC localities
@@ -120,7 +113,7 @@ const LOCALITY_CITY_MAP: Record<string, CitySlug> = {
   'Ambarnath': 'kdmc', 'Badlapur': 'kdmc', 'Shil Phata': 'kdmc', 'Murbad': 'kdmc',
 };
 
-// Custom hook for debouncing
+// Custom hooks
 function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
   useEffect(() => {
@@ -130,7 +123,6 @@ function useDebounce<T>(value: T, delay: number): T {
   return debouncedValue;
 }
 
-// Custom hook for mouse position
 function useMousePosition() {
   const mouseRef = useRef({ x: 0, y: 0 });
   useEffect(() => {
@@ -138,8 +130,6 @@ function useMousePosition() {
       mouseRef.current = { x: e.clientX, y: e.clientY };
       document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
       document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
-      document.documentElement.style.setProperty('--mouse-x-pct', `${(e.clientX / window.innerWidth) * 100}%`);
-      document.documentElement.style.setProperty('--mouse-y-pct', `${(e.clientY / window.innerHeight) * 100}%`);
     };
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
     return () => window.removeEventListener('mousemove', handleMouseMove);
@@ -147,7 +137,6 @@ function useMousePosition() {
   return mouseRef;
 }
 
-// Custom hook for scroll position
 function useScrollPosition(callback: (scrollY: number) => void, threshold: number) {
   const callbackRef = useRef(callback);
   const tickingRef = useRef(false);
@@ -170,24 +159,22 @@ function useScrollPosition(callback: (scrollY: number) => void, threshold: numbe
 export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }: HeroProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const pathname = usePathname(); // ✅ NEW: Get current path
+  const pathname = usePathname();
   
-  // ✅ Initialize city from path (/locations/[city]) OR fallback to query param/initialCity
+  // ✅ Initialize city from path OR query param OR fallback
   const [selectedCity, setSelectedCity] = useState<CityName>(() => {
-    // First, check if we're on a /locations/[city] path
     const locationMatch = pathname?.match(/^\/locations\/(pune|mumbai|kdmc)$/i);
     if (locationMatch) {
       const slug = locationMatch[1].toLowerCase() as CitySlug;
       const city = CITIES.find(c => c.slug === slug);
       if (city) return city.name;
     }
-    
-    // Fallback: check query param (for /properties?city=...)
     const urlCity = searchParams?.get('city');
-    if (urlCity && CITIES.some(c => c.slug === urlCity.toLowerCase())) {
-      return CITIES.find(c => c.slug === urlCity.toLowerCase())?.name || initialCity;
+    if (urlCity) {
+      const normalized = urlCity.toLowerCase();
+      const city = CITIES.find(c => c.slug === normalized);
+      if (city) return city.name;
     }
-    
     return initialCity as CityName;
   });
   
@@ -221,7 +208,6 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
   const { scrollY } = useScroll();
   const heroOpacity = useTransform(scrollY, [0, 500], [1, 0.97]);
   const heroScale = useTransform(scrollY, [0, 500], [1, 0.99]);
-
   const debouncedSearchQuery = useDebounce(searchQuery, 250);
 
   useScrollPosition((scrollY) => setShowStickySearch(scrollY > 120), 120);
@@ -230,17 +216,13 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
     return () => { if (dropdownCloseTimer.current) clearTimeout(dropdownCloseTimer.current); };
   }, []);
 
-  // ✅ Notify parent when filters or city change
   useEffect(() => {
     onFilterChange?.({ city: selectedCity.toLowerCase(), filters });
   }, [selectedCity, filters, onFilterChange]);
 
-  // ✅ NEW: Navigate to /locations/[city] for city browsing
   const navigateToLocation = useCallback((cityName: CityName) => {
     const citySlug = CITIES.find(c => c.name === cityName)?.slug;
-    if (citySlug) {
-      router.push(`/locations/${citySlug}`);
-    }
+    if (citySlug) router.push(`/locations/${citySlug}`);
   }, [router]);
 
   const handleCityDropdownOpen = useCallback((isOpen: boolean) => {
@@ -249,13 +231,11 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
     else dropdownCloseTimer.current = setTimeout(() => setIsCityDropdownOpen(false), 100);
   }, []);
 
-  // ✅ UPDATED: Navigate to /locations/[city] instead of updating query params
   const handleCityChange = useCallback((newCity: CityName) => {
     setSelectedCity(newCity);
-    navigateToLocation(newCity); // ✅ Path-based navigation
+    navigateToLocation(newCity);
   }, [navigateToLocation]);
 
-  // ✅ UPDATED: Smart navigation - /locations/[city] for browsing, /properties?... for search
   const handleSearch = useCallback(async () => {
     if (isSearching) return;
     setIsSearching(true);
@@ -264,31 +244,18 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
     const hasSearchQuery = searchQuery.trim().length > 0;
     const hasFilters = Object.keys(filters).length > 0;
     
-    // ✅ Case 1: Only city selected → Go to /locations/[city]
     if (!hasSearchQuery && !hasFilters) {
       try {
         await router.push(`/locations/${citySlug}`);
         onSearch?.({ tab: activeTab, city: selectedCity, query: '', filters: undefined });
-      } catch (error) {
-        console.error('Location navigation error:', error);
-      } finally {
-        setTimeout(() => setIsSearching(false), 200);
-      }
+      } catch (error) { console.error('Location navigation error:', error); }
+      finally { setTimeout(() => setIsSearching(false), 200); }
       return;
     }
-    
-    // ✅ Case 2: Search query or filters → Go to /properties?...
-    const params = { 
-      tab: activeTab, 
-      city: selectedCity, 
-      query: searchQuery.trim(), 
-      filters: hasFilters ? filters : undefined 
-    };
     
     const queryParams = new URLSearchParams();
     queryParams.append('city', citySlug);
     queryParams.append('tab', activeTab);
-    
     if (hasSearchQuery) queryParams.append('q', searchQuery.trim());
     if (filters.bhk?.length) queryParams.append('bhk', filters.bhk.join(','));
     if (filters.builder?.length) queryParams.append('builder', filters.builder.join(','));
@@ -301,13 +268,10 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
     
     try {
       await router.push(`/properties?${queryParams.toString()}`, { scroll: false });
-      onSearch?.(params);
+      onSearch?.({ tab: activeTab, city: selectedCity, query: searchQuery.trim(), filters: hasFilters ? filters : undefined });
       setIsCityDropdownOpen(false);
-    } catch (error) {
-      console.error('Search navigation error:', error);
-    } finally {
-      setTimeout(() => setIsSearching(false), 200);
-    }
+    } catch (error) { console.error('Search navigation error:', error); }
+    finally { setTimeout(() => setIsSearching(false), 200); }
   }, [activeTab, selectedCity, searchQuery, filters, onSearch, router, isSearching]);
 
   const filteredSuggestions = useMemo(() => {
@@ -323,7 +287,6 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
       const bhkMatch = suggestion.match(/(\d+\s*[RB]HK)/i);
       if (bhkMatch) newFilters.bhk = [bhkMatch[0].toUpperCase()];
     }
-    
     if (suggestion.toLowerCase().includes('under') || suggestion.toLowerCase().includes('below')) {
       const priceMatch = suggestion.match(/₹?([\d.]+)\s*([LC])/i);
       if (priceMatch) {
@@ -332,10 +295,8 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
       }
     }
     
-    // Check for city name in suggestion
     const cityMatch = CITIES.find(c => suggestion.toLowerCase().includes(c.name.toLowerCase()));
     if (cityMatch) {
-      // If only city mentioned (no other filters), go to location page
       if (!newFilters.bhk?.length && !newFilters.priceRange) {
         navigateToLocation(cityMatch.name);
         return;
@@ -343,7 +304,6 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
       handleCityChange(cityMatch.name);
     }
     
-    // Check for locality in suggestion
     const localityMatch = Object.keys(LOCALITY_CITY_MAP).find(loc => 
       suggestion.toLowerCase().includes(loc.toLowerCase())
     );
@@ -351,7 +311,6 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
       const targetCitySlug = LOCALITY_CITY_MAP[localityMatch];
       const targetCity = CITIES.find(c => c.slug === targetCitySlug);
       if (targetCity) {
-        // If only locality mentioned, go to location page
         if (!newFilters.bhk?.length && !newFilters.priceRange) {
           navigateToLocation(targetCity.name);
           return;
@@ -373,7 +332,6 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
     if (targetCitySlug) {
       const targetCity = CITIES.find(c => c.slug === targetCitySlug);
       if (targetCity) {
-        // ✅ Navigate directly to location page for locality clicks
         navigateToLocation(targetCity.name);
         return;
       }
@@ -405,40 +363,144 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
 
   const currentCity = useMemo(() => CITIES.find(c => c.name === selectedCity) || CITIES[0], [selectedCity]);
 
+  // ✅ Responsive: Show more localities on desktop, scrollable on mobile
+  const displayedLocalities = useMemo(() => {
+    // Show all localities on desktop (lg+), limit to 4 on mobile
+    return currentCity.localities;
+  }, [currentCity]);
+
   return (
-    <motion.section style={{ opacity: heroOpacity, scale: heroScale }} className="relative min-h-[400px] lg:min-h-[440px] overflow-hidden will-change-transform">
+    <motion.section 
+      style={{ opacity: heroOpacity, scale: heroScale }} 
+      className="relative min-h-[380px] sm:min-h-[400px] md:min-h-[420px] lg:min-h-[440px] overflow-hidden will-change-transform"
+    >
       <AnimatedBackground mouseRef={mouseRef} />
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-10">
-        <div className="grid lg:grid-cols-12 gap-8 items-end">
-          <motion.div className="lg:col-span-5 text-center lg:text-left" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: "easeOut" }}>
-            <motion.div className="inline-flex items-center gap-2 px-3.5 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/15 mb-5" whileHover={{ scale: 1.015 }} whileTap={{ scale: 0.99 }}>
-              <Sparkles className="w-4 h-4" style={{ color: BRAND.yellow }} />
-              <span className="text-xs font-semibold text-white/90 tracking-wide">Verified Projects in Pune, Mumbai & KDMC</span>
+      
+      {/* Main Content - Responsive Grid */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start lg:items-end">
+          
+          {/* 🔹 Left Column - Text Content */}
+          <motion.div 
+            className="lg:col-span-5 text-center lg:text-left order-1 lg:order-1" 
+            initial={{ opacity: 0, y: 16 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            transition={{ duration: 0.5, ease: "easeOut" }}
+          >
+            {/* Badge */}
+            <motion.div 
+              className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-3.5 sm:py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/15 mb-4 sm:mb-5 mx-auto lg:mx-0" 
+              whileHover={{ scale: 1.015 }} 
+              whileTap={{ scale: 0.99 }}
+            >
+              <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4" style={{ color: BRAND.yellow }} />
+              <span className="text-[10px] sm:text-xs font-semibold text-white/90 tracking-wide">
+                Verified Projects in Pune, Mumbai & KDMC
+              </span>
             </motion.div>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-[1.08] mb-4">
+            
+            {/* Heading */}
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight sm:leading-[1.1] lg:leading-[1.08] mb-3 sm:mb-4">
               <span className="block">Find Your Dream Home in</span>
-              <motion.span className="block" style={{ color: BRAND.yellow }}>{selectedCity}</motion.span>
+              <motion.span className="block" style={{ color: BRAND.yellow }}>
+                {selectedCity}
+              </motion.span>
             </h1>
-            <motion.p className="text-sm sm:text-base text-slate-300 mb-6 max-w-sm mx-auto lg:mx-0 leading-relaxed" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}>
+            
+            {/* Description */}
+            <motion.p 
+              className="text-xs sm:text-sm md:text-base text-slate-300 mb-4 sm:mb-6 max-w-xs sm:max-w-sm mx-auto lg:mx-0 leading-relaxed" 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              transition={{ delay: 0.15 }}
+            >
               Explore <span className="text-white font-medium">{currentCity.projects}+ verified properties</span> from trusted builders in {currentCity.localities.slice(0, 3).join(', ')} & more
             </motion.p>
-            <motion.div className="flex flex-wrap justify-center lg:justify-start gap-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}>
-              {currentCity.localities.slice(0, 4).map((loc, i) => (
-                <motion.button key={loc} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 + i * 0.03 }} whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.98 }} onClick={() => handleLocalityClick(loc)} className="px-3.5 py-2 text-xs font-medium text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-full transition-all duration-200 backdrop-blur-sm" style={{ borderColor: `rgba(0, 94, 96, 0.3)` }}>{loc}</motion.button>
+            
+            {/* 🔹 Locality Pills - Responsive: Scrollable on mobile, wrapped on desktop */}
+            <motion.div 
+              className="flex flex-wrap justify-center lg:justify-start gap-1.5 sm:gap-2 lg:gap-2.5" 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              transition={{ delay: 0.25 }}
+            >
+              {displayedLocalities.map((loc, i) => (
+                <motion.button 
+                  key={loc} 
+                  initial={{ opacity: 0, y: 6 }} 
+                  animate={{ opacity: 1, y: 0 }} 
+                  transition={{ delay: 0.35 + i * 0.03 }} 
+                  whileHover={{ scale: 1.04 }} 
+                  whileTap={{ scale: 0.98 }} 
+                  onClick={() => handleLocalityClick(loc)} 
+                  className="
+                    px-2.5 py-1.5 sm:px-3.5 sm:py-2 
+                    text-[10px] sm:text-xs font-medium 
+                    text-slate-300 hover:text-white 
+                    bg-white/5 hover:bg-white/10 
+                    border border-white/10 rounded-full 
+                    transition-all duration-200 backdrop-blur-sm 
+                    whitespace-nowrap
+                    lg:px-4 lg:py-2 lg:text-sm
+                  " 
+                  style={{ borderColor: `rgba(0, 94, 96, 0.3)` }}
+                >
+                  {loc}
+                </motion.button>
               ))}
             </motion.div>
+            
+            {/* ✅ Mobile: Show "View More" if many localities */}
+            {currentCity.localities.length > 4 && (
+              <motion.button
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+                onClick={() => {
+                  // Optional: Expand to show all localities or navigate to location page
+                  navigateToLocation(selectedCity);
+                }}
+                className="lg:hidden mt-3 text-xs text-white/70 hover:text-white underline mx-auto block"
+              >
+                View all {currentCity.localities.length} localities →
+              </motion.button>
+            )}
           </motion.div>
-          <motion.div className="lg:col-span-7" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.5, ease: "easeOut" }}>
-            <SearchBar {...searchBarProps} />
+          
+          {/* 🔹 Right Column - Search Bar */}
+          <motion.div
+            className="lg:col-span-7 w-full order-2 lg:order-2"
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.5, ease: "easeOut" }}
+          >
+            <div className="w-full">
+              <SearchBar {...searchBarProps} />
+            </div>
           </motion.div>
         </div>
       </div>
-      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-slate-950 via-slate-950/95 to-transparent pointer-events-none" />
-      <AnimatePresence>{showStickySearch && <StickySearchBar {...stickySearchProps} />}</AnimatePresence>
+      
+      {/* Bottom Gradient Fade - Responsive height */}
+      <div className="absolute bottom-0 left-0 right-0 h-16 sm:h-20 lg:h-24 bg-gradient-to-t from-slate-950 via-slate-950/95 to-transparent pointer-events-none" />
+      
+      {/* Sticky Search Bar */}
+      <AnimatePresence>
+        {showStickySearch && <StickySearchBar {...stickySearchProps} />}
+      </AnimatePresence>
+      
+      {/* Filter Panel Modal */}
       <AnimatePresence>
         {showFilters && (
           <>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowFilters(false)} className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[55]" aria-hidden="true" />
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              exit={{ opacity: 0 }} 
+              onClick={() => setShowFilters(false)} 
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[55]" 
+              aria-hidden="true" 
+            />
             <FilterPanel {...filterPanelProps} />
           </>
         )}

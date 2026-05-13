@@ -1,87 +1,90 @@
+// client/components/builder-page/BuilderProjectCard.tsx
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
+import { MapPin, Home, ArrowRight } from 'lucide-react';
 
-type Property = {
+interface Project {
   slug: string;
   name: string;
   location: string;
   price: string;
   image: string;
-  fullLocation: { area: string; city: string };
-  priceDetails: { range: string; configurations: Array<{ type: string; area: string; price: string }> };
-  developer: { name: string };
-  about: string;
-};
+  developer?: { name: string };
+  bhk?: string[];
+  [key: string]: any; // Allow extra fields
+}
 
-export default function BuilderProjectCard({ project }: { project: Property }) {
+interface BuilderProjectCardProps {
+  project: Project;
+}
+
+export default function BuilderProjectCard({ project }: BuilderProjectCardProps) {
+  // ✅ Defensive: handle missing required fields
+  if (!project?.slug || !project?.name) {
+    console.warn('BuilderProjectCard: Missing required props', project);
+    return null;
+  }
+
   return (
-    <div className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 border border-gray-200 overflow-hidden">
-      <div className="flex flex-col lg:flex-row">
-        {/* Image Section */}
-        <div className="lg:w-80 relative h-64 lg:h-auto">
-          <Image
-            src={project.image}
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.3 }}
+      whileHover={{ y: -4 }}
+      className="group"
+    >
+      <Link 
+        href={`/properties/${project.slug}`}  // ✅ Link to project detail
+        className="block bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-xl overflow-hidden"
+      >
+        {/* Image */}
+        <div className="relative h-48 bg-gray-100">
+          <img 
+            src={project.image || '/projects/placeholder.jpg'} 
             alt={project.name}
-            fill
-            className="object-cover"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            onError={e => (e.target as HTMLImageElement).src = '/projects/placeholder.jpg'}
           />
-          <div className="absolute top-4 left-4 bg-[#8B0000] text-white px-3 py-1.5 rounded text-sm font-semibold">
-            Zero Brokerage
-          </div>
+          {/* Price Badge */}
+          <span className="absolute bottom-3 left-3 px-3 py-1 bg-[#005E60] text-white text-sm font-semibold rounded-lg">
+            {project.price}
+          </span>
         </div>
 
-        {/* Content Section */}
-        <div className="flex-1 p-6">
-          {/* Header */}
-          <div className="mb-4">
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">{project.name}</h3>
-            <div className="flex items-center gap-2 text-gray-600 text-sm">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              <span>{project.fullLocation.area}, {project.fullLocation.city}</span>
-              <span className="text-gray-400">•</span>
-              <span className="text-[#005E60] font-medium">{project.developer.name}</span>
-            </div>
+        {/* Content */}
+        <div className="p-5">
+          <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-[#8B0000] transition-colors line-clamp-1">
+            {project.name}
+          </h3>
+          
+          {/* Location */}
+          <div className="flex items-center gap-1.5 text-sm text-gray-600 mb-3">
+            <MapPin className="w-4 h-4 text-[#005E60]" />
+            <span className="capitalize">{project.location}</span>
           </div>
-
-          {/* Configurations */}
-          <div className="mb-5">
-            <h4 className="text-sm font-semibold text-gray-700 mb-3">Configuration</h4>
-            <div className="flex flex-wrap gap-3">
-              {project.priceDetails.configurations.slice(0, 4).map((config, idx) => (
-                <div 
-                  key={idx}
-                  className="bg-gray-50 border-2 border-gray-200 rounded-lg p-3 min-w-[130px] hover:border-[#F8C21C] hover:bg-[#F8C21C]/5 transition-all cursor-pointer"
-                >
-                  <div className="font-bold text-gray-900">{config.type}</div>
-                  <div className="text-sm text-gray-600 mt-0.5">{config.area}</div>
-                  <div className="text-[#8B0000] font-bold mt-1">{config.price}</div>
-                </div>
+          
+          {/* BHK Tags */}
+          {project.bhk?.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mb-4">
+              {project.bhk.slice(0, 3).map((type: string) => (
+                <span key={type} className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-md font-medium">
+                  {type}
+                </span>
               ))}
             </div>
-          </div>
-
-          {/* Description */}
-          <p className="text-gray-600 text-sm mb-5 line-clamp-2">{project.about}</p>
-
-          {/* Actions */}
-          <div className="flex gap-3">
-            <Link 
-              href={`/projects/${project.slug}`}
-              className="flex-1 bg-white border-2 border-[#8B0000] text-[#8B0000] py-2.5 px-4 rounded font-semibold hover:bg-[#8B0000] hover:text-white transition-all text-center"
-            >
-              View Details
-            </Link>
-            <button className="flex-1 bg-[#F8C21C] text-[#8B0000] py-2.5 px-4 rounded font-bold hover:bg-[#F8C21C]/90 transition-all">
-              Enquire Now
-            </button>
+          )}
+          
+          {/* CTA */}
+          <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+            <span className="text-sm text-[#005E60] font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
+              View Details <ArrowRight className="w-4 h-4" />
+            </span>
           </div>
         </div>
-      </div>
-    </div>
+      </Link>
+    </motion.div>
   );
 }
