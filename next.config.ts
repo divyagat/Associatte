@@ -1,16 +1,12 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
   reactStrictMode: true,
 
   // ✅ TypeScript: Ignore errors temporarily to unblock deployment
   // ⚠️ Remove this once all TypeScript errors are fixed properly
   typescript: {
     ignoreBuildErrors: true,
-  },
-
-  // ✅ ESLint: Also ignore during build (optional but helpful)
-  eslint: {
-    ignoreDuringBuilds: true,
   },
 
   // ✅ Image optimization
@@ -42,4 +38,5 @@ const nextConfig = {
   // output: 'standalone',
 };
 
-module.exports = nextConfig;
+export default nextConfig;
+// Trigger redeploy 05/14/2026 18:18:42
