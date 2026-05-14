@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { motion, useScroll, useInView, useTransform } from 'framer-motion';
+import { motion, useScroll, useInView, useTransform, type Variants } from 'framer-motion';
 import { 
   Target, Heart, Users, Award, ShieldCheck, Lightbulb, 
   Building2, MapPin, Phone, Mail, ArrowRight, CheckCircle2, 
@@ -12,6 +12,35 @@ import {
   Building, Monitor,
 } from 'lucide-react';
 
+// ✅ Single, clean variant definitions - NO duplicates
+const customEase = [0.22, 1, 0.36, 1] as const;
+
+const fadeInUp: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { duration: 0.6, ease: customEase as any }
+  }
+};
+
+const scaleIn: Variants = {
+  hidden: { opacity: 0, scale: 0.95 },
+  visible: { 
+    opacity: 1, 
+    scale: 1, 
+    transition: { duration: 0.5, ease: customEase as any }
+  }
+};
+
+const staggerContainer: Variants = {
+  hidden: { opacity: 0 },
+  visible: { 
+    opacity: 1, 
+    transition: { staggerChildren: 0.15, delayChildren: 0.2 } 
+  }
+};
+
 export default function AboutUs() {
   const [scrolled, setScrolled] = useState(false);
   const [activeStat, setActiveStat] = useState<number | null>(null);
@@ -19,10 +48,10 @@ export default function AboutUs() {
   const { scrollYProgress } = useScroll();
   const heroOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0.95]);
   
-  const missionRef = useRef(null);
-  const valuesRef = useRef(null);
-  const timelineRef = useRef(null);
-  const teamRef = useRef(null);
+  const missionRef = useRef<HTMLDivElement>(null);
+  const valuesRef = useRef<HTMLDivElement>(null);
+  const timelineRef = useRef<HTMLDivElement>(null);
+  const teamRef = useRef<HTMLDivElement>(null);
   
   const missionInView = useInView(missionRef, { once: true, margin: "-100px" });
   const valuesInView = useInView(valuesRef, { once: true, margin: "-100px" });
@@ -132,21 +161,6 @@ export default function AboutUs() {
     },
   };
 
-  const fadeInUp = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
-  };
-
-  const staggerContainer = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.15, delayChildren: 0.2 } }
-  };
-
-  const scaleIn = {
-    hidden: { opacity: 0, scale: 0.95 },
-    visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: "easeOut" } }
-  };
-
   return (
     <main className="min-h-screen bg-gradient-to-b from-white via-slate-50/50 to-white">
       {/* Scroll Progress Bar */}
@@ -203,7 +217,7 @@ export default function AboutUs() {
             </motion.h1>
 
             <motion.p initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.25 }} className="mt-7 text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-              We're not just a property platform – we're your trusted partner in finding the perfect space to live, work, and thrive across India.
+              We&apos;re not just a property platform – we&apos;re your trusted partner in finding the perfect space to live, work, and thrive across India.
             </motion.p>
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }} className="mt-10 flex flex-wrap justify-center gap-4">
@@ -361,7 +375,7 @@ export default function AboutUs() {
               <span className="text-xs font-semibold" style={{ color: '#F8C21C' }}>Our Journey</span>
             </div>
             <h2 className="text-3.5xl sm:text-4.5xl font-bold text-gray-900 mb-5">Growing With Purpose</h2>
-            <p className="text-lg text-gray-600">Milestones that shaped who we are today and where we're headed tomorrow.</p>
+            <p className="text-lg text-gray-600">Milestones that shaped who we are today and where we&apos;re headed tomorrow.</p>
           </motion.div>
 
           <div className="relative">
@@ -434,7 +448,7 @@ export default function AboutUs() {
                           {[
                             { icon: LinkedInIcon, href: owner.social.linkedin },
                             { icon: TwitterIcon, href: owner.social.twitter },
-                            { icon: Mail, href: `mailto:${owner.name.toLowerCase().replace(' ', '.')}@propertyhub.com` },
+                            { icon: Mail, href: `mailto:${owner.name.toLowerCase().replace(' ', '.')}@associatte.com` },
                           ].map(({ icon: Icon, href }, i) => (
                             <motion.a key={i} href={href} whileHover={{ scale: 1.15, y: -3 }} whileTap={{ scale: 0.95 }} className="p-2.5 bg-[#F8C21C]/20 rounded-xl transition-colors border border-[#F8C21C]/40" style={{ color: '#8B0000' }}>
                               <Icon className="w-4.5 h-4.5" />
@@ -508,8 +522,8 @@ export default function AboutUs() {
                 <Star className="w-4.5 h-4.5 text-[#F8C21C]" />
                 <span className="text-sm font-semibold text-white">Ready to Start Your Journey?</span>
               </motion.div>
-              <h2 className="text-3.5xl sm:text-4.5xl font-bold text-white mb-6 leading-tight">Let's Find Your Perfect Property Together</h2>
-              <p className="text-lg mb-10 max-w-2xl mx-auto leading-relaxed text-white/90">Join thousands of happy customers who trusted us with their property journey. Your dream home is just a search away – let's make it happen.</p>
+              <h2 className="text-3.5xl sm:text-4.5xl font-bold text-white mb-6 leading-tight">Let&apos;s Find Your Perfect Property Together</h2>
+              <p className="text-lg mb-10 max-w-2xl mx-auto leading-relaxed text-white/90">Join thousands of happy customers who trusted us with their property journey. Your dream home is just a search away – let&apos;s make it happen.</p>
               <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.4 }} className="flex flex-col sm:flex-row justify-center gap-5">
                 <motion.button whileHover={{ scale: 1.04, boxShadow: "0 25px 50px -12px rgba(248,194,28,0.3)" }} whileTap={{ scale: 0.98 }} className="group px-9 py-4.5 font-bold rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center justify-center gap-3" style={{ color: '#8B0000', backgroundColor: '#F8C21C' }}>
                   Browse Properties <ArrowRight className="w-4.5 h-4.5 transition-transform group-hover:translate-x-1" />
@@ -532,15 +546,15 @@ export default function AboutUs() {
       <section className="py-10 border-t border-gray-100/60 bg-white/60 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-5">
-            <p className="text-sm text-gray-600">© 2026 PropertyHub. All rights reserved.</p>
+            <p className="text-sm text-gray-600">© 2026 Associatte PropTech Pvt Ltd. All rights reserved.</p>
             <div className="flex items-center gap-7">
-              <a href="mailto:hello@propertyhub.com" className="flex items-center gap-2.5 text-sm text-gray-600 hover:text-[#005E60] transition-colors group">
+              <a href="mailto:hello@associatte.com" className="flex items-center gap-2.5 text-sm text-gray-600 hover:text-[#005E60] transition-colors group">
                 <div className="p-2 bg-gray-100 rounded-lg group-hover:bg-[#005E60]/10 transition-colors"><Mail className="w-4 h-4" /></div>
-                hello@propertyhub.com
+                hello@associatte.com
               </a>
-              <a href="tel:+919876543210" className="flex items-center gap-2.5 text-sm text-gray-600 hover:text-[#8B0000] transition-colors group">
+              <a href="tel:+918743563546" className="flex items-center gap-2.5 text-sm text-gray-600 hover:text-[#8B0000] transition-colors group">
                 <div className="p-2 bg-gray-100 rounded-lg group-hover:bg-[#8B0000]/10 transition-colors"><Phone className="w-4 h-4" /></div>
-                +91 98765 43210
+                +91 87435 63546
               </a>
             </div>
           </div>

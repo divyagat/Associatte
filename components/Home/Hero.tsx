@@ -6,7 +6,7 @@ import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { 
   Search, MapPin, Home, Building2, Construction, KeyRound, 
-  ChevronDown, Sparkles, CheckCircle2, Loader2, X, Filter, ChevronRight, SlidersHorizontal
+  ChevronDown, Sparkles, CheckCircle2, Loader2, X, Filter
 } from 'lucide-react';
 
 // Import memoized child components
@@ -425,7 +425,7 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
 
   // ✅ Responsive: Show all localities with expand/collapse on mobile
   const displayedLocalities = useMemo(() => {
-    if (showAllLocalities) return currentCity.localities;
+    // Show all localities on desktop (lg+), limit to 4 on mobile
     return currentCity.localities;
   }, [currentCity, showAllLocalities]);
 
@@ -575,15 +575,8 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.5, ease: "easeOut" }}
           >
-            <div className="w-full mb-0 lg:mb-20">
-              {/* Mobile: Full-width search with proper spacing */}
-              <div className="lg:hidden w-full">
-                <SearchBar {...searchBarProps} />
-              </div>
-              {/* Desktop: Search with margin adjustments */}
-              <div className="hidden lg:block">
-                <SearchBar {...searchBarProps} />
-              </div>
+            <div className="w-full">
+              <SearchBar {...searchBarProps} />
             </div>
           </motion.div>
         </div>
@@ -594,14 +587,10 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
       
       {/* Sticky Search Bar - Mobile optimized */}
       <AnimatePresence>
-        {showStickySearch && (
-          <div className="lg:hidden fixed top-0 left-0 right-0 z-50 ">
-            <StickySearchBar {...stickySearchProps} />
-          </div>
-        )}
+        {showStickySearch && <StickySearchBar {...stickySearchProps} />}
       </AnimatePresence>
       
-      {/* ✅ Filter Panel Modal - Now navigates to separate page on filter selection */}
+      {/* Filter Panel Modal */}
       <AnimatePresence>
         {showFilters && (
           <>
@@ -613,49 +602,7 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
               className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[55]" 
               aria-hidden="true" 
             />
-            <motion.div
-              initial={{ y: '100%' }}
-              animate={{ y: 0 }}
-              exit={{ y: '100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed bottom-0 left-0 right-0 lg:left-auto lg:right-8 lg:top-20 lg:bottom-auto lg:w-[380px] z-[60] bg-white rounded-t-2xl lg:rounded-2xl shadow-2xl overflow-hidden"
-            >
-              {/* ✅ Header with close button */}
-              <div className="sticky top-0 z-10 flex items-center justify-between px-4 py-3 bg-white border-b border-slate-100">
-                <div className="flex items-center gap-2">
-                  <SlidersHorizontal className="w-4 h-4 text-slate-600" />
-                  <span className="text-sm font-semibold text-slate-800">Filters</span>
-                </div>
-                <button 
-                  onClick={() => setShowFilters(false)}
-                  className="p-1.5 rounded-full hover:bg-slate-100 transition-colors"
-                  aria-label="Close filters"
-                >
-                  <X className="w-4 h-4 text-slate-500" />
-                </button>
-              </div>
-              
-              {/* ✅ Filter Panel Content */}
-              <FilterPanel {...filterPanelProps} />
-              
-              {/* ✅ Mobile: Apply button fixed at bottom */}
-              <div className="lg:hidden sticky bottom-0 p-4 bg-white border-t border-slate-100">
-                <button
-                  onClick={handleApplyFilters}
-                  disabled={isSearching}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#005E60] hover:bg-[#004a4d] text-white font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isSearching ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <>
-                      <Search className="w-4 h-4" />
-                      Apply & View Results
-                    </>
-                  )}
-                </button>
-              </div>
-            </motion.div>
+            <FilterPanel {...filterPanelProps} />
           </>
         )}
       </AnimatePresence>
