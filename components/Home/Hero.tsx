@@ -14,7 +14,7 @@ import { SearchBar } from './Hero/SearchBar';
 import { FilterPanel, type FilterPanelProps } from './Hero/FilterPanel';
 import { StickySearchBar } from './Hero/StickySearchBar';
 
-// Types - ✅ Simple, no circular references
+// Types
 export interface SearchFilters {
   bhk?: string[];
   priceRange?: { min: number; max: number };
@@ -25,10 +25,11 @@ export interface SearchFilters {
   locality?: string;
 }
 
-// ✅ Simple union types (no derivation, no circular refs)
+// ✅ FIX: Define simple union types FIRST (no circular reference possible)
 export type CityName = 'Pune' | 'Mumbai' | 'KDMC';
 export type CitySlug = 'pune' | 'mumbai' | 'kdmc';
 
+// ✅ Then define City interface using the simple unions
 export interface City {
   name: CityName;
   projects: number;
@@ -37,7 +38,7 @@ export interface City {
   slug: CitySlug;
 }
 
-// ✅ Simple array - no 'as const' on localities to avoid readonly issues
+// ✅ Now define CITIES using the interface (safe, no circular reference)
 export const CITIES: City[] = [
   { 
     name: 'Pune', 
