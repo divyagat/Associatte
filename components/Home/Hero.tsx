@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform, type Variants } from 'framer-motion';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { 
   Search, MapPin, Home, Building2, Construction, KeyRound, 
@@ -25,6 +25,37 @@ export interface SearchFilters {
   locality?: string;
 }
 
+// 🗺️ Cities Data with KDMC Support
+// ✅ FIX: Removed 'as const' from localities arrays to allow mutable string[] compatibility
+export const CITIES = [
+  { 
+    name: 'Pune' as const, 
+    projects: 1923, 
+    localities: ['Wakad', 'Hinjewadi', 'Baner', 'Kharadi', 'Sus', 'Viman Nagar', 'Kondhwa', 'Magarpatta'],
+    description: 'IT hub with premium projects in Wakad, Hinjewadi & Baner',
+    slug: 'pune' as const
+  },
+  { 
+    name: 'Mumbai' as const, 
+    projects: 2847, 
+    localities: ['Kharghar', 'Panvel', 'Thane', 'Andheri', 'Bandra', 'Worli', 'Navi Mumbai'],
+    description: 'Premium properties in Kharghar, Panvel & Navi Mumbai',
+    slug: 'mumbai' as const
+  },
+  { 
+    name: 'KDMC' as const, 
+    projects: 487, 
+    localities: ['Kalyan', 'Dombivli', 'Ulhasnagar', 'Ambarnath', 'Badlapur', 'Shil Phata', 'Murbad'],
+    description: 'Affordable & premium projects in Kalyan-Dombivli belt',
+    slug: 'kdmc' as const
+  },
+] as const;
+
+// Derive types from the const assertion (after CITIES is defined)
+export type CitySlug = typeof CITIES[number]['slug'];
+export type CityName = typeof CITIES[number]['name'];
+
+// Now define City interface using the derived types
 export interface City {
   name: CityName;
   projects: number;
@@ -45,34 +76,6 @@ const BRAND = {
   red: '#8B0000',
   yellow: '#F8C21C',
 } as const;
-
-// 🗺️ Cities Data with KDMC Support
-export const CITIES: readonly City[] = [
-  { 
-    name: 'Pune', 
-    projects: 1923, 
-    localities: ['Wakad', 'Hinjewadi', 'Baner', 'Kharadi', 'Sus', 'Viman Nagar', 'Kondhwa', 'Magarpatta'],
-    description: 'IT hub with premium projects in Wakad, Hinjewadi & Baner',
-    slug: 'pune'
-  },
-  { 
-    name: 'Mumbai', 
-    projects: 2847, 
-    localities: ['Kharghar', 'Panvel', 'Thane', 'Andheri', 'Bandra', 'Worli', 'Navi Mumbai'],
-    description: 'Premium properties in Kharghar, Panvel & Navi Mumbai',
-    slug: 'mumbai'
-  },
-  { 
-    name: 'KDMC', 
-    projects: 487, 
-    localities: ['Kalyan', 'Dombivli', 'Ulhasnagar', 'Ambarnath', 'Badlapur', 'Shil Phata', 'Murbad'],
-    description: 'Affordable & premium projects in Kalyan-Dombivli belt',
-    slug: 'kdmc'
-  },
-] as const;
-
-export type CitySlug = typeof CITIES[number]['slug'];
-export type CityName = typeof CITIES[number]['name'];
 
 // 🔍 Search suggestions
 const SEARCH_SUGGESTIONS = [
@@ -173,7 +176,6 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
   const searchParams = useSearchParams();
   const pathname = usePathname();
   
-  // ✅ Initialize city from path OR query param OR fallback
   const [selectedCity, setSelectedCity] = useState<CityName>(() => {
     const locationMatch = pathname?.match(/^\/locations\/(pune|mumbai|kdmc)$/i);
     if (locationMatch) {
@@ -244,12 +246,13 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
     else dropdownCloseTimer.current = setTimeout(() => setIsCityDropdownOpen(false), 100);
   }, []);
 
-  const handleCityChange = useCallback((newCity: CityName) => {
-    setSelectedCity(newCity);
-    navigateToLocation(newCity);
+  const handleCityChange = useCallback((newCity: string) => {
+    const matchedCity = CITIES.find(c => c.name === newCity);
+    if (!matchedCity) return;
+    setSelectedCity(matchedCity.name);
+    navigateToLocation(matchedCity.name);
   }, [navigateToLocation]);
 
-  // ✅ Navigate to properties page with filters - Same as dropdown behavior
   const navigateToProperties = useCallback((searchParamsObj: URLSearchParams) => {
     router.push(`/properties?${searchParamsObj.toString()}`, { scroll: false });
   }, [router]);
@@ -284,7 +287,6 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
     if (filters.locality) queryParams.append('locality', filters.locality);
     
     try {
-      // ✅ Navigate to separate properties page (same as dropdown behavior)
       await navigateToProperties(queryParams);
       onSearch?.({ city: selectedCity, query: searchQuery.trim(), filters: hasFilters ? filters : undefined });
       setIsCityDropdownOpen(false);
@@ -292,7 +294,6 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
     finally { setTimeout(() => setIsSearching(false), 200); }
   }, [selectedCity, searchQuery, filters, onSearch, navigateToProperties, isSearching]);
 
-  // ✅ Handle filter selection - Navigate immediately to properties page
   const handleFilterSelect = useCallback((filterType: keyof SearchFilters, value: unknown) => {
     const newFilters = { ...filters };
     
@@ -314,7 +315,6 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
       newFilters.locality = value;
     }
     
-    // ✅ Immediately navigate to properties page with updated filters
     const citySlug = CITIES.find(c => c.name === selectedCity)?.slug || 'pune';
     const queryParams = new URLSearchParams();
     queryParams.append('city', citySlug);
@@ -382,7 +382,6 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
 
   const handleClearFilters = useCallback(() => { 
     setFilters({}); 
-    // ✅ Navigate to base location page when clearing filters
     const citySlug = CITIES.find(c => c.name === selectedCity)?.slug || 'pune';
     router.push(`/locations/${citySlug}`);
   }, [selectedCity, router]);
@@ -404,33 +403,51 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
     handleSearch();
   }, [handleSearch, navigateToLocation]);
 
-  // ✅ Props with proper type casting for readonly arrays
-  const searchBarProps = useMemo(() => ({
-    activeTab, selectedCity, searchQuery, filters, isCityDropdownOpen,
-    showSuggestions: !!searchQuery && filteredSuggestions.length > 0,
-    filteredSuggestions: [...filteredSuggestions],
-    categories: CATEGORIES as unknown as readonly Category[],
-    cities: CITIES as unknown as readonly City[],
-    isSearching,
-    onTabChange: (tab: 'residential' | 'commercial' | 'underConstruction' | 'readyToMove') => setActiveTab(tab),
-    onCityChange: handleCityChange,
-    onSearchQueryChange: setSearchQuery,
-    onCityDropdownToggle: handleCityDropdownOpen,
-    onSuggestionClick: handleSuggestionClick, 
-    onFilterToggle: () => setShowFilters(true),
-    onSearch: handleSearch,
-  }), [activeTab, selectedCity, searchQuery, filters, isCityDropdownOpen, filteredSuggestions.length, isSearching, handleCityDropdownOpen, handleSuggestionClick, handleSearch, handleCityChange]);
+  // ✅ Props - properly typed for child component compatibility
+  const searchBarProps = useMemo(() => {
+    // ✅ Convert CITIES to mutable City[] for SearchBarProps compatibility
+    const citiesForSearchBar: City[] = CITIES.map(city => ({
+      name: city.name,
+      projects: city.projects,
+      localities: [...city.localities],
+      description: city.description,
+      slug: city.slug
+    }));
+    
+    return {
+      activeTab, 
+      selectedCity, 
+      searchQuery, 
+      filters, 
+      isCityDropdownOpen,
+      showSuggestions: !!searchQuery && filteredSuggestions.length > 0,
+      filteredSuggestions: [...filteredSuggestions],
+      categories: CATEGORIES as readonly Category[],
+      cities: citiesForSearchBar,
+      isSearching,
+      // ✅ CRITICAL FIX: onTabChange must accept (tab: string) to match SearchBarProps
+      // Then cast internally to the union type for setActiveTab
+      onTabChange: (tab: string) => setActiveTab(tab as 'residential' | 'commercial' | 'underConstruction' | 'readyToMove'),
+      onCityChange: handleCityChange,
+      onSearchQueryChange: setSearchQuery,
+      onCityDropdownToggle: handleCityDropdownOpen,
+      onSuggestionClick: handleSuggestionClick, 
+      onFilterToggle: () => setShowFilters(true),
+      onSearch: handleSearch,
+    };
+  }, [activeTab, selectedCity, searchQuery, filters, isCityDropdownOpen, filteredSuggestions.length, isSearching, handleCityDropdownOpen, handleSuggestionClick, handleSearch, handleCityChange]);
 
   const stickySearchProps = useMemo(() => ({
-    activeTab, selectedCity, searchQuery,
-    categories: CATEGORIES as unknown as readonly Category[],
+    activeTab, 
+    selectedCity, 
+    searchQuery,
+    categories: CATEGORIES as readonly Category[],
     isSearching,
-    onTabChange: (tab: 'residential' | 'commercial' | 'underConstruction' | 'readyToMove') => setActiveTab(tab),
+    onTabChange: (tab: string) => setActiveTab(tab as 'residential' | 'commercial' | 'underConstruction' | 'readyToMove'),
     onSearchQueryChange: setSearchQuery,
     onSearch: handleSearch,
   }), [activeTab, selectedCity, searchQuery, isSearching, handleSearch]);
 
-  // ✅ Updated filter panel props
   const filterPanelProps: FilterPanelProps = useMemo(() => ({
     filters, 
     bhkOptions: BHK_OPTIONS, 
@@ -446,10 +463,10 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
 
   const currentCity = useMemo(() => CITIES.find(c => c.name === selectedCity) || CITIES[0], [selectedCity]);
 
-  // ✅ Responsive: Show all localities with expand/collapse on mobile
-  const displayedLocalities = useMemo(() => {
-    return currentCity.localities;
-  }, [currentCity, showAllLocalities]);
+  const heroTransition: Variants = {
+    initial: { opacity: 0, y: 16 },
+    animate: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' as const } }
+  };
 
   return (
     <motion.section 
@@ -467,7 +484,7 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
             className="lg:col-span-5 text-center lg:text-left order-1 lg:order-1 w-full" 
             initial={{ opacity: 0, y: 16 }} 
             animate={{ opacity: 1, y: 0 }} 
-            transition={{ duration: 0.5, ease: "easeOut" }}
+            transition={{ duration: 0.5, ease: 'easeOut' as const }}
           >
             {/* Badge */}
             <motion.div 
@@ -538,7 +555,6 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
                     </motion.button>
                   ))}
                 </div>
-                {/* Fade indicators for scrollable area */}
                 <div className="absolute left-0 top-0 bottom-2 w-8 bg-gradient-to-r from-slate-900/80 to-transparent pointer-events-none lg:hidden" />
                 <div className="absolute right-0 top-0 bottom-2 w-8 bg-gradient-to-l from-slate-900/80 to-transparent pointer-events-none lg:hidden" />
               </div>
@@ -595,10 +611,10 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
             className="lg:col-span-7 w-full order-2 lg:order-2"
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, duration: 0.5, ease: "easeOut" }}
+            transition={{ delay: 0.1, duration: 0.5, ease: 'easeOut' as const }}
           >
             <div className="w-full">
-              <SearchBar {...searchBarProps as any} />
+              <SearchBar {...searchBarProps} />
             </div>
           </motion.div>
         </div>
@@ -609,7 +625,7 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
       
       {/* Sticky Search Bar - Mobile optimized */}
       <AnimatePresence>
-        {showStickySearch && <StickySearchBar {...stickySearchProps as any} />}
+        {showStickySearch && <StickySearchBar {...stickySearchProps} />}
       </AnimatePresence>
       
       {/* Filter Panel Modal */}

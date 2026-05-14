@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import { MapPin, Heart, ChevronRight, ChevronLeft, Star, Phone, Filter, X } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, type Transition, type Variants } from 'framer-motion';
 
 // ✅ Import SearchFilters type from Hero
 import type { SearchFilters } from '../Home/Hero';
@@ -123,23 +123,6 @@ function mapProjectToCard(project: any): CardProject {
   };
 }
 
-// Fix the framer-motion variants - use proper Ease type:
-import { type Transition, type Ease } from 'framer-motion';
-
-// Then update cardVariants:
-const cardVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: (index: number) => ({ 
-    opacity: 1, 
-    y: 0,
-    transition: { 
-      duration: 0.3, 
-      ease: 'easeOut' as Ease,
-      delay: index * 0.05
-    } as Transition
-  })
-};
-
 // ✅ City to slug mapping for filtering
 const CITY_SLUG_MAP: Record<CityName, string> = {
   'Pune': 'pune',
@@ -149,6 +132,19 @@ const CITY_SLUG_MAP: Record<CityName, string> = {
 
 // ✅ CONFIG: Default limit for projects display
 const DEFAULT_PROJECT_LIMIT = 8;
+
+// ✅ Animation variants for cards - Fixed framer-motion Variants type compatibility
+const cardVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { 
+      duration: 0.3, 
+      ease: 'easeOut' as const  // ✅ Fixed: use 'as const' for literal type inference
+    }
+  }
+};
 
 export default function TopSellingProjects({ 
   city, 
@@ -326,16 +322,6 @@ export default function TopSellingProjects({
     setCurrentSlide(0);
   }, []);
 
-  // ✅ Animation variants for cards
-  const cardVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { duration: 0.3, ease: 'easeOut' }
-    }
-  };
-
   return (
     <section className={`py-16 bg-white ${className}`.trim()}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -451,14 +437,14 @@ export default function TopSellingProjects({
                 transition={{ type: 'spring', stiffness: 300, damping: 30 }}
               >
                 {orderedProjects.map((project, index) => (
-                <motion.div
-  key={project.slug}
-  variants={cardVariants}
-  initial="hidden"
-  animate="visible"
-  custom={index} // ✅ Pass index for staggered animation
-  className="flex-shrink-0 w-[calc(33.333%-10.67px)] lg:w-[calc(33.333%-16px)] bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-2xl hover:border-[#005E60]/30 transition-all duration-300 group"
->
+                  <motion.div
+                    key={project.slug}
+                    variants={cardVariants}
+                    initial="hidden"
+                    animate="visible"
+                    custom={index}
+                    className="flex-shrink-0 w-[calc(33.333%-10.67px)] lg:w-[calc(33.333%-16px)] bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-2xl hover:border-[#005E60]/30 transition-all duration-300 group"
+                  >
                     {/* Image Container */}
                     <div className="relative h-48 lg:h-52 overflow-hidden">
                       <img

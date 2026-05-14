@@ -2,8 +2,23 @@
 
 import { useState } from "react";
 import { Phone, Mail, User, MessageSquare, CheckCircle } from "lucide-react";
-import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+
+// ✅ Simple toast replacement - no external dependency needed
+const toast = {
+  success: (message: string) => {
+    console.log("✓", message);
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("toast", { detail: { type: "success", message } }));
+    }
+  },
+  error: (message: string) => {
+    console.error("✗", message);
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("toast", { detail: { type: "error", message } }));
+    }
+  },
+};
 
 interface ContactFormProps {
   propertyId?: string;
