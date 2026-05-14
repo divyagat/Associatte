@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform, type Variants } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { 
   Search, MapPin, Home, Building2, Construction, KeyRound, 
@@ -14,7 +14,7 @@ import { SearchBar } from './Hero/SearchBar';
 import { FilterPanel, type FilterPanelProps } from './Hero/FilterPanel';
 import { StickySearchBar } from './Hero/StickySearchBar';
 
-// Types
+// Types - ✅ Simple, no circular references
 export interface SearchFilters {
   bhk?: string[];
   priceRange?: { min: number; max: number };
@@ -25,11 +25,10 @@ export interface SearchFilters {
   locality?: string;
 }
 
-// ✅ FIX: Define simple union types FIRST (no circular reference possible)
+// ✅ Simple union types (no derivation, no circular refs)
 export type CityName = 'Pune' | 'Mumbai' | 'KDMC';
 export type CitySlug = 'pune' | 'mumbai' | 'kdmc';
 
-// ✅ Then define City interface using the simple unions
 export interface City {
   name: CityName;
   projects: number;
@@ -38,8 +37,8 @@ export interface City {
   slug: CitySlug;
 }
 
-// ✅ Now define CITIES using the interface (safe, no circular reference)
-export const CITIES: readonly City[] = [
+// ✅ Simple array - no 'as const' on localities to avoid readonly issues
+export const CITIES: City[] = [
   { 
     name: 'Pune', 
     projects: 1923, 
@@ -74,7 +73,7 @@ const BRAND = {
   green: '#005E60',
   red: '#8B0000',
   yellow: '#F8C21C',
-} as const;
+};
 
 // 🔍 Search suggestions
 const SEARCH_SUGGESTIONS = [
@@ -99,23 +98,23 @@ export interface Category {
   gradient: string;
 }
 
-export const CATEGORIES: readonly Category[] = [
+export const CATEGORIES: Category[] = [
   { id: 'residential', label: 'Residential', icon: Home, color: BRAND.green, gradient: `from-[${BRAND.green}] to-[#004a4d]` },
   { id: 'commercial', label: 'Commercial', icon: Building2, color: BRAND.red, gradient: `from-[${BRAND.red}] to-[#6a0000]` },
   { id: 'underConstruction', label: 'Pre-Launch', icon: Construction, color: BRAND.yellow, gradient: `from-[${BRAND.yellow}] to-[#d4a017]` },
   { id: 'readyToMove', label: 'Ready', icon: KeyRound, color: BRAND.green, gradient: `from-[${BRAND.green}] to-[#004a4d]` },
-] as const;
+];
 
 // 🔧 Filter options
 export const BHK_OPTIONS = ['1 RK', '1 BHK', '2 BHK', '3 BHK', '4 BHK', '4+ BHK'] as const;
 export const BUILDER_OPTIONS = ['Mantra Developers', 'Lodha Group', 'Shapoorji Pallonji', 'Paradise Group', 'Today Global', 'Birla Estates', 'Panchshil Realty'] as const;
 export const PROPERTY_TYPES = ['Apartment', 'Villa', 'Plot', 'Studio', 'Penthouse', 'Office Space'] as const;
-export const PRICE_RANGES: readonly { label: string; min: number; max: number }[] = [
+export const PRICE_RANGES: { label: string; min: number; max: number }[] = [
   { label: 'Under ₹75L', min: 0, max: 7500000 },
   { label: '₹75L - ₹1Cr', min: 7500000, max: 10000000 },
   { label: '₹1Cr - ₹2Cr', min: 10000000, max: 20000000 },
   { label: 'Above ₹2Cr', min: 20000000, max: Infinity },
-] as const;
+];
 
 // 🗺️ Locality to City mapping
 export const LOCALITY_CITY_MAP: Record<string, CitySlug> = {
@@ -175,42 +174,11 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
   const searchParams = useSearchParams();
   const pathname = usePathname();
   
-  const [selectedCity, setSelectedCity] = useState<CityName>(() => {
-    const locationMatch = pathname?.match(/^\/locations\/(pune|mumbai|kdmc)$/i);
-    if (locationMatch) {
-      const slug = locationMatch[1].toLowerCase() as CitySlug;
-      const city = CITIES.find(c => c.slug === slug);
-      if (city) return city.name;
-    }
-    const urlCity = searchParams?.get('city');
-    if (urlCity) {
-      const normalized = urlCity.toLowerCase();
-      const city = CITIES.find(c => c.slug === normalized);
-      if (city) return city.name;
-    }
-    return initialCity as CityName;
-  });
-  
-  const [activeTab, setActiveTab] = useState<'residential' | 'commercial' | 'underConstruction' | 'readyToMove'>(
-    () => (searchParams?.get('tab') as any) || 'residential'
-  );
+  const [selectedCity, setSelectedCity] = useState<CityName>('Pune');
+  const [activeTab, setActiveTab] = useState<'residential' | 'commercial' | 'underConstruction' | 'readyToMove'>('residential');
   const [showStickySearch, setShowStickySearch] = useState(false);
-  const [searchQuery, setSearchQuery] = useState(() => searchParams?.get('q') || '');
-  const [filters, setFilters] = useState<SearchFilters>(() => {
-    const initial: SearchFilters = {};
-    if (searchParams?.get('bhk')) initial.bhk = searchParams.get('bhk')?.split(',');
-    if (searchParams?.get('builder')) initial.builder = searchParams.get('builder')?.split(',');
-    if (searchParams?.get('type')) initial.propertyType = searchParams.get('type')?.split(',');
-    const minPrice = searchParams?.get('minPrice');
-    const maxPrice = searchParams?.get('maxPrice');
-    if (minPrice || maxPrice) {
-      initial.priceRange = {
-        min: minPrice ? parseInt(minPrice) : 0,
-        max: maxPrice === '999999999' ? Infinity : maxPrice ? parseInt(maxPrice) : Infinity
-      };
-    }
-    return initial;
-  });
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filters, setFilters] = useState<SearchFilters>({});
   const [showFilters, setShowFilters] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
@@ -233,6 +201,28 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
   useEffect(() => {
     onFilterChange?.({ city: selectedCity.toLowerCase(), filters });
   }, [selectedCity, filters, onFilterChange]);
+
+  // ✅ Initialize from URL on mount
+  useEffect(() => {
+    const locationMatch = pathname?.match(/^\/locations\/(pune|mumbai|kdmc)$/i);
+    if (locationMatch) {
+      const slug = locationMatch[1].toLowerCase() as CitySlug;
+      const city = CITIES.find(c => c.slug === slug);
+      if (city) setSelectedCity(city.name);
+    }
+    const urlCity = searchParams?.get('city');
+    if (urlCity) {
+      const normalized = urlCity.toLowerCase();
+      const city = CITIES.find(c => c.slug === normalized);
+      if (city) setSelectedCity(city.name);
+    }
+    const urlTab = searchParams?.get('tab');
+    if (urlTab && ['residential', 'commercial', 'underConstruction', 'readyToMove'].includes(urlTab)) {
+      setActiveTab(urlTab as any);
+    }
+    const urlQuery = searchParams?.get('q');
+    if (urlQuery) setSearchQuery(urlQuery);
+  }, [pathname, searchParams]);
 
   const navigateToLocation = useCallback((cityName: CityName) => {
     const citySlug = CITIES.find(c => c.name === cityName)?.slug;
@@ -400,16 +390,8 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
     handleSearch();
   }, [handleSearch, navigateToLocation]);
 
-  // ✅ Props - properly typed for child component compatibility
+  // ✅ Props - simple, no complex typing that could cause issues
   const searchBarProps = useMemo(() => {
-    const citiesForSearchBar: City[] = CITIES.map(city => ({
-      name: city.name,
-      projects: city.projects,
-      localities: [...city.localities],
-      description: city.description,
-      slug: city.slug
-    }));
-    
     return {
       activeTab, 
       selectedCity, 
@@ -418,10 +400,10 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
       isCityDropdownOpen,
       showSuggestions: !!searchQuery && filteredSuggestions.length > 0,
       filteredSuggestions: [...filteredSuggestions],
-      categories: CATEGORIES as readonly Category[],
-      cities: citiesForSearchBar,
+      categories: CATEGORIES,
+      cities: CITIES,
       isSearching,
-      onTabChange: (tab: string) => setActiveTab(tab as 'residential' | 'commercial' | 'underConstruction' | 'readyToMove'),
+      onTabChange: (tab: string) => setActiveTab(tab as any),
       onCityChange: (city: string) => handleCityChange(city as CityName),
       onSearchQueryChange: setSearchQuery,
       onCityDropdownToggle: handleCityDropdownOpen,
@@ -435,9 +417,9 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
     activeTab, 
     selectedCity, 
     searchQuery,
-    categories: CATEGORIES as readonly Category[],
+    categories: CATEGORIES,
     isSearching,
-    onTabChange: (tab: string) => setActiveTab(tab as 'residential' | 'commercial' | 'underConstruction' | 'readyToMove'),
+    onTabChange: (tab: string) => setActiveTab(tab as any),
     onSearchQueryChange: setSearchQuery,
     onSearch: handleSearch,
   }), [activeTab, selectedCity, searchQuery, isSearching, handleSearch]);
@@ -457,11 +439,6 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
 
   const currentCity = useMemo(() => CITIES.find(c => c.name === selectedCity) || CITIES[0], [selectedCity]);
 
-  const heroTransition: Variants = {
-    initial: { opacity: 0, y: 16 },
-    animate: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' as const } }
-  };
-
   return (
     <motion.section 
       style={{ opacity: heroOpacity, scale: heroScale }} 
@@ -478,7 +455,7 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
             className="lg:col-span-5 text-center lg:text-left order-1 lg:order-1 w-full" 
             initial={{ opacity: 0, y: 16 }} 
             animate={{ opacity: 1, y: 0 }} 
-            transition={{ duration: 0.5, ease: 'easeOut' as const }}
+            transition={{ duration: 0.5 }}
           >
             {/* Badge */}
             <motion.div 
@@ -605,7 +582,7 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
             className="lg:col-span-7 w-full order-2 lg:order-2"
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, duration: 0.5, ease: 'easeOut' as const }}
+            transition={{ delay: 0.1, duration: 0.5 }}
           >
             <div className="w-full">
               <SearchBar {...searchBarProps} />
