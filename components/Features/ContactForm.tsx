@@ -22,7 +22,7 @@ export default function ContactForm({
   propertyId,
   propertyTitle,
   compact = false,
-}: ContactFormProps): JSX.Element {
+}: ContactFormProps) {
   const [form, setForm] = useState<FormState>({
     name: "",
     email: "",
@@ -32,11 +32,10 @@ export default function ContactForm({
       : "",
   });
 
-  const [submitting, setSubmitting] = useState<boolean>(false);
-  const [submitted, setSubmitted] = useState<boolean>(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // ✅ Validation
   const validate = (): boolean => {
     const e: Record<string, string> = {};
 
@@ -54,7 +53,6 @@ export default function ContactForm({
     return Object.keys(e).length === 0;
   };
 
-  // ✅ Submit Handler
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!validate()) return;
@@ -82,7 +80,6 @@ export default function ContactForm({
     toast.success("Enquiry submitted! We'll contact you within 2 hours.");
   };
 
-  // ✅ Success UI
   if (submitted) {
     return (
       <div className="flex flex-col items-center justify-center py-8 text-center">
@@ -107,7 +104,6 @@ export default function ContactForm({
     );
   }
 
-  // ✅ Form UI
   return (
     <form onSubmit={handleSubmit} className="space-y-4" noValidate>
       {/* NAME */}

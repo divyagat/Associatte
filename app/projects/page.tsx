@@ -1,4 +1,3 @@
-// client/app/projects/page.tsx
 import { Metadata } from 'next';
 import ProjectCard from '@/components/builder-page/ProjectCard';
 import properties from '../../data/properties.json';
@@ -9,9 +8,9 @@ export const metadata: Metadata = {
   keywords: ['projects', 'Pune', 'Mumbai', 'KDMC', 'real estate', 'properties'],
 };
 
-// ✅ Get unique values for filters
-const getAllLocations = () => [...new Set(properties.map((p: any) => p.location).filter(Boolean))];
-const getAllBuilders = () => [...new Set(properties.map((p: any) => p.developer?.name).filter(Boolean))];
+// ✅ Get unique values for filters - FIXED with Array.from
+const getAllLocations = () => Array.from(new Set(properties.map((p: any) => p.location).filter(Boolean)));
+const getAllBuilders = () => Array.from(new Set(properties.map((p: any) => p.developer?.name).filter(Boolean)));
 const getAllBHKs = () => {
   const bhks = new Set<string>();
   properties.forEach((p: any) => {
@@ -23,38 +22,38 @@ const getAllBHKs = () => {
 };
 
 // ✅ FIX: Added 'async' keyword for Next.js 15+ Promise searchParams
-export default async function ProjectsPage({ 
-  searchParams 
-}: { 
-  searchParams: Promise<{ 
-    q?: string; 
-    location?: string; 
-    builder?: string; 
+export default async function ProjectsPage({
+  searchParams
+}: {
+  searchParams: Promise<{
+    q?: string;
+    location?: string;
+    builder?: string;
     bhk?: string;
     minPrice?: string;
     maxPrice?: string;
-  }> 
+  }>
 }) {
   // ✅ Now await works because function is async
   const params = await searchParams;
-  
+
   // 🔍 Filter projects
   const filteredProjects = properties.filter((project: any) => {
     // Search query
     if (params.q) {
       const query = params.q.toLowerCase();
       const matchesName = project.name?.toLowerCase().includes(query);
-      const matchesLocation = project.fullLocation?.area?.toLowerCase().includes(query) || 
-                             project.location?.toLowerCase().includes(query);
+      const matchesLocation = project.fullLocation?.area?.toLowerCase().includes(query) ||
+        project.location?.toLowerCase().includes(query);
       const matchesBuilder = project.developer?.name?.toLowerCase().includes(query);
       if (!matchesName && !matchesLocation && !matchesBuilder) return false;
     }
-    
+
     // Location filter
     if (params.location && project.location?.toLowerCase() !== params.location.toLowerCase()) {
       return false;
     }
-    
+
     // Builder filter
     if (params.builder) {
       const builderPattern = params.builder.toLowerCase();
@@ -63,16 +62,16 @@ export default async function ProjectsPage({
         return false;
       }
     }
-    
+
     // BHK filter
     if (params.bhk) {
       const bhkPattern = params.bhk.toLowerCase();
-      const hasBHK = project.priceDetails?.configurations?.some((c: any) => 
+      const hasBHK = project.priceDetails?.configurations?.some((c: any) =>
         c.type?.toLowerCase().includes(bhkPattern)
       );
       if (!hasBHK) return false;
     }
-    
+
     // Price filter (basic numeric comparison)
     if (params.minPrice || params.maxPrice) {
       const priceText = project.priceDetails?.range || project.price || '';
@@ -80,7 +79,7 @@ export default async function ProjectsPage({
       if (params.minPrice && priceNum < parseInt(params.minPrice)) return false;
       if (params.maxPrice && priceNum > parseInt(params.maxPrice)) return false;
     }
-    
+
     return true;
   });
 
@@ -97,7 +96,7 @@ export default async function ProjectsPage({
           <p className="text-lg text-white/90 mb-6">
             Discover {filteredProjects.length} premium projects across Pune, Mumbai & KDMC
           </p>
-          
+
           {/* 🔍 Search & Filters Form */}
           <form className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
             {/* Search */}
@@ -113,34 +112,34 @@ export default async function ProjectsPage({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
-            
+
             {/* Location */}
             <select name="location" defaultValue={params.location}
               className="px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-[#F8C21C]">
               <option value="">All Locations</option>
               {locations.map(loc => <option key={loc} value={loc} className="text-gray-900">{loc}</option>)}
             </select>
-            
+
             {/* Builder */}
             <select name="builder" defaultValue={params.builder}
               className="px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-[#F8C21C]">
               <option value="">All Builders</option>
               {builders.map(b => <option key={b} value={b} className="text-gray-900">{b}</option>)}
             </select>
-            
+
             {/* BHK */}
             <select name="bhk" defaultValue={params.bhk}
               className="px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-[#F8C21C]">
               <option value="">All Configurations</option>
               {bhks.map(b => <option key={b} value={b} className="text-gray-900">{b}</option>)}
             </select>
-            
+
             {/* Submit */}
             <button type="submit" className="lg:col-span-5 px-6 py-3 bg-[#F8C21C] text-[#8B0000] font-semibold rounded-xl hover:bg-[#d4a017] transition-colors">
               Filter Projects
             </button>
           </form>
-          
+
           {/* Active Filters */}
           {(params.q || params.location || params.builder || params.bhk) && (
             <div className="flex flex-wrap gap-2 mt-4">

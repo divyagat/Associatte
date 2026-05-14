@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-export default function VirtualSiteVisitSection(): JSX.Element {
+export default function VirtualSiteVisitSection() {
   const steps = [
     { title: '360° Location Tour', desc: 'Explore the project\'s actual surroundings.' },
     { title: 'Sample Flat Video', desc: 'Experience your future home virtually.' },
@@ -65,7 +65,7 @@ export default function VirtualSiteVisitSection(): JSX.Element {
                   
                   {/* Laptop */}
                   <rect x="90" y="150" width="120" height="70" rx="4" fill="#334155" />
-                  <rect x="95" y="155" width="110" height="55" rx="2" fill="#E2E8F0" /> {/* Grey Screen (No more harsh yellow) */}
+                  <rect x="95" y="155" width="110" height="55" rx="2" fill="#E2E8F0" />
                   <rect x="80" y="218" width="140" height="8" rx="4" fill="#475569" />
                   
                   {/* Video Play Button on Screen */}

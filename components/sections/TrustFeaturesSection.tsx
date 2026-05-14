@@ -1,56 +1,51 @@
-// @/components/sections/TrustFeaturesSection.tsx
 'use client';
 
 import { motion } from 'framer-motion';
 import { Shield, Users, Headphones, Handshake, ArrowRight, CheckCircle2 } from 'lucide-react';
 import Image from 'next/image';
 
-const features = [
-  {
-    icon: Shield,
-    title: 'Verified Projects Only',
-    description: 'Every project is builder-verified and legally checked with RERA compliance.',
-    color: 'from-[#8B0000] to-[#6b0000]',
-    bgColor: 'bg-[#8B0000]/10',
-    iconColor: 'text-[#8B0000]',
-  },
-  {
-    icon: Users,
-    title: 'Expert Property Advisors',
-    description: 'Dedicated relationship manager with 10+ years market experience.',
-    color: 'from-[#005E60] to-[#004a4d]',
-    bgColor: 'bg-[#005E60]/10',
-    iconColor: 'text-[#005E60]',
-  },
-  {
-    icon: Headphones,
-    title: 'Zero Brokerage Support',
-    description: 'We help you get the best builder deals & exclusive offers.',
-    color: 'from-[#F8C21C] to-[#e6b418]',
-    bgColor: 'bg-[#F8C21C]/10',
-    iconColor: 'text-[#F8C21C]',
-  },
-  {
-    icon: Handshake,
-    title: 'End-to-End Assistance',
-    description: 'Site visit → Negotiation → Loan → Registration. We handle it all.',
-    color: 'from-[#8B0000] to-[#6b0000]',
-    bgColor: 'bg-[#8B0000]/10',
-    iconColor: 'text-[#8B0000]',
-  },
-];
+// ✅ ADD city PROP
+interface TrustFeaturesSectionProps {
+  city: 'Pune' | 'Mumbai' | 'KDMC';
+}
+
+const FEATURES: Record<'Pune' | 'Mumbai' | 'KDMC', Array<{
+  icon: React.ComponentType<{ className?: string }>;
+  title: string;
+  description: string;
+  color: string;
+  bgColor: string;
+  iconColor: string;
+}>> = {
+  Pune: [
+    { icon: Shield, title: 'Verified Projects Only', description: 'Every project is builder-verified and legally checked with RERA compliance.', color: 'from-[#8B0000] to-[#6b0000]', bgColor: 'bg-[#8B0000]/10', iconColor: 'text-[#8B0000]' },
+    { icon: Users, title: 'Expert Property Advisors', description: 'Dedicated relationship manager with 10+ years market experience.', color: 'from-[#005E60] to-[#004a4d]', bgColor: 'bg-[#005E60]/10', iconColor: 'text-[#005E60]' },
+    { icon: Headphones, title: 'Zero Brokerage Support', description: 'We help you get the best builder deals & exclusive offers.', color: 'from-[#F8C21C] to-[#e6b418]', bgColor: 'bg-[#F8C21C]/10', iconColor: 'text-[#F8C21C]' },
+    { icon: Handshake, title: 'End-to-End Assistance', description: 'Site visit → Negotiation → Loan → Registration. We handle it all.', color: 'from-[#8B0000] to-[#6b0000]', bgColor: 'bg-[#8B0000]/10', iconColor: 'text-[#8B0000]' },
+  ],
+  Mumbai: [
+    { icon: Shield, title: 'Verified Projects Only', description: 'Every project is builder-verified and legally checked with RERA compliance.', color: 'from-[#8B0000] to-[#6b0000]', bgColor: 'bg-[#8B0000]/10', iconColor: 'text-[#8B0000]' },
+    { icon: Users, title: 'Expert Property Advisors', description: 'Dedicated relationship manager with 10+ years market experience.', color: 'from-[#005E60] to-[#004a4d]', bgColor: 'bg-[#005E60]/10', iconColor: 'text-[#005E60]' },
+    { icon: Headphones, title: 'Zero Brokerage Support', description: 'We help you get the best builder deals & exclusive offers.', color: 'from-[#F8C21C] to-[#e6b418]', bgColor: 'bg-[#F8C21C]/10', iconColor: 'text-[#F8C21C]' },
+    { icon: Handshake, title: 'End-to-End Assistance', description: 'Site visit → Negotiation → Loan → Registration. We handle it all.', color: 'from-[#8B0000] to-[#6b0000]', bgColor: 'bg-[#8B0000]/10', iconColor: 'text-[#8B0000]' },
+  ],
+  KDMC: [
+    { icon: Shield, title: 'Verified Projects Only', description: 'Every project is builder-verified and legally checked with RERA compliance.', color: 'from-[#8B0000] to-[#6b0000]', bgColor: 'bg-[#8B0000]/10', iconColor: 'text-[#8B0000]' },
+    { icon: Users, title: 'Expert Property Advisors', description: 'Dedicated relationship manager with 10+ years market experience.', color: 'from-[#005E60] to-[#004a4d]', bgColor: 'bg-[#005E60]/10', iconColor: 'text-[#005E60]' },
+    { icon: Headphones, title: 'Zero Brokerage Support', description: 'We help you get the best builder deals & exclusive offers.', color: 'from-[#F8C21C] to-[#e6b418]', bgColor: 'bg-[#F8C21C]/10', iconColor: 'text-[#F8C21C]' },
+    { icon: Handshake, title: 'End-to-End Assistance', description: 'Site visit → Negotiation → Loan → Registration. We handle it all.', color: 'from-[#8B0000] to-[#6b0000]', bgColor: 'bg-[#8B0000]/10', iconColor: 'text-[#8B0000]' },
+  ],
+};
 
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.2,
-    },
+    transition: { staggerChildren: 0.15, delayChildren: 0.2 },
   },
 };
 
+// ✅ FIX: Use proper Framer Motion types with 'as const'
 const itemVariants = {
   hidden: { opacity: 0, y: 30, scale: 0.95 },
   visible: {
@@ -58,18 +53,18 @@ const itemVariants = {
     y: 0,
     scale: 1,
     transition: {
-      type: 'spring',
+      type: 'spring' as const,
       stiffness: 100,
       damping: 15,
     },
   },
 };
 
-export default function TrustFeaturesSection() {
+export default function TrustFeaturesSection({ city }: TrustFeaturesSectionProps) {
+  const features = FEATURES[city];
+
   return (
     <section className="relative py-20 lg:py-28 bg-gradient-to-b from-white via-gray-50 to-white overflow-hidden">
-      
-      {/* Decorative Background Elements */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-20 left-10 w-72 h-72 bg-[#005E60]/5 rounded-full blur-3xl" />
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#F8C21C]/10 rounded-full blur-3xl" />
@@ -78,8 +73,6 @@ export default function TrustFeaturesSection() {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          
-          {/* Left: Content & Features */}
           <motion.div
             initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -87,7 +80,6 @@ export default function TrustFeaturesSection() {
             transition={{ duration: 0.6, ease: 'easeOut' }}
             className="order-2 lg:order-1"
           >
-            {/* Section Header */}
             <div className="mb-10">
               <motion.span 
                 initial={{ opacity: 0, y: 10 }}
@@ -113,7 +105,6 @@ export default function TrustFeaturesSection() {
               </p>
             </div>
 
-            {/* Features Grid */}
             <motion.div 
               variants={containerVariants}
               initial="hidden"
@@ -128,16 +119,13 @@ export default function TrustFeaturesSection() {
                   whileHover={{ y: -4, transition: { duration: 0.2 } }}
                   className="group relative p-5 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-[#005E60]/30 transition-all duration-300 cursor-default"
                 >
-                  {/* Hover Glow Effect */}
                   <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`} />
                   
                   <div className="relative flex items-start gap-4">
-                    {/* Icon */}
                     <div className={`flex-shrink-0 w-12 h-12 rounded-xl ${feature.bgColor} ${feature.iconColor} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
                       <feature.icon className="w-6 h-6" />
                     </div>
                     
-                    {/* Content */}
                     <div className="flex-1 min-w-0">
                       <h3 className="font-bold text-gray-900 text-base leading-tight group-hover:text-[#005E60] transition-colors">
                         {feature.title}
@@ -148,13 +136,11 @@ export default function TrustFeaturesSection() {
                     </div>
                   </div>
                   
-                  {/* Subtle bottom accent */}
                   <div className={`absolute bottom-0 left-5 right-5 h-0.5 bg-gradient-to-r ${feature.color} rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
                 </motion.div>
               ))}
             </motion.div>
 
-            {/* CTA Button */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -172,7 +158,6 @@ export default function TrustFeaturesSection() {
             </motion.div>
           </motion.div>
 
-          {/* Right: Image Section */}
           <motion.div
             initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -180,9 +165,7 @@ export default function TrustFeaturesSection() {
             transition={{ duration: 0.6, ease: 'easeOut', delay: 0.2 }}
             className="order-1 lg:order-2 relative"
           >
-            {/* Main Image Container */}
             <div className="relative rounded-3xl overflow-hidden shadow-2xl">
-              {/* Image */}
               <div className="relative aspect-[4/5] lg:aspect-square">
                 <Image
                   src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80"
@@ -192,12 +175,9 @@ export default function TrustFeaturesSection() {
                   priority
                   sizes="(max-width: 1024px) 100vw, 50vw"
                 />
-                
-                {/* Gradient Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
               </div>
 
-              {/* Floating Stats Card */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -220,7 +200,6 @@ export default function TrustFeaturesSection() {
                 </div>
               </motion.div>
 
-              {/* Decorative Badge */}
               <motion.div
                 initial={{ scale: 0 }}
                 whileInView={{ scale: 1 }}
@@ -235,11 +214,9 @@ export default function TrustFeaturesSection() {
               </motion.div>
             </div>
 
-            {/* Decorative Elements */}
             <div className="absolute -top-4 -right-4 w-24 h-24 bg-[#F8C21C]/20 rounded-full blur-2xl" />
             <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-[#005E60]/20 rounded-full blur-2xl" />
           </motion.div>
-
         </div>
       </div>
     </section>

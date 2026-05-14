@@ -1,4 +1,3 @@
-// client/app/properties/page.tsx
 import { Metadata } from 'next';
 import ProjectCard from '@/components/builder-page/ProjectCard';
 import properties from '../../data/properties.json';
@@ -23,28 +22,24 @@ export type PropertyType = typeof PROPERTY_TYPES[number]['id'];
 
 // ✅ Helper: Determine property type from project data
 const getPropertyType = (project: any): PropertyType => {
-  // If project has explicit type field, use it
   if (project.propertyType) return project.propertyType;
-  
-  // Infer from configurations
   const configs = project.priceDetails?.configurations || [];
   const hasPlot = configs.some((c: any) => c.type?.toLowerCase().includes('plot'));
-  const hasCommercial = configs.some((c: any) => 
+  const hasCommercial = configs.some((c: any) =>
     c.type?.toLowerCase().includes('office') || c.type?.toLowerCase().includes('shop')
   );
   const isReady = project.possessionDate?.toLowerCase().includes('ready');
   const isPreLaunch = project.possessionDate && new Date(project.possessionDate) > new Date('2027-12-31');
-  
   if (hasPlot) return 'plots';
   if (hasCommercial) return 'commercial';
   if (isReady) return 'ready';
   if (isPreLaunch) return 'pre-launch';
-  return 'residential'; // Default
+  return 'residential';
 };
 
-// ✅ Get unique filter values
-const getAllLocations = () => [...new Set(properties.map((p: any) => p.location).filter(Boolean))];
-const getAllBuilders = () => [...new Set(properties.map((p: any) => p.developer?.name).filter(Boolean))];
+// ✅ Get unique filter values - FIXED with Array.from
+const getAllLocations = () => Array.from(new Set(properties.map((p: any) => p.location).filter(Boolean)));
+const getAllBuilders = () => Array.from(new Set(properties.map((p: any) => p.developer?.name).filter(Boolean)));
 const getAllBHKs = () => {
   const bhks = new Set<string>();
   properties.forEach((p: any) => {
@@ -59,45 +54,40 @@ const getAllBHKs = () => {
 };
 
 // ✅ FIX: Added 'async' keyword for Next.js 15+ Promise searchParams
-export default async function PropertiesPage({ 
-  searchParams 
-}: { 
-  searchParams: Promise<{ 
+export default async function PropertiesPage({
+  searchParams
+}: {
+  searchParams: Promise<{
     type?: string;
-    q?: string; 
-    location?: string; 
-    builder?: string; 
+    q?: string;
+    location?: string;
+    builder?: string;
     bhk?: string;
     minPrice?: string;
     maxPrice?: string;
-  }> 
+  }>
 }) {
   const params = await searchParams;
   const activeType = (params.type as PropertyType) || 'residential';
-  
+
   // 🔍 Filter projects by type + other params
   const filteredProjects = properties.filter((project: any) => {
     const projectType = getPropertyType(project);
-    
-    // ✅ Property type filter (primary)
     if (activeType && projectType !== activeType) return false;
-    
-    // Search query
+
     if (params.q) {
       const query = params.q.toLowerCase();
       const matchesName = project.name?.toLowerCase().includes(query);
-      const matchesLocation = project.fullLocation?.area?.toLowerCase().includes(query) || 
-                             project.location?.toLowerCase().includes(query);
+      const matchesLocation = project.fullLocation?.area?.toLowerCase().includes(query) ||
+        project.location?.toLowerCase().includes(query);
       const matchesBuilder = project.developer?.name?.toLowerCase().includes(query);
       if (!matchesName && !matchesLocation && !matchesBuilder) return false;
     }
-    
-    // Location filter
+
     if (params.location && project.location?.toLowerCase() !== params.location.toLowerCase()) {
       return false;
     }
-    
-    // Builder filter
+
     if (params.builder) {
       const builderPattern = params.builder.toLowerCase();
       const projectName = project.developer?.name?.toLowerCase() || '';
@@ -105,32 +95,29 @@ export default async function PropertiesPage({
         return false;
       }
     }
-    
-    // BHK filter
+
     if (params.bhk) {
       const bhkPattern = params.bhk.toLowerCase();
-      const hasBHK = project.priceDetails?.configurations?.some((c: any) => 
+      const hasBHK = project.priceDetails?.configurations?.some((c: any) =>
         c.type?.toLowerCase().includes(bhkPattern)
       );
       if (!hasBHK) return false;
     }
-    
-    // Price filter
+
     if (params.minPrice || params.maxPrice) {
       const priceText = project.priceDetails?.range || project.price || '';
       const priceNum = parseInt(priceText.replace(/[^0-9]/g, '')) * 100000;
       if (params.minPrice && priceNum < parseInt(params.minPrice)) return false;
       if (params.maxPrice && priceNum > parseInt(params.maxPrice)) return false;
     }
-    
+
     return true;
   });
 
   const locations = getAllLocations();
   const builders = getAllBuilders();
   const bhks = getAllBHKs();
-  
-  // Count projects per type for badges
+
   const typeCounts = PROPERTY_TYPES.reduce((acc, type) => {
     acc[type.id] = properties.filter(p => getPropertyType(p) === type.id).length;
     return acc;
@@ -145,7 +132,7 @@ export default async function PropertiesPage({
           <p className="text-lg text-white/90 mb-6">
             Discover {filteredProjects.length} properties across Pune, Mumbai & KDMC
           </p>
-          
+
           {/* 🔹 Property Type Tabs */}
           <div className="flex flex-wrap gap-2 mb-6">
             {PROPERTY_TYPES.map((type) => {
@@ -170,10 +157,9 @@ export default async function PropertiesPage({
               );
             })}
           </div>
-          
+
           {/* 🔍 Search & Filters Form */}
           <form className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
-            {/* Search */}
             <div className="lg:col-span-2 relative">
               <input
                 type="text"
@@ -186,34 +172,30 @@ export default async function PropertiesPage({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
-            
-            {/* Location */}
+
             <select name="location" defaultValue={params.location}
               className="px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-[#F8C21C]">
               <option value="">All Locations</option>
               {locations.map(loc => <option key={loc} value={loc} className="text-gray-900">{loc}</option>)}
             </select>
-            
-            {/* Builder */}
+
             <select name="builder" defaultValue={params.builder}
               className="px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-[#F8C21C]">
               <option value="">All Builders</option>
               {builders.map(b => <option key={b} value={b} className="text-gray-900">{b}</option>)}
             </select>
-            
-            {/* BHK */}
+
             <select name="bhk" defaultValue={params.bhk}
               className="px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-[#F8C21C]">
               <option value="">All Configurations</option>
               {bhks.map(b => <option key={b} value={b} className="text-gray-900">{b}</option>)}
             </select>
-            
-            {/* Submit */}
+
             <button type="submit" className="lg:col-span-6 px-6 py-3 bg-[#F8C21C] text-[#8B0000] font-semibold rounded-xl hover:bg-[#d4a017] transition-colors">
               Filter Properties
             </button>
           </form>
-          
+
           {/* Active Filters */}
           {(params.q || params.location || params.builder || params.bhk) && (
             <div className="flex flex-wrap gap-2 mt-4">

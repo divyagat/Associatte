@@ -1,4 +1,3 @@
-// components/sections/NewlyLaunchedProjects.tsx
 'use client';
 
 import { ChevronLeft, ChevronRight, MapPin, Bed, Square, Tag, Filter } from 'lucide-react';
@@ -18,7 +17,7 @@ interface Project {
   price: string;
   image: string;
   // ✅ Extra fields for filtering (internal use only)
-  city?: 'pune' | 'mumbai';
+  city?: 'pune' | 'mumbai' | 'kdmc';
   priceNumeric?: number;
   builder?: string;
   propertyType?: string;
@@ -34,7 +33,6 @@ const PUNE_PROJECTS: Project[] = [
     sqft: '1270 - 1858 SQ.FT.',
     price: '₹1.48 Crore',
     image: 'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=400&q=80',
-    // ✅ Internal filtering fields
     city: 'pune',
     priceNumeric: 14800000,
     builder: 'Shapoorji Pallonji',
@@ -163,24 +161,100 @@ const MUMBAI_PROJECTS: Project[] = [
   },
 ];
 
+// ✅ KDMC projects - NEW section with affordable options
+const KDMC_PROJECTS: Project[] = [
+  {
+    id: 201,
+    name: 'Paradise Sai World City',
+    location: 'Kalyan East, KDMC',
+    bhk: '1 & 2 BHK',
+    sqft: '425 - 685 SQ.FT.',
+    price: '₹42 Lakh',
+    image: 'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=400&q=80',
+    city: 'kdmc',
+    priceNumeric: 4200000,
+    builder: 'Paradise Group',
+    propertyType: 'Apartment',
+  },
+  {
+    id: 202,
+    name: 'Today Global Anantam',
+    location: 'Dombivli East, KDMC',
+    bhk: '1, 2 & 3 BHK',
+    sqft: '380 - 920 SQ.FT.',
+    price: '₹38 Lakh',
+    image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400&q=80',
+    city: 'kdmc',
+    priceNumeric: 3800000,
+    builder: 'Today Global',
+    propertyType: 'Apartment',
+  },
+  {
+    id: 203,
+    name: 'Runwal Bliss',
+    location: 'Badlapur West, KDMC',
+    bhk: '1 & 2 BHK',
+    sqft: '410 - 650 SQ.FT.',
+    price: '₹35 Lakh',
+    image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&q=80',
+    city: 'kdmc',
+    priceNumeric: 3500000,
+    builder: 'Runwal',
+    propertyType: 'Apartment',
+  },
+  {
+    id: 204,
+    name: 'Lodha Codename Hidden Treasure',
+    location: 'Kalyan West, KDMC',
+    bhk: '2 & 3 BHK',
+    sqft: '650 - 1050 SQ.FT.',
+    price: '₹58 Lakh',
+    image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&q=80',
+    city: 'kdmc',
+    priceNumeric: 5800000,
+    builder: 'Lodha Group',
+    propertyType: 'Apartment',
+  },
+  {
+    id: 205,
+    name: 'Shapoorji Pallonji Joyville Hadapsar',
+    location: 'Ulhasnagar, KDMC',
+    bhk: '1 & 2 BHK',
+    sqft: '395 - 620 SQ.FT.',
+    price: '₹32 Lakh',
+    image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&q=80',
+    city: 'kdmc',
+    priceNumeric: 3200000,
+    builder: 'Shapoorji Pallonji',
+    propertyType: 'Apartment',
+  },
+];
+
 // ✅ Your EXACT slug mapping (unchanged - with trailing spaces preserved)
 const PROJECT_SLUG_MAP: Record<string, string> = {
+  // Pune slugs
   'Shapoorji Everra at Tree Cloud': 'shapoorji-tree-cloud',
   'Flamingo Park At Riverview City': 'magarpatta-city-rvc-flamingo',
   'Tribeca Everett': 'tribeca-lulla-nagar',
-  'Tribeca Trump world Center ': 'tribeca-trump-tower',  // ✅ Trailing space preserved
-  '57Avenue Panchshil ': 'panchshil-57avenue',           // ✅ Trailing space preserved
+  'Tribeca Trump world Center ': 'tribeca-trump-tower',
+  '57Avenue Panchshil ': 'panchshil-57avenue',
   // Mumbai slugs
   'Lodha Belmondo': 'lodha-belmondo-kharghar',
   'Runwal Gardens': 'runwal-gardens-dombivli',
   'Shapoorji Pallonji Joyville': 'joyville-virar',
   'Lodha Fiore': 'lodha-fiore-thane',
   'Birla Aerya': 'birla-aerya-andheri',
+  // KDMC slugs
+  'Paradise Sai World City': 'paradise-sai-world-city-kalyan',
+  'Today Global Anantam': 'today-global-anantam-dombivli',
+  'Runwal Bliss': 'runwal-bliss-badlapur',
+  'Lodha Codename Hidden Treasure': 'lodha-hidden-treasure-kalyan',
+  'Shapoorji Pallonji Joyville Hadapsar': 'joyville-ulhasnagar',
 };
 
-// ✅ Props interface
+// ✅ Props interface - FIXED: added kdmc to union type
 interface NewlyLaunchedProjectsProps {
-  selectedCity: 'pune' | 'mumbai';
+  selectedCity: 'pune' | 'mumbai' | 'kdmc';
   filters?: SearchFilters;
 }
 
@@ -194,8 +268,15 @@ export default function NewlyLaunchedProjects({
 
   // ✅ Filter logic - SAME behavior as Hero, works with original data structure
   const filteredProjects = useMemo(() => {
-    // Step 1: Select projects by city
-    let projects = selectedCity === 'pune' ? [...PUNE_PROJECTS] : [...MUMBAI_PROJECTS];
+    // Step 1: Select projects by city (NOW INCLUDES KDMC)
+    let projects: Project[] = [];
+    if (selectedCity === 'pune') {
+      projects = [...PUNE_PROJECTS];
+    } else if (selectedCity === 'mumbai') {
+      projects = [...MUMBAI_PROJECTS];
+    } else {
+      projects = [...KDMC_PROJECTS];
+    }
 
     // Step 2: Apply BHK filter (case-insensitive partial match)
     if (filters.bhk?.length) {

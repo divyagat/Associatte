@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Building2, Phone, Mail, MapPin } from "lucide-react";
 import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from "react-icons/fa";
 
-export default function Footer(): JSX.Element {
+export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   const socialIcons = [

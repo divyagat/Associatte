@@ -1,6 +1,7 @@
 import VirtualSiteVisitSection from "../sections/VirtualSiteVisitSection";
 
-export default function Advantages(): JSX.Element {
+
+export default function Advantages()  {
   const advantages = [
     {
       icon: (

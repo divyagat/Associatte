@@ -1,9 +1,8 @@
-// client/components/builder-page/BuilderProjectCard.tsx
 'use client';
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { MapPin, Home, ArrowRight } from 'lucide-react';
+import { MapPin, ArrowRight } from 'lucide-react';
 
 interface Project {
   slug: string;
@@ -12,8 +11,8 @@ interface Project {
   price: string;
   image: string;
   developer?: { name: string };
-  bhk?: string[];
-  [key: string]: any; // Allow extra fields
+  bhk?: readonly string[];
+  [key: string]: unknown;
 }
 
 interface BuilderProjectCardProps {
@@ -21,11 +20,12 @@ interface BuilderProjectCardProps {
 }
 
 export default function BuilderProjectCard({ project }: BuilderProjectCardProps) {
-  // ✅ Defensive: handle missing required fields
   if (!project?.slug || !project?.name) {
     console.warn('BuilderProjectCard: Missing required props', project);
     return null;
   }
+
+  const bhkList = project.bhk ?? [];
 
   return (
     <motion.div
@@ -37,7 +37,7 @@ export default function BuilderProjectCard({ project }: BuilderProjectCardProps)
       className="group"
     >
       <Link 
-        href={`/properties/${project.slug}`}  // ✅ Link to project detail
+        href={`/properties/${project.slug}`}
         className="block bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-xl overflow-hidden"
       >
         {/* Image */}
@@ -46,7 +46,13 @@ export default function BuilderProjectCard({ project }: BuilderProjectCardProps)
             src={project.image || '/projects/placeholder.jpg'} 
             alt={project.name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            onError={e => (e.target as HTMLImageElement).src = '/projects/placeholder.jpg'}
+            onError={e => {
+              const target = e.target as HTMLImageElement;
+              if (!target.dataset.fallback) {
+                target.dataset.fallback = 'true';
+                target.src = '/projects/placeholder.jpg';
+              }
+            }}
           />
           {/* Price Badge */}
           <span className="absolute bottom-3 left-3 px-3 py-1 bg-[#005E60] text-white text-sm font-semibold rounded-lg">
@@ -67,9 +73,9 @@ export default function BuilderProjectCard({ project }: BuilderProjectCardProps)
           </div>
           
           {/* BHK Tags */}
-          {project.bhk?.length > 0 && (
+          {bhkList.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mb-4">
-              {project.bhk.slice(0, 3).map((type: string) => (
+              {bhkList.slice(0, 3).map((type) => (
                 <span key={type} className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-md font-medium">
                   {type}
                 </span>

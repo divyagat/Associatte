@@ -202,7 +202,7 @@ function LocationSchema({ city, projects }: { city: string; projects: Project[] 
         "offers": {
           "@type": "Offer",
           "priceCurrency": "INR",
-          "price": parsePrice(project.price), // Price is already in rupees
+          "price": parsePrice(project.price),
           "availability": project.possessionDate?.toLowerCase().includes('ready') 
             ? "https://schema.org/InStock" 
             : "https://schema.org/PreOrder"
@@ -320,7 +320,6 @@ export default function CityPage() {
     if (sortBy === 'price-asc') {
       projects.sort((a, b) => parsePrice(a.price) - parsePrice(b.price));
     } else if (sortBy === 'price-desc') {
-      // FIXED: Was parsePrice(b.price) - parsePrice(b.price) - now correctly compares a and b
       projects.sort((a, b) => parsePrice(b.price) - parsePrice(a.price));
     } else if (sortBy === 'newest') {
       projects.sort((a, b) => {
@@ -700,7 +699,7 @@ export default function CityPage() {
                       if (!project.mapCoords) return null;
                       
                       const isSelected = selectedProject?.slug === project.slug;
-                      const highlights = getHighlights(project); // ✅ Defined in scope
+                      const highlights = getHighlights(project);
                       
                       return (
                         <Marker
@@ -918,7 +917,8 @@ export default function CityPage() {
                             </div>
                           </div>
 
-                          {project.amenities?.length > 0 && (
+                          {/* ✅ FIXED: TypeScript-safe amenities rendering */}
+                          {project.amenities && project.amenities.length > 0 && (
                             <div className="mb-4">
                               <div className="flex flex-wrap gap-1.5">
                                 {project.amenities.slice(0, 4).map((amenity: string, i: number) => (
@@ -926,7 +926,11 @@ export default function CityPage() {
                                     {amenity}
                                   </span>
                                 ))}
-                                {project.amenities.length > 4 && <span className="px-2.5 py-1 text-gray-400 text-[11px]">+{project.amenities.length - 4} more</span>}
+                                {project.amenities.length > 4 && (
+                                  <span className="px-2.5 py-1 text-gray-400 text-[11px]">
+                                    +{project.amenities.length - 4} more
+                                  </span>
+                                )}
                               </div>
                             </div>
                           )}
@@ -946,14 +950,16 @@ export default function CityPage() {
               </div>
             )}
             
-            {totalProjects > 6 && viewMode !== 'map' && (
-              <div className="mt-12 text-center">
-                <button className="px-8 py-3 bg-white border-2 border-[#005E60] text-[#005E60] font-bold rounded-xl hover:bg-[#005E60] hover:text-white transition-all shadow-sm hover:shadow-lg">
-                  Load More Projects
-                </button>
-                <p className="text-xs text-gray-500 mt-3">Showing 1-{Math.min(6, totalProjects)} of {totalProjects} projects in {cityDisplayName}</p>
-              </div>
-            )}
+           {totalProjects > 6 && (
+  <div className="mt-12 text-center">
+    <button className="px-8 py-3 bg-white border-2 border-[#005E60] text-[#005E60] font-bold rounded-xl hover:bg-[#005E60] hover:text-white transition-all shadow-sm hover:shadow-lg">
+      Load More Projects
+    </button>
+    <p className="text-xs text-gray-500 mt-3">
+      Showing 1-{Math.min(6, totalProjects)} of {totalProjects} projects in {cityDisplayName}
+    </p>
+  </div>
+)}
           </main>
         )}
 

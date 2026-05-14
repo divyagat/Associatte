@@ -133,11 +133,7 @@ export default function RootLayout({
         <Header />
         
         <Providers>
-<<<<<<< Updated upstream
           <main className="min-h-screen">{children}</main>
-=======
-          <main className=" min-h-screen">{children}</main>
->>>>>>> Stashed changes
         </Providers>
         
         <Footer />

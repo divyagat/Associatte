@@ -1,10 +1,8 @@
-// client/components/sections/TopDevelopersCarousel.tsx
 'use client';
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState, useEffect, useMemo, useRef } from 'react';
 import properties from '../../data/properties.json';
-// ✅ Import shared slug utilities
 import { 
   getBuilderSlug, 
   getBuilderYears, 
@@ -12,25 +10,28 @@ import {
   BUILDER_PRIMARY_SLUGS 
 } from '@/lib/builder-slugs';
 
-// ✅ Fallback slug generator (only if not in shared map)
 const toSlug = (str: string) => 
   str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 
 interface Developer {
-  id: string;           // Internal unique ID
-  name: string;         // Display name
-  slug: string;         // ✅ Navigation slug (matches builder page)
+  id: string;
+  name: string;
+  slug: string;
   years: string;
   projects: number;
   logo: string;
 }
 
-export default function TopDevelopersCarousel() {
+// ✅ ADD city PROP INTERFACE
+interface TopDevelopersCarouselProps {
+  city: 'Pune' | 'Mumbai' | 'KDMC';
+}
+
+export default function TopDevelopersCarousel({ city }: TopDevelopersCarouselProps) {
   const [offset, setOffset] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const trackRef = useRef<HTMLDivElement>(null);
 
-  // 🔄 Extract & aggregate developers from properties.json
   const developers: Developer[] = useMemo(() => {
     const devMap = new Map<string, Developer>();
     
@@ -38,7 +39,6 @@ export default function TopDevelopersCarousel() {
       const name = p.developer?.name;
       if (!name) return;
       
-      // ✅ Use shared utilities for consistency
       const navSlug = getBuilderSlug(name);
       const internalId = toSlug(name);
       
@@ -46,23 +46,21 @@ export default function TopDevelopersCarousel() {
         devMap.set(internalId, {
           id: internalId,
           name,
-          slug: navSlug,  // ✅ Matches builder page routing
-          years: getBuilderYears(name),  // ✅ Shared logic
+          slug: navSlug,
+          years: getBuilderYears(name),
           projects: 0,
-          logo: getBuilderLogo(name),  // ✅ Shared logo path
+          logo: getBuilderLogo(name),
         });
       }
       const dev = devMap.get(internalId)!;
       dev.projects += 1;
     });
     
-    // Sort by project count (descending)
     return Array.from(devMap.values())
-      .filter(d => d.name && d.slug)  // ✅ Defensive: filter invalid entries
+      .filter(d => d.name && d.slug)
       .sort((a, b) => b.projects - a.projects);
   }, []);
 
-  // Duplicate for seamless infinite scroll
   const extendedDevelopers = useMemo(() => {
     if (developers.length <= 4) return developers;
     return [...developers, ...developers.slice(0, 4)];
@@ -71,9 +69,8 @@ export default function TopDevelopersCarousel() {
   const CARD_WIDTH = 280;
   const GAP = 24;
   const STEP = CARD_WIDTH + GAP;
-  const SPEED = 0.08; // ~80px/sec for smooth slow scroll
+  const SPEED = 0.08;
 
-  // 🔄 Auto-scroll animation
   useEffect(() => {
     if (isPaused || developers.length <= 4) return;
     
@@ -100,7 +97,6 @@ export default function TopDevelopersCarousel() {
     };
   }, [isPaused, developers.length]);
 
-  // Manual navigation
   const scrollByCards = (direction: 'left' | 'right') => {
     const container = trackRef.current?.parentElement;
     if (!container) return;
@@ -108,7 +104,6 @@ export default function TopDevelopersCarousel() {
     container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
   };
 
-  // ✅ Defensive: return null if no developers
   if (!developers || developers.length === 0) return null;
 
   return (
@@ -118,15 +113,13 @@ export default function TopDevelopersCarousel() {
       onMouseLeave={() => setIsPaused(false)}
     >
       <div className="max-w-7xl mx-auto px-4">
-        
-        {/* Header */}
         <div className="flex items-center justify-between mb-6 lg:mb-8">
           <div>
             <span className="text-[#005E60] text-xs font-bold uppercase tracking-wider block mb-2">
               Trusted Builders
             </span>
             <h2 className="text-2xl md:text-3xl font-bold text-[#8B0000]">
-              Top Developers in Pune, Mumbai & KDMC
+              Top Developers in {city}
             </h2>
           </div>
           
@@ -150,7 +143,6 @@ export default function TopDevelopersCarousel() {
           )}
         </div>
 
-        {/* Infinite Scroll Track */}
         <div className="overflow-hidden">
           <div 
             ref={trackRef}
@@ -164,12 +156,10 @@ export default function TopDevelopersCarousel() {
             {extendedDevelopers.map((dev, idx) => (
               <a
                 key={`${dev.id}-${idx}`} 
-                // ✅ href uses navigation slug that matches builder page
                 href={`/builders/${dev.slug}`}
                 className="min-w-[280px] w-[280px] bg-white rounded-xl border-l-4 border-[#005E60] shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden block flex-shrink-0"
               >
                 <div className="p-5 flex flex-col h-full">
-                  {/* Logo + Years */}
                   <div className="flex justify-between items-start mb-5">
                     <div className="h-11 w-20 bg-gray-50 rounded-lg flex items-center justify-center px-2 border border-gray-100 group-hover:border-[#005E60]/30 transition-colors">
                       <img 
@@ -188,7 +178,6 @@ export default function TopDevelopersCarousel() {
 
                   <div className="h-px w-full bg-gray-100 mb-5"></div>
 
-                  {/* Name + Projects */}
                   <div className="flex-grow flex flex-col justify-end">
                     <h3 className="text-base font-bold text-gray-900 mb-2 group-hover:text-[#8B0000] transition-colors line-clamp-1">
                       {dev.name}
@@ -202,14 +191,12 @@ export default function TopDevelopersCarousel() {
                   </div>
                 </div>
 
-                {/* Yellow hover progress bar */}
                 <div className="absolute bottom-0 left-0 h-0.5 w-0 bg-[#F8C21C] group-hover:w-full transition-all duration-400 ease-out"></div>
               </a>
             ))}
           </div>
         </div>
 
-        {/* Pause Indicator */}
         {developers.length > 4 && (
           <div className="flex justify-center mt-4">
             <span className={`text-xs transition-opacity duration-300 ${isPaused ? 'opacity-100 text-[#8B0000]' : 'opacity-0'}`}>

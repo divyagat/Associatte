@@ -75,7 +75,7 @@ export const StickySearchBar = memo(({
                     borderColor: isActive ? 'transparent' : `${BRAND_GREEN}30`
                   }}
                 >
-                  <Icon className="w-3 h-3 inline mr-1" style={{ color: isActive ? 'white' : BRAND_GREEN }} />
+                  <Icon className={`w-3 h-3 inline mr-1 ${isActive ? 'text-white' : 'text-[#005E60]'}`} />
                   {cat.label}
                 </motion.button>
               );

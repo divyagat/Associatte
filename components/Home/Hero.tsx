@@ -1,4 +1,3 @@
-// @/components/Home/Hero.tsx
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
@@ -12,7 +11,7 @@ import {
 // Import memoized child components
 import { AnimatedBackground } from './Hero/AnimatedBackground';
 import { SearchBar } from './Hero/SearchBar';
-import { FilterPanel } from './Hero/FilterPanel';
+import { FilterPanel, type FilterPanelProps } from './Hero/FilterPanel';
 import { StickySearchBar } from './Hero/StickySearchBar';
 
 // Types
@@ -26,9 +25,17 @@ export interface SearchFilters {
   locality?: string;
 }
 
+export interface City {
+  name: CityName;
+  projects: number;
+  localities: string[];
+  description: string;
+  slug: CitySlug;
+}
+
 interface HeroProps {
   initialCity?: string;
-  onSearch?: (params: { tab: string; city: string; query: string; filters?: SearchFilters }) => void;
+  onSearch?: (params: { city: string; query?: string; filters?: SearchFilters }) => void;
   onFilterChange?: (params: { city: string; filters: SearchFilters }) => void;
 }
 
@@ -40,7 +47,7 @@ const BRAND = {
 } as const;
 
 // 🗺️ Cities Data with KDMC Support
-export const CITIES = [
+export const CITIES: readonly City[] = [
   { 
     name: 'Pune', 
     projects: 1923, 
@@ -82,7 +89,15 @@ const SEARCH_SUGGESTIONS = [
 ] as const;
 
 // 🗂️ Categories
-const CATEGORIES = [
+export interface Category {
+  id: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  color: string;
+  gradient: string;
+}
+
+export const CATEGORIES: readonly Category[] = [
   { id: 'residential', label: 'Residential', icon: Home, color: BRAND.green, gradient: `from-[${BRAND.green}] to-[#004a4d]` },
   { id: 'commercial', label: 'Commercial', icon: Building2, color: BRAND.red, gradient: `from-[${BRAND.red}] to-[#6a0000]` },
   { id: 'underConstruction', label: 'Pre-Launch', icon: Construction, color: BRAND.yellow, gradient: `from-[${BRAND.yellow}] to-[#d4a017]` },
@@ -90,10 +105,10 @@ const CATEGORIES = [
 ] as const;
 
 // 🔧 Filter options
-const BHK_OPTIONS = ['1 RK', '1 BHK', '2 BHK', '3 BHK', '4 BHK', '4+ BHK'] as const;
-const BUILDER_OPTIONS = ['Mantra Developers', 'Lodha Group', 'Shapoorji Pallonji', 'Paradise Group', 'Today Global', 'Birla Estates', 'Panchshil Realty'] as const;
-const PROPERTY_TYPES = ['Apartment', 'Villa', 'Plot', 'Studio', 'Penthouse', 'Office Space'] as const;
-const PRICE_RANGES = [
+export const BHK_OPTIONS = ['1 RK', '1 BHK', '2 BHK', '3 BHK', '4 BHK', '4+ BHK'] as const;
+export const BUILDER_OPTIONS = ['Mantra Developers', 'Lodha Group', 'Shapoorji Pallonji', 'Paradise Group', 'Today Global', 'Birla Estates', 'Panchshil Realty'] as const;
+export const PROPERTY_TYPES = ['Apartment', 'Villa', 'Plot', 'Studio', 'Penthouse', 'Office Space'] as const;
+export const PRICE_RANGES: readonly { label: string; min: number; max: number }[] = [
   { label: 'Under ₹75L', min: 0, max: 7500000 },
   { label: '₹75L - ₹1Cr', min: 7500000, max: 10000000 },
   { label: '₹1Cr - ₹2Cr', min: 10000000, max: 20000000 },
@@ -250,7 +265,7 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
     if (!hasSearchQuery && !hasFilters) {
       try {
         await router.push(`/locations/${citySlug}`);
-        onSearch?.({ tab: activeTab, city: selectedCity, query: '', filters: undefined });
+        onSearch?.({ city: selectedCity, query: '', filters: undefined });
       } catch (error) { console.error('Location navigation error:', error); }
       finally { setTimeout(() => setIsSearching(false), 200); }
       return;
@@ -258,7 +273,6 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
     
     const queryParams = new URLSearchParams();
     queryParams.append('city', citySlug);
-    queryParams.append('tab', activeTab);
     if (hasSearchQuery) queryParams.append('q', searchQuery.trim());
     if (filters.bhk?.length) queryParams.append('bhk', filters.bhk.join(','));
     if (filters.builder?.length) queryParams.append('builder', filters.builder.join(','));
@@ -272,14 +286,14 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
     try {
       // ✅ Navigate to separate properties page (same as dropdown behavior)
       await navigateToProperties(queryParams);
-      onSearch?.({ tab: activeTab, city: selectedCity, query: searchQuery.trim(), filters: hasFilters ? filters : undefined });
+      onSearch?.({ city: selectedCity, query: searchQuery.trim(), filters: hasFilters ? filters : undefined });
       setIsCityDropdownOpen(false);
     } catch (error) { console.error('Search navigation error:', error); }
     finally { setTimeout(() => setIsSearching(false), 200); }
-  }, [activeTab, selectedCity, searchQuery, filters, onSearch, navigateToProperties, isSearching]);
+  }, [selectedCity, searchQuery, filters, onSearch, navigateToProperties, isSearching]);
 
   // ✅ Handle filter selection - Navigate immediately to properties page
-  const handleFilterSelect = useCallback((filterType: keyof SearchFilters, value: string | number | { min: number; max: number }) => {
+  const handleFilterSelect = useCallback((filterType: keyof SearchFilters, value: unknown) => {
     const newFilters = { ...filters };
     
     if (filterType === 'bhk' && typeof value === 'string') {
@@ -294,7 +308,7 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
       newFilters.propertyType = newFilters.propertyType?.includes(value)
         ? newFilters.propertyType.filter(v => v !== value)
         : [...(newFilters.propertyType || []), value];
-    } else if (filterType === 'priceRange' && typeof value === 'object') {
+    } else if (filterType === 'priceRange' && typeof value === 'object' && value !== null) {
       newFilters.priceRange = value as { min: number; max: number };
     } else if (filterType === 'locality' && typeof value === 'string') {
       newFilters.locality = value;
@@ -304,7 +318,6 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
     const citySlug = CITIES.find(c => c.name === selectedCity)?.slug || 'pune';
     const queryParams = new URLSearchParams();
     queryParams.append('city', citySlug);
-    queryParams.append('tab', activeTab);
     
     if (newFilters.bhk?.length) queryParams.append('bhk', newFilters.bhk.join(','));
     if (newFilters.builder?.length) queryParams.append('builder', newFilters.builder.join(','));
@@ -316,7 +329,7 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
     if (newFilters.locality) queryParams.append('locality', newFilters.locality);
     
     navigateToProperties(queryParams);
-  }, [filters, selectedCity, activeTab, navigateToProperties]);
+  }, [filters, selectedCity, navigateToProperties]);
 
   const filteredSuggestions = useMemo(() => {
     if (!debouncedSearchQuery) return SEARCH_SUGGESTIONS.slice(0, 4);
@@ -391,41 +404,50 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
     handleSearch();
   }, [handleSearch, navigateToLocation]);
 
+  // ✅ Props with proper type casting for readonly arrays
   const searchBarProps = useMemo(() => ({
     activeTab, selectedCity, searchQuery, filters, isCityDropdownOpen,
     showSuggestions: !!searchQuery && filteredSuggestions.length > 0,
-    filteredSuggestions, categories: CATEGORIES, cities: CITIES, isSearching,
-    onTabChange: setActiveTab, onCityChange: handleCityChange,
-    onSearchQueryChange: setSearchQuery, onCityDropdownToggle: handleCityDropdownOpen,
+    filteredSuggestions: [...filteredSuggestions],
+    categories: CATEGORIES as unknown as readonly Category[],
+    cities: CITIES as unknown as readonly City[],
+    isSearching,
+    onTabChange: (tab: 'residential' | 'commercial' | 'underConstruction' | 'readyToMove') => setActiveTab(tab),
+    onCityChange: handleCityChange,
+    onSearchQueryChange: setSearchQuery,
+    onCityDropdownToggle: handleCityDropdownOpen,
     onSuggestionClick: handleSuggestionClick, 
     onFilterToggle: () => setShowFilters(true),
     onSearch: handleSearch,
   }), [activeTab, selectedCity, searchQuery, filters, isCityDropdownOpen, filteredSuggestions.length, isSearching, handleCityDropdownOpen, handleSuggestionClick, handleSearch, handleCityChange]);
 
   const stickySearchProps = useMemo(() => ({
-    activeTab, selectedCity, searchQuery, categories: CATEGORIES, isSearching,
-    onTabChange: setActiveTab, onSearchQueryChange: setSearchQuery, onSearch: handleSearch,
+    activeTab, selectedCity, searchQuery,
+    categories: CATEGORIES as unknown as readonly Category[],
+    isSearching,
+    onTabChange: (tab: 'residential' | 'commercial' | 'underConstruction' | 'readyToMove') => setActiveTab(tab),
+    onSearchQueryChange: setSearchQuery,
+    onSearch: handleSearch,
   }), [activeTab, selectedCity, searchQuery, isSearching, handleSearch]);
 
-  // ✅ Updated filter panel props to use navigation-based filter selection
-  const filterPanelProps = useMemo(() => ({
+  // ✅ Updated filter panel props
+  const filterPanelProps: FilterPanelProps = useMemo(() => ({
     filters, 
     bhkOptions: BHK_OPTIONS, 
     builderOptions: BUILDER_OPTIONS,
     propertyTypes: PROPERTY_TYPES, 
     priceRanges: PRICE_RANGES,
-    onFilterChange: handleFilterSelect, // ✅ Navigate on filter change
+    onFilterChange: handleFilterSelect,
     onClear: handleClearFilters,
     onApply: handleApplyFilters, 
     onClose: () => setShowFilters(false),
-    isNavigating: true, // ✅ Flag to indicate navigation mode
+    isNavigating: true,
   }), [filters, handleFilterSelect, handleClearFilters, handleApplyFilters]);
 
   const currentCity = useMemo(() => CITIES.find(c => c.name === selectedCity) || CITIES[0], [selectedCity]);
 
   // ✅ Responsive: Show all localities with expand/collapse on mobile
   const displayedLocalities = useMemo(() => {
-    // Show all localities on desktop (lg+), limit to 4 on mobile
     return currentCity.localities;
   }, [currentCity, showAllLocalities]);
 
@@ -576,7 +598,7 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
             transition={{ delay: 0.1, duration: 0.5, ease: "easeOut" }}
           >
             <div className="w-full">
-              <SearchBar {...searchBarProps} />
+              <SearchBar {...searchBarProps as any} />
             </div>
           </motion.div>
         </div>
@@ -587,7 +609,7 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
       
       {/* Sticky Search Bar - Mobile optimized */}
       <AnimatePresence>
-        {showStickySearch && <StickySearchBar {...stickySearchProps} />}
+        {showStickySearch && <StickySearchBar {...stickySearchProps as any} />}
       </AnimatePresence>
       
       {/* Filter Panel Modal */}

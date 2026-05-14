@@ -1,44 +1,43 @@
-// @/components/sections/FeaturedProjectsSection.tsx
 'use client';
 
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, ChevronLeft, ChevronRight, MapPin, Home } from 'lucide-react';
 import Link from 'next/link';
-
-// ✅ Import your project data
 import properties from '@/data/properties.json';
 
-// 🔁 Map JSON project to card format
+// ✅ ADD city PROP
+interface FeaturedProjectsSectionProps {
+  city: 'Pune' | 'Mumbai' | 'KDMC';
+}
+
 interface FeaturedProject {
-  slug: string;        // ← For routing to /property/[slug]
+  slug: string;
   name: string;
-  location: string;    // e.g., "Sus, Pune"
-  price: string;       // e.g., "₹80 Lakh - ₹1.2 Cr"
-  bhk: string;         // e.g., "2, 3 BHK"
+  location: string;
+  price: string;
+  bhk: string;
   image: string;
-  badge: string;       // "New Launch" | "Ready" | "Under Construction"
-  badgeColor: string;  // Tailwind class for badge background
+  badge: string;
+  badgeColor: string;
 }
 
 function mapProjectToFeatured(project: any): FeaturedProject {
-  // Determine badge based on possession status
   const getBadge = (p: any) => {
     const possession = p.possessionDate?.toLowerCase() || '';
     if (possession.includes('ready') || possession.includes('dec 2024') || possession.includes('jan 2025')) {
-      return { text: 'Ready', color: 'bg-[#005E60]' }; // Teal for ready
+      return { text: 'Ready', color: 'bg-[#005E60]' };
     }
     if (possession.includes('2026') || possession.includes('2027') || possession.includes('2028')) {
-      return { text: 'Under Construction', color: 'bg-[#F8C21C] text-[#005E60]' }; // Gold for under construction
+      return { text: 'Under Construction', color: 'bg-[#F8C21C] text-[#005E60]' };
     }
-    return { text: 'New Launch', color: 'bg-[#8B0000]' }; // Red for new/pre-launch
+    return { text: 'New Launch', color: 'bg-[#8B0000]' };
   };
 
   const { text: badgeText, color: badgeColor } = getBadge(project);
-  
-  // Format BHK types from configurations
   const bhkTypes = project.priceDetails?.configurations?.map((c: any) => c.type) || [];
-  const uniqueBhk = [...new Set(bhkTypes)].join(', ') || 'TBA';
+  // ✅ FIX: Use Array.from for Set iteration with proper typing
+  const uniqueBhk = Array.from(new Set(bhkTypes.map((t: any) => String(t || '').trim()))).filter(Boolean).join(', ') || 'TBA';
 
   return {
     slug: project.slug,
@@ -52,21 +51,19 @@ function mapProjectToFeatured(project: any): FeaturedProject {
   };
 }
 
-// ✅ CONFIG: Show only featured projects (with images + detailed data)
 const MAX_FEATURED_PROJECTS = 8;
-const VISIBLE_CARDS = 6; // Cards visible at once in carousel
+const VISIBLE_CARDS = 6;
 
-export default function FeaturedProjectsSection() {
+export default function FeaturedProjectsSection({ city }: FeaturedProjectsSectionProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [direction, setDirection] = useState(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // 🔁 Convert JSON projects to featured format + limit count
   const featuredProjects = useMemo(() => {
     return properties
-      .filter((p: any) => p.image && p.priceDetails?.range) // Has image + detailed pricing
-      .slice(0, MAX_FEATURED_PROJECTS) // Limit to 8 featured
+      .filter((p: any) => p.image && p.priceDetails?.range)
+      .slice(0, MAX_FEATURED_PROJECTS)
       .map(mapProjectToFeatured);
   }, []);
 
@@ -83,36 +80,19 @@ export default function FeaturedProjectsSection() {
   }, [maxIndex]);
 
   const resetInterval = useCallback(() => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
-    
+    if (intervalRef.current) clearInterval(intervalRef.current);
     if (!isPaused && featuredProjects.length > VISIBLE_CARDS) {
-      intervalRef.current = setInterval(() => {
-        slideNext();
-      }, 5000);
+      intervalRef.current = setInterval(() => slideNext(), 5000);
     }
   }, [isPaused, slideNext, featuredProjects.length]);
 
   useEffect(() => {
     resetInterval();
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
   }, [resetInterval]);
 
-  const handleNext = () => {
-    slideNext();
-    resetInterval();
-  };
-
-  const handlePrev = () => {
-    slidePrev();
-    resetInterval();
-  };
-
+  const handleNext = () => { slideNext(); resetInterval(); };
+  const handlePrev = () => { slidePrev(); resetInterval(); };
   const handleDotClick = (index: number) => {
     setDirection(index > currentIndex ? 1 : -1);
     setCurrentIndex(index);
@@ -120,82 +100,45 @@ export default function FeaturedProjectsSection() {
   };
 
   const slideVariants = {
-    enter: (direction: number) => ({
-      x: direction > 0 ? '100%' : '-100%',
-      opacity: 0,
-    }),
+    enter: (dir: number) => ({ x: dir > 0 ? '100%' : '-100%', opacity: 0 }),
     center: { x: 0, opacity: 1 },
-    exit: (direction: number) => ({
-      x: direction < 0 ? '100%' : '-100%',
-      opacity: 0,
-    }),
+    exit: (dir: number) => ({ x: dir < 0 ? '100%' : '-100%', opacity: 0 }),
   };
 
-  // 🎨 Your exact color palette
-  const COLORS = {
-    primary: '#005E60',    // Dark teal
-    accent: '#F8C21C',     // Golden yellow
-    alert: '#8B0000',      // Dark red
-  };
+  const COLORS = { primary: '#005E60', accent: '#F8C21C', alert: '#8B0000' };
 
   return (
     <section className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Header */}
         <div className="flex justify-between items-center mb-10">
           <div>
             <h2 className="text-3xl font-bold text-gray-900">
-              Featured <span style={{ color: COLORS.primary }}>Projects</span>
+              Featured <span style={{ color: COLORS.primary }}>Projects in {city}</span>
             </h2>
             <p className="text-gray-600 mt-1">Handpicked premium properties for you</p>
           </div>
-          <Link 
-            href="/properties" 
-            className="group flex items-center gap-2 font-semibold transition-colors"
-            style={{ color: COLORS.primary }}
-          >
-            Explore All Projects
-            <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+          <Link href="/properties" className="group flex items-center gap-2 font-semibold transition-colors" style={{ color: COLORS.primary }}>
+            Explore All Projects <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
 
-        {/* Show message if not enough projects */}
         {featuredProjects.length === 0 ? (
           <div className="text-center py-12 bg-gray-50 rounded-xl">
             <p className="text-gray-500">No featured projects available at the moment.</p>
           </div>
         ) : (
-          /* Carousel Container */
-          <div 
-            className="relative"
-            onMouseEnter={() => setIsPaused(true)}
-            onMouseLeave={() => setIsPaused(false)}
-          >
-            {/* Navigation Buttons - Only show if carousel has overflow */}
+          <div className="relative" onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)}>
             {featuredProjects.length > VISIBLE_CARDS && (
               <>
-                <button
-                  onClick={handlePrev}
-                  className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 bg-white border border-gray-200 rounded-full shadow-md flex items-center justify-center transition-all hover:scale-110"
-                  style={{ color: COLORS.primary }}
-                  aria-label="Previous projects"
-                >
+                <button onClick={handlePrev} className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 bg-white border border-gray-200 rounded-full shadow-md flex items-center justify-center transition-all hover:scale-110" style={{ color: COLORS.primary }} aria-label="Previous projects">
                   <ChevronLeft size={20} />
                 </button>
-
-                <button
-                  onClick={handleNext}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 bg-white border border-gray-200 rounded-full shadow-md flex items-center justify-center transition-all hover:scale-110"
-                  style={{ color: COLORS.primary }}
-                  aria-label="Next projects"
-                >
+                <button onClick={handleNext} className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 bg-white border border-gray-200 rounded-full shadow-md flex items-center justify-center transition-all hover:scale-110" style={{ color: COLORS.primary }} aria-label="Next projects">
                   <ChevronRight size={20} />
                 </button>
               </>
             )}
 
-            {/* Cards Container */}
             <div className="overflow-hidden">
               <AnimatePresence initial={false} custom={direction} mode="popLayout">
                 <motion.div
@@ -205,10 +148,7 @@ export default function FeaturedProjectsSection() {
                   initial="enter"
                   animate="center"
                   exit="exit"
-                  transition={{
-                    x: { type: 'spring', stiffness: 300, damping: 30 },
-                    opacity: { duration: 0.3 },
-                  }}
+                  transition={{ x: { type: 'spring', stiffness: 300, damping: 30 }, opacity: { duration: 0.3 } }}
                   className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4"
                 >
                   {featuredProjects.slice(currentIndex, currentIndex + VISIBLE_CARDS).map((project) => (
@@ -219,59 +159,25 @@ export default function FeaturedProjectsSection() {
                       transition={{ duration: 0.4 }}
                       className="group bg-white rounded-xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col"
                     >
-                      {/* Image Container */}
                       <div className="relative h-36 overflow-hidden flex-shrink-0">
-                        <img
-                          src={project.image}
-                          alt={project.name}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                          loading="lazy"
-                        />
-                        
-                        {/* Badge */}
-                        <div className={`absolute top-2 left-2 px-2 py-0.5 rounded text-[10px] font-semibold text-white ${project.badgeColor}`}>
-                          {project.badge}
-                        </div>
-
-                        {/* Favorite Button */}
+                        <img src={project.image} alt={project.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
+                        <div className={`absolute top-2 left-2 px-2 py-0.5 rounded text-[10px] font-semibold text-white ${project.badgeColor}`}>{project.badge}</div>
                         <button className="absolute top-2 right-2 w-7 h-7 bg-white/90 backdrop-blur rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110">
-                          <svg className="w-4 h-4 text-gray-600 hover:text-[#8B0000]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                          </svg>
+                          <svg className="w-4 h-4 text-gray-600 hover:text-[#8B0000]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
                         </button>
                       </div>
-
-                      {/* Content */}
                       <div className="p-3 flex flex-col flex-grow">
-                        <h3 className="font-bold text-sm text-gray-900 mb-0.5 group-hover:text-[#005E60] transition-colors line-clamp-1">
-                          {project.name}
-                        </h3>
-                        
+                        <h3 className="font-bold text-sm text-gray-900 mb-0.5 group-hover:text-[#005E60] transition-colors line-clamp-1">{project.name}</h3>
                         <div className="flex items-center gap-1 text-xs text-gray-600 mb-1">
                           <MapPin size={12} style={{ color: COLORS.alert }} />
                           <span className="line-clamp-1">{project.location}</span>
                         </div>
-                        
-                        <p className="font-bold text-sm mb-0.5" style={{ color: COLORS.alert }}>
-                          {project.price}
-                        </p>
-                        
+                        <p className="font-bold text-sm mb-0.5" style={{ color: COLORS.alert }}>{project.price}</p>
                         <div className="flex items-center gap-1 text-xs text-gray-500 mb-2">
                           <Home size={12} />
                           <span>{project.bhk}</span>
                         </div>
-                        
-                        {/* View Details Button - Links to dynamic property page */}
-                        <Link 
-                          href={`/property/${project.slug}`}
-                          className="w-full py-1.5 rounded-lg font-semibold text-xs transition-all duration-300 text-center mt-auto"
-                          style={{ 
-                            backgroundColor: COLORS.primary, 
-                            color: 'white' 
-                          }}
-                        >
-                          View Details
-                        </Link>
+                        <Link href={`/property/${project.slug}`} className="w-full py-1.5 rounded-lg font-semibold text-xs transition-all duration-300 text-center mt-auto" style={{ backgroundColor: COLORS.primary, color: 'white' }}>View Details</Link>
                       </div>
                     </motion.div>
                   ))}
@@ -279,23 +185,10 @@ export default function FeaturedProjectsSection() {
               </AnimatePresence>
             </div>
 
-            {/* Progress Indicators - Only show if carousel has overflow */}
             {featuredProjects.length > VISIBLE_CARDS && (
               <div className="flex justify-center gap-2 mt-6">
                 {Array.from({ length: maxIndex + 1 }).map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handleDotClick(index)}
-                    className={`h-2 rounded-full transition-all duration-300 ${
-                      index === currentIndex 
-                        ? 'w-6' 
-                        : 'w-2 bg-gray-300 hover:bg-gray-400'
-                    }`}
-                    style={{ 
-                      backgroundColor: index === currentIndex ? COLORS.primary : undefined 
-                    }}
-                    aria-label={`Go to slide ${index + 1}`}
-                  />
+                  <button key={index} onClick={() => handleDotClick(index)} className={`h-2 rounded-full transition-all duration-300 ${index === currentIndex ? 'w-6' : 'w-2 bg-gray-300 hover:bg-gray-400'}`} style={{ backgroundColor: index === currentIndex ? COLORS.primary : undefined }} aria-label={`Go to slide ${index + 1}`} />
                 ))}
               </div>
             )}
