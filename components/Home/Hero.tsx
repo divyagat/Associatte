@@ -25,37 +25,11 @@ export interface SearchFilters {
   locality?: string;
 }
 
-// 🗺️ Cities Data with KDMC Support
-// ✅ FIX: Removed 'as const' from localities arrays to allow mutable string[] compatibility
-export const CITIES = [
-  { 
-    name: 'Pune' as const, 
-    projects: 1923, 
-    localities: ['Wakad', 'Hinjewadi', 'Baner', 'Kharadi', 'Sus', 'Viman Nagar', 'Kondhwa', 'Magarpatta'],
-    description: 'IT hub with premium projects in Wakad, Hinjewadi & Baner',
-    slug: 'pune' as const
-  },
-  { 
-    name: 'Mumbai' as const, 
-    projects: 2847, 
-    localities: ['Kharghar', 'Panvel', 'Thane', 'Andheri', 'Bandra', 'Worli', 'Navi Mumbai'],
-    description: 'Premium properties in Kharghar, Panvel & Navi Mumbai',
-    slug: 'mumbai' as const
-  },
-  { 
-    name: 'KDMC' as const, 
-    projects: 487, 
-    localities: ['Kalyan', 'Dombivli', 'Ulhasnagar', 'Ambarnath', 'Badlapur', 'Shil Phata', 'Murbad'],
-    description: 'Affordable & premium projects in Kalyan-Dombivli belt',
-    slug: 'kdmc' as const
-  },
-] as const;
+// ✅ FIX: Define simple union types FIRST (no circular reference possible)
+export type CityName = 'Pune' | 'Mumbai' | 'KDMC';
+export type CitySlug = 'pune' | 'mumbai' | 'kdmc';
 
-// Derive types from the const assertion (after CITIES is defined)
-export type CitySlug = typeof CITIES[number]['slug'];
-export type CityName = typeof CITIES[number]['name'];
-
-// Now define City interface using the derived types
+// ✅ Then define City interface using the simple unions
 export interface City {
   name: CityName;
   projects: number;
@@ -63,6 +37,31 @@ export interface City {
   description: string;
   slug: CitySlug;
 }
+
+// ✅ Now define CITIES using the interface (safe, no circular reference)
+export const CITIES: readonly City[] = [
+  { 
+    name: 'Pune', 
+    projects: 1923, 
+    localities: ['Wakad', 'Hinjewadi', 'Baner', 'Kharadi', 'Sus', 'Viman Nagar', 'Kondhwa', 'Magarpatta'],
+    description: 'IT hub with premium projects in Wakad, Hinjewadi & Baner',
+    slug: 'pune'
+  },
+  { 
+    name: 'Mumbai', 
+    projects: 2847, 
+    localities: ['Kharghar', 'Panvel', 'Thane', 'Andheri', 'Bandra', 'Worli', 'Navi Mumbai'],
+    description: 'Premium properties in Kharghar, Panvel & Navi Mumbai',
+    slug: 'mumbai'
+  },
+  { 
+    name: 'KDMC', 
+    projects: 487, 
+    localities: ['Kalyan', 'Dombivli', 'Ulhasnagar', 'Ambarnath', 'Badlapur', 'Shil Phata', 'Murbad'],
+    description: 'Affordable & premium projects in Kalyan-Dombivli belt',
+    slug: 'kdmc'
+  },
+];
 
 interface HeroProps {
   initialCity?: string;
@@ -246,11 +245,9 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
     else dropdownCloseTimer.current = setTimeout(() => setIsCityDropdownOpen(false), 100);
   }, []);
 
-  const handleCityChange = useCallback((newCity: string) => {
-    const matchedCity = CITIES.find(c => c.name === newCity);
-    if (!matchedCity) return;
-    setSelectedCity(matchedCity.name);
-    navigateToLocation(matchedCity.name);
+  const handleCityChange = useCallback((newCity: CityName) => {
+    setSelectedCity(newCity);
+    navigateToLocation(newCity);
   }, [navigateToLocation]);
 
   const navigateToProperties = useCallback((searchParamsObj: URLSearchParams) => {
@@ -405,7 +402,6 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
 
   // ✅ Props - properly typed for child component compatibility
   const searchBarProps = useMemo(() => {
-    // ✅ Convert CITIES to mutable City[] for SearchBarProps compatibility
     const citiesForSearchBar: City[] = CITIES.map(city => ({
       name: city.name,
       projects: city.projects,
@@ -425,10 +421,8 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
       categories: CATEGORIES as readonly Category[],
       cities: citiesForSearchBar,
       isSearching,
-      // ✅ CRITICAL FIX: onTabChange must accept (tab: string) to match SearchBarProps
-      // Then cast internally to the union type for setActiveTab
       onTabChange: (tab: string) => setActiveTab(tab as 'residential' | 'commercial' | 'underConstruction' | 'readyToMove'),
-      onCityChange: handleCityChange,
+      onCityChange: (city: string) => handleCityChange(city as CityName),
       onSearchQueryChange: setSearchQuery,
       onCityDropdownToggle: handleCityDropdownOpen,
       onSuggestionClick: handleSuggestionClick, 
