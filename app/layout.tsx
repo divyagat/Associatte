@@ -3,35 +3,25 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-// ✅ Keep your existing imports
 import Header from "../components/Layout/Header";
 import Footer from "../components/Layout/Footer";
 import { Providers } from "./providers";
+import StickyActions from "@/components/common/StickyActions";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
+const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-// 🎯 BRAND-SPECIFIC SEO METADATA
+// ✅ FIX: Correct TypeScript syntax - colon between variable name and type
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://propfinder.in"),
   
-  // 🔹 Title with brand template
   title: {
     default: "PropFinder by Associatte PropTech | Find Your Dream Property in Mumbai, Pune & Kharghar",
-    template: "%s | PropFinder" // e.g., "Mantra 1 Residences - 3 BHK in Kharghar | PropFinder"
+    template: "%s | PropFinder"
   },
   
-  // 🔹 Description with company credibility + keywords
   description: "PropFinder by Associatte PropTech Pvt Ltd: Find verified 2, 3, 4 BHK properties in Mumbai, Pune, Kharghar. Browse new launches & ready-to-move projects starting ₹75L. Trusted real estate guidance.",
   
-  // 🔹 Keywords optimized for Indian real estate
   keywords: [
     "PropFinder",
     "Associatte PropTech",
@@ -47,17 +37,10 @@ export const metadata: Metadata = {
     "Paradise Sai World Empire"
   ],
   
-  // 🔹 Authors & company info
-  authors: [
-    { 
-      name: "Associatte PropTech Pvt Ltd", 
-      url: "https://propfinder.in" 
-    }
-  ],
+  authors: [{ name: "Associatte PropTech Pvt Ltd", url: "https://propfinder.in" }],
   creator: "Associatte PropTech Pvt Ltd",
   publisher: "Associatte PropTech Pvt Ltd",
   
-  // 🔹 Open Graph (for WhatsApp, Facebook, LinkedIn sharing)
   openGraph: {
     type: "website",
     locale: "en_IN",
@@ -65,27 +48,23 @@ export const metadata: Metadata = {
     siteName: "PropFinder",
     title: "PropFinder by Associatte PropTech | Verified Real Estate Projects",
     description: "Discover 500+ verified properties in Mumbai, Pune & Kharghar. 2, 3, 4 BHK homes with transparent pricing & expert guidance.",
-    images: [
-      {
-        url: "/og-image.jpg", // Place in /public folder (1200x630px)
-        width: 1200,
-        height: 630,
-        alt: "PropFinder by Associatte PropTech - Find Your Dream Home",
-        type: "image/jpeg"
-      }
-    ]
+    images: [{
+      url: "/og-image.jpg",
+      width: 1200,
+      height: 630,
+      alt: "PropFinder by Associatte PropTech - Find Your Dream Home",
+      type: "image/jpeg"
+    }]
   },
   
-  // 🔹 Twitter Card
   twitter: {
     card: "summary_large_image",
     title: "PropFinder | Verified Properties by Associatte PropTech",
     description: "Browse 2, 3, 4 BHK properties in Mumbai, Pune, Kharghar. Starting ₹75L.",
     images: ["/og-image.jpg"],
-    creator: "@associatteproptech" // Update with your actual handle
+    creator: "@associatteproptech"
   },
   
-  // 🔹 Robots control
   robots: {
     index: true,
     follow: true,
@@ -98,16 +77,13 @@ export const metadata: Metadata = {
     },
   },
   
-  // 🔹 Verification (add after claiming in Search Console)
   verification: {
-    google: "your-google-site-verification-code", // Get from Google Search Console
+    google: "your-google-site-verification-code",
   },
   
-  // 🔹 Category
   category: "real estate",
 };
 
-// 🎯 ORGANIZATION SCHEMA (JSON-LD) - Critical for brand authority
 const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "RealEstateAgent",
@@ -146,7 +122,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* 🎯 Inject Organization Schema for Google */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ 
@@ -156,10 +131,15 @@ export default function RootLayout({
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Header />
+        
         <Providers>
           <main className="min-h-screen">{children}</main>
         </Providers>
+        
         <Footer />
+        
+        {/* ✅ Sticky Action Buttons - Simple props only */}
+        <StickyActions showScrollTop={true} />
       </body>
     </html>
   );

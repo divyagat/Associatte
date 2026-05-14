@@ -6,7 +6,7 @@ import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { 
   Search, MapPin, Home, Building2, Construction, KeyRound, 
-  ChevronDown, Sparkles, CheckCircle2, Loader2, X, Filter
+  ChevronDown, Sparkles, CheckCircle2, Loader2, X, Filter, ChevronRight
 } from 'lucide-react';
 
 // Import memoized child components
@@ -32,7 +32,7 @@ interface HeroProps {
   onFilterChange?: (data: { city: string; filters: SearchFilters }) => void;
 }
 
-// 🎨 Associatte Brand Colors
+// 🎨 Brand Colors
 const BRAND = {
   green: '#005E60',
   red: '#8B0000',
@@ -100,15 +100,12 @@ const PRICE_RANGES = [
   { label: 'Above ₹2Cr', min: 20000000, max: Infinity },
 ] as const;
 
-// 🗺️ Locality to City mapping (CRITICAL for KDMC)
+// 🗺️ Locality to City mapping
 export const LOCALITY_CITY_MAP: Record<string, CitySlug> = {
-  // Pune
   'Wakad': 'pune', 'Hinjewadi': 'pune', 'Baner': 'pune', 'Kharadi': 'pune',
   'Sus': 'pune', 'Viman Nagar': 'pune', 'Kondhwa': 'pune', 'Magarpatta': 'pune',
-  // Mumbai
   'Kharghar': 'mumbai', 'Panvel': 'mumbai', 'Thane': 'mumbai', 'Andheri': 'mumbai',
   'Bandra': 'mumbai', 'Worli': 'mumbai', 'Navi Mumbai': 'mumbai',
-  // ✅ KDMC localities
   'Kalyan': 'kdmc', 'Dombivli': 'kdmc', 'Ulhasnagar': 'kdmc', 
   'Ambarnath': 'kdmc', 'Badlapur': 'kdmc', 'Shil Phata': 'kdmc', 'Murbad': 'kdmc',
 };
@@ -201,6 +198,7 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
   const [showFilters, setShowFilters] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
+  const [showAllLocalities, setShowAllLocalities] = useState(false);
 
   const mouseRef = useMousePosition();
   const dropdownCloseTimer = useRef<NodeJS.Timeout | null>(null);
@@ -363,44 +361,45 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
 
   const currentCity = useMemo(() => CITIES.find(c => c.name === selectedCity) || CITIES[0], [selectedCity]);
 
-  // ✅ Responsive: Show more localities on desktop, scrollable on mobile
+  // ✅ Responsive: Show all localities with expand/collapse on mobile
   const displayedLocalities = useMemo(() => {
-    // Show all localities on desktop (lg+), limit to 4 on mobile
+    if (showAllLocalities) return currentCity.localities;
+    // Show first 4 on mobile, all on desktop via CSS
     return currentCity.localities;
-  }, [currentCity]);
+  }, [currentCity, showAllLocalities]);
 
   return (
     <motion.section 
       style={{ opacity: heroOpacity, scale: heroScale }} 
-      className="relative min-h-[380px] sm:min-h-[400px] md:min-h-[420px] lg:min-h-[440px] overflow-hidden will-change-transform"
+      className="relative min-h-[320px] sm:min-h-[360px] md:min-h-[400px] lg:min-h-[440px] overflow-hidden will-change-transform"
     >
       <AnimatedBackground mouseRef={mouseRef} />
       
       {/* Main Content - Responsive Grid */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start lg:items-end">
+      <div className="relative z-10 max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-8 items-start lg:items-end">
           
           {/* 🔹 Left Column - Text Content */}
           <motion.div 
-            className="lg:col-span-5 text-center lg:text-left order-1 lg:order-1" 
+            className="lg:col-span-5 text-center lg:text-left order-1 lg:order-1 w-full" 
             initial={{ opacity: 0, y: 16 }} 
             animate={{ opacity: 1, y: 0 }} 
             transition={{ duration: 0.5, ease: "easeOut" }}
           >
             {/* Badge */}
             <motion.div 
-              className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-3.5 sm:py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/15 mb-4 sm:mb-5 mx-auto lg:mx-0" 
+              className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 py-1.5 sm:px-3.5 sm:py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/15 mb-3 sm:mb-4 mx-auto lg:mx-0" 
               whileHover={{ scale: 1.015 }} 
               whileTap={{ scale: 0.99 }}
             >
-              <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4" style={{ color: BRAND.yellow }} />
+              <Sparkles className="w-3 h-3 sm:w-4 sm:h-4" style={{ color: BRAND.yellow }} />
               <span className="text-[10px] sm:text-xs font-semibold text-white/90 tracking-wide">
                 Verified Projects in Pune, Mumbai & KDMC
               </span>
             </motion.div>
             
             {/* Heading */}
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight sm:leading-[1.1] lg:leading-[1.08] mb-3 sm:mb-4">
+            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-white leading-tight sm:leading-[1.15] lg:leading-[1.08] mb-2.5 sm:mb-3 lg:mb-4">
               <span className="block">Find Your Dream Home in</span>
               <motion.span className="block" style={{ color: BRAND.yellow }}>
                 {selectedCity}
@@ -409,7 +408,7 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
             
             {/* Description */}
             <motion.p 
-              className="text-xs sm:text-sm md:text-base text-slate-300 mb-4 sm:mb-6 max-w-xs sm:max-w-sm mx-auto lg:mx-0 leading-relaxed" 
+              className="text-[11px] sm:text-xs md:text-sm text-slate-300 mb-3 sm:mb-4 lg:mb-6 max-w-full sm:max-w-sm mx-auto lg:mx-0 leading-relaxed px-1" 
               initial={{ opacity: 0 }} 
               animate={{ opacity: 1 }} 
               transition={{ delay: 0.15 }}
@@ -417,53 +416,94 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
               Explore <span className="text-white font-medium">{currentCity.projects}+ verified properties</span> from trusted builders in {currentCity.localities.slice(0, 3).join(', ')} & more
             </motion.p>
             
-            {/* 🔹 Locality Pills - Responsive: Scrollable on mobile, wrapped on desktop */}
+            {/* 🔹 Locality Pills - Fully Responsive with Scroll + Expand */}
             <motion.div 
-              className="flex flex-wrap justify-center lg:justify-start gap-1.5 sm:gap-2 lg:gap-2.5" 
+              className="w-full"
               initial={{ opacity: 0 }} 
               animate={{ opacity: 1 }} 
               transition={{ delay: 0.25 }}
             >
-              {displayedLocalities.map((loc, i) => (
-                <motion.button 
-                  key={loc} 
-                  initial={{ opacity: 0, y: 6 }} 
-                  animate={{ opacity: 1, y: 0 }} 
-                  transition={{ delay: 0.35 + i * 0.03 }} 
-                  whileHover={{ scale: 1.04 }} 
-                  whileTap={{ scale: 0.98 }} 
-                  onClick={() => handleLocalityClick(loc)} 
-                  className="
-                    px-2.5 py-1.5 sm:px-3.5 sm:py-2 
-                    text-[10px] sm:text-xs font-medium 
-                    text-slate-300 hover:text-white 
-                    bg-white/5 hover:bg-white/10 
-                    border border-white/10 rounded-full 
-                    transition-all duration-200 backdrop-blur-sm 
-                    whitespace-nowrap
-                    lg:px-4 lg:py-2 lg:text-sm
-                  " 
-                  style={{ borderColor: `rgba(0, 94, 96, 0.3)` }}
+              {/* Mobile: Horizontal scrollable container */}
+              <div className="lg:hidden relative">
+                <div 
+                  className="flex gap-1.5 overflow-x-auto pb-2 px-1 scrollbar-hide scroll-smooth"
+                  style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                 >
-                  {loc}
-                </motion.button>
-              ))}
+                  {currentCity.localities.map((loc, i) => (
+                    <motion.button 
+                      key={loc} 
+                      initial={{ opacity: 0, y: 6 }} 
+                      animate={{ opacity: 1, y: 0 }} 
+                      transition={{ delay: 0.35 + i * 0.02 }} 
+                      whileHover={{ scale: 1.04 }} 
+                      whileTap={{ scale: 0.98 }} 
+                      onClick={() => handleLocalityClick(loc)} 
+                      className="
+                        flex-shrink-0
+                        px-3 py-1.5 
+                        text-[10px] font-medium 
+                        text-slate-300 hover:text-white 
+                        bg-white/5 hover:bg-white/10 
+                        border border-white/10 rounded-full 
+                        transition-all duration-200 backdrop-blur-sm 
+                        whitespace-nowrap
+                        min-h-[28px]
+                      " 
+                      style={{ borderColor: `rgba(0, 94, 96, 0.3)` }}
+                    >
+                      {loc}
+                    </motion.button>
+                  ))}
+                </div>
+                {/* Fade indicators for scrollable area */}
+                <div className="absolute left-0 top-0 bottom-2 w-8 bg-gradient-to-r from-slate-900/80 to-transparent pointer-events-none lg:hidden" />
+                <div className="absolute right-0 top-0 bottom-2 w-8 bg-gradient-to-l from-slate-900/80 to-transparent pointer-events-none lg:hidden" />
+              </div>
+              
+              {/* Desktop: Wrapped pills */}
+              <div className="hidden lg:flex flex-wrap gap-2 justify-center lg:justify-start">
+                {currentCity.localities.map((loc, i) => (
+                  <motion.button 
+                    key={loc} 
+                    initial={{ opacity: 0, y: 6 }} 
+                    animate={{ opacity: 1, y: 0 }} 
+                    transition={{ delay: 0.35 + i * 0.03 }} 
+                    whileHover={{ scale: 1.04 }} 
+                    whileTap={{ scale: 0.98 }} 
+                    onClick={() => handleLocalityClick(loc)} 
+                    className="
+                      px-4 py-2 
+                      text-sm font-medium 
+                      text-slate-300 hover:text-white 
+                      bg-white/5 hover:bg-white/10 
+                      border border-white/10 rounded-full 
+                      transition-all duration-200 backdrop-blur-sm 
+                      whitespace-nowrap
+                    " 
+                    style={{ borderColor: `rgba(0, 94, 96, 0.3)` }}
+                  >
+                    {loc}
+                  </motion.button>
+                ))}
+              </div>
             </motion.div>
             
-            {/* ✅ Mobile: Show "View More" if many localities */}
+            {/* ✅ Mobile: Show "View All Localities" button if needed */}
             {currentCity.localities.length > 4 && (
-              <motion.button
+              <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.5 }}
-                onClick={() => {
-                  // Optional: Expand to show all localities or navigate to location page
-                  navigateToLocation(selectedCity);
-                }}
-                className="lg:hidden mt-3 text-xs text-white/70 hover:text-white underline mx-auto block"
+                className="lg:hidden mt-2 flex justify-center"
               >
-                View all {currentCity.localities.length} localities →
-              </motion.button>
+                <button
+                  onClick={() => setShowAllLocalities(!showAllLocalities)}
+                  className="flex items-center gap-1 text-[10px] text-white/80 hover:text-white transition-colors"
+                >
+                  {showAllLocalities ? 'Show Less' : `View All ${currentCity.localities.length} Localities`}
+                  <ChevronDown className={`w-3 h-3 transition-transform ${showAllLocalities ? 'rotate-180' : ''}`} />
+                </button>
+              </motion.div>
             )}
           </motion.div>
           
@@ -474,22 +514,33 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.5, ease: "easeOut" }}
           >
-            <div className="w-full">
-              <SearchBar {...searchBarProps} />
+            <div className="w-full mb-0 lg:mb-20">
+              {/* Mobile: Full-width search with proper spacing */}
+              <div className="lg:hidden w-full" >
+                <SearchBar {...searchBarProps} />
+              </div>
+              {/* Desktop: Search with margin adjustments */}
+              <div className="hidden lg:block">
+                <SearchBar {...searchBarProps} />
+              </div>
             </div>
           </motion.div>
         </div>
       </div>
       
       {/* Bottom Gradient Fade - Responsive height */}
-      <div className="absolute bottom-0 left-0 right-0 h-16 sm:h-20 lg:h-24 bg-gradient-to-t from-slate-950 via-slate-950/95 to-transparent pointer-events-none" />
+      <div className="absolute bottom-0 left-0 right-0 h-12 sm:h-16 lg:h-24 bg-gradient-to-t from-slate-950 via-slate-950/95 to-transparent pointer-events-none" />
       
-      {/* Sticky Search Bar */}
+      {/* Sticky Search Bar - Mobile optimized */}
       <AnimatePresence>
-        {showStickySearch && <StickySearchBar {...stickySearchProps} />}
+        {showStickySearch && (
+          <div className="lg:hidden fixed top-0 left-0  right-0 z-50">
+            <StickySearchBar {...stickySearchProps} />
+          </div>
+        )}
       </AnimatePresence>
       
-      {/* Filter Panel Modal */}
+      {/* Filter Panel Modal - Mobile full screen */}
       <AnimatePresence>
         {showFilters && (
           <>
@@ -498,10 +549,18 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
               animate={{ opacity: 1 }} 
               exit={{ opacity: 0 }} 
               onClick={() => setShowFilters(false)} 
-              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[55]" 
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[55]" 
               aria-hidden="true" 
             />
-            <FilterPanel {...filterPanelProps} />
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed bottom-0 left-0 right-0 lg:left-auto lg:right-8 lg:top-20 lg:bottom-auto lg:w-[380px] z-[60] bg-white rounded-t-2xl lg:rounded-2xl shadow-2xl overflow-hidden"
+            >
+              <FilterPanel {...filterPanelProps} />
+            </motion.div>
           </>
         )}
       </AnimatePresence>
