@@ -3,7 +3,7 @@
 
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import Head from 'next/head'; // ✅ Add this for SEO
+import Head from 'next/head';
 import properties from "../../../data/properties.json";
 import Image from "next/image";
 import Link from "next/link";
@@ -17,36 +17,105 @@ import EnquiryPopup from '@/components/common/EnquiryPopup';
 import { GoogleMap, useLoadScript, Marker, InfoWindow } from '@react-google-maps/api';
 
 // Types
-type Project = any;
+interface PriceConfig {
+  type: string;
+  area: string;
+  price?: string;
+}
+
+interface PriceDetails {
+  configurations: PriceConfig[];
+  perSqft?: string;
+}
+
+interface LocationInfo {
+  area?: string;
+  landmark?: string;
+}
+
+interface Developer {
+  name: string;
+}
+
+interface MapCoords {
+  lat: number;
+  lng: number;
+}
+
+interface Project {
+  slug: string;
+  name: string;
+  image: string;
+  about: string;
+  price: string;
+  location: string;
+  possessionDate?: string;
+  reraNumber?: string;
+  developer?: Developer;
+  fullLocation?: LocationInfo;
+  priceDetails?: PriceDetails;
+  amenities?: string[];
+  mapCoords?: MapCoords;
+  createdAt?: string;
+}
+
+interface CityData {
+  lat: number;
+  lng: number;
+  zoom: number;
+  title: string;
+  description: string;
+  keywords: string[];
+}
+
+interface Highlight {
+  label: string;
+  color: string;
+}
 
 // Helpers
-const formatPrice = (price: string) => price.includes('₹') ? price : `₹${price}`;
-const parsePrice = (price: string) => parseInt(price?.replace(/[^0-9]/g, '')) || 0;
+const formatPrice = (price: string): string => price.includes('₹') ? price : `₹${price}`;
 
-const getBHKInfo = (project: Project) => {
-  const configs = project.priceDetails?.configurations || [];
-  return configs.map((c: any) => c.type).filter((t: string) => t.includes('BHK')).join(', ') || 'TBA';
+const parsePrice = (price: string): number => {
+  const cleaned = price?.replace(/[^0-9]/g, '');
+  const num = parseInt(cleaned, 10);
+  return isNaN(num) ? 0 : num;
 };
 
-const getAreaRange = (project: Project) => {
+const getBHKInfo = (project: Project): string => {
   const configs = project.priceDetails?.configurations || [];
-  const areas = configs.map((c: any) => parseInt(c.area) || 0).filter((a: number) => a > 0);
+  const bhkTypes = configs
+    .map((c: PriceConfig) => c.type)
+    .filter((t: string): boolean => t?.includes('BHK'));
+  return bhkTypes.length > 0 ? bhkTypes.join(', ') : 'TBA';
+};
+
+const getAreaRange = (project: Project): string => {
+  const configs = project.priceDetails?.configurations || [];
+  const areas = configs
+    .map((c: PriceConfig) => parseInt(c.area, 10))
+    .filter((a: number): boolean => !isNaN(a) && a > 0);
+  
   if (areas.length === 0) return '';
   const min = Math.min(...areas);
   const max = Math.max(...areas);
   return min === max ? `${min} sq.ft` : `${min} - ${max} sq.ft`;
 };
 
-const getHighlights = (project: Project) => {
-  const h = [];
+const getHighlights = (project: Project): Highlight[] => {
+  const h: Highlight[] = [];
   if (project.reraNumber) h.push({ label: 'RERA', color: 'bg-[#005E60]' });
-  if (project.possessionDate?.toLowerCase().includes('ready')) h.push({ label: 'Ready', color: 'bg-[#F8C21C] text-[#8B0000]' });
-  if (project.fullLocation?.landmark?.toLowerCase().includes('metro')) h.push({ label: 'Near Metro', color: 'bg-blue-600' });
+  if (project.possessionDate?.toLowerCase().includes('ready')) {
+    h.push({ label: 'Ready', color: 'bg-[#F8C21C] text-[#8B0000]' });
+  }
+  if (project.fullLocation?.landmark?.toLowerCase().includes('metro')) {
+    h.push({ label: 'Near Metro', color: 'bg-blue-600' });
+  }
   return h.slice(0, 2);
 };
 
 // 🗺️ Map configuration
-const MAP_OPTIONS = {
+const MAP_OPTIONS: google.maps.MapOptions = {
   disableDefaultUI: true,
   zoomControl: true,
   mapTypeControl: false,
@@ -61,14 +130,7 @@ const MAP_OPTIONS = {
 };
 
 // 📍 City coordinates + SEO metadata
-const CITY_METADATA: Record<string, { 
-  lat: number; 
-  lng: number; 
-  zoom: number;
-  title: string;
-  description: string;
-  keywords: string[];
-}> = {
+const CITY_METADATA: Record<string, CityData> = {
   pune: { 
     lat: 18.5204, 
     lng: 73.8567, 
@@ -140,7 +202,7 @@ function LocationSchema({ city, projects }: { city: string; projects: Project[] 
         "offers": {
           "@type": "Offer",
           "priceCurrency": "INR",
-          "price": parsePrice(project.price) * 10000,
+          "price": parsePrice(project.price), // Price is already in rupees
           "availability": project.possessionDate?.toLowerCase().includes('ready') 
             ? "https://schema.org/InStock" 
             : "https://schema.org/PreOrder"
@@ -205,7 +267,7 @@ function PlaceSchema({ city }: { city: string }) {
 export default function CityPage() {
   const { city } = useParams<{ city: string }>();
   const cityName = city?.toLowerCase() || '';
-  const cityDisplayName = cityName.charAt(0).toUpperCase() + cityName.slice(1);
+  const cityDisplayName = cityName.charAt(0).toUpperCase() + cityName.slice(1).replace('-', ' ');
   
   // Get city-specific metadata
   const cityData = CITY_METADATA[cityName] || CITY_METADATA.default;
@@ -233,7 +295,7 @@ export default function CityPage() {
 
   // Filter & Sort Logic
   const filteredProjects = useMemo(() => {
-    let projects = properties.filter((p: Project) => p.location.toLowerCase() === cityName) as Project[];
+    let projects = (properties as Project[]).filter((p) => p.location.toLowerCase() === cityName);
 
     // Apply Price Filter
     projects = projects.filter(p => {
@@ -255,16 +317,27 @@ export default function CityPage() {
     }
 
     // Apply Sorting
-    if (sortBy === 'price-asc') projects.sort((a, b) => parsePrice(a.price) - parsePrice(b.price));
-    else if (sortBy === 'price-desc') projects.sort((a, b) => parsePrice(b.price) - parsePrice(b.price));
-    else if (sortBy === 'newest') projects.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
+    if (sortBy === 'price-asc') {
+      projects.sort((a, b) => parsePrice(a.price) - parsePrice(b.price));
+    } else if (sortBy === 'price-desc') {
+      // FIXED: Was parsePrice(b.price) - parsePrice(b.price) - now correctly compares a and b
+      projects.sort((a, b) => parsePrice(b.price) - parsePrice(a.price));
+    } else if (sortBy === 'newest') {
+      projects.sort((a, b) => {
+        const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return dateB - dateA;
+      });
+    }
 
     return projects;
   }, [cityName, sortBy, priceMin, priceMax, selectedBhk, readyOnly]);
 
   const totalProjects = filteredProjects.length;
   const uniqueBuilders = new Set(filteredProjects.map(p => p.developer?.name).filter(Boolean)).size;
-  const startingPrice = totalProjects > 0 ? Math.min(...filteredProjects.map(p => parsePrice(p.price) || Infinity)) : 0;
+  const startingPrice = totalProjects > 0 
+    ? Math.min(...filteredProjects.map(p => parsePrice(p.price) || Infinity)) 
+    : 0;
 
   // Toggle BHK filter
   const toggleBhk = (bhk: string) => {
@@ -456,6 +529,7 @@ export default function CityPage() {
                     onClick={() => setViewMode('grid')}
                     className={`p-2 rounded-md transition ${viewMode === 'grid' ? 'bg-white shadow-sm text-[#005E60]' : 'text-gray-500 hover:text-gray-700'}`}
                     title="Grid View"
+                    aria-label="Grid View"
                   >
                     <Grid3X3 className="w-4 h-4" />
                   </button>
@@ -463,6 +537,7 @@ export default function CityPage() {
                     onClick={() => setViewMode('list')}
                     className={`p-2 rounded-md transition ${viewMode === 'list' ? 'bg-white shadow-sm text-[#005E60]' : 'text-gray-500 hover:text-gray-700'}`}
                     title="List View"
+                    aria-label="List View"
                   >
                     <List className="w-4 h-4" />
                   </button>
@@ -470,6 +545,7 @@ export default function CityPage() {
                     onClick={() => setViewMode('map')}
                     className={`p-2 rounded-md transition ${viewMode === 'map' ? 'bg-white shadow-sm text-[#005E60]' : 'text-gray-500 hover:text-gray-700'}`}
                     title="Map View"
+                    aria-label="Map View"
                   >
                     <MapPin className="w-4 h-4" />
                   </button>
@@ -480,8 +556,9 @@ export default function CityPage() {
                 <div className="relative">
                   <select 
                     value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as any)}
+                    onChange={(e) => setSortBy(e.target.value as 'price-asc' | 'price-desc' | 'newest')}
                     className="appearance-none text-sm border border-gray-200 rounded-lg pl-3 pr-8 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-[#005E60]/20 focus:border-[#005E60] cursor-pointer"
+                    aria-label="Sort by"
                   >
                     <option value="price-asc">Price: Low to High</option>
                     <option value="price-desc">Price: High to Low</option>
@@ -493,6 +570,8 @@ export default function CityPage() {
                 <button 
                   onClick={() => setShowFilters(!showFilters)}
                   className={`flex items-center gap-2 px-4 py-2 border rounded-lg text-sm font-medium transition-colors ${showFilters ? 'bg-[#005E60] text-white border-[#005E60]' : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'}`}
+                  aria-expanded={showFilters}
+                  aria-controls="filter-panel"
                 >
                   <SlidersHorizontal className="w-4 h-4" />
                   {showFilters ? 'Hide Filters' : 'Filters'}
@@ -502,17 +581,35 @@ export default function CityPage() {
 
             {/* ✅ Expandable Filter Panel */}
             {showFilters && (
-              <div className="mt-4 p-4 bg-gray-50 rounded-xl border border-gray-200 animate-in slide-in-from-top-2 duration-200">
+              <div id="filter-panel" className="mt-4 p-4 bg-gray-50 rounded-xl border border-gray-200 animate-in slide-in-from-top-2 duration-200">
                 <div className="flex flex-col md:flex-row gap-6">
                   {/* Price Range */}
                   <div className="flex-1">
                     <label className="text-sm font-medium text-gray-700 mb-2 block">Price Range (₹)</label>
                     <div className="flex items-center gap-3">
-                      <input type="range" min="0" max="50000000" step="500000" value={priceMin} onChange={e => setPriceMin(Number(e.target.value))} className="flex-1 accent-[#005E60]" />
+                      <input 
+                        type="range" 
+                        min="0" 
+                        max="50000000" 
+                        step="500000" 
+                        value={priceMin} 
+                        onChange={e => setPriceMin(Number(e.target.value))} 
+                        className="flex-1 accent-[#005E60]"
+                        aria-label="Minimum price"
+                      />
                       <span className="text-sm font-semibold text-[#005E60] w-16 text-right">{(priceMin/100000).toFixed(0)}L</span>
                     </div>
                     <div className="flex items-center gap-3 mt-2">
-                      <input type="range" min="0" max="50000000" step="500000" value={priceMax} onChange={e => setPriceMax(Number(e.target.value))} className="flex-1 accent-[#005E60]" />
+                      <input 
+                        type="range" 
+                        min="0" 
+                        max="50000000" 
+                        step="500000" 
+                        value={priceMax} 
+                        onChange={e => setPriceMax(Number(e.target.value))} 
+                        className="flex-1 accent-[#005E60]"
+                        aria-label="Maximum price"
+                      />
                       <span className="text-sm font-semibold text-[#005E60] w-16 text-right">{(priceMax/100000).toFixed(0)}L</span>
                     </div>
                   </div>
@@ -526,6 +623,7 @@ export default function CityPage() {
                           key={bhk} 
                           onClick={() => toggleBhk(bhk)}
                           className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all border ${selectedBhk.includes(bhk) ? 'bg-[#005E60] text-white border-[#005E60]' : 'bg-white text-gray-600 border-gray-200 hover:border-[#005E60]'}`}
+                          aria-pressed={selectedBhk.includes(bhk)}
                         >
                           {bhk}
                         </button>
@@ -602,7 +700,7 @@ export default function CityPage() {
                       if (!project.mapCoords) return null;
                       
                       const isSelected = selectedProject?.slug === project.slug;
-                      const highlights = getHighlights(project);
+                      const highlights = getHighlights(project); // ✅ Defined in scope
                       
                       return (
                         <Marker
@@ -654,7 +752,7 @@ export default function CityPage() {
                                 <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">{selectedProject.developer?.name}</p>
                                 <p className="text-sm font-bold text-[#8B0000] mt-1">{formatPrice(selectedProject.price)}</p>
                                 <div className="flex gap-1 mt-2">
-                                  {highlights.map((badge, i) => (
+                                  {getHighlights(selectedProject).map((badge: Highlight, i: number) => (
                                     <span key={i} className={`px-1.5 py-0.5 ${badge.color} text-white text-[10px] font-bold rounded`}>
                                       {badge.label}
                                     </span>
@@ -696,7 +794,7 @@ export default function CityPage() {
                         <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">{selectedProject.developer?.name}</p>
                         <p className="text-lg font-bold text-[#8B0000] mt-1">{formatPrice(selectedProject.price)}</p>
                         <div className="flex gap-1 mt-2">
-                          {getHighlights(selectedProject).map((badge, i) => (
+                          {getHighlights(selectedProject).map((badge: Highlight, i: number) => (
                             <span key={i} className={`px-2 py-0.5 ${badge.color} text-white text-[10px] font-bold rounded`}>
                               {badge.label}
                             </span>
@@ -727,7 +825,7 @@ export default function CityPage() {
               </div>
             ) : (
               <div className={`grid gap-6 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3' : 'grid-cols-1 max-w-4xl'}`}>
-                {filteredProjects.map((project: Project, index) => {
+                {filteredProjects.map((project: Project, index: number) => {
                   const highlights = getHighlights(project);
                   const bhkInfo = getBHKInfo(project);
                   const areaRange = getAreaRange(project);
@@ -747,7 +845,7 @@ export default function CityPage() {
                           <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                           
                           <div className="absolute top-3 left-3 flex flex-col gap-2 z-10">
-                            {highlights.map((badge, i) => (
+                            {highlights.map((badge: Highlight, i: number) => (
                               <span key={i} className={`px-2.5 py-1 ${badge.color} text-white text-xs font-bold rounded-full shadow-sm whitespace-nowrap`}>
                                 {badge.label}
                               </span>
@@ -755,15 +853,26 @@ export default function CityPage() {
                           </div>
                           
                           <div className="absolute top-3 right-3 flex flex-col gap-2 z-10">
-                            <button className="w-9 h-9 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-600 hover:text-[#8B0000] hover:bg-white transition-all shadow-sm" onClick={e => e.preventDefault()} aria-label="Save">
+                            <button 
+                              className="w-9 h-9 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-600 hover:text-[#8B0000] hover:bg-white transition-all shadow-sm" 
+                              onClick={e => e.preventDefault()} 
+                              aria-label="Save property"
+                            >
                               <Heart className="w-4 h-4" />
                             </button>
-                            <button className="w-9 h-9 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-600 hover:text-[#005E60] hover:bg-white transition-all shadow-sm" onClick={e => e.preventDefault()} aria-label="Compare">
+                            <button 
+                              className="w-9 h-9 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-600 hover:text-[#005E60] hover:bg-white transition-all shadow-sm" 
+                              onClick={e => e.preventDefault()} 
+                              aria-label="Compare property"
+                            >
                               <GitCompare className="w-4 h-4" />
                             </button>
                           </div>
                           
-                          <button className="absolute bottom-4 left-1/2 -translate-x-1/2 px-5 py-2 bg-white/95 backdrop-blur-sm text-[#005E60] text-sm font-bold rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-lg hover:bg-white hover:scale-105 flex items-center gap-2" onClick={e => e.preventDefault()}>
+                          <button 
+                            className="absolute bottom-4 left-1/2 -translate-x-1/2 px-5 py-2 bg-white/95 backdrop-blur-sm text-[#005E60] text-sm font-bold rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-lg hover:bg-white hover:scale-105 flex items-center gap-2" 
+                            onClick={e => e.preventDefault()}
+                          >
                             <Eye className="w-4 h-4" /> Quick View
                           </button>
                         </div>
@@ -792,16 +901,30 @@ export default function CityPage() {
                           </div>
 
                           <div className="grid grid-cols-3 gap-2 py-3 border-t border-b border-gray-100 mb-4">
-                            <div className="text-center"><Bed className="w-4 h-4 mx-auto text-gray-400 mb-1" /><div className="text-[11px] text-gray-500 uppercase">Config</div><div className="text-xs font-semibold text-gray-900">{bhkInfo}</div></div>
-                            <div className="text-center border-l border-gray-100"><Square className="w-4 h-4 mx-auto text-gray-400 mb-1" /><div className="text-[11px] text-gray-500 uppercase">Area</div><div className="text-xs font-semibold text-gray-900">{areaRange || 'TBA'}</div></div>
-                            <div className="text-center border-l border-gray-100"><MapPin className="w-4 h-4 mx-auto text-gray-400 mb-1" /><div className="text-[11px] text-gray-500 uppercase">Locality</div><div className="text-xs font-semibold text-gray-900">{project.fullLocation?.area?.split(' ')[0] || 'TBA'}</div></div>
+                            <div className="text-center">
+                              <Bed className="w-4 h-4 mx-auto text-gray-400 mb-1" />
+                              <div className="text-[11px] text-gray-500 uppercase">Config</div>
+                              <div className="text-xs font-semibold text-gray-900">{bhkInfo}</div>
+                            </div>
+                            <div className="text-center border-l border-gray-100">
+                              <Square className="w-4 h-4 mx-auto text-gray-400 mb-1" />
+                              <div className="text-[11px] text-gray-500 uppercase">Area</div>
+                              <div className="text-xs font-semibold text-gray-900">{areaRange || 'TBA'}</div>
+                            </div>
+                            <div className="text-center border-l border-gray-100">
+                              <MapPin className="w-4 h-4 mx-auto text-gray-400 mb-1" />
+                              <div className="text-[11px] text-gray-500 uppercase">Locality</div>
+                              <div className="text-xs font-semibold text-gray-900">{project.fullLocation?.area?.split(' ')[0] || 'TBA'}</div>
+                            </div>
                           </div>
 
                           {project.amenities?.length > 0 && (
                             <div className="mb-4">
                               <div className="flex flex-wrap gap-1.5">
                                 {project.amenities.slice(0, 4).map((amenity: string, i: number) => (
-                                  <span key={i} className="px-2.5 py-1 bg-gray-100 text-gray-700 text-[11px] font-medium rounded-md hover:bg-[#005E60] hover:text-white transition-colors cursor-default">{amenity}</span>
+                                  <span key={i} className="px-2.5 py-1 bg-gray-100 text-gray-700 text-[11px] font-medium rounded-md hover:bg-[#005E60] hover:text-white transition-colors cursor-default">
+                                    {amenity}
+                                  </span>
                                 ))}
                                 {project.amenities.length > 4 && <span className="px-2.5 py-1 text-gray-400 text-[11px]">+{project.amenities.length - 4} more</span>}
                               </div>
@@ -825,7 +948,9 @@ export default function CityPage() {
             
             {totalProjects > 6 && viewMode !== 'map' && (
               <div className="mt-12 text-center">
-                <button className="px-8 py-3 bg-white border-2 border-[#005E60] text-[#005E60] font-bold rounded-xl hover:bg-[#005E60] hover:text-white transition-all shadow-sm hover:shadow-lg">Load More Projects</button>
+                <button className="px-8 py-3 bg-white border-2 border-[#005E60] text-[#005E60] font-bold rounded-xl hover:bg-[#005E60] hover:text-white transition-all shadow-sm hover:shadow-lg">
+                  Load More Projects
+                </button>
                 <p className="text-xs text-gray-500 mt-3">Showing 1-{Math.min(6, totalProjects)} of {totalProjects} projects in {cityDisplayName}</p>
               </div>
             )}
