@@ -7,7 +7,6 @@ import { usePathname } from 'next/navigation';
 import { 
   Building2, Phone, Menu, X, ChevronDown, 
   Home, Building, Construction, KeyRound, Tag, MapPin,
-  // ✅ Services icons (Interior Design removed)
   Handshake, FileText, Scale, ClipboardList, TrendingUp 
 } from 'lucide-react';
 
@@ -16,6 +15,10 @@ export default function Header() {
   const [buildersDropdownOpen, setBuildersDropdownOpen] = useState(false);
   const [propertiesDropdownOpen, setPropertiesDropdownOpen] = useState(false);
   const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
+  
+  // ✅ FIXED: Single state object for mobile dropdowns (no Hooks in loops)
+  const [mobileDropdownStates, setMobileDropdownStates] = useState<Record<string, boolean>>({});
+  
   const pathname = usePathname();
 
   const navLinks = [
@@ -37,7 +40,6 @@ export default function Header() {
     { 
       name: 'Services', 
       href: '/services',
-      // ✅ UPDATED: 5 services (Interior Design removed)
       dropdown: [
         { label: 'Property Consultation', href: '/services#consultation', icon: Handshake, color: '#005E60' },
         { label: 'Home Loans', href: '/services#home-loans', icon: FileText, color: '#F8C21C' },
@@ -67,6 +69,17 @@ export default function Header() {
       if (dropdown === 'services') setServicesDropdownOpen(false);
     }, 150);
   };
+
+  // ✅ Helper to toggle mobile dropdown by link name
+  const toggleMobileDropdown = (linkName: string) => {
+    setMobileDropdownStates(prev => ({
+      ...prev,
+      [linkName]: !prev[linkName]
+    }));
+  };
+
+  // ✅ Helper to check if mobile dropdown is open
+  const isMobileDropdownOpen = (linkName: string) => !!mobileDropdownStates[linkName];
 
   return (
     <nav className="bg-white shadow-sm sticky top-0 z-50">
@@ -185,10 +198,11 @@ export default function Header() {
       {mobileMenuOpen && (
         <div className="md:hidden bg-white border-t border-gray-100">
           <div className="px-4 py-3 space-y-1">
+            {/* ✅ FIXED: No Hooks inside this map - using shared state object */}
             {navLinks.map((link: any) => {
               const isActive = pathname === link.href || pathname?.startsWith(link.href + '?') || pathname?.startsWith(link.href + '/');
               const hasDropdown = link.dropdown?.length > 0;
-              const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
+              const mobileDropdownOpen = isMobileDropdownOpen(link.name);
               const isPropertiesDropdown = link.name === 'Properties';
               const isServicesDropdown = link.name === 'Services';
               
@@ -198,7 +212,7 @@ export default function Header() {
                     className={`flex items-center justify-between px-3 py-3 rounded-lg ${isActive ? 'text-[#F8C21C] font-medium bg-[#F8C21C]/10' : 'text-gray-700 hover:text-[#005E60] hover:bg-gray-50'}`}>
                     <span>{link.name}</span>
                     {hasDropdown && (
-                      <button type="button" onClick={(e) => { e.preventDefault(); setMobileDropdownOpen(!mobileDropdownOpen); }} className="p-1">
+                      <button type="button" onClick={(e) => { e.preventDefault(); toggleMobileDropdown(link.name); }} className="p-1">
                         <ChevronDown className={`w-4 h-4 transition-transform ${mobileDropdownOpen ? 'rotate-180' : ''}`} />
                       </button>
                     )}
@@ -226,7 +240,7 @@ export default function Header() {
             <div className="pt-3 mt-3 border-t border-gray-100">
               <a href="tel:+918668695995" className="flex items-center justify-center gap-2 w-full py-3 bg-[#8B0000] text-white rounded-lg font-medium hover:bg-[#6a0000] transition-colors">
                 <Phone className="w-4 h-4" />
-                <span>+91 866 869 5995</span>
+                <span>+91 888 869 5995</span>
               </a>
             </div>
           </div>

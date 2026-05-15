@@ -7,6 +7,7 @@ import Header from "../components/Layout/Header";
 import Footer from "../components/Layout/Footer";
 import { Providers } from "./providers";
 import StickyActions from "@/components/common/StickyActions";
+import EmiCalculator from "@/components/common/EmiCalculator"; // ✅ Import EMI Calculator
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
@@ -84,7 +85,7 @@ export const metadata: Metadata = {
   category: "real estate",
 };
 
-// ✅ JSON-LD Schema for Organization - typed as Record<string, unknown> for TypeScript compatibility
+// ✅ JSON-LD Schema for Organization
 const organizationSchema: Record<string, unknown> = {
   "@context": "https://schema.org",
   "@type": "RealEstateAgent",
@@ -139,7 +140,10 @@ export default function RootLayout({
         
         <Footer />
         
-        {/* ✅ Sticky Action Buttons - Simple props only */}
+        {/* ✅ EMI Calculator Modal - Single instance, listens for global events */}
+        <EmiCalculator />
+        
+        {/* ✅ Sticky Action Buttons */}
         <StickyActions showScrollTop={true} />
       </body>
     </html>

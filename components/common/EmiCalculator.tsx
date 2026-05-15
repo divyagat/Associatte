@@ -6,29 +6,40 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Calculator, Info, ChevronDown } from 'lucide-react';
 
 interface EmiCalculatorProps {
-  isOpen: boolean;
-  onClose: () => void;
+  isOpen?: boolean;           // Optional: direct control
+  onClose?: () => void;       // Optional: direct control
   defaultLoanAmount?: number;
 }
 
 export default function EmiCalculator({ 
-  isOpen, 
-  onClose, 
+  isOpen: controlledOpen, 
+  onClose: controlledClose, 
   defaultLoanAmount = 5000000 
 }: EmiCalculatorProps) {
+  // Internal state for event-based triggering
+  const [internalOpen, setInternalOpen] = useState(false);
   const [loanAmount, setLoanAmount] = useState(defaultLoanAmount);
   const [interestRate, setInterestRate] = useState(8.5);
   const [tenure, setTenure] = useState(20);
   const [showBreakdown, setShowBreakdown] = useState(false);
+
+  // Determine open state: controlled prop OR internal state
+  const isOpen = controlledOpen !== undefined ? controlledOpen : internalOpen;
+  const onClose = controlledClose || (() => setInternalOpen(false));
+
+  // ✅ Listen for global "open-emi-calculator" event
+  useEffect(() => {
+    const handleOpenEvent = () => setInternalOpen(true);
+    window.addEventListener('open-emi-calculator', handleOpenEvent);
+    return () => window.removeEventListener('open-emi-calculator', handleOpenEvent);
+  }, []);
 
   // Calculate EMI using standard formula
   const calculateEMI = useMemo(() => {
     const P = loanAmount;
     const R = interestRate / 12 / 100;
     const N = tenure * 12;
-    
     if (R === 0) return P / N;
-    
     const emi = (P * R * Math.pow(1 + R, N)) / (Math.pow(1 + R, N) - 1);
     return emi;
   }, [loanAmount, interestRate, tenure]);
@@ -44,9 +55,6 @@ export default function EmiCalculator({
       currency: 'INR',
       maximumFractionDigits: 0 
     }).format(val);
-
-  const formatNumber = (val: number) => 
-    new Intl.NumberFormat('en-IN').format(val);
 
   // Close on Escape key
   useEffect(() => {

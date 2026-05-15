@@ -580,7 +580,7 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
           
           {/* 🔹 Right Column - Search Bar */}
           <motion.div
-            className="lg:col-span-7 w-full order-2 lg:order-2"
+            className="lg:col-span-7 w-full mb-0 lg:mb-25 order-2 lg:order-2"
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.5 }}

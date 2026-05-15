@@ -1,3 +1,4 @@
+// client/components/common/StickyActions.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -68,10 +69,10 @@ export default function StickyActions({ showScrollTop = true }: StickyActionsPro
 
   const handleAction = (action: string) => {
     if (action === 'open-calculator') {
-      const section = document.getElementById('emi-calculator');
-      if (section) section.scrollIntoView({ behavior: 'smooth' });
-      else window.location.href = '/services#home-loans';
-    } else {
+      // ✅ Dispatch custom event to open EMI Calculator modal
+      window.dispatchEvent(new CustomEvent('open-emi-calculator'));
+    } else if (action.startsWith('http') || action.startsWith('tel:')) {
+      // External links / phone
       window.open(action, '_blank');
     }
   };
@@ -99,9 +100,10 @@ export default function StickyActions({ showScrollTop = true }: StickyActionsPro
                   whileHover={{ scale: 1.12, y: -3 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => handleAction(action.action)}
-                  className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl"
+                  className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl border-2 border-white/20"
                   style={{ backgroundColor: action.color }}
                   title={action.label}
+                  aria-label={action.label}
                 >
                   <Icon className="text-white text-[20px]" />
                 </motion.button>
@@ -113,12 +115,17 @@ export default function StickyActions({ showScrollTop = true }: StickyActionsPro
 
       {/* Scroll to top */}
       {showScrollTop && showScrollTopBtn && (
-        <button
+        <motion.button
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
           onClick={scrollToTop}
-          className="fixed right-4 bottom-6 z-[100] w-12 h-12 rounded-full bg-[#005E60] text-white flex items-center justify-center shadow-lg"
+          className="fixed right-4 bottom-6 z-[100] w-12 h-12 rounded-full bg-[#005E60] text-white flex items-center justify-center shadow-lg border-2 border-white/20"
+          aria-label="Scroll to top"
         >
           <IoArrowUp size={22} />
-        </button>
+        </motion.button>
       )}
     </>
   );
