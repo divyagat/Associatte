@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // ⭐ Premium icons
-import { FaWhatsapp, FaFacebookF, FaInstagram } from 'react-icons/fa';
+import { FaWhatsapp, FaFacebookF, FaInstagram, FaLinkedinIn } from 'react-icons/fa';
 import { FiPhoneCall } from 'react-icons/fi';
 import { HiOutlineCalculator } from 'react-icons/hi';
 import { IoArrowUp } from 'react-icons/io5';
@@ -23,29 +23,36 @@ const ACTIONS = [
     label: 'WhatsApp',
     icon: FaWhatsapp,
     color: '#25D366',
-    action: 'https://wa.me/918668695995?text=Hi,%20I%27m%20interested%20in%20properties%20on%20Associatte',
+    action: 'https://wa.me/918881188181?text=Hi,%20I%27m%20interested%20in%20properties%20on%20Associatte',
   },
   {
     id: 'call',
     label: 'Call Us',
     icon: FiPhoneCall,
     color: '#8B0000',
-    action: 'tel:+918668695995',
+    action: 'tel:+918881188181',
   },
   {
     id: 'facebook',
     label: 'Facebook',
     icon: FaFacebookF,
     color: '#1877F2',
-    action: 'https://facebook.com/associatteproptech',
+    action: 'https://www.facebook.com/AssociatteIndia/',
   },
   {
     id: 'instagram',
     label: 'Instagram',
     icon: FaInstagram,
     color: '#E4405F',
-    action: 'https://instagram.com/associatteproptech',
+    action: 'https://instagram.com/vikramm.associatte?igsh=MXM5aXhmNmZsYThicg==',
   },
+  {
+  id: 'linkedin',
+  label: 'LinkedIn',
+  icon: FaLinkedinIn,
+  color: '#0A66C2',
+  action: 'https://www.linkedin.com/company/associatteindia/posts/?feedView=all',
+},
 ];
 
 interface StickyActionsProps {

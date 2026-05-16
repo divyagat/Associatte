@@ -8,10 +8,10 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   const socialIcons = [
-    { icon: FaFacebookF, href: "#" },
-    { icon: FaTwitter, href: "#" },
-    { icon: FaInstagram, href: "#" },
-    { icon: FaLinkedinIn, href: "#" },
+    { icon: FaFacebookF, href: "https://www.facebook.com/AssociatteIndia/" },
+    { icon: FaTwitter, href: "https://twitter.com/Associatte" },
+    { icon: FaInstagram, href: "https://instagram.com/vikramm.associatte?igsh=MXM5aXhmNmZsYThicg==" },
+    { icon: FaLinkedinIn, href: "https://www.linkedin.com/company/associatteindia/posts/?feedView=all" },
   ];
 
   return (
@@ -68,14 +68,25 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* TOP CITIES */}
+          {/* TOP LOCATIONS */}
           <div>
-            <h3 className="text-white font-semibold mb-5">Top Cities</h3>
+            <h3 className="text-white font-semibold mb-5">Top Locations</h3>
             <ul className="space-y-3 text-sm">
-              <li><Link href="/city/pune" className="hover:text-[#F8C21C] transition">Properties in Pune</Link></li>
-              <li><Link href="/city/mumbai" className="hover:text-[#F8C21C] transition">Properties in Mumbai</Link></li>
-              <li><Link href="/city/bangalore" className="hover:text-[#F8C21C] transition">Properties in Bangalore</Link></li>
-              <li><Link href="/city/hyderabad" className="hover:text-[#F8C21C] transition">Properties in Hyderabad</Link></li>
+              <li>
+                <Link href="/locations/pune" className="hover:text-[#F8C21C] transition">
+                  Properties in Pune
+                </Link>
+              </li>
+              <li>
+                <Link href="/locations/mumbai" className="hover:text-[#F8C21C] transition">
+                  Properties in Mumbai
+                </Link>
+              </li>
+              <li>
+                <Link href="/locations/kdmc" className="hover:text-[#F8C21C] transition">
+                  Properties in KDMC
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -83,9 +94,9 @@ export default function Footer() {
           <div>
             <h3 className="text-white font-semibold mb-5">Contact & Support</h3>
             <ul className="space-y-3 text-sm mb-5">
-              <li className="flex gap-2 items-start"><MapPin size={16} className="mt-0.5 flex-shrink-0 text-[#F8C21C]"/> Pune, India</li>
-              <li className="flex gap-2 items-start"><Phone size={16} className="mt-0.5 flex-shrink-0 text-[#F8C21C]"/> +91 80080 01234</li>
-              <li className="flex gap-2 items-start"><Mail size={16} className="mt-0.5 flex-shrink-0 text-[#F8C21C]"/> hello@associatteproptech.com</li>
+              <li className="flex gap-2 items-start"><MapPin size={16} className="mt-0.5 flex-shrink-0 text-[#F8C21C]"/> 302 and 303, Naren Pearl, 3rd Floor, Magarpatta Road, Above Axis and IndusInd Bank, Hadapsar, Pune - 411028</li>
+              <li className="flex gap-2 items-start"><Phone size={16} className="mt-0.5 flex-shrink-0 text-[#F8C21C]"/> +91 88 8118 8181</li>
+              <li className="flex gap-2 items-start"><Mail size={16} className="mt-0.5 flex-shrink-0 text-[#F8C21C]"/> info@associatte.co.in</li>
             </ul>
             
             <h3 className="text-white font-semibold mb-3">Legal</h3>
