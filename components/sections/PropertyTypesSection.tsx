@@ -130,7 +130,7 @@ export default function PropertyTypesSection({ city }: PropertyTypesSectionProps
           className="mt-12 text-center"
         >
           <p className="text-sm text-gray-500">
-            Can&apos;t find your city? <Link href="/contact" className="text-[#005E60] font-medium hover:underline">Contact us</Link> and we&apos;ll help you explore more locations.
+            Can&apos;t find your city? <Link href="/contact" className="text-[#005E60] font-medium hover:underline"> Contact us</Link> &nbsp;and we&apos;ll help you explore more locations.
           </p>
         </motion.div>
       </div>
