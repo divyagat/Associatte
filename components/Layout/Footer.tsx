@@ -1,6 +1,8 @@
+// app/components/Layout/Footer.tsx
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Building2, Phone, Mail, MapPin, ChevronUp, ArrowRight } from "lucide-react";
 import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from "react-icons/fa";
 import { useState, useEffect } from "react";
@@ -61,21 +63,17 @@ export default function Footer() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 relative z-10">
 
-        {/* BRAND HEADER */}
+        {/* ✅ BRAND HEADER - UPDATED WITH LOGO IMAGE */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between pb-8 border-b border-gray-800/60 mb-10">
           <Link href="/" className="flex items-center gap-3 group mb-6 lg:mb-0">
-            <div className="relative">
-              <div className="w-12 h-12 bg-gradient-to-br from-[#005E60] to-[#007a7d] rounded-xl flex items-center justify-center shadow-lg shadow-[#005E60]/30 group-hover:shadow-[#005E60]/50 transition-all duration-300 group-hover:scale-105">
-                <Building2 className="w-6 h-6 text-white" />
-              </div>
-              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-[#F8C21C] rounded-full border-2 border-[#0d1117]"></div>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-2xl font-bold text-white tracking-tight">
-                Associatte<span className="text-[#F8C21C]">.</span>
-              </span>
-              <span className="text-xs text-gray-500 font-medium">PropTech Pvt Ltd</span>
-            </div>
+            {/* Logo Image */}
+            <Image
+              src="/logos/whitelogo.webp"
+              alt="Associatte PropTech Pvt Ltd"
+              width={140}
+              height={48}
+              className="h-12 w-auto object-contain"
+            />
           </Link>
 
           <div className="flex items-center gap-4">

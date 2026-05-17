@@ -41,6 +41,26 @@ export const BUILDER_SLUG_MAP: Record<string, string[]> = {
   'majestique': ['majestique', 'majestique group'],
 };
 
+// ✅ ADD THIS: Explicit logo paths for each builder slug
+export const BUILDER_LOGOS: Record<string, string> = {
+  'mantra': '/logos/mantra.png',
+  'lodha': '/logos/lodha.png',
+  'godrej': '/logos/godrej.png',
+  'birla': '/logos/birla.png',
+  'shapoorji': '/logos/shapoorji.png',
+  'jhamtani': '/logos/jhamtani.png',
+  'kumar': '/logos/kumar.png',
+  'panchshil': '/logos/panchshil.png',
+  'tribeca': '/logos/tribeca.svg',
+  'sai-paradise-group': '/logos/sai-paradise-group.png',
+  'today-group': '/logos/today-group.png',
+  'magarpatta-city': '/logos/magarpatta-city.png',
+  'runwal-group': '/logos/runwal-group.png',
+  'l-t': '/logos/l-t.png',
+  'mahindra': '/logos/mahindra.png',
+  'majestique': '/logos/majestique.png',
+};
+
 export const getBuilderSlug = (name: string): string => {
   const normalized = name.toLowerCase().trim();
   if (BUILDER_PRIMARY_SLUGS[normalized]) return BUILDER_PRIMARY_SLUGS[normalized];
@@ -64,7 +84,11 @@ export const getBuilderYears = (name: string): string => {
   return map[name.toLowerCase()] || '10y +';
 };
 
-export const getBuilderLogo = (name: string): string => `/logos/${getBuilderSlug(name)}.png`;
+// ✅ UPDATED: Use explicit logo mapping with fallback
+export const getBuilderLogo = (name: string): string => {
+  const slug = getBuilderSlug(name);
+  return BUILDER_LOGOS[slug] || '/logos/placeholder.png';
+};
 
 export const normalize = (str: string) => str.toLowerCase().replace(/[^a-z0-9]/g, '').replace(/\s+/g, '');
 

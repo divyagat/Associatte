@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import Image from 'next/image';
 import { 
   Building2, Phone, Menu, X, ChevronDown, 
   Home, Building, Construction, KeyRound, Tag, MapPin,
@@ -16,7 +17,7 @@ export default function Header() {
   const [propertiesDropdownOpen, setPropertiesDropdownOpen] = useState(false);
   const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
   
-  // ✅ FIXED: Single state object for mobile dropdowns (no Hooks in loops)
+  // ✅ Single state object for mobile dropdowns
   const [mobileDropdownStates, setMobileDropdownStates] = useState<Record<string, boolean>>({});
   
   const pathname = usePathname();
@@ -86,16 +87,17 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           
-          {/* Logo */}
+          {/* ✅ Logo - FIXED PATH */}
           <div className="flex items-center">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-[#8B0000] to-[#F8C21C] rounded-lg flex items-center justify-center">
-                <Building2 className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-gray-900">ASSOCIATTE</h1>
-                <p className="text-xs text-gray-600">PROP TECH PVT LTD</p>
-              </div>
+            <Link href="/" className="flex items-center gap-3">
+              <Image
+                src="/logos/logo.webp"
+                alt="Associatte PropTech Pvt Ltd"
+                width={120}
+                height={40}
+                className="h-10 w-auto object-contain"
+                priority
+              />
             </Link>
           </div>
 
@@ -187,7 +189,11 @@ export default function Header() {
 
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center">
-            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-gray-700 hover:text-gray-900 p-2" aria-label="Toggle menu">
+            <button 
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)} 
+              className="text-gray-700 hover:text-gray-900 p-2" 
+              aria-label="Toggle menu"
+            >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
@@ -198,21 +204,29 @@ export default function Header() {
       {mobileMenuOpen && (
         <div className="md:hidden bg-white border-t border-gray-100">
           <div className="px-4 py-3 space-y-1">
-            {/* ✅ FIXED: No Hooks inside this map - using shared state object */}
             {navLinks.map((link: any) => {
               const isActive = pathname === link.href || pathname?.startsWith(link.href + '?') || pathname?.startsWith(link.href + '/');
               const hasDropdown = link.dropdown?.length > 0;
               const mobileDropdownOpen = isMobileDropdownOpen(link.name);
-              const isPropertiesDropdown = link.name === 'Properties';
-              const isServicesDropdown = link.name === 'Services';
               
               return (
                 <div key={link.name}>
-                  <Link href={link.href} onClick={() => { if (!hasDropdown) setMobileMenuOpen(false); }}
-                    className={`flex items-center justify-between px-3 py-3 rounded-lg ${isActive ? 'text-[#F8C21C] font-medium bg-[#F8C21C]/10' : 'text-gray-700 hover:text-[#005E60] hover:bg-gray-50'}`}>
+                  <Link 
+                    href={link.href} 
+                    onClick={() => { if (!hasDropdown) setMobileMenuOpen(false); }}
+                    className={`flex items-center justify-between px-3 py-3 rounded-lg ${
+                      isActive 
+                        ? 'text-[#F8C21C] font-medium bg-[#F8C21C]/10' 
+                        : 'text-gray-700 hover:text-[#005E60] hover:bg-gray-50'
+                    }`}
+                  >
                     <span>{link.name}</span>
                     {hasDropdown && (
-                      <button type="button" onClick={(e) => { e.preventDefault(); toggleMobileDropdown(link.name); }} className="p-1">
+                      <button 
+                        type="button" 
+                        onClick={(e) => { e.preventDefault(); toggleMobileDropdown(link.name); }} 
+                        className="p-1"
+                      >
                         <ChevronDown className={`w-4 h-4 transition-transform ${mobileDropdownOpen ? 'rotate-180' : ''}`} />
                       </button>
                     )}
@@ -224,8 +238,16 @@ export default function Header() {
                         const isSubActive = pathname === item.href || pathname?.includes(item.href.split('#')[1] || item.href.split('=')[1]);
                         const Icon = item.icon;
                         return (
-                          <Link key={item.href} href={item.href} onClick={() => setMobileMenuOpen(false)}
-                            className={`flex items-center gap-3 px-3 py-2 text-sm rounded-md ${isSubActive ? 'text-[#005E60] font-medium bg-[#005E60]/5' : 'text-gray-600 hover:text-[#005E60] hover:bg-gray-50'}`}>
+                          <Link 
+                            key={item.href} 
+                            href={item.href} 
+                            onClick={() => setMobileMenuOpen(false)}
+                            className={`flex items-center gap-3 px-3 py-2 text-sm rounded-md ${
+                              isSubActive 
+                                ? 'text-[#005E60] font-medium bg-[#005E60]/5' 
+                                : 'text-gray-600 hover:text-[#005E60] hover:bg-gray-50'
+                            }`}
+                          >
                             {Icon && <Icon className="w-4 h-4 flex-shrink-0" style={{ color: item.color }} />}
                             <span>{item.label}</span>
                             {isSubActive && <span className="w-1.5 h-1.5 rounded-full ml-auto" style={{ backgroundColor: item.color }} />}
@@ -237,8 +259,13 @@ export default function Header() {
                 </div>
               );
             })}
+            
+            {/* Mobile Phone Button */}
             <div className="pt-3 mt-3 border-t border-gray-100">
-              <a href="tel:+918881188181" className="flex items-center justify-center gap-2 w-full py-3 bg-[#8B0000] text-white rounded-lg font-medium hover:bg-[#6a0000] transition-colors">
+              <a 
+                href="tel:+918881188181" 
+                className="flex items-center justify-center gap-2 w-full py-3 bg-[#8B0000] text-white rounded-lg font-medium hover:bg-[#6a0000] transition-colors"
+              >
                 <Phone className="w-4 h-4" />
                 <span>+91 888 869 5995</span>
               </a>
