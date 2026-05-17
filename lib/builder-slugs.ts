@@ -52,7 +52,7 @@ export const BUILDER_LOGOS: Record<string, string> = {
   'kumar': '/logos/kumar.png',
   'panchshil': '/logos/panchshil.png',
   'tribeca': '/logos/tribeca.svg',
-  'sai-paradise-group': '/logos/sai-paradise-group.png',
+  'sai-paradise-group': '/logos/sai-paradise-black-logo.png',
   'today-group': '/logos/today-group.png',
   'magarpatta-city': '/logos/magarpatta-city.png',
   'runwal-group': '/logos/runwal-group.png',

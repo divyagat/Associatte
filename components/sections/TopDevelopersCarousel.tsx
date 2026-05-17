@@ -7,7 +7,6 @@ import {
   getBuilderSlug, 
   getBuilderYears, 
   getBuilderLogo,
-  BUILDER_PRIMARY_SLUGS 
 } from '@/lib/builder-slugs';
 
 const toSlug = (str: string) => 
@@ -22,7 +21,6 @@ interface Developer {
   logo: string;
 }
 
-// ✅ ADD city PROP INTERFACE
 interface TopDevelopersCarouselProps {
   city: 'Pune' | 'Mumbai' | 'KDMC';
 }
@@ -30,8 +28,10 @@ interface TopDevelopersCarouselProps {
 export default function TopDevelopersCarousel({ city }: TopDevelopersCarouselProps) {
   const [offset, setOffset] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [logoErrors, setLogoErrors] = useState<Set<string>>(new Set());
   const trackRef = useRef<HTMLDivElement>(null);
 
+  // 1️⃣ Build unique developers list
   const developers: Developer[] = useMemo(() => {
     const devMap = new Map<string, Developer>();
     
@@ -61,9 +61,10 @@ export default function TopDevelopersCarousel({ city }: TopDevelopersCarouselPro
       .sort((a, b) => b.projects - a.projects);
   }, []);
 
+  // 2️⃣ ✅ Duplicate FULL array for seamless infinite looping
   const extendedDevelopers = useMemo(() => {
-    if (developers.length <= 4) return developers;
-    return [...developers, ...developers.slice(0, 4)];
+    if (developers.length === 0) return [];
+    return [...developers, ...developers]; // Second half = exact copy of first half
   }, [developers]);
 
   const CARD_WIDTH = 280;
@@ -71,8 +72,9 @@ export default function TopDevelopersCarousel({ city }: TopDevelopersCarouselPro
   const STEP = CARD_WIDTH + GAP;
   const SPEED = 0.08;
 
+  // 3️⃣ Animation loop with frame-perfect reset
   useEffect(() => {
-    if (isPaused || developers.length <= 4) return;
+    if (isPaused || developers.length <= 1) return;
     
     let animationFrame: number;
     let lastTime = 0;
@@ -84,7 +86,13 @@ export default function TopDevelopersCarousel({ city }: TopDevelopersCarouselPro
       
       setOffset(prev => {
         const newOffset = prev + SPEED * delta;
-        if (newOffset >= STEP * developers.length) return 0;
+        const maxOffset = STEP * developers.length;
+        
+        // ✅ Reset to 0 exactly when we pass the first set. 
+        // Since the second set is identical, the reset is visually invisible.
+        if (newOffset >= maxOffset) {
+          return 0;
+        }
         return newOffset;
       });
       
@@ -97,11 +105,22 @@ export default function TopDevelopersCarousel({ city }: TopDevelopersCarouselPro
     };
   }, [isPaused, developers.length]);
 
+  // 4️⃣ ✅ Fixed manual scroll to work with transform-based animation
   const scrollByCards = (direction: 'left' | 'right') => {
-    const container = trackRef.current?.parentElement;
-    if (!container) return;
-    const scrollAmount = direction === 'left' ? -STEP : STEP;
-    container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    setOffset(prev => {
+      const maxOffset = STEP * developers.length;
+      let newOffset = prev + (direction === 'left' ? -STEP : STEP);
+      
+      // Wrap around seamlessly
+      if (newOffset < 0) newOffset = maxOffset - STEP;
+      if (newOffset >= maxOffset) newOffset = 0;
+      
+      return newOffset;
+    });
+  };
+
+  const handleLogoError = (developerId: string) => {
+    setLogoErrors(prev => new Set(prev).add(developerId));
   };
 
   if (!developers || developers.length === 0) return null;
@@ -149,51 +168,74 @@ export default function TopDevelopersCarousel({ city }: TopDevelopersCarouselPro
             className="flex gap-6 will-change-transform"
             style={{ 
               transform: `translateX(-${offset}px)`,
+              // ✅ No transition during animation for instant seamless reset
               transition: isPaused ? 'transform 0.3s ease-out' : 'none',
               width: `${STEP * extendedDevelopers.length}px`
             }}
           >
-            {extendedDevelopers.map((dev, idx) => (
-              <a
-                key={`${dev.id}-${idx}`} 
-                href={`/builders/${dev.slug}`}
-                className="min-w-[280px] w-[280px] bg-white rounded-xl border-l-4 border-[#005E60] shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden block flex-shrink-0"
-              >
-                <div className="p-5 flex flex-col h-full">
-                  <div className="flex justify-between items-start mb-5">
-                    <div className="h-11 w-20 bg-gray-50 rounded-lg flex items-center justify-center px-2 border border-gray-100 group-hover:border-[#005E60]/30 transition-colors">
-                      <img 
-                        src={dev.logo} 
-                        alt={`${dev.name} logo`} 
-                        className="max-h-7 w-auto object-contain opacity-75 group-hover:opacity-100 transition-opacity"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = '/logos/placeholder.png';
-                        }}
-                      />
+            {extendedDevelopers.map((dev, idx) => {
+              const hasLogoError = logoErrors.has(dev.id);
+              
+              return (
+                <a
+                  key={`${dev.id}-${idx}`} 
+                  href={`/builders/${dev.slug}`}
+                  className="min-w-[280px] w-[280px] bg-white rounded-xl border-l-4 border-[#005E60] shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden block flex-shrink-0"
+                >
+                  <div className="p-5 flex flex-col h-full">
+                    
+                    {/* Logo or Text Fallback */}
+                    <div className="mb-6">
+                      <div className="relative">
+                        <div className="absolute -top-2 -right-2 z-10">
+                          <div className="bg-[#005E60] text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-sm whitespace-nowrap">
+                            {dev.years}
+                          </div>
+                        </div>
+                        
+                        <div className="h-20 w-full bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl flex items-center justify-center p-4 border border-gray-200 group-hover:border-[#005E60]/40 group-hover:shadow-md transition-all duration-300">
+                          {hasLogoError || !dev.logo ? (
+                            <div className="text-center">
+                              <div className="text-lg font-bold text-[#005E60] leading-tight">
+                                {dev.name.split(' ').slice(0, 2).join(' ')}
+                              </div>
+                              {dev.name.split(' ').length > 2 && (
+                                <div className="text-xs text-gray-500 font-medium mt-0.5">
+                                  {dev.name.split(' ').slice(2).join(' ')}
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            <img 
+                              src={dev.logo} 
+                              alt={`${dev.name} logo`} 
+                              className="max-h-14 w-full max-w-[180px] object-contain opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-300"
+                              onError={() => handleLogoError(dev.id)}
+                            />
+                          )}
+                        </div>
+                      </div>
                     </div>
-                    <div className="bg-[#005E60]/10 text-[#005E60] px-2.5 py-1 rounded-full text-xs font-bold">
-                      {dev.years}
+
+                    <div className="h-px w-full bg-gradient-to-r from-transparent via-gray-200 to-transparent mb-5"></div>
+
+                    <div className="flex-grow flex flex-col justify-end">
+                      <h3 className="text-base font-bold text-gray-900 mb-2 group-hover:text-[#8B0000] transition-colors line-clamp-1">
+                        {dev.name}
+                      </h3>
+                      <div className="flex items-end justify-between">
+                        <span className="text-xs text-gray-500 font-medium">Projects</span>
+                        <span className="text-xl font-bold text-[#005E60]">
+                          {dev.projects}
+                        </span>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="h-px w-full bg-gray-100 mb-5"></div>
-
-                  <div className="flex-grow flex flex-col justify-end">
-                    <h3 className="text-base font-bold text-gray-900 mb-2 group-hover:text-[#8B0000] transition-colors line-clamp-1">
-                      {dev.name}
-                    </h3>
-                    <div className="flex items-end justify-between">
-                      <span className="text-xs text-gray-500 font-medium">Projects</span>
-                      <span className="text-xl font-bold text-[#005E60]">
-                        {dev.projects}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="absolute bottom-0 left-0 h-0.5 w-0 bg-[#F8C21C] group-hover:w-full transition-all duration-400 ease-out"></div>
-              </a>
-            ))}
+                  <div className="absolute bottom-0 left-0 h-0.5 w-0 bg-[#F8C21C] group-hover:w-full transition-all duration-400 ease-out"></div>
+                </a>
+              );
+            })}
           </div>
         </div>
 
