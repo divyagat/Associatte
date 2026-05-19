@@ -3,65 +3,79 @@
 import { motion } from 'framer-motion';
 import { Building2, Map, Home, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
-// ✅ ADD PROPER PROPS INTERFACE
 interface CategorySectionProps {
-  city: 'Pune' | 'Mumbai' | 'KDMC';
-  featuredLocalities: readonly string[];
+  city?: 'Pune' | 'Mumbai' | 'KDMC';
+  featuredLocalities?: readonly string[];
 }
 
 const categories = [
-  { path: '/project-sub/saiword', title: 'Apartments', image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400&q=80', icon: Building2 },
-  { path: '/project-sub/saiword', title: 'Plots & Land', image: 'https://images.unsplash.com/photo-1500382017468-9049fed18f3e?w=400&q=80', icon: Map },
-  { path: '/project-sub/saiword', title: 'Second Homes', image: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=400&q=80', icon: Home },
-  { path: '/project-sub/saiword', title: 'Investment Projects', image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&q=80', icon: TrendingUp },
+  { type: 'residential', title: 'Apartments', image: '/Explore By Category/Apartments.webp', icon: Building2 },
+  { type: 'plots', title: 'Plots & Land', image: '/Explore By Category/PlotsLand lands.webp', icon: Map },
+  { type: 'ready', title: 'Ready To Move', image: '/Explore By Category/readyto.webp', icon: Home },
+  { type: 'pre-launch', title: 'Investment Projects', image: '/Explore By Category/prelaunch.webp', icon: TrendingUp },
 ];
 
 export default function CategorySection({ city, featuredLocalities }: CategorySectionProps) {
+  const searchParams = useSearchParams();
+  const currentLocation = searchParams.get('location') || '';
+  const currentBuilder = searchParams.get('builder') || '';
+  const currentBhk = searchParams.get('bhk') || '';
+
+  const buildCategoryLink = (type: string) => {
+    const params = new URLSearchParams();
+    params.set('type', type);
+    if (currentLocation) params.set('location', currentLocation);
+    if (currentBuilder) params.set('builder', currentBuilder);
+    if (currentBhk) params.set('bhk', currentBhk);
+    return `/properties?${params.toString()}`;
+  };
+
   return (
-    <section className="py-16 bg-white">
+    <section className="py-12 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900">Explore by Category in {city}</h2>
-          <div className="w-16 h-1 bg-red-800 mx-auto mt-2" />
+        <div className="text-center mb-10">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
+            Explore by Category {city && `in ${city}`}
+          </h2>
+          <div className="w-16 h-1 bg-[#8B0000] mx-auto mt-2" />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {categories.map((category, index) => (
             <motion.div
-              key={index}
+              key={category.type}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
               className="group cursor-pointer"
             >
-              <Link href={category.path}>
-                <div className="relative overflow-hidden rounded-lg shadow-lg h-64">
+              <Link href={buildCategoryLink(category.type)}>
+                <div className="relative overflow-hidden rounded-lg shadow-lg h-56 sm:h-64">
                   <img
                     src={category.image}
                     alt={category.title}
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&q=80';
+                    }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                   <div className="absolute top-4 left-1/2 transform -translate-x-1/2">
-                    <div className="w-14 h-14 rounded-full bg-red-800 flex items-center justify-center shadow-lg">
-                      <category.icon className="w-7 h-7 text-white" />
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#8B0000] flex items-center justify-center shadow-lg">
+                      <category.icon className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
                     </div>
                   </div>
                   <div className="absolute bottom-4 left-0 right-0 text-center">
-                    <h3 className="text-white font-bold text-lg">{category.title}</h3>
+                    <h3 className="text-white font-bold text-base sm:text-lg">{category.title}</h3>
                   </div>
                 </div>
               </Link>
             </motion.div>
           ))}
-        </div>
-
-        <div className="text-center mt-8">
-          <button className="bg-yellow-500 text-gray-900 px-8 py-3 rounded-md font-semibold hover:bg-yellow-600 transition-colors">
-            View All Properties
-          </button>
         </div>
       </div>
     </section>

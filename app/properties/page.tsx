@@ -37,7 +37,7 @@ const getPropertyType = (project: any): PropertyType => {
   return 'residential';
 };
 
-// ✅ Get unique filter values - FIXED with Array.from
+// ✅ Get unique filter values
 const getAllLocations = () => Array.from(new Set(properties.map((p: any) => p.location).filter(Boolean)));
 const getAllBuilders = () => Array.from(new Set(properties.map((p: any) => p.developer?.name).filter(Boolean)));
 const getAllBHKs = () => {
@@ -53,7 +53,6 @@ const getAllBHKs = () => {
   return Array.from(bhks).sort();
 };
 
-// ✅ FIX: Added 'async' keyword for Next.js 15+ Promise searchParams
 export default async function PropertiesPage({
   searchParams
 }: {

@@ -41,6 +41,26 @@ export const BUILDER_SLUG_MAP: Record<string, string[]> = {
   'majestique': ['majestique', 'majestique group'],
 };
 
+// ✅ Builder images mapping
+export const BUILDER_IMAGES: Record<string, { logo: string; banner?: string }> = {
+  'mantra': { logo: '/logos/mantra.png' },
+  'lodha': { logo: '/logos/lodha.png' },
+  'godrej': { logo: '/logos/godrej.png' },
+  'birla': { logo: '/logos/birla.png' },
+  'shapoorji': { logo: '/logos/shapoorji.png' },
+  'jhamtani': { logo: '/logos/jhamtani.png' },
+  'kumar': { logo: '/logos/kumar.png' },
+  'panchshil': { logo: '/logos/panchshil.png' },
+  'tribeca': { logo: '/logos/tribeca.svg' },
+  'sai-paradise-group': { logo: '/logos/sai-paradise-black-logo.png' },
+  'today-group': { logo: '/logos/today-group.png' },
+  'magarpatta-city': { logo: '/logos/magarpatta-city.png' },
+  'runwal-group': { logo: '/logos/runwal-group.png' },
+  'l-t': { logo: '/logos/l-t.png.webp' },
+  'mahindra': { logo: '/logos/mahindra.png' },
+  'majestique': { logo: '/logos/majestique.png' },
+};
+
 export const getBuilderSlug = (name: string): string => {
   const normalized = name.toLowerCase().trim();
   if (BUILDER_PRIMARY_SLUGS[normalized]) return BUILDER_PRIMARY_SLUGS[normalized];
@@ -64,7 +84,29 @@ export const getBuilderYears = (name: string): string => {
   return map[name.toLowerCase()] || '10y +';
 };
 
-export const getBuilderLogo = (name: string): string => `/logos/${getBuilderSlug(name)}.png`;
+// ✅ Get builder logo path
+export const getBuilderLogo = (name: string): string => {
+  const slug = getBuilderSlug(name);
+  const image = BUILDER_IMAGES[slug];
+  return image?.logo || `/logos/${slug}.png`;
+};
+
+// ✅ Get builder banner path
+export const getBuilderBanner = (name: string): string | undefined => {
+  const slug = getBuilderSlug(name);
+  return BUILDER_IMAGES[slug]?.banner;
+};
+
+// ✅ NEW: Get all builder metadata (logo, banner, years, slug)
+export const getBuilderMetadata = (name: string) => {
+  const slug = getBuilderSlug(name);
+  return {
+    slug,
+    logo: getBuilderLogo(name),
+    banner: getBuilderBanner(name),
+    years: getBuilderYears(name),
+  };
+};
 
 export const normalize = (str: string) => str.toLowerCase().replace(/[^a-z0-9]/g, '').replace(/\s+/g, '');
 

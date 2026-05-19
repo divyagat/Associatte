@@ -597,7 +597,7 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.5, ease: "easeOut" }}
           >
-            <div className="w-full">
+            <div className="w-full mb-24">
               <SearchBar {...searchBarProps as any} />
             </div>
           </motion.div>

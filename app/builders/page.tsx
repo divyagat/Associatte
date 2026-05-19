@@ -2,7 +2,7 @@
 import { Metadata } from 'next';
 import BuilderSearchContainer from '@/components/builder-page/BuilderSearchContainer';
 import properties from '@/data/properties.json';
-import { getBuilderSlug, getBuilderYears, getBuilderLogo } from '@/lib/builder-slugs';
+import { getBuilderSlug, getBuilderYears, getBuilderLogo, getBuilderMetadata } from '@/lib/builder-slugs';
 
 export const metadata: Metadata = {
   title: 'Know Your Developer | Trusted Builders in Pune, Mumbai & KDMC',
@@ -16,6 +16,7 @@ type Builder = {
   slug: string;
   years: string;
   logo: string;
+  banner?: string;
   projects: any[];
   locations: string[];
   totalProjects: number;
@@ -30,13 +31,16 @@ const getAllBuilders = (): Builder[] => {
     if (!name) return;
 
     const slug = getBuilderSlug(name);
+    const metadata = getBuilderMetadata(name);
+    
     if (!builderMap.has(slug)) {
       builderMap.set(slug, {
         id: slug,
         name,
         slug,
         years: getBuilderYears(name),
-        logo: getBuilderLogo(name),
+        logo: metadata.logo,
+        banner: metadata.banner,
         projects: [],
         locations: [],
         totalProjects: 0,
@@ -118,22 +122,6 @@ export default async function BuildersPage({
                 Search
               </button>
             </form>
-            {(searchQuery || locationFilter) && (
-              <div className="flex flex-wrap gap-2 mt-4">
-                {searchQuery && (
-                  <span className="inline-flex items-center gap-1 px-3 py-1 bg-white/10 rounded-full text-sm">
-                    Search: "{searchQuery}" 
-                    <a href="/builders" className="hover:text-[#F8C21C]">×</a>
-                  </span>
-                )}
-                {locationFilter && (
-                  <span className="inline-flex items-center gap-1 px-3 py-1 bg-white/10 rounded-full text-sm">
-                    Location: {locationFilter} 
-                    <a href="/builders" className="hover:text-[#F8C21C]">×</a>
-                  </span>
-                )}
-              </div>
-            )}
           </div>
         </div>
       </section>

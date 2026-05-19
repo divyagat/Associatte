@@ -1,7 +1,6 @@
-// client/components/common/EmiCalculator.tsx
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Calculator, Info, ChevronDown } from 'lucide-react';
 
@@ -21,6 +20,29 @@ export default function EmiCalculator({
   const [tenure, setTenure] = useState(20);
   const [showBreakdown, setShowBreakdown] = useState(false);
 
+  // ✅ Update loan amount when default changes
+  useEffect(() => {
+    if (defaultLoanAmount && defaultLoanAmount !== loanAmount) {
+      setLoanAmount(defaultLoanAmount);
+    }
+  }, [defaultLoanAmount]);
+
+  // ✅ Listen for global custom event to open calculator
+  useEffect(() => {
+    const handleOpenCalculator = (event: CustomEvent<{ amount?: number }>) => {
+      if (event.detail?.amount) {
+        setLoanAmount(event.detail.amount);
+      }
+      // Trigger open via custom event on document
+      document.dispatchEvent(new CustomEvent('emi-calculator-request-open'));
+    };
+
+    window.addEventListener('open-emi-calculator', handleOpenCalculator as EventListener);
+    return () => {
+      window.removeEventListener('open-emi-calculator', handleOpenCalculator as EventListener);
+    };
+  }, []);
+
   // Calculate EMI using standard formula
   const calculateEMI = useMemo(() => {
     const P = loanAmount;
@@ -38,15 +60,15 @@ export default function EmiCalculator({
   const principalPercentage = (loanAmount / totalPayment) * 100;
   const interestPercentage = (totalInterest / totalPayment) * 100;
 
-  const formatCurrency = (val: number) => 
+  const formatCurrency = useCallback((val: number) => 
     new Intl.NumberFormat('en-IN', { 
       style: 'currency', 
       currency: 'INR',
       maximumFractionDigits: 0 
-    }).format(val);
+    }).format(val), []);
 
-  const formatNumber = (val: number) => 
-    new Intl.NumberFormat('en-IN').format(val);
+  const formatNumber = useCallback((val: number) => 
+    new Intl.NumberFormat('en-IN').format(val), []);
 
   // Close on Escape key
   useEffect(() => {
@@ -58,6 +80,15 @@ export default function EmiCalculator({
       return () => window.removeEventListener('keydown', handleEscape);
     }
   }, [isOpen, onClose]);
+
+  // Cleanup body scroll lock
+  useEffect(() => {
+    return () => {
+      if (typeof document !== 'undefined') {
+        document.body.style.overflow = '';
+      }
+    };
+  }, []);
 
   if (!isOpen) return null;
 
@@ -79,6 +110,9 @@ export default function EmiCalculator({
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
           className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-hidden"
           onClick={e => e.stopPropagation()}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="emi-calculator-title"
         >
           {/* Header */}
           <div className="bg-gradient-to-r from-[#005E60] to-[#004a4d] text-white px-6 py-4 flex items-center justify-between sticky top-0 z-10">
@@ -87,13 +121,13 @@ export default function EmiCalculator({
                 <Calculator className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-lg font-bold">EMI Calculator</h3>
+                <h3 id="emi-calculator-title" className="text-lg font-bold">EMI Calculator</h3>
                 <p className="text-xs text-white/80">Calculate your monthly payments</p>
               </div>
             </div>
             <button 
               onClick={onClose}
-              className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+              className="p-2 hover:bg-white/10 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-white/50"
               aria-label="Close calculator"
             >
               <X className="w-5 h-5" />
@@ -116,7 +150,8 @@ export default function EmiCalculator({
                 step="100000"
                 value={loanAmount}
                 onChange={(e) => setLoanAmount(Number(e.target.value))}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#005E60]"
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#005E60] focus:outline-none focus:ring-2 focus:ring-[#005E60]/50"
+                aria-label="Loan amount slider"
               />
               <div className="flex justify-between text-xs text-gray-500 mt-2">
                 <span>₹10L</span>
@@ -124,16 +159,17 @@ export default function EmiCalculator({
                 <span>₹2Cr</span>
               </div>
               {/* Quick presets */}
-              <div className="flex gap-2 mt-3">
+              <div className="flex flex-wrap gap-2 mt-3">
                 {[5000000, 7500000, 10000000, 15000000].map((amount) => (
                   <button
                     key={amount}
                     onClick={() => setLoanAmount(amount)}
-                    className={`px-3 py-1.5 text-xs rounded-lg border transition-colors ${
+                    className={`px-3 py-1.5 text-xs rounded-lg border transition-colors focus:outline-none focus:ring-2 focus:ring-[#005E60]/50 ${
                       loanAmount === amount 
                         ? 'bg-[#005E60] text-white border-[#005E60]' 
                         : 'bg-gray-50 text-gray-600 border-gray-200 hover:border-[#005E60]'
                     }`}
+                    aria-pressed={loanAmount === amount}
                   >
                     {amount >= 10000000 ? `₹${amount/10000000}Cr` : `₹${amount/1000000}L`}
                   </button>
@@ -154,7 +190,8 @@ export default function EmiCalculator({
                 step="0.1"
                 value={interestRate}
                 onChange={(e) => setInterestRate(Number(e.target.value))}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#005E60]"
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#005E60] focus:outline-none focus:ring-2 focus:ring-[#005E60]/50"
+                aria-label="Interest rate slider"
               />
               <div className="flex justify-between text-xs text-gray-500 mt-2">
                 <span>5%</span>
@@ -176,7 +213,8 @@ export default function EmiCalculator({
                 step="1"
                 value={tenure}
                 onChange={(e) => setTenure(Number(e.target.value))}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#005E60]"
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#005E60] focus:outline-none focus:ring-2 focus:ring-[#005E60]/50"
+                aria-label="Loan tenure slider"
               />
               <div className="flex justify-between text-xs text-gray-500 mt-2">
                 <span>1Y</span>
@@ -231,7 +269,9 @@ export default function EmiCalculator({
             {/* Toggle Breakdown */}
             <button
               onClick={() => setShowBreakdown(!showBreakdown)}
-              className="w-full flex items-center justify-between p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
+              className="w-full flex items-center justify-between p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-[#005E60]/50"
+              aria-expanded={showBreakdown}
+              aria-controls="payment-breakdown"
             >
               <span className="text-sm font-medium text-gray-700">View Payment Breakdown</span>
               <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${showBreakdown ? 'rotate-180' : ''}`} />
@@ -241,6 +281,7 @@ export default function EmiCalculator({
             <AnimatePresence>
               {showBreakdown && (
                 <motion.div
+                  id="payment-breakdown"
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: 'auto', opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
@@ -252,7 +293,7 @@ export default function EmiCalculator({
                       <span className="text-right">Principal</span>
                       <span className="text-right">Interest</span>
                     </div>
-                    {[1, 5, 10, 15, 20].map((year) => {
+                    {[1, 5, 10, 15, 20].filter(y => y <= tenure).map((year) => {
                       const yearlyPrincipal = (loanAmount / tenure);
                       const yearlyInterest = (totalInterest / tenure);
                       return (
@@ -269,7 +310,7 @@ export default function EmiCalculator({
             </AnimatePresence>
 
             {/* Disclaimer */}
-            <div className="flex items-start gap-2 text-xs text-gray-500 bg-yellow-50 p-3 rounded-lg border border-yellow-200">
+            <div className="flex items-start gap-2 text-xs text-gray-500 bg-yellow-50 p-3 rounded-lg border border-yellow-200" role="note">
               <Info className="w-4 h-4 flex-shrink-0 mt-0.5 text-yellow-600" />
               <p>EMI is an estimate. Actual rates may vary based on credit profile, bank policies & market conditions. Consult a financial advisor for personalized advice.</p>
             </div>
@@ -279,13 +320,13 @@ export default function EmiCalculator({
           <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex gap-3 sticky bottom-0">
             <button 
               onClick={onClose}
-              className="flex-1 py-2.5 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-100 transition-colors"
+              className="flex-1 py-2.5 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-[#005E60]/50"
             >
               Close
             </button>
             <a 
               href="/contact-us?service=home-loans"
-              className="flex-1 py-2.5 bg-[#005E60] text-white font-medium rounded-lg hover:bg-[#004a4d] transition-colors text-center"
+              className="flex-1 py-2.5 bg-[#005E60] text-white font-medium rounded-lg hover:bg-[#004a4d] transition-colors text-center focus:outline-none focus:ring-2 focus:ring-[#005E60]/50"
             >
               Apply for Loan
             </a>

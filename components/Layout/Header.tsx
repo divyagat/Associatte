@@ -1,13 +1,12 @@
-// app/components/Layout/Header.tsx
 'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { 
   Building2, Phone, Menu, X, ChevronDown, 
   Home, Building, Construction, KeyRound, Tag, MapPin,
-  // ✅ Services icons (Interior Design removed)
   Handshake, FileText, Scale, ClipboardList, TrendingUp 
 } from 'lucide-react';
 
@@ -37,7 +36,6 @@ export default function Header() {
     { 
       name: 'Services', 
       href: '/services',
-      // ✅ UPDATED: 5 services (Interior Design removed)
       dropdown: [
         { label: 'Property Consultation', href: '/services#consultation', icon: Handshake, color: '#005E60' },
         { label: 'Home Loans', href: '/services#home-loans', icon: FileText, color: '#F8C21C' },
@@ -70,24 +68,45 @@ export default function Header() {
 
   return (
     <nav className="bg-white shadow-sm sticky top-0 z-50">
+      {/* ✅ Taller header on desktop to accommodate bigger logo */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
+        <div className="flex justify-between items-center h-20 lg:h-24">
           
-          {/* Logo */}
+          {/* ✅ BIG & RESPONSIVE LOGO - YOUR IMAGE ONLY */}
           <div className="flex items-center">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-[#8B0000] to-[#F8C21C] rounded-lg flex items-center justify-center">
-                <Building2 className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-gray-900">ASSOCIATTE</h1>
-                <p className="text-xs text-gray-600">PROP TECH PVT LTD</p>
+            <Link href="/" className="flex items-center group" aria-label="Home">
+              <div className="relative w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 flex items-center justify-center overflow-hidden group-hover:scale-105 transition-transform duration-200">
+                
+                {/* 🔁 REPLACE THIS WITH YOUR ACTUAL LOGO PATH */}
+                <Image
+                  src="/logos/Asoociattelogo.jpg"
+                  alt="Company Logo"
+                  width={96}
+                  height={96}
+                  className="object-contain w-full h-full p-1"
+                  priority
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                    const fallback = target.parentElement?.querySelector('.logo-fallback');
+                    if (fallback) {
+                      (fallback as HTMLElement).style.display = 'flex';
+                    }
+                  }}
+                />
+                
+                {/* Fallback Icon (scales with logo) */}
+                <Building2 
+                  className="logo-fallback w-7 h-7 sm:w-8 sm:h-8 lg:w-10 lg:h-10 text-[#005E60] absolute hidden"
+                  aria-hidden="true"
+                />
+                
               </div>
             </Link>
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-1">
+          <div className="hidden lg:flex items-center space-x-1">
             {navLinks.map((link: any) => {
               const isActive = pathname === link.href || pathname?.startsWith(link.href + '?') || pathname?.startsWith(link.href + '/');
               const hasDropdown = link.dropdown?.length > 0;
@@ -165,15 +184,15 @@ export default function Header() {
           </div>
 
           {/* Phone Button */}
-          <div className="hidden md:flex items-center">
+          <div className="hidden lg:flex items-center">
             <a href="tel:+918668695995" className="bg-[#8B0000] text-white px-5 py-2.5 rounded-lg flex items-center gap-2 hover:bg-[#6a0000] transition-colors font-medium text-sm shadow-sm">
               <Phone className="w-4 h-4" />
               <span>+91 866 869 5995</span>
             </a>
           </div>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
+          {/* Mobile/Tablet menu button */}
+          <div className="lg:hidden flex items-center">
             <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-gray-700 hover:text-gray-900 p-2" aria-label="Toggle menu">
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -183,14 +202,12 @@ export default function Header() {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100">
+        <div className="lg:hidden bg-white border-t border-gray-100">
           <div className="px-4 py-3 space-y-1">
             {navLinks.map((link: any) => {
               const isActive = pathname === link.href || pathname?.startsWith(link.href + '?') || pathname?.startsWith(link.href + '/');
               const hasDropdown = link.dropdown?.length > 0;
               const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
-              const isPropertiesDropdown = link.name === 'Properties';
-              const isServicesDropdown = link.name === 'Services';
               
               return (
                 <div key={link.name}>

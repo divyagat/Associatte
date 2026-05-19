@@ -11,36 +11,21 @@ import StickyActions from "@/components/common/StickyActions";
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
-// ✅ FIX: Correct TypeScript syntax - colon between variable name and type
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://propfinder.in"),
-  
   title: {
     default: "PropFinder by Associatte PropTech | Find Your Dream Property in Mumbai, Pune & Kharghar",
     template: "%s | PropFinder"
   },
-  
   description: "PropFinder by Associatte PropTech Pvt Ltd: Find verified 2, 3, 4 BHK properties in Mumbai, Pune, Kharghar. Browse new launches & ready-to-move projects starting ₹75L. Trusted real estate guidance.",
-  
   keywords: [
-    "PropFinder",
-    "Associatte PropTech",
-    "real estate India",
-    "properties in Mumbai",
-    "flats in Pune",
-    "3 BHK Kharghar",
-    "under construction projects",
-    "ready to move homes",
-    "property investment",
-    "new launch projects",
-    "Mantra 1 Residences",
-    "Paradise Sai World Empire"
+    "PropFinder", "Associatte PropTech", "real estate India", "properties in Mumbai",
+    "flats in Pune", "3 BHK Kharghar", "under construction projects", "ready to move homes",
+    "property investment", "new launch projects", "Mantra 1 Residences", "Paradise Sai World Empire"
   ],
-  
   authors: [{ name: "Associatte PropTech Pvt Ltd", url: "https://propfinder.in" }],
   creator: "Associatte PropTech Pvt Ltd",
   publisher: "Associatte PropTech Pvt Ltd",
-  
   openGraph: {
     type: "website",
     locale: "en_IN",
@@ -56,7 +41,6 @@ export const metadata: Metadata = {
       type: "image/jpeg"
     }]
   },
-  
   twitter: {
     card: "summary_large_image",
     title: "PropFinder | Verified Properties by Associatte PropTech",
@@ -64,7 +48,6 @@ export const metadata: Metadata = {
     images: ["/og-image.jpg"],
     creator: "@associatteproptech"
   },
-  
   robots: {
     index: true,
     follow: true,
@@ -76,11 +59,9 @@ export const metadata: Metadata = {
       "max-video-preview": -1,
     },
   },
-  
   verification: {
     google: "your-google-site-verification-code",
   },
-  
   category: "real estate",
 };
 
@@ -138,7 +119,7 @@ export default function RootLayout({
         
         <Footer />
         
-        {/* ✅ Sticky Action Buttons - Simple props only */}
+        {/* ✅ Sticky Actions now manages its own modal */}
         <StickyActions showScrollTop={true} />
       </body>
     </html>
