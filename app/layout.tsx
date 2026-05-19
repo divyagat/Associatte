@@ -7,11 +7,19 @@ import Header from "../components/Layout/Header";
 import Footer from "../components/Layout/Footer";
 import { Providers } from "./providers";
 import StickyActions from "@/components/common/StickyActions";
+<<<<<<< HEAD
+=======
+import EmiCalculator from "@/components/common/EmiCalculator"; // ✅ Import EMI Calculator
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
+<<<<<<< HEAD
 // ✅ FIX: Correct TypeScript syntax - colon between variable name and type
+=======
+// ✅ Metadata with correct TypeScript syntax
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://propfinder.in"),
   
@@ -78,13 +86,22 @@ export const metadata: Metadata = {
   },
   
   verification: {
+<<<<<<< HEAD
     google: "your-google-site-verification-code",
+=======
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || "your-google-site-verification-code",
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
   },
   
   category: "real estate",
 };
 
+<<<<<<< HEAD
 const organizationSchema = {
+=======
+// ✅ JSON-LD Schema for Organization
+const organizationSchema: Record<string, unknown> = {
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
   "@context": "https://schema.org",
   "@type": "RealEstateAgent",
   "name": "Associatte PropTech Pvt Ltd",
@@ -138,7 +155,14 @@ export default function RootLayout({
         
         <Footer />
         
+<<<<<<< HEAD
         {/* ✅ Sticky Action Buttons - Simple props only */}
+=======
+        {/* ✅ EMI Calculator Modal - Single instance, listens for global events */}
+        <EmiCalculator />
+        
+        {/* ✅ Sticky Action Buttons */}
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
         <StickyActions showScrollTop={true} />
       </body>
     </html>

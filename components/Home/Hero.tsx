@@ -25,6 +25,14 @@ export interface SearchFilters {
   locality?: string;
 }
 
+<<<<<<< HEAD
+=======
+// ✅ FIX: Define simple union types FIRST (no circular reference possible)
+export type CityName = 'Pune' | 'Mumbai' | 'KDMC';
+export type CitySlug = 'pune' | 'mumbai' | 'kdmc';
+
+// ✅ Then define City interface using the simple unions
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
 export interface City {
   name: CityName;
   projects: number;
@@ -33,6 +41,7 @@ export interface City {
   slug: CitySlug;
 }
 
+<<<<<<< HEAD
 interface HeroProps {
   initialCity?: string;
   onSearch?: (params: { city: string; query?: string; filters?: SearchFilters }) => void;
@@ -48,6 +57,10 @@ const BRAND = {
 
 // 🗺️ Cities Data with KDMC Support
 export const CITIES: readonly City[] = [
+=======
+// ✅ Now define CITIES using the interface (safe, no circular reference)
+export const CITIES: City[] = [
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
   { 
     name: 'Pune', 
     projects: 1923, 
@@ -69,10 +82,27 @@ export const CITIES: readonly City[] = [
     description: 'Affordable & premium projects in Kalyan-Dombivli belt',
     slug: 'kdmc'
   },
+<<<<<<< HEAD
 ] as const;
 
 export type CitySlug = typeof CITIES[number]['slug'];
 export type CityName = typeof CITIES[number]['name'];
+=======
+];
+
+interface HeroProps {
+  initialCity?: string;
+  onSearch?: (params: { city: string; query?: string; filters?: SearchFilters }) => void;
+  onFilterChange?: (params: { city: string; filters: SearchFilters }) => void;
+}
+
+// 🎨 Brand Colors
+const BRAND = {
+  green: '#005E60',
+  red: '#8B0000',
+  yellow: '#F8C21C',
+};
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
 
 // 🔍 Search suggestions
 const SEARCH_SUGGESTIONS = [
@@ -97,23 +127,39 @@ export interface Category {
   gradient: string;
 }
 
+<<<<<<< HEAD
 export const CATEGORIES: readonly Category[] = [
+=======
+export const CATEGORIES: Category[] = [
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
   { id: 'residential', label: 'Residential', icon: Home, color: BRAND.green, gradient: `from-[${BRAND.green}] to-[#004a4d]` },
   { id: 'commercial', label: 'Commercial', icon: Building2, color: BRAND.red, gradient: `from-[${BRAND.red}] to-[#6a0000]` },
   { id: 'underConstruction', label: 'Pre-Launch', icon: Construction, color: BRAND.yellow, gradient: `from-[${BRAND.yellow}] to-[#d4a017]` },
   { id: 'readyToMove', label: 'Ready', icon: KeyRound, color: BRAND.green, gradient: `from-[${BRAND.green}] to-[#004a4d]` },
+<<<<<<< HEAD
 ] as const;
+=======
+];
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
 
 // 🔧 Filter options
 export const BHK_OPTIONS = ['1 RK', '1 BHK', '2 BHK', '3 BHK', '4 BHK', '4+ BHK'] as const;
 export const BUILDER_OPTIONS = ['Mantra Developers', 'Lodha Group', 'Shapoorji Pallonji', 'Paradise Group', 'Today Global', 'Birla Estates', 'Panchshil Realty'] as const;
 export const PROPERTY_TYPES = ['Apartment', 'Villa', 'Plot', 'Studio', 'Penthouse', 'Office Space'] as const;
+<<<<<<< HEAD
 export const PRICE_RANGES: readonly { label: string; min: number; max: number }[] = [
+=======
+export const PRICE_RANGES: { label: string; min: number; max: number }[] = [
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
   { label: 'Under ₹75L', min: 0, max: 7500000 },
   { label: '₹75L - ₹1Cr', min: 7500000, max: 10000000 },
   { label: '₹1Cr - ₹2Cr', min: 10000000, max: 20000000 },
   { label: 'Above ₹2Cr', min: 20000000, max: Infinity },
+<<<<<<< HEAD
 ] as const;
+=======
+];
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
 
 // 🗺️ Locality to City mapping
 export const LOCALITY_CITY_MAP: Record<string, CitySlug> = {
@@ -173,6 +219,7 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
   const searchParams = useSearchParams();
   const pathname = usePathname();
   
+<<<<<<< HEAD
   // ✅ Initialize city from path OR query param OR fallback
   const [selectedCity, setSelectedCity] = useState<CityName>(() => {
     const locationMatch = pathname?.match(/^\/locations\/(pune|mumbai|kdmc)$/i);
@@ -210,6 +257,13 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
     }
     return initial;
   });
+=======
+  const [selectedCity, setSelectedCity] = useState<CityName>('Pune');
+  const [activeTab, setActiveTab] = useState<'residential' | 'commercial' | 'underConstruction' | 'readyToMove'>('residential');
+  const [showStickySearch, setShowStickySearch] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filters, setFilters] = useState<SearchFilters>({});
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
   const [showFilters, setShowFilters] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
@@ -233,6 +287,31 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
     onFilterChange?.({ city: selectedCity.toLowerCase(), filters });
   }, [selectedCity, filters, onFilterChange]);
 
+<<<<<<< HEAD
+=======
+  // ✅ Initialize from URL on mount
+  useEffect(() => {
+    const locationMatch = pathname?.match(/^\/locations\/(pune|mumbai|kdmc)$/i);
+    if (locationMatch) {
+      const slug = locationMatch[1].toLowerCase() as CitySlug;
+      const city = CITIES.find(c => c.slug === slug);
+      if (city) setSelectedCity(city.name);
+    }
+    const urlCity = searchParams?.get('city');
+    if (urlCity) {
+      const normalized = urlCity.toLowerCase();
+      const city = CITIES.find(c => c.slug === normalized);
+      if (city) setSelectedCity(city.name);
+    }
+    const urlTab = searchParams?.get('tab');
+    if (urlTab && ['residential', 'commercial', 'underConstruction', 'readyToMove'].includes(urlTab)) {
+      setActiveTab(urlTab as any);
+    }
+    const urlQuery = searchParams?.get('q');
+    if (urlQuery) setSearchQuery(urlQuery);
+  }, [pathname, searchParams]);
+
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
   const navigateToLocation = useCallback((cityName: CityName) => {
     const citySlug = CITIES.find(c => c.name === cityName)?.slug;
     if (citySlug) router.push(`/locations/${citySlug}`);
@@ -249,7 +328,10 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
     navigateToLocation(newCity);
   }, [navigateToLocation]);
 
+<<<<<<< HEAD
   // ✅ Navigate to properties page with filters - Same as dropdown behavior
+=======
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
   const navigateToProperties = useCallback((searchParamsObj: URLSearchParams) => {
     router.push(`/properties?${searchParamsObj.toString()}`, { scroll: false });
   }, [router]);
@@ -284,7 +366,10 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
     if (filters.locality) queryParams.append('locality', filters.locality);
     
     try {
+<<<<<<< HEAD
       // ✅ Navigate to separate properties page (same as dropdown behavior)
+=======
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
       await navigateToProperties(queryParams);
       onSearch?.({ city: selectedCity, query: searchQuery.trim(), filters: hasFilters ? filters : undefined });
       setIsCityDropdownOpen(false);
@@ -292,7 +377,10 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
     finally { setTimeout(() => setIsSearching(false), 200); }
   }, [selectedCity, searchQuery, filters, onSearch, navigateToProperties, isSearching]);
 
+<<<<<<< HEAD
   // ✅ Handle filter selection - Navigate immediately to properties page
+=======
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
   const handleFilterSelect = useCallback((filterType: keyof SearchFilters, value: unknown) => {
     const newFilters = { ...filters };
     
@@ -314,7 +402,10 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
       newFilters.locality = value;
     }
     
+<<<<<<< HEAD
     // ✅ Immediately navigate to properties page with updated filters
+=======
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
     const citySlug = CITIES.find(c => c.name === selectedCity)?.slug || 'pune';
     const queryParams = new URLSearchParams();
     queryParams.append('city', citySlug);
@@ -382,7 +473,10 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
 
   const handleClearFilters = useCallback(() => { 
     setFilters({}); 
+<<<<<<< HEAD
     // ✅ Navigate to base location page when clearing filters
+=======
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
     const citySlug = CITIES.find(c => c.name === selectedCity)?.slug || 'pune';
     router.push(`/locations/${citySlug}`);
   }, [selectedCity, router]);
@@ -404,6 +498,7 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
     handleSearch();
   }, [handleSearch, navigateToLocation]);
 
+<<<<<<< HEAD
   // ✅ Props with proper type casting for readonly arrays
   const searchBarProps = useMemo(() => ({
     activeTab, selectedCity, searchQuery, filters, isCityDropdownOpen,
@@ -426,11 +521,46 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
     categories: CATEGORIES as unknown as readonly Category[],
     isSearching,
     onTabChange: (tab: 'residential' | 'commercial' | 'underConstruction' | 'readyToMove') => setActiveTab(tab),
+=======
+  // ✅ Props - simple, no complex typing that could cause issues
+  const searchBarProps = useMemo(() => {
+    return {
+      activeTab, 
+      selectedCity, 
+      searchQuery, 
+      filters, 
+      isCityDropdownOpen,
+      showSuggestions: !!searchQuery && filteredSuggestions.length > 0,
+      filteredSuggestions: [...filteredSuggestions],
+      categories: CATEGORIES,
+      cities: CITIES,
+      isSearching,
+      onTabChange: (tab: string) => setActiveTab(tab as any),
+      onCityChange: (city: string) => handleCityChange(city as CityName),
+      onSearchQueryChange: setSearchQuery,
+      onCityDropdownToggle: handleCityDropdownOpen,
+      onSuggestionClick: handleSuggestionClick, 
+      onFilterToggle: () => setShowFilters(true),
+      onSearch: handleSearch,
+    };
+  }, [activeTab, selectedCity, searchQuery, filters, isCityDropdownOpen, filteredSuggestions.length, isSearching, handleCityDropdownOpen, handleSuggestionClick, handleSearch, handleCityChange]);
+
+  const stickySearchProps = useMemo(() => ({
+    activeTab, 
+    selectedCity, 
+    searchQuery,
+    categories: CATEGORIES,
+    isSearching,
+    onTabChange: (tab: string) => setActiveTab(tab as any),
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
     onSearchQueryChange: setSearchQuery,
     onSearch: handleSearch,
   }), [activeTab, selectedCity, searchQuery, isSearching, handleSearch]);
 
+<<<<<<< HEAD
   // ✅ Updated filter panel props
+=======
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
   const filterPanelProps: FilterPanelProps = useMemo(() => ({
     filters, 
     bhkOptions: BHK_OPTIONS, 
@@ -446,11 +576,14 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
 
   const currentCity = useMemo(() => CITIES.find(c => c.name === selectedCity) || CITIES[0], [selectedCity]);
 
+<<<<<<< HEAD
   // ✅ Responsive: Show all localities with expand/collapse on mobile
   const displayedLocalities = useMemo(() => {
     return currentCity.localities;
   }, [currentCity, showAllLocalities]);
 
+=======
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
   return (
     <motion.section 
       style={{ opacity: heroOpacity, scale: heroScale }} 
@@ -467,7 +600,11 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
             className="lg:col-span-5 text-center lg:text-left order-1 lg:order-1 w-full" 
             initial={{ opacity: 0, y: 16 }} 
             animate={{ opacity: 1, y: 0 }} 
+<<<<<<< HEAD
             transition={{ duration: 0.5, ease: "easeOut" }}
+=======
+            transition={{ duration: 0.5 }}
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
           >
             {/* Badge */}
             <motion.div 
@@ -538,7 +675,10 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
                     </motion.button>
                   ))}
                 </div>
+<<<<<<< HEAD
                 {/* Fade indicators for scrollable area */}
+=======
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
                 <div className="absolute left-0 top-0 bottom-2 w-8 bg-gradient-to-r from-slate-900/80 to-transparent pointer-events-none lg:hidden" />
                 <div className="absolute right-0 top-0 bottom-2 w-8 bg-gradient-to-l from-slate-900/80 to-transparent pointer-events-none lg:hidden" />
               </div>
@@ -592,6 +732,7 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
           
           {/* 🔹 Right Column - Search Bar */}
           <motion.div
+<<<<<<< HEAD
             className="lg:col-span-7 w-full order-2 lg:order-2"
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
@@ -599,6 +740,15 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
           >
             <div className="w-full">
               <SearchBar {...searchBarProps as any} />
+=======
+            className="lg:col-span-7 w-full mb-0 lg:mb-25 order-2 lg:order-2"
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.5 }}
+          >
+            <div className="w-full">
+              <SearchBar {...searchBarProps} />
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
             </div>
           </motion.div>
         </div>
@@ -609,7 +759,11 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
       
       {/* Sticky Search Bar - Mobile optimized */}
       <AnimatePresence>
+<<<<<<< HEAD
         {showStickySearch && <StickySearchBar {...stickySearchProps as any} />}
+=======
+        {showStickySearch && <StickySearchBar {...stickySearchProps} />}
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
       </AnimatePresence>
       
       {/* Filter Panel Modal */}
