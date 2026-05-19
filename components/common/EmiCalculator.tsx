@@ -6,29 +6,61 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Calculator, Info, ChevronDown } from 'lucide-react';
 
 interface EmiCalculatorProps {
+<<<<<<< HEAD
   isOpen: boolean;
   onClose: () => void;
+=======
+  isOpen?: boolean;           // Optional: direct control
+  onClose?: () => void;       // Optional: direct control
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
   defaultLoanAmount?: number;
 }
 
 export default function EmiCalculator({ 
+<<<<<<< HEAD
   isOpen, 
   onClose, 
   defaultLoanAmount = 5000000 
 }: EmiCalculatorProps) {
+=======
+  isOpen: controlledOpen, 
+  onClose: controlledClose, 
+  defaultLoanAmount = 5000000 
+}: EmiCalculatorProps) {
+  // Internal state for event-based triggering
+  const [internalOpen, setInternalOpen] = useState(false);
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
   const [loanAmount, setLoanAmount] = useState(defaultLoanAmount);
   const [interestRate, setInterestRate] = useState(8.5);
   const [tenure, setTenure] = useState(20);
   const [showBreakdown, setShowBreakdown] = useState(false);
 
+<<<<<<< HEAD
+=======
+  // Determine open state: controlled prop OR internal state
+  const isOpen = controlledOpen !== undefined ? controlledOpen : internalOpen;
+  const onClose = controlledClose || (() => setInternalOpen(false));
+
+  // ✅ Listen for global "open-emi-calculator" event
+  useEffect(() => {
+    const handleOpenEvent = () => setInternalOpen(true);
+    window.addEventListener('open-emi-calculator', handleOpenEvent);
+    return () => window.removeEventListener('open-emi-calculator', handleOpenEvent);
+  }, []);
+
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
   // Calculate EMI using standard formula
   const calculateEMI = useMemo(() => {
     const P = loanAmount;
     const R = interestRate / 12 / 100;
     const N = tenure * 12;
+<<<<<<< HEAD
     
     if (R === 0) return P / N;
     
+=======
+    if (R === 0) return P / N;
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
     const emi = (P * R * Math.pow(1 + R, N)) / (Math.pow(1 + R, N) - 1);
     return emi;
   }, [loanAmount, interestRate, tenure]);
@@ -45,9 +77,12 @@ export default function EmiCalculator({
       maximumFractionDigits: 0 
     }).format(val);
 
+<<<<<<< HEAD
   const formatNumber = (val: number) => 
     new Intl.NumberFormat('en-IN').format(val);
 
+=======
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
   // Close on Escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {

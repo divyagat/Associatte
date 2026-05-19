@@ -4,10 +4,17 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+<<<<<<< HEAD
 import { 
   Building2, Phone, Menu, X, ChevronDown, 
   Home, Building, Construction, KeyRound, Tag, MapPin,
   // ✅ Services icons (Interior Design removed)
+=======
+import Image from 'next/image';
+import { 
+  Building2, Phone, Menu, X, ChevronDown, 
+  Home, Building, Construction, KeyRound, Tag, MapPin,
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
   Handshake, FileText, Scale, ClipboardList, TrendingUp 
 } from 'lucide-react';
 
@@ -16,6 +23,13 @@ export default function Header() {
   const [buildersDropdownOpen, setBuildersDropdownOpen] = useState(false);
   const [propertiesDropdownOpen, setPropertiesDropdownOpen] = useState(false);
   const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
+<<<<<<< HEAD
+=======
+  
+  // ✅ Single state object for mobile dropdowns
+  const [mobileDropdownStates, setMobileDropdownStates] = useState<Record<string, boolean>>({});
+  
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
   const pathname = usePathname();
 
   const navLinks = [
@@ -37,7 +51,10 @@ export default function Header() {
     { 
       name: 'Services', 
       href: '/services',
+<<<<<<< HEAD
       // ✅ UPDATED: 5 services (Interior Design removed)
+=======
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
       dropdown: [
         { label: 'Property Consultation', href: '/services#consultation', icon: Handshake, color: '#005E60' },
         { label: 'Home Loans', href: '/services#home-loans', icon: FileText, color: '#F8C21C' },
@@ -68,11 +85,26 @@ export default function Header() {
     }, 150);
   };
 
+<<<<<<< HEAD
+=======
+  // ✅ Helper to toggle mobile dropdown by link name
+  const toggleMobileDropdown = (linkName: string) => {
+    setMobileDropdownStates(prev => ({
+      ...prev,
+      [linkName]: !prev[linkName]
+    }));
+  };
+
+  // ✅ Helper to check if mobile dropdown is open
+  const isMobileDropdownOpen = (linkName: string) => !!mobileDropdownStates[linkName];
+
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
   return (
     <nav className="bg-white shadow-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           
+<<<<<<< HEAD
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center gap-2">
@@ -83,6 +115,19 @@ export default function Header() {
                 <h1 className="text-xl font-bold text-gray-900">ASSOCIATTE</h1>
                 <p className="text-xs text-gray-600">PROP TECH PVT LTD</p>
               </div>
+=======
+          {/* ✅ Logo - FIXED PATH */}
+          <div className="flex items-center">
+            <Link href="/" className="flex items-center gap-3">
+              <Image
+                src="/logos/logo.webp"
+                alt="Associatte PropTech Pvt Ltd"
+                width={120}
+                height={40}
+                className="h-10 w-auto object-contain"
+                priority
+              />
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
             </Link>
           </div>
 
@@ -166,15 +211,29 @@ export default function Header() {
 
           {/* Phone Button */}
           <div className="hidden md:flex items-center">
+<<<<<<< HEAD
             <a href="tel:+918668695995" className="bg-[#8B0000] text-white px-5 py-2.5 rounded-lg flex items-center gap-2 hover:bg-[#6a0000] transition-colors font-medium text-sm shadow-sm">
               <Phone className="w-4 h-4" />
               <span>+91 866 869 5995</span>
+=======
+            <a href="tel:+918881188181" className="bg-[#8B0000] text-white px-5 py-2.5 rounded-lg flex items-center gap-2 hover:bg-[#6a0000] transition-colors font-medium text-sm shadow-sm">
+              <Phone className="w-4 h-4" />
+              <span>+91 88 8118 8181</span>
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
             </a>
           </div>
 
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center">
+<<<<<<< HEAD
             <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-gray-700 hover:text-gray-900 p-2" aria-label="Toggle menu">
+=======
+            <button 
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)} 
+              className="text-gray-700 hover:text-gray-900 p-2" 
+              aria-label="Toggle menu"
+            >
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
@@ -188,6 +247,7 @@ export default function Header() {
             {navLinks.map((link: any) => {
               const isActive = pathname === link.href || pathname?.startsWith(link.href + '?') || pathname?.startsWith(link.href + '/');
               const hasDropdown = link.dropdown?.length > 0;
+<<<<<<< HEAD
               const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
               const isPropertiesDropdown = link.name === 'Properties';
               const isServicesDropdown = link.name === 'Services';
@@ -199,6 +259,28 @@ export default function Header() {
                     <span>{link.name}</span>
                     {hasDropdown && (
                       <button type="button" onClick={(e) => { e.preventDefault(); setMobileDropdownOpen(!mobileDropdownOpen); }} className="p-1">
+=======
+              const mobileDropdownOpen = isMobileDropdownOpen(link.name);
+              
+              return (
+                <div key={link.name}>
+                  <Link 
+                    href={link.href} 
+                    onClick={() => { if (!hasDropdown) setMobileMenuOpen(false); }}
+                    className={`flex items-center justify-between px-3 py-3 rounded-lg ${
+                      isActive 
+                        ? 'text-[#F8C21C] font-medium bg-[#F8C21C]/10' 
+                        : 'text-gray-700 hover:text-[#005E60] hover:bg-gray-50'
+                    }`}
+                  >
+                    <span>{link.name}</span>
+                    {hasDropdown && (
+                      <button 
+                        type="button" 
+                        onClick={(e) => { e.preventDefault(); toggleMobileDropdown(link.name); }} 
+                        className="p-1"
+                      >
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
                         <ChevronDown className={`w-4 h-4 transition-transform ${mobileDropdownOpen ? 'rotate-180' : ''}`} />
                       </button>
                     )}
@@ -210,8 +292,21 @@ export default function Header() {
                         const isSubActive = pathname === item.href || pathname?.includes(item.href.split('#')[1] || item.href.split('=')[1]);
                         const Icon = item.icon;
                         return (
+<<<<<<< HEAD
                           <Link key={item.href} href={item.href} onClick={() => setMobileMenuOpen(false)}
                             className={`flex items-center gap-3 px-3 py-2 text-sm rounded-md ${isSubActive ? 'text-[#005E60] font-medium bg-[#005E60]/5' : 'text-gray-600 hover:text-[#005E60] hover:bg-gray-50'}`}>
+=======
+                          <Link 
+                            key={item.href} 
+                            href={item.href} 
+                            onClick={() => setMobileMenuOpen(false)}
+                            className={`flex items-center gap-3 px-3 py-2 text-sm rounded-md ${
+                              isSubActive 
+                                ? 'text-[#005E60] font-medium bg-[#005E60]/5' 
+                                : 'text-gray-600 hover:text-[#005E60] hover:bg-gray-50'
+                            }`}
+                          >
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
                             {Icon && <Icon className="w-4 h-4 flex-shrink-0" style={{ color: item.color }} />}
                             <span>{item.label}</span>
                             {isSubActive && <span className="w-1.5 h-1.5 rounded-full ml-auto" style={{ backgroundColor: item.color }} />}
@@ -223,10 +318,22 @@ export default function Header() {
                 </div>
               );
             })}
+<<<<<<< HEAD
             <div className="pt-3 mt-3 border-t border-gray-100">
               <a href="tel:+918668695995" className="flex items-center justify-center gap-2 w-full py-3 bg-[#8B0000] text-white rounded-lg font-medium hover:bg-[#6a0000] transition-colors">
                 <Phone className="w-4 h-4" />
                 <span>+91 866 869 5995</span>
+=======
+            
+            {/* Mobile Phone Button */}
+            <div className="pt-3 mt-3 border-t border-gray-100">
+              <a 
+                href="tel:+918881188181" 
+                className="flex items-center justify-center gap-2 w-full py-3 bg-[#8B0000] text-white rounded-lg font-medium hover:bg-[#6a0000] transition-colors"
+              >
+                <Phone className="w-4 h-4" />
+                <span>+91 888 869 5995</span>
+>>>>>>> 89ffa861f4c6ae6f84a0f22875dc985eb4edd23b
               </a>
             </div>
           </div>
