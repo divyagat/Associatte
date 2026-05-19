@@ -78,22 +78,22 @@ export default function Header() {
               <div className="relative w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 flex items-center justify-center overflow-hidden group-hover:scale-105 transition-transform duration-200">
                 
                 {/* 🔁 REPLACE THIS WITH YOUR ACTUAL LOGO PATH */}
-                <Image
-                  src="/logos/Asoociattelogo.jpg"
-                  alt="Company Logo"
-                  width={96}
-                  height={96}
-                  className="object-contain w-full h-full p-1"
-                  priority
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                    const fallback = target.parentElement?.querySelector('.logo-fallback');
-                    if (fallback) {
-                      (fallback as HTMLElement).style.display = 'flex';
-                    }
-                  }}
-                />
+             <Image
+  src="/logos/associattewhitelogo.webp"
+  alt="Associatte PropTech"
+  width={96}
+  height={96}
+  className="object-contain w-auto h-auto"  // ✅ Added w-auto h-auto
+  priority
+  onError={(e) => {
+    const target = e.target as HTMLImageElement;
+    target.style.display = 'none';
+    const fallback = target.parentElement?.querySelector('.logo-fallback');
+    if (fallback) {
+      (fallback as HTMLElement).style.display = 'flex';
+    }
+  }}
+/>
                 
                 {/* Fallback Icon (scales with logo) */}
                 <Building2 
