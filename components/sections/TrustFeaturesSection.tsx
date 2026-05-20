@@ -168,7 +168,7 @@ export default function TrustFeaturesSection({ city }: TrustFeaturesSectionProps
             <div className="relative rounded-3xl overflow-hidden shadow-2xl">
               <div className="relative aspect-[4/5] lg:aspect-square">
                 <Image
-                  src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80"
+                  src="/Home/Trust associatte.webp"
                   alt="Luxury Interior - Happy Homebuyers"
                   fill
                   className="object-cover"
