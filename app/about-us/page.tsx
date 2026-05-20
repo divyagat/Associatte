@@ -648,7 +648,7 @@ export default function AboutUs() {
                   className="px-6 sm:px-8 py-3 sm:py-4 bg-white/20 backdrop-blur-sm border border-white/30 text-white font-bold rounded-xl hover:bg-white/30 transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base"
                 >
                   <Phone className="w-4 h-4 sm:w-5 sm:h-5" />
-                  +91 87435 63546
+                  +91 88 8118 8181
                 </motion.button>
               </div>
             </div>
@@ -662,11 +662,11 @@ export default function AboutUs() {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-500">
             <p>© 2026 Associatte PropTech Pvt Ltd. All rights reserved.</p>
             <div className="flex items-center gap-5 sm:gap-6">
-              <a href="mailto:hello@associatte.com" className="flex items-center gap-2 hover:text-[#005E60] transition-colors">
-                <Mail className="w-4 h-4" /> hello@associatte.com
+              <a href="mailto:info@associatte.co.in" className="flex items-center gap-2 hover:text-[#005E60] transition-colors">
+                <Mail className="w-4 h-4" /> info@associatte.co.in
               </a>
               <a href="tel:+918743563546" className="flex items-center gap-2 hover:text-[#8B0000] transition-colors">
-                <Phone className="w-4 h-4" /> +91 87435 63546
+                <Phone className="w-4 h-4" /> +91 88 8118 8181
               </a>
             </div>
           </div>
