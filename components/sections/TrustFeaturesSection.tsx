@@ -4,9 +4,9 @@ import { motion } from 'framer-motion';
 import { Shield, Users, Headphones, Handshake, ArrowRight, CheckCircle2 } from 'lucide-react';
 import Image from 'next/image';
 
-// ✅ ADD city PROP
 interface TrustFeaturesSectionProps {
   city: 'Pune' | 'Mumbai' | 'KDMC';
+  onConsultationClick?: () => void;
 }
 
 const FEATURES: Record<'Pune' | 'Mumbai' | 'KDMC', Array<{
@@ -45,7 +45,6 @@ const containerVariants = {
   },
 };
 
-// ✅ FIX: Use proper Framer Motion types with 'as const'
 const itemVariants = {
   hidden: { opacity: 0, y: 30, scale: 0.95 },
   visible: {
@@ -60,7 +59,10 @@ const itemVariants = {
   },
 };
 
-export default function TrustFeaturesSection({ city }: TrustFeaturesSectionProps) {
+export default function TrustFeaturesSection({ 
+  city, 
+  onConsultationClick 
+}: TrustFeaturesSectionProps) {
   const features = FEATURES[city];
 
   return (
@@ -73,6 +75,7 @@ export default function TrustFeaturesSection({ city }: TrustFeaturesSectionProps
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          {/* Left Content */}
           <motion.div
             initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -148,17 +151,24 @@ export default function TrustFeaturesSection({ city }: TrustFeaturesSectionProps
               transition={{ delay: 0.6 }}
               className="mt-10"
             >
-              <button className="group inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#005E60] to-[#004a4d] text-white font-semibold rounded-xl hover:from-[#004a4d] hover:to-[#003537] transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-[#005E60]/25">
+              {/* ✅ FIXED: Button with onClick handler */}
+              <button 
+                onClick={onConsultationClick}
+                className="group inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#005E60] to-[#004a4d] text-white font-semibold rounded-xl hover:from-[#004a4d] hover:to-[#003537] transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-[#005E60]/25"
+              >
                 <span>Get Free Consultation</span>
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </button>
+              
+              {/* ✅ FIXED: Replaced &nbsp; with {" "} to fix SWC parser error */}
               <p className="mt-3 text-sm text-gray-500">
-                ✓ No obligation &nbsp; • &nbsp; ✓ Response within 2 hours
+                ✓ No obligation {" "} • {" "} ✓ Response within 2 hours
               </p>
             </motion.div>
           </motion.div>
 
-          <motion.div
+          {/* Right Image */}
+          <motion.div 
             initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: '-100px' }}
