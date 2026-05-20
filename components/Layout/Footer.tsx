@@ -143,7 +143,9 @@ export default function Footer() {
             <ul className="space-y-3 text-sm mb-5">
               <li className="flex gap-2.5 items-start">
                 <MapPin size={16} className="mt-0.5 flex-shrink-0 text-[#F8C21C]" aria-hidden="true" />
-                <span>Pune, India</span>
+                <span>302 and 303, Naren Pearl, 3rd Floor, Magarpatta Road, Above Axis and IndusInd Bank, Hadapsar
+
+Pune - 411028</span>
               </li>
               <li className="flex gap-2.5 items-start">
                 <Phone size={16} className="mt-0.5 flex-shrink-0 text-[#F8C21C]" aria-hidden="true" />
@@ -167,7 +169,12 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="hover:text-[#F8C21C] transition-colors">
+                <Link href="/cookie-policy" className="hover:text-[#F8C21C] transition-colors">
+                  Cookie Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/about-us" className="hover:text-[#F8C21C] transition-colors">
                   About Us
                 </Link>
               </li>

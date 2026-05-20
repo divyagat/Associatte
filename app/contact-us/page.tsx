@@ -103,15 +103,15 @@ export default function ContactUsPage() {
               <div className="space-y-4">
                 <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
                   <p className="text-sm font-medium text-slate-500">Acquisitions & Investments</p>
-                  <a href="tel:+18005551234" className="text-slate-900 hover:text-amber-700 transition font-semibold">+1 (800) 555-1234</a>
+                  <a href="tel:+918881188181" className="text-slate-900 hover:text-amber-700 transition font-semibold">+91 8881188181</a>
                 </div>
                 <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
                   <p className="text-sm font-medium text-slate-500">Leasing & Tenant Rep</p>
-                  <a href="tel:+18005555678" className="text-slate-900 hover:text-amber-700 transition font-semibold">+1 (800) 555-5678</a>
+                  <a href="tel:+918881188181" className="text-slate-900 hover:text-amber-700 transition font-semibold">+91 8881188181</a>
                 </div>
                 <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
                   <p className="text-sm font-medium text-slate-500">Property Management</p>
-                  <a href="tel:+18005559012" className="text-slate-900 hover:text-amber-700 transition font-semibold">+1 (800) 555-9012</a>
+                  <a href="tel:+918881188181" className="text-slate-900 hover:text-amber-700 transition font-semibold">+91 8881188181</a>
                 </div>
               </div>
             </div>
@@ -122,21 +122,21 @@ export default function ContactUsPage() {
                 Office Hours
               </h3>
               <ul className="space-y-2 text-slate-300 text-sm">
-                <li className="flex justify-between"><span>Monday – Friday</span> <span>8:00 AM – 6:00 PM</span></li>
-                <li className="flex justify-between"><span>Saturday</span> <span>9:00 AM – 2:00 PM</span></li>
-                <li className="flex justify-between"><span>Sunday</span> <span>Closed</span></li>
+                <li className="flex justify-between"><span>Tuesday – Sunday</span> <span>10:00 AM – 7:00 PM</span></li>
+                {/* <li className="flex justify-between"><span>Saturday</span> <span>9:00 AM – 2:00 PM</span></li> */}
+                <li className="flex justify-between"><span>Monday</span> <span>Closed</span></li>
               </ul>
               <div className="mt-4 pt-4 border-t border-slate-700">
                 <p className="text-xs text-slate-400 uppercase tracking-wide mb-1">After-Hours Emergency</p>
-                <a href="tel:+18005550000" className="text-amber-400 hover:text-amber-300 font-medium transition">+1 (800) 555-0000</a>
+                <a href="tel:+918881188181" className="text-amber-400 hover:text-amber-300 font-medium transition">+91 8881188181</a>
               </div>
             </div>
 
             <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
               <h3 className="text-lg font-semibold text-slate-900 mb-2">Headquarters</h3>
               <address className="not-italic text-slate-600 space-y-1">
-                <p>450 Park Avenue, Suite 2100</p>
-                <p>New York, NY 10022</p>
+                <p>302 and 303, Naren Pearl, 3rd Floor, Magarpatta Road, Above Axis and IndusInd Bank, Hadapsar</p>
+                <p>Pune - 411028</p>
               </address>
               <button className="mt-4 w-full py-2 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-lg transition text-sm">
                 View on Map

@@ -185,9 +185,9 @@ export default function Header() {
 
           {/* Phone Button */}
           <div className="hidden lg:flex items-center">
-            <a href="tel:+918668695995" className="bg-[#8B0000] text-white px-5 py-2.5 rounded-lg flex items-center gap-2 hover:bg-[#6a0000] transition-colors font-medium text-sm shadow-sm">
+            <a href="tel:+918881188181" className="bg-[#8B0000] text-white px-5 py-2.5 rounded-lg flex items-center gap-2 hover:bg-[#6a0000] transition-colors font-medium text-sm shadow-sm">
               <Phone className="w-4 h-4" />
-              <span>+91 866 869 5995</span>
+              <span>+91 8881188181</span>
             </a>
           </div>
 
@@ -241,9 +241,9 @@ export default function Header() {
               );
             })}
             <div className="pt-3 mt-3 border-t border-gray-100">
-              <a href="tel:+918668695995" className="flex items-center justify-center gap-2 w-full py-3 bg-[#8B0000] text-white rounded-lg font-medium hover:bg-[#6a0000] transition-colors">
+              <a href="tel:+918881188181" className="flex items-center justify-center gap-2 w-full py-3 bg-[#8B0000] text-white rounded-lg font-medium hover:bg-[#6a0000] transition-colors">
                 <Phone className="w-4 h-4" />
-                <span>+91 866 869 5995</span>
+                <span>+91 8881188181</span>
               </a>
             </div>
           </div>
