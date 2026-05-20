@@ -1,3 +1,4 @@
+// client/components/builder-page/BuilderProjectCard.tsx
 'use client';
 
 import Link from 'next/link';
@@ -37,7 +38,8 @@ export default function BuilderProjectCard({ project }: BuilderProjectCardProps)
       className="group"
     >
       <Link 
-        href={`/properties/${project.slug}`}
+        // ✅ FIXED: Use singular `/property/` to match app/property/[slug]/page.jsx
+        href={`/property/${project.slug}`}
         className="block bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-xl overflow-hidden"
       >
         {/* Image */}

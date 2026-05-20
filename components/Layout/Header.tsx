@@ -79,7 +79,7 @@ export default function Header() {
                 
                 {/* 🔁 REPLACE THIS WITH YOUR ACTUAL LOGO PATH */}
              <Image
-  src="/logos/associattewhitelogo.webp"
+  src="/logos/Asoociattelogo.jpg"
   alt="Associatte PropTech"
   width={96}
   height={96}
