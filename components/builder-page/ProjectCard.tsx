@@ -36,7 +36,7 @@ export default function BuilderProjectCard({ project }: BuilderProjectCardProps)
       className="group"
     >
       <Link
-        href={`/properties/${project.slug}`}
+        href={`/property/${project.slug}`}
         className="block bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-xl overflow-hidden"
       >
         {/* Image */}
