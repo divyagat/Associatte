@@ -30,6 +30,12 @@ function transformProject(project) {
     pricePerSqft: project.priceDetails?.perSqft,
     developer: project.developer?.name,
     image: project.image,
+    
+    // ✅ ADD: Pass gallery, masterPlan, locationMap to propertyData
+    gallery: project.gallery || [],
+    masterPlan: project.masterPlan || null,
+    locationMap: project.locationMap || null,
+    
     location: {
       area: project.fullLocation?.area || project.location,
       city: project.fullLocation?.city || (project.location === 'pune' ? 'Pune' : project.location === 'mumbai' ? 'Navi Mumbai' : 'Kalyan')
@@ -40,10 +46,14 @@ function transformProject(project) {
       area: config.area,
       price: config.price
     })) || [],
+    
+    // ✅ ADD: Keep floorPlans with image property
     floorPlans: project.floorPlans?.map(plan => ({
       type: plan.type,
-      area: plan.area
+      area: plan.area,
+      image: plan.image  // ✅ This was missing!
     })) || [],
+    
     about: project.about,
     amenities: (project.amenities || []).map(name => {
       const iconMap = {
@@ -199,6 +209,8 @@ export default function PropertyPage() {
     
     if (project) {
       console.log('✅ Found project:', project.name);
+      console.log('🖼️ Gallery data:', project.gallery);
+      console.log('📐 Floor plan images:', project.floorPlans?.map(fp => fp.image));
       setPropertyData(transformProject(project));
     } else {
       console.error('❌ Project not found for slug:', slug);
@@ -357,34 +369,72 @@ export default function PropertyPage() {
           </div>
         </header>
 
-        {/* 🖼️ Hero Section */}
+        {/* 🖼️ Hero Section - FIXED with WebP Images */}
         <section className="bg-white border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 py-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              
+              {/* Main Image */}
               <div className="lg:col-span-2">
                 <div className="relative aspect-video bg-gradient-to-br from-[#005E60] to-[#003d40] rounded-2xl overflow-hidden group">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <button className="w-20 h-20 bg-white/90 rounded-full flex items-center justify-center shadow-xl hover:scale-105 transition-transform">
-                      <svg className="w-8 h-8 text-[#005E60] ml-1" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.841z" />
-                      </svg>
-                    </button>
-                  </div>
+                  
+                  {/* ✅ ACTUAL WEBP IMAGE - Perfect Fit */}
+                  <img 
+                    src={propertyData.image} 
+                    alt={propertyData.title}
+                    className="w-full h-full object-cover"
+                    loading="eager"
+                    onError={(e) => { e.target.style.display = 'none'; }}
+                  />
+                  
+                  {/* Location Badge */}
                   <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
-                    <span className="px-4 py-2 bg-[#F8C21C] text-[#005E60] font-bold rounded-lg shadow-lg">{propertyData.location.area}</span>
-                    <span className="px-3 py-1.5 bg-white/90 text-gray-700 text-sm font-medium rounded-lg">4 Photos • 1 Video</span>
+                    <span className="px-4 py-2 bg-[#F8C21C] text-[#005E60] font-bold rounded-lg shadow-lg">
+                      {propertyData.location.area}
+                    </span>
+                    <span className="px-3 py-1.5 bg-white/90 text-gray-700 text-sm font-medium rounded-lg">
+                      {propertyData.gallery?.length || 0} Photos
+                    </span>
                   </div>
                 </div>
               </div>
+
+              {/* ✅ Gallery Thumbnails - PERFECT FIT - NO WHITE SPACE */}
               <div className="grid grid-cols-2 gap-3">
-                {[1, 2, 3, 4].map((item) => (
-                  <div key={item} className={`aspect-square rounded-xl overflow-hidden cursor-pointer transition-all hover:ring-2 hover:ring-[#F8C21C] ${item === 1 ? 'ring-2 ring-[#005E60]' : ''}`}>
-                    <div className={`w-full h-full ${item === 1 ? 'bg-gradient-to-br from-[#005E60] to-[#003d40]' : 'bg-gray-200'} flex items-center justify-center`}>
-                      {item === 4 && <span className="text-white font-medium text-sm">+12 More</span>}
-                    </div>
+                {propertyData.gallery?.slice(0, 4).map((src, i) => (
+                  <div 
+                    key={i} 
+                    className={`relative aspect-square rounded-xl overflow-hidden cursor-pointer transition-all hover:ring-2 hover:ring-[#F8C21C] ${i === 0 ? 'ring-2 ring-[#005E60]' : ''}`}
+                  >
+                    {/* ✅ Gallery Image - PERFECT FIT with object-cover */}
+                    <img 
+                      src={src} 
+                      alt={`${propertyData.title} ${i + 1}`}
+                      className="absolute inset-0 w-full h-full object-cover"
+                      loading="lazy"
+                      onError={(e) => { 
+                        e.target.style.display = 'none';
+                        e.target.parentElement.classList.add('bg-gray-200');
+                      }}
+                    />
+                    {i === 3 && propertyData.gallery?.length > 4 && (
+                      <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white font-medium text-sm z-10">
+                        +{propertyData.gallery.length - 4} More
+                      </div>
+                    )}
                   </div>
                 ))}
+                
+                {/* Fallback if no gallery */}
+                {(!propertyData.gallery || propertyData.gallery.length === 0) && 
+                  [1,2,3,4].map((item) => (
+                    <div key={item} className="aspect-square rounded-xl bg-gray-100 border border-gray-200 flex items-center justify-center">
+                      <span className="text-gray-400 text-xs">Photo {item}</span>
+                    </div>
+                  ))
+                }
               </div>
+
             </div>
           </div>
         </section>
@@ -434,22 +484,61 @@ export default function PropertyPage() {
                 </div>
               </section>
 
+              {/* ✅ Floor Plans Section - With Master Plan Image */}
               <section id="floor-plans" className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden scroll-mt-24">
                 <div className="p-6 border-b border-gray-100">
-                  <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2"><span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>Floor Plans</h2>
+                  <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                    <span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>
+                    Floor Plans
+                  </h2>
                 </div>
                 <div className="p-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {propertyData.floorPlans.map((plan, index) => (
-                      <button key={index} className={`p-4 rounded-xl border-2 text-left transition-all ${index === 0 ? 'border-[#F8C21C] bg-[#F8C21C]/10' : 'border-gray-200 hover:border-[#005E60]/50 hover:bg-gray-50'}`}>
-                        <div className={`font-semibold ${index === 0 ? 'text-[#005E60]' : 'text-gray-900'}`}>{plan.type}</div>
+                    {propertyData.floorPlans?.map((plan, index) => (
+                      <div 
+                        key={index} 
+                        className={`p-4 rounded-xl border-2 text-left transition-all ${index === 0 ? 'border-[#F8C21C] bg-[#F8C21C]/10' : 'border-gray-200 hover:border-[#005E60]/50 hover:bg-gray-50'}`}
+                      >
+                        {/* ✅ Floor Plan WebP Image */}
+                        {plan.image && (
+                          <img 
+                            src={plan.image} 
+                            alt={`${propertyData.title} ${plan.type} Floor Plan`}
+                            className="w-full h-48 object-contain mb-3 rounded-lg bg-gray-50"
+                            loading="lazy"
+                            onError={(e) => { e.target.style.display = 'none'; }}
+                          />
+                        )}
+                        <div className={`font-semibold ${index === 0 ? 'text-[#005E60]' : 'text-gray-900'}`}>
+                          {plan.type}
+                        </div>
                         <div className="text-sm text-gray-600">{plan.area}</div>
-                      </button>
+                      </div>
                     ))}
                   </div>
-                  <div className="mt-6 aspect-video bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center">
-                    <button className="px-6 py-3 bg-[#F8C21C] text-[#005E60] font-semibold rounded-xl hover:bg-[#e6b418] transition-colors shadow-lg">Login to Download Floor Plan</button>
-                  </div>
+                  
+                  {/* ✅ Master Plan Image */}
+                  {propertyData.masterPlan ? (
+                    <div className="mt-6">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-3">Master Plan</h3>
+                      <div className="aspect-video bg-gray-50 rounded-xl overflow-hidden border border-gray-200">
+                        <img 
+                          src={propertyData.masterPlan} 
+                          alt={`${propertyData.title} Master Plan`}
+                          className="w-full h-full object-contain"
+                          loading="lazy"
+                          onError={(e) => { 
+                            e.target.style.display = 'none';
+                            e.target.parentElement.innerHTML = '<div class="flex items-center justify-center h-full text-gray-500">Master Plan image not available</div>';
+                          }}
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="mt-6 aspect-video bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center">
+                      <span className="text-gray-500 text-sm">Master plan available on request</span>
+                    </div>
+                  )}
                 </div>
               </section>
 
@@ -472,17 +561,51 @@ export default function PropertyPage() {
                 </div>
               </section>
 
+              {/* ✅ Location Section - With Map Image */}
               <section id="location" className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 scroll-mt-24">
-                <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2"><span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>Location & Connectivity</h2>
-                <div className="aspect-video bg-gray-200 rounded-xl flex items-center justify-center mb-4">
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-[#005E60]/10 rounded-full flex items-center justify-center mx-auto mb-3" style={{ color: COLORS.primary }}><Icons.Location /></div>
-                    <p className="text-gray-600">Interactive map loading...</p>
+                <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                  <span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>
+                  Location & Connectivity
+                </h2>
+                
+                {/* ✅ Location Map Image */}
+                {propertyData.locationMap ? (
+                  <div className="aspect-video bg-gray-100 rounded-xl overflow-hidden mb-4 border border-gray-200">
+                    <img 
+                      src={propertyData.locationMap} 
+                      alt={`${propertyData.title} Location Map`}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                      onError={(e) => { 
+                        e.target.style.display = 'none';
+                        e.target.parentElement.innerHTML = `
+                          <div class="flex flex-col items-center justify-center h-full text-gray-500">
+                            <svg class="w-16 h-16 mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            <p>Location map not available</p>
+                          </div>
+                        `;
+                      }}
+                    />
                   </div>
-                </div>
+                ) : (
+                  <div className="aspect-video bg-gray-200 rounded-xl flex items-center justify-center mb-4">
+                    <div className="text-center">
+                      <div className="w-16 h-16 bg-[#005E60]/10 rounded-full flex items-center justify-center mx-auto mb-3" style={{ color: COLORS.primary }}>
+                        <Icons.Location />
+                      </div>
+                      <p className="text-gray-600">Interactive map loading...</p>
+                    </div>
+                  </div>
+                )}
+                
                 <div className="flex flex-wrap gap-2">
                   {['Schools', 'Hospitals', 'Malls', 'Metro', 'Airport'].map((tag) => (
-                    <span key={tag} className="px-3 py-1.5 bg-gray-100 text-gray-700 text-sm rounded-full hover:bg-[#005E60] hover:text-white transition-colors cursor-pointer">{tag}</span>
+                    <span key={tag} className="px-3 py-1.5 bg-gray-100 text-gray-700 text-sm rounded-full hover:bg-[#005E60] hover:text-white transition-colors cursor-pointer">
+                      {tag}
+                    </span>
                   ))}
                 </div>
               </section>
@@ -571,11 +694,12 @@ export default function PropertyPage() {
                     Calculate EMI
                   </button>
                   
+                  {/* ✅ Updated button text - No "Download" implication */}
                   <button 
                     onClick={() => setShowPopup(true)}
                     className="w-full py-3 bg-white/10 text-white font-semibold rounded-xl hover:bg-white/20 transition-colors border border-white/20"
                   >
-                    Download Brochure
+                    Request Brochure
                   </button>
                 </div>
 
