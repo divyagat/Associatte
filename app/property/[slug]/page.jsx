@@ -186,11 +186,107 @@ function PropertySchema({ property }) {
   );
 }
 
+// 🖼️ FULL SCREEN GALLERY MODAL COMPONENT
+function GalleryModal({ images, initialIndex, onClose }) {
+  const [currentIndex, setCurrentIndex] = useState(initialIndex);
+
+  // Handle keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose();
+      if (e.key === 'ArrowLeft') goToPrevious();
+      if (e.key === 'ArrowRight') goToNext();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    // Prevent body scroll when modal is open
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'auto';
+    };
+  }, [currentIndex]);
+
+  const goToPrevious = () => {
+    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  };
+
+  const goToNext = () => {
+    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  };
+
+  if (!images || images.length === 0) return null;
+
+  return (
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md"
+      onClick={onClose}
+    >
+      {/* Close button */}
+      <button 
+        onClick={onClose}
+        className="absolute top-4 right-4 z-10 p-2 text-white/80 hover:text-white bg-black/50 rounded-full transition-colors"
+        aria-label="Close gallery"
+      >
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      {/* Image counter */}
+      <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/60 text-white px-3 py-1 rounded-full text-sm font-medium z-10">
+        {currentIndex + 1} / {images.length}
+      </div>
+
+      {/* Main image */}
+      <div 
+        className="w-full h-full flex items-center justify-center p-4 cursor-pointer"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <img 
+          src={images[currentIndex]} 
+          alt={`Gallery image ${currentIndex + 1}`}
+          className="max-w-full max-h-full object-contain select-none"
+        />
+      </div>
+
+      {/* Previous button */}
+      {images.length > 1 && (
+        <button
+          onClick={(e) => { e.stopPropagation(); goToPrevious(); }}
+          className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-black/50 hover:bg-black/70 rounded-full text-white transition-colors"
+          aria-label="Previous image"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+      )}
+
+      {/* Next button */}
+      {images.length > 1 && (
+        <button
+          onClick={(e) => { e.stopPropagation(); goToNext(); }}
+          className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-black/50 hover:bg-black/70 rounded-full text-white transition-colors"
+          aria-label="Next image"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      )}
+    </div>
+  );
+}
+
 export default function PropertyPage() {
   const [propertyData, setPropertyData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showPopup, setShowPopup] = useState(false);
   const [showEmiPopup, setShowEmiPopup] = useState(false);
+  // 🖼️ Gallery modal state
+  const [galleryModalOpen, setGalleryModalOpen] = useState(false);
+  const [galleryStartIndex, setGalleryStartIndex] = useState(0);
+  
   const router = useRouter();
   
   const params = useParams();
@@ -260,6 +356,14 @@ export default function PropertyPage() {
       console.log('✅ Enquiry submitted for:', propertyData?.title);
     } catch (error) {
       console.error('❌ Error:', error);
+    }
+  };
+
+  // 🖼️ Open gallery modal at specific index
+  const openGallery = (index) => {
+    if (propertyData?.gallery && propertyData.gallery.length > 0) {
+      setGalleryStartIndex(index);
+      setGalleryModalOpen(true);
     }
   };
 
@@ -374,15 +478,15 @@ export default function PropertyPage() {
           <div className="max-w-7xl mx-auto px-4 py-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               
-              {/* Main Image */}
-              <div className="lg:col-span-2">
+              {/* Main Image - Click to open gallery at index 0 */}
+              <div className="lg:col-span-2 cursor-pointer" onClick={() => openGallery(0)}>
                 <div className="relative aspect-video bg-gradient-to-br from-[#005E60] to-[#003d40] rounded-2xl overflow-hidden group">
                   
                   {/* ✅ ACTUAL WEBP IMAGE - Perfect Fit */}
                   <img 
                     src={propertyData.image} 
                     alt={propertyData.title}
-                    className="w-full h-full object-cover"
+                    className="absolute inset-0 w-full h-full object-cover"
                     loading="eager"
                     onError={(e) => { e.target.style.display = 'none'; }}
                   />
@@ -400,17 +504,18 @@ export default function PropertyPage() {
               </div>
 
               {/* ✅ Gallery Thumbnails - PERFECT FIT - NO WHITE SPACE */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-3 h-full">
                 {propertyData.gallery?.slice(0, 4).map((src, i) => (
                   <div 
                     key={i} 
-                    className={`relative aspect-square rounded-xl overflow-hidden cursor-pointer transition-all hover:ring-2 hover:ring-[#F8C21C] ${i === 0 ? 'ring-2 ring-[#005E60]' : ''}`}
+                    className={`relative w-full h-full min-h-[150px] rounded-xl overflow-hidden cursor-pointer transition-all hover:ring-2 hover:ring-[#F8C21C] ${i === 0 ? 'ring-2 ring-[#005E60]' : ''}`}
+                    onClick={() => openGallery(i)}
                   >
                     {/* ✅ Gallery Image - PERFECT FIT with object-cover */}
                     <img 
                       src={src} 
                       alt={`${propertyData.title} ${i + 1}`}
-                      className="absolute inset-0 w-full h-full object-cover"
+                      className="absolute inset-0 w-full h-full min-h-[230px] object-cover"
                       loading="lazy"
                       onError={(e) => { 
                         e.target.style.display = 'none';
@@ -428,7 +533,7 @@ export default function PropertyPage() {
                 {/* Fallback if no gallery */}
                 {(!propertyData.gallery || propertyData.gallery.length === 0) && 
                   [1,2,3,4].map((item) => (
-                    <div key={item} className="aspect-square rounded-xl bg-gray-100 border border-gray-200 flex items-center justify-center">
+                    <div key={item} className="relative w-full h-full min-h-[150px] rounded-xl bg-gray-100 border-gray-200 flex items-center justify-center overflow-hidden">
                       <span className="text-gray-400 text-xs">Photo {item}</span>
                     </div>
                   ))
@@ -759,6 +864,15 @@ export default function PropertyPage() {
           </div>
         </footer>
       </div>
+
+      {/* 🖼️ Full Screen Gallery Modal */}
+      {galleryModalOpen && propertyData.gallery && propertyData.gallery.length > 0 && (
+        <GalleryModal 
+          images={propertyData.gallery}
+          initialIndex={galleryStartIndex}
+          onClose={() => setGalleryModalOpen(false)}
+        />
+      )}
 
       {/* ✅ Dynamic Enquiry Popup */}
       <EnquiryPopup

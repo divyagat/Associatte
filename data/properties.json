@@ -48,11 +48,11 @@
     "amenities": ["Swimming Pool", "Gym", "Kids Play Area", "Jogging Track", "24/7 Security", "Power Backup", "Landscaped Gardens"],
     "floorPlans": [
       { "type": "2 BHK", "area": "940 sq.ft", "image": "/floorplans/mayfair-2bhk.webp" },
-      { "type": "3 BHK", "area": "1200 sq.ft", "image": "/floorplans/mayfair-3bhk.webp" }
+      { "type": "3 BHK", "area": "1200 sq.ft", "image": "/floorplans/mayfair-2bhk.webp" }
     ],
     "possessionDate": "Mar 2027",
     "reraNumber": "P52100048121",
-    "gallery": ["/gallery/mayfair-1.webp", "/gallery/mayfair-2.webp"],
+    "gallery": ["/gallery/mayfair-gallery1.webp", "/gallery/mayfair-gallery2.webp","/gallery/mayfair-gallery3.webp","public/gallery/mayfair-gallery4.webp"],
     "mapCoords": { "lat": 18.5912, "lng": 73.7389 },
     "nearbyPlaces": [
       { "type": "Metro", "name": "Hinjewadi Metro", "distance": "0.5 km" },
@@ -82,7 +82,7 @@
     ],
     "possessionDate": "Jun 2027",
     "reraNumber": "P52100048122",
-    "gallery": ["/gallery/meridian-1.webp", "/gallery/meridian-2.webp", "/gallery/meridian-3.webp"],
+    "gallery": ["/gallery/meridian-1.webp", "/gallery/meridian-2.webp", "/gallery/meridian-3.webp","/gallery/meridian-4.webp","/gallery/meridian-5.webp"],
     "mapCoords": { "lat": 18.5593, "lng": 73.7815 },
     "nearbyPlaces": [
       { "type": "Mall", "name": "Westend Mall", "distance": "0.8 km" },
@@ -96,7 +96,7 @@
     "location": "pune",
     "price": "₹80 Lakh onwards",
     "image": "/projects/mantra-magnus.webp",
-    "masterPlan": "/floorplans/mantra-magnus-master.webp",
+    "masterPlan": "/floorplans/mantra-meridian-master.webp",
     "locationMap": "/maps/mantra-magnus-location.webp",
     "fullLocation": { "area": "Wagholi", "city": "Pune", "state": "Maharashtra", "pincode": "412207", "landmark": "Near Phoenix Mall" },
     "priceDetails": { "range": "₹78 Lakh - ₹1.1 Cr", "perSqft": "₹7,900/sq.ft", "configurations": [
@@ -108,11 +108,11 @@
     "amenities": ["Swimming Pool", "Gym", "Children's Play Area", "Jogging Track", "24/7 Security", "Power Backup"],
     "floorPlans": [
       { "type": "2 BHK", "area": "900 sq.ft", "image": "/floorplans/magnus-2bhk.webp" },
-      { "type": "3 BHK", "area": "1150 sq.ft", "image": "/floorplans/magnus-3bhk.webp" }
+      { "type": "3 BHK", "area": "1150 sq.ft", "image": "/floorplans/magnus-2bhk.webp" }
     ],
     "possessionDate": "Sep 2026",
     "reraNumber": "P52100048124",
-    "gallery": ["/gallery/magnus-1.webp", "/gallery/magnus-2.webp"],
+    "gallery": ["/gallery/magnus-1.webp", "/gallery/magnus-2.webp","/gallery/magnus-3.webp","/gallery/magnus-4.webp","/gallery/magnus-5.webp"],
     "mapCoords": { "lat": 18.5679, "lng": 73.9719 },
     "nearbyPlaces": [
       { "type": "Mall", "name": "Phoenix Mall", "distance": "1.0 km" },
@@ -125,8 +125,8 @@
     "name": "Mantra Milange",
     "location": "pune",
     "price": "₹80 Lakh onwards",
-    "image": "/projects/mantra-milange.webp",
-    "masterPlan": "/floorplans/mantra-milange-master.webp",
+    "image": "/projects/milange.webp",
+    "masterPlan": "/floorplans/mantra-meridian-master.webp",
     "locationMap": "/maps/mantra-milange-location.webp",
     "fullLocation": { "area": "Kharadi", "city": "Pune", "state": "Maharashtra", "pincode": "411014", "landmark": "Near EON IT Park" },
     "priceDetails": { "range": "₹83 Lakh - ₹1.25 Cr", "perSqft": "₹8,600/sq.ft", "configurations": [
@@ -142,7 +142,7 @@
     ],
     "possessionDate": "Dec 2026",
     "reraNumber": "P52100048125",
-    "gallery": ["/gallery/milange-1.webp", "/gallery/milange-2.webp"],
+    "gallery": ["/gallery/milange-1.webp", "/gallery/milange-2.webp","/gallery/milange-3.webp","/gallery/milange-4.webp","/gallery/milange-5.webp"],
     "mapCoords": { "lat": 18.5579, "lng": 73.9453 },
     "nearbyPlaces": [
       { "type": "IT Park", "name": "EON IT Park", "distance": "0.3 km" },
@@ -167,12 +167,12 @@
     "about": "Mantra Codename Paradise offers luxurious 2 & 3 BHK homes in Sus, Pune with modern amenities, excellent connectivity to Hinjewadi IT Park, and a serene living environment. The project features landscaped gardens, 24/7 security, and premium finishes throughout.",
     "amenities": ["Swimming Pool", "Gym", "Children's Play Area", "Jogging Track", "24/7 Security", "Power Backup", "Clubhouse", "Landscaped Gardens", "Indoor Games", "Yoga Deck"],
     "floorPlans": [
-      { "type": "2 BHK", "area": "950 sq.ft", "image": "/floorplans/mantra-2bhk.webp" },
-      { "type": "3 BHK", "area": "1250 sq.ft", "image": "/floorplans/mantra-3bhk.webp" }
+      { "type": "2 BHK", "area": "950 sq.ft", "image": "/floorplans/mantra-codename-2bhk.webp" },
+      { "type": "3 BHK", "area": "1250 sq.ft", "image": "/floorplans/mantra-codename-3bhk.webp" }
     ],
     "possessionDate": "Dec 2026",
     "reraNumber": "P52100048123",
-    "gallery": ["/gallery/mantra-1.webp", "/gallery/mantra-2.webp", "/gallery/mantra-3.webp", "/gallery/mantra-4.webp", "/gallery/mantra-5.webp"],
+    "gallery": ["/gallery/mantra-codename-paradise-1.webp", "/gallery/mantra-codename-paradise-2.webp", "/gallery/mantra-codename-paradise-3.webp"],
     "mapCoords": { "lat": 18.5912, "lng": 73.7389 },
     "nearbyPlaces": [
       { "type": "School", "name": "Delhi Public School", "distance": "1.2 km" },
