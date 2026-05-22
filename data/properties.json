@@ -291,11 +291,11 @@
     "amenities": ["Swimming Pool", "Gym", "Kids Play Area", "Jogging Track", "24/7 Security", "Power Backup", "Clubhouse", "Landscaped Gardens", "Amphitheatre"],
     "floorPlans": [
       { "type": "2 BHK", "area": "990 sq.ft", "image": "/floorplans/treecloud-2bhk.webp" },
-      { "type": "3 BHK", "area": "1320 sq.ft", "image": "/floorplans/treecloud-3bhk.webp" }
+      { "type": "3 BHK", "area": "1320 sq.ft", "image": "/floorplans/opulis-1bhk.webp" }
     ],
     "possessionDate": "Dec 2027",
     "reraNumber": "P52100048133",
-    "gallery": ["/gallery/treecloud-1.webp", "/gallery/treecloud-2.webp"],
+    "gallery": ["/gallery/treecloud-1.webp", "/gallery/treecloud-2.webp","/gallery/treecloud-3.webp","/gallery/treecloud-4.webp","/gallery/treecloud-5.webp","/gallery/treecloud-6.webp"],
     "mapCoords": { "lat": 18.5593, "lng": 73.7815 },
     "nearbyPlaces": [
       { "type": "Mall", "name": "Westend Mall", "distance": "0.6 km" },
@@ -309,7 +309,7 @@
     "location": "pune",
     "price": "₹80 Lakh onwards",
     "image": "/projects/shapoorji-celestia.webp",
-    "masterPlan": "/floorplans/shapoorji-celestia-master.webp",
+    "masterPlan": "/floorplans/mantra-meridian-master.webp",
     "locationMap": "/maps/shapoorji-celestia-location.webp",
     "fullLocation": { "area": "Wakad", "city": "Pune", "state": "Maharashtra", "pincode": "411057", "landmark": "Near DYP College" },
     "priceDetails": { "range": "₹86 Lakh - ₹1.4 Cr", "perSqft": "₹9,200/sq.ft", "configurations": [
@@ -325,7 +325,7 @@
     ],
     "possessionDate": "Mar 2027",
     "reraNumber": "P52100048134",
-    "gallery": ["/gallery/celestia-1.webp", "/gallery/celestia-2.webp"],
+    "gallery": ["/gallery/celestia-1.webp", "/gallery/celestia-2.webp","/gallery/celestia-3.webp","/gallery/celestia-4.webp"],
     "mapCoords": { "lat": 18.5975, "lng": 73.7898 },
     "nearbyPlaces": [
       { "type": "School", "name": "Delhi Public School", "distance": "0.8 km" },
@@ -339,7 +339,7 @@
     "location": "pune",
     "price": "₹80 Lakh onwards",
     "image": "/projects/shapoorji-wildernest.webp",
-    "masterPlan": "/floorplans/shapoorji-wildernest-master.webp",
+    "masterPlan": "/floorplans/mantra-meridian-master.webp",
     "locationMap": "/maps/shapoorji-wildernest-location.webp",
     "fullLocation": { "area": "Hinjewadi", "city": "Pune", "state": "Maharashtra", "pincode": "411057", "landmark": "Phase 3 IT Park" },
     "priceDetails": { "range": "₹83 Lakh - ₹1.35 Cr", "perSqft": "₹8,800/sq.ft", "configurations": [
@@ -350,12 +350,12 @@
     "about": "Shapoorji Wildernest in Hinjewadi Phase 3 offers convenient living for IT professionals with modern amenities and excellent connectivity.",
     "amenities": ["Swimming Pool", "Gym", "Kids Play Area", "Jogging Track", "24/7 Security", "Power Backup", "Co-working Space"],
     "floorPlans": [
-      { "type": "2 BHK", "area": "950 sq.ft", "image": "/floorplans/wildernest-2bhk.webp" },
-      { "type": "3 BHK", "area": "1270 sq.ft", "image": "/floorplans/wildernest-3bhk.webp" }
+      { "type": "3 BHK", "area": "950 sq.ft", "image": "/floorplans/wildernest-3bhk.webp" },
+      { "type": "4 BHK", "area": "1270 sq.ft", "image": "/floorplans/wildernest-4bhk.webp" }
     ],
     "possessionDate": "Jun 2027",
     "reraNumber": "P52100048135",
-    "gallery": ["/gallery/wildernest-1.webp", "/gallery/wildernest-2.webp"],
+    "gallery": ["/gallery/wildernest-1.webp", "/gallery/wildernest-2.webp","/gallery/wildernest-3.webp","/gallery/wildernest-4.webp","/gallery/wildernest-5.webp","/gallery/wildernest-6.webp","/gallery/wildernest-7.webp"],
     "mapCoords": { "lat": 18.5845, "lng": 73.7298 },
     "nearbyPlaces": [
       { "type": "IT Park", "name": "Hinjewadi Phase 3", "distance": "0.4 km" },
@@ -385,7 +385,7 @@
     ],
     "possessionDate": "Sep 2026",
     "reraNumber": "P52100048136",
-    "gallery": ["/gallery/treetopia-1.webp", "/gallery/treetopia-2.webp"],
+    "gallery": ["/gallery/treetopia-1.webp", "/gallery/treetopia-2.webp","/gallery/treetopia-3.webp","/gallery/treetopia-4.webp","/gallery/treetopia-5.webp"],
     "mapCoords": { "lat": 18.6298, "lng": 73.8045 },
     "nearbyPlaces": [
       { "type": "Metro", "name": "Pimple Saudagar Metro", "distance": "0.3 km" },
@@ -429,7 +429,7 @@
     "location": "pune",
     "price": "₹80 Lakh onwards",
     "image": "/projects/jhamtani-ace-abundance.webp",
-    "masterPlan": "/floorplans/jhamtani-ace-abundance-master.webp",
+    "masterPlan": "/floorplans/mantra-meridian-master.webp",
     "locationMap": "/maps/jhamtani-ace-abundance-location.webp",
     "fullLocation": { "area": "Wagholi", "city": "Pune", "state": "Maharashtra", "pincode": "412207", "landmark": "Near Phoenix Mall" },
     "priceDetails": { "range": "₹79 Lakh - ₹1.15 Cr", "perSqft": "₹8,100/sq.ft", "configurations": [
@@ -440,12 +440,12 @@
     "about": "Jhamtani Ace Abundance in Wagholi offers excellent value homes with modern amenities and growing connectivity to Pune's IT corridors.",
     "amenities": ["Swimming Pool", "Gym", "Kids Play Area", "Jogging Track", "24/7 Security", "Power Backup"],
     "floorPlans": [
-      { "type": "2 BHK", "area": "910 sq.ft", "image": "/floorplans/ace-2bhk.webp" },
+      { "type": "3 BHK", "area": "910 sq.ft", "image": "/floorplans/ace-3bhk.webp" },
       { "type": "3 BHK", "area": "1190 sq.ft", "image": "/floorplans/ace-3bhk.webp" }
     ],
     "possessionDate": "Jun 2026",
     "reraNumber": "P52100048138",
-    "gallery": ["/gallery/ace-1.webp", "/gallery/ace-2.webp"],
+    "gallery": ["/gallery/ace-1.webp", "/gallery/ace-2.webp","/gallery/ace-3.webp","/gallery/ace-4.webp","/gallery/ace-5.webp"],
     "mapCoords": { "lat": 18.5679, "lng": 73.9719 },
     "nearbyPlaces": [
       { "type": "Mall", "name": "Phoenix Mall", "distance": "1.2 km" },
@@ -470,12 +470,12 @@
     "about": "Kumar Prism in Kharadi offers smart homes with excellent connectivity to EON IT Park and Pune Airport.",
     "amenities": ["Swimming Pool", "Gym", "Kids Play Area", "Jogging Track", "24/7 Security", "Power Backup", "Smart Home Features"],
     "floorPlans": [
-      { "type": "2 BHK", "area": "955 sq.ft", "image": "/floorplans/prism-2bhk.webp" },
-      { "type": "3 BHK", "area": "1255 sq.ft", "image": "/floorplans/prism-3bhk.webp" }
+      { "type": "3 BHK", "area": "955 sq.ft", "image": "/floorplans/prism-3bhk.webp" },
+      { "type": "4 BHK", "area": "1255 sq.ft", "image": "/floorplans/prism-4bhk.webp" }
     ],
     "possessionDate": "Mar 2027",
     "reraNumber": "P52100048139",
-    "gallery": ["/gallery/prism-1.webp", "/gallery/prism-2.webp"],
+    "gallery": ["/gallery/prism-1.webp", "/gallery/prism-2.webp","/gallery/prism-3.webp","/gallery/prism-4.webp","/gallery/prism-5.webp","/gallery/prism-6.webp"],
     "mapCoords": { "lat": 18.5579, "lng": 73.9453 },
     "nearbyPlaces": [
       { "type": "IT Park", "name": "EON IT Park", "distance": "0.4 km" },
@@ -501,11 +501,11 @@
     "amenities": ["Infinity Pool", "Spa & Sauna", "Private Gym", "Concierge Service", "24/7 Security", "Valet Parking", "Sky Lounge", "Wine Cellar"],
     "floorPlans": [
       { "type": "3 BHK", "area": "1600 sq.ft", "image": "/floorplans/57ave-3bhk.webp" },
-      { "type": "4 BHK", "area": "2200 sq.ft", "image": "/floorplans/57ave-4bhk.webp" }
+      { "type": "3.5 BHK", "area": "2200 sq.ft", "image": "/floorplans/57ave-3.5bhk.webp" }
     ],
     "possessionDate": "Dec 2027",
     "reraNumber": "P52100048140",
-    "gallery": ["/gallery/57ave-1.webp", "/gallery/57ave-2.webp"],
+    "gallery": ["/gallery/57ave-1.webp", "/gallery/57ave-2.webp","/gallery/57ave-3.webp","/gallery/57ave-4.webp"],
     "mapCoords": { "lat": 18.5362, "lng": 73.8958 },
     "nearbyPlaces": [
       { "type": "Mall", "name": "Phoenix Mall", "distance": "0.5 km" },
@@ -561,11 +561,11 @@
     "amenities": ["Infinity Pool", "Spa", "Private Gym", "Concierge", "24/7 Security", "Valet Parking", "Sky Lounge", "Wine Room"],
     "floorPlans": [
       { "type": "2 BHK", "area": "1020 sq.ft", "image": "/floorplans/tribeca-2bhk.webp" },
-      { "type": "3 BHK", "area": "1380 sq.ft", "image": "/floorplans/tribeca-3bhk.webp" }
+      { "type": "3 BHK", "area": "1380 sq.ft", "image": "/floorplans/tribeca-2bhk.webp" }
     ],
     "possessionDate": "Jun 2027",
     "reraNumber": "P52100048142",
-    "gallery": ["/gallery/tribeca-1.webp", "/gallery/tribeca-2.webp"],
+    "gallery": ["/gallery/tribeca-1.webp", "/gallery/tribeca-2.webp","/gallery/tribeca-3.webp","/gallery/tribeca-4.webp","/gallery/tribeca-5.webp"],
     "mapCoords": { "lat": 18.5456, "lng": 73.8123 },
     "nearbyPlaces": [
       { "type": "Mall", "name": "Phoenix Mall", "distance": "0.8 km" },
@@ -595,7 +595,7 @@
     ],
     "possessionDate": "Dec 2028",
     "reraNumber": "P52100048143",
-    "gallery": ["/gallery/trump-1.webp", "/gallery/trump-2.webp"],
+    "gallery": ["/gallery/trump-1.webp", "/gallery/trump-2.webp","/gallery/trump-3.webp","/gallery/trump-4.webp"],
     "mapCoords": { "lat": 18.5593, "lng": 73.7815 },
     "nearbyPlaces": [
       { "type": "Mall", "name": "Westend Mall", "distance": "0.5 km" },
@@ -686,7 +686,7 @@
     ],
     "possessionDate": "Ready to Move",
     "reraNumber": "P52100048146",
-    "gallery": ["/gallery/hornbill-1.webp", "/gallery/hornbill-2.webp"],
+    "gallery": ["/gallery/hornbill-1.webp", "/gallery/hornbill-2.webp", "/gallery/hornbill-3.webp", "/gallery/hornbill-4.webp","/gallery/hornbill-5.webp"],
     "mapCoords": { "lat": 18.5167, "lng": 73.9298 },
     "nearbyPlaces": [
       { "type": "School", "name": "Magarpatta School", "distance": "0.2 km" },
@@ -716,7 +716,7 @@
     ],
     "possessionDate": "Ready to Move",
     "reraNumber": "P52100048147",
-    "gallery": ["/gallery/flamingo-1.webp", "/gallery/flamingo-2.webp"],
+    "gallery": ["/gallery/flamingo-1.webp", "/gallery/flamingo-2.webp","/gallery/flamingo-3.webp","/gallery/flamingo-4.webp","/gallery/flamingo-5.webp","/gallery/flamingo-6.webp"],
     "mapCoords": { "lat": 18.5167, "lng": 73.9298 },
     "nearbyPlaces": [
       { "type": "School", "name": "Magarpatta School", "distance": "0.2 km" },
@@ -748,7 +748,7 @@
     ],
     "possessionDate": "Dec 2026",
     "reraNumber": "P52000048035",
-    "gallery": ["/gallery/sai1-1.webp", "/gallery/sai1-2.webp"],
+    "gallery": ["/gallery/sai1-1.webp", "/gallery/sai1-2.webp","/gallery/sai1-3.webp","/gallery/sai1-4.webp","/gallery/sai1-5.webp","/gallery/sai1-6.webp"],
     "mapCoords": { "lat": 18.9894, "lng": 73.1103 },
     "nearbyPlaces": [
       { "type": "Airport", "name": "Navi Mumbai Airport", "distance": "5 km" },
@@ -780,7 +780,7 @@
     ],
     "possessionDate": "Jun 2027",
     "reraNumber": "P52000048037",
-    "gallery": ["/gallery/sai-1.webp", "/gallery/sai-2.webp", "/gallery/sai-3.webp", "/gallery/sai-4.webp", "/gallery/sai-5.webp", "/gallery/sai-6.webp"],
+    "gallery": ["/gallery/sai-World Empire1.webp", "/gallery/sai-World Empire2.webp", "/gallery/sai-World Empire3.webp", "/gallery/sai-World Empire4.webp", "/gallery/sai-World Empire5.webp"],
     "mapCoords": { "lat": 19.0448, "lng": 73.0678 },
     "nearbyPlaces": [
       { "type": "School", "name": "Ryan International School", "distance": "0.8 km" },
@@ -808,13 +808,13 @@
     "about": "Sai World Dreams in Taloja offers excellent value homes with modern amenities and growing connectivity to Mumbai and Pune.",
     "amenities": ["Swimming Pool", "Gym", "Kids Play Area", "Jogging Track", "24/7 Security", "Power Backup", "Clubhouse"],
     "floorPlans": [
-      { "type": "1 BHK", "area": "460 sq.ft", "image": "/floorplans/dreams-1bhk.webp" },
-      { "type": "2 BHK", "area": "760 sq.ft", "image": "/floorplans/dreams-2bhk.webp" },
+      { "type": "3 BHK", "area": "460 sq.ft", "image": "/floorplans/dreams-3bhk.webp" },
+      { "type": "4 BHK", "area": "760 sq.ft", "image": "/floorplans/dreams-4bhk.webp" },
       { "type": "3 BHK", "area": "1080 sq.ft", "image": "/floorplans/dreams-3bhk.webp" }
     ],
     "possessionDate": "Mar 2027",
     "reraNumber": "P52000048038",
-    "gallery": ["/gallery/dreams-1.webp", "/gallery/dreams-2.webp"],
+    "gallery": ["/gallery/dreams-1.webp", "/gallery/dreams-2.webp", "/gallery/dreams-3.webp", "/gallery/dreams-4.webp", "/gallery/dreams-5.webp", "/gallery/dreams-6.webp","/gallery/dreams-7.webp","/gallery/dreams-8.webp","/gallery/dreams-9.webp"],
     "mapCoords": { "lat": 19.0123, "lng": 73.1234 },
     "nearbyPlaces": [
       { "type": "Industrial", "name": "Taloja MIDC", "distance": "1.0 km" },
@@ -846,7 +846,7 @@
     ],
     "possessionDate": "Sep 2027",
     "reraNumber": "P52000048040",
-    "gallery": ["/gallery/novavista-1.webp", "/gallery/novavista-2.webp"],
+    "gallery": ["/gallery/novavista-1.webp", "/gallery/novavista-2.webp", "/gallery/novavista-3.webp", "/gallery/novavista-4.webp", "/gallery/novavista-5.webp", "/gallery/novavista-6.webp"],
     "mapCoords": { "lat": 19.0330, "lng": 73.0169 },
     "nearbyPlaces": [
       { "type": "Metro", "name": "Nerul Metro", "distance": "0.5 km" },
@@ -942,7 +942,7 @@
     ],
     "possessionDate": "Mar 2026",
     "reraNumber": "P52000048050",
-    "gallery": ["/gallery/runwal-1.webp", "/gallery/runwal-2.webp"],
+    "gallery": ["/gallery/runwal-1.webp", "/gallery/runwal-2.webp", "/gallery/runwal-3.webp", "/gallery/runwal-4.webp", "/gallery/runwal-5.webp", "/gallery/runwal-6.webp"],
     "mapCoords": { "lat": 19.2183, "lng": 73.0789 },
     "nearbyPlaces": [
       { "type": "Railway", "name": "Dombivli Station", "distance": "1.5 km" },
