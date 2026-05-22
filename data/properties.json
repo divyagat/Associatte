@@ -199,12 +199,12 @@
     "about": "Lodha Mundhwa brings the Lodha legacy of excellence to Pune with premium homes, world-class amenities, and impeccable craftsmanship in a prime location.",
     "amenities": ["Infinity Pool", "State-of-art Gym", "Spa & Sauna", "Kids Play Area", "Jogging Track", "24/7 Security", "Clubhouse", "Landscaped Gardens", "Tennis Court", "Indoor Games"],
     "floorPlans": [
-      { "type": "2 BHK", "area": "980 sq.ft", "image": "/floorplans/lodha-2bhk.webp" },
-      { "type": "3 BHK", "area": "1300 sq.ft", "image": "/floorplans/lodha-3bhk.webp" }
+      { "type": "1 BHK", "area": "980 sq.ft", "image": "/floorplans/lodha-1bhk.webp" },
+      { "type": "2 BHK", "area": "1300 sq.ft", "image": "/floorplans/lodha-2bhk.webp" }
     ],
     "possessionDate": "Mar 2027",
     "reraNumber": "P52100048130",
-    "gallery": ["/gallery/lodha-1.webp", "/gallery/lodha-2.webp", "/gallery/lodha-3.webp"],
+    "gallery": ["/gallery/lodha-1.webp", "/gallery/lodha-2.webp", "/gallery/lodha-3.webp","/gallery/lodha-4.webp","/gallery/lodha-5.webp","/gallery/lodha-gallery1.webp"],
     "mapCoords": { "lat": 18.5314, "lng": 73.9260 },
     "nearbyPlaces": [
       { "type": "Mall", "name": "Phoenix Mall", "distance": "0.5 km" },
@@ -235,7 +235,7 @@
     ],
     "possessionDate": "Jun 2027",
     "reraNumber": "P52100048131",
-    "gallery": ["/gallery/birla-1.webp", "/gallery/birla-2.webp"],
+    "gallery": ["/gallery/birla-punya1.webp", "/gallery/birla-punya2.webp","/gallery/birla-punya3.webp","/gallery/birla-punya4.webp","/gallery/birla-punya5.webp"],
     "mapCoords": { "lat": 18.4912, "lng": 73.9098 },
     "nearbyPlaces": [
       { "type": "Mall", "name": "Amanora Mall", "distance": "1.2 km" },
@@ -265,7 +265,7 @@
     ],
     "possessionDate": "Sep 2027",
     "reraNumber": "P52100048132",
-    "gallery": ["/gallery/evem-1.webp", "/gallery/evem-2.webp"],
+    "gallery": ["/gallery/evem-1.webp", "/gallery/evem-2.webp","/gallery/evem-3.webp","/gallery/evem-4.webp"],
     "mapCoords": { "lat": 18.5579, "lng": 73.9453 },
     "nearbyPlaces": [
       { "type": "IT Park", "name": "EON IT Park", "distance": "0.5 km" },
@@ -974,7 +974,7 @@
     ],
     "possessionDate": "Jun 2026",
     "reraNumber": "P52000048051",
-    "gallery": ["/gallery/premier-1.webp", "/gallery/premier-2.webp"],
+    "gallery": ["/gallery/premier-1.webp", "/gallery/premier-2.webp", "/gallery/premier-3.webp", "/gallery/premier-4.webp", "/gallery/premier-5.webp"],
     "mapCoords": { "lat": 19.2403, "lng": 73.1305 },
     "nearbyPlaces": [
       { "type": "Railway", "name": "Kalyan Station", "distance": "1.0 km" },
@@ -1001,12 +1001,12 @@
     "amenities": ["Swimming Pool", "Gym", "Kids Play Area", "Jogging Track", "24/7 Security", "Power Backup", "Clubhouse"],
     "floorPlans": [
       { "type": "1 BHK", "area": "430 sq.ft", "image": "/floorplans/opulis-1bhk.webp" },
-      { "type": "2 BHK", "area": "670 sq.ft", "image": "/floorplans/opulis-2bhk.webp" },
-      { "type": "3 BHK", "area": "930 sq.ft", "image": "/floorplans/opulis-3bhk.webp" }
+      { "type": "2 BHK", "area": "670 sq.ft", "image": "/floorplans/opulis-1bhk.webp" },
+      { "type": "3 BHK", "area": "930 sq.ft", "image": "/floorplans/opulis-1bhk.webp" }
     ],
     "possessionDate": "Sep 2026",
     "reraNumber": "P52000048052",
-    "gallery": ["/gallery/opulis-1.webp", "/gallery/opulis-2.webp"],
+    "gallery": ["/gallery/opulis-1.webp", "/gallery/opulis-2.webp","/gallery/opulis-3.webp","/gallery/opulis-4.webp","/gallery/opulis-5.webp"],
     "mapCoords": { "lat": 19.2183, "lng": 73.0789 },
     "nearbyPlaces": [
       { "type": "Railway", "name": "Dombivli Station", "distance": "1.8 km" },
