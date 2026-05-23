@@ -8,7 +8,7 @@ import Link from 'next/link';
 import properties from '../../../data/properties.json';
 import EnquiryPopup from '@/components/common/EnquiryPopup';
 
-// 🎨 Strategic Color Palette (YOUR EXACT COLORS)
+// 🎨 Strategic Color Palette
 const COLORS = {
   primary: '#005E60',
   accent: '#F8C21C',
@@ -22,6 +22,10 @@ const COLORS = {
 function transformProject(project) {
   if (!project) return null;
   
+  // Get unique BHK types for display
+  const bhkTypes = project.priceDetails?.configurations?.map(c => c.type) || [];
+  const uniqueBhk = [...new Set(bhkTypes)].filter(Boolean).join(', ');
+  
   return {
     title: project.name,
     slug: project.slug,
@@ -30,8 +34,8 @@ function transformProject(project) {
     pricePerSqft: project.priceDetails?.perSqft,
     developer: project.developer?.name,
     image: project.image,
+    bhk: uniqueBhk,
     
-    // ✅ ADD: Pass gallery, masterPlan, locationMap to propertyData
     gallery: project.gallery || [],
     masterPlan: project.masterPlan || null,
     locationMap: project.locationMap || null,
@@ -47,11 +51,10 @@ function transformProject(project) {
       price: config.price
     })) || [],
     
-    // ✅ ADD: Keep floorPlans with image property
     floorPlans: project.floorPlans?.map(plan => ({
       type: plan.type,
       area: plan.area,
-      image: plan.image  // ✅ This was missing!
+      image: plan.image
     })) || [],
     
     about: project.about,
@@ -89,30 +92,12 @@ function transformProject(project) {
       description: project.developer?.description
     },
     reraNumber: project.reraNumber,
-    otherProjectsNaviMumbai: properties
-      .filter(p => p.slug !== project.slug && p.location === project.location)
-      .slice(0, 3)
-      .map(p => ({
-        title: p.name.length > 20 ? p.name.substring(0, 17) + '...' : p.name,
-        location: `${p.fullLocation?.area || p.location}, ${p.fullLocation?.city || ''}`,
-        bhk: p.priceDetails?.configurations?.map(c => c.type).join(', ') || 'TBA',
-        area: p.priceDetails?.configurations?.[0]?.area || 'TBA',
-        price: p.priceDetails?.range?.split(' - ')[0] || p.price
-      })),
-    otherProjectsTodayGlobal: properties
-      .filter(p => p.slug !== project.slug && p.developer?.name === project.developer?.name)
-      .slice(0, 3)
-      .map(p => ({
-        title: p.name.length > 20 ? p.name.substring(0, 17) + '...' : p.name,
-        location: `${p.fullLocation?.area || p.location}, ${p.fullLocation?.city || ''}`,
-        bhk: p.priceDetails?.configurations?.map(c => c.type).join(', ') || 'TBA',
-        area: p.priceDetails?.configurations?.[0]?.area || 'TBA',
-        price: p.priceDetails?.range?.split(' - ')[0] || p.price
-      }))
+    // Store original project for similar projects filtering
+    _originalProject: project
   };
 }
 
-// Icons (YOUR EXACT ICONS - keep as-is)
+// Icons
 const Icons = {
   Location: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>,
   Calendar: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>,
@@ -123,74 +108,14 @@ const Icons = {
   Yoga: () => <svg className="w-10 h-10 mx-auto mb-2" style={{ color: COLORS.primary }} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
   Pool: () => <svg className="w-10 h-10 mx-auto mb-2" style={{ color: COLORS.primary }} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>,
   Heart: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>,
-  ExternalLink: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>,
   ChevronRight: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>,
-  Phone: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>,
-  MessageCircle: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>,
+  ArrowRight: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>,
 };
-
-// 🏠 Property Schema Component (JSON-LD)
-function PropertySchema({ property }) {
-  if (!property) return null;
-
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    "name": property.title,
-    "image": property.image ? [property.image] : [],
-    "description": property.about,
-    "brand": {
-      "@type": "Brand",
-      "name": property.developer
-    },
-    "provider": {
-      "@type": "Organization",
-      "name": "Associatte PropTech Pvt Ltd",
-      "url": "https://propfinder.in",
-      "logo": "https://propfinder.in/logo.png"
-    },
-    "offers": {
-      "@type": "Offer",
-      "priceCurrency": "INR",
-      "price": property.priceRange?.replace(/[^\d.]/g, '') * 10000000 || 0,
-      "availability": property.projectDetails?.possessionDate === 'Ready to Move' 
-        ? "https://schema.org/InStock" 
-        : "https://schema.org/PreOrder",
-      "url": `https://propfinder.in/property/${property.slug}`
-    },
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": property.location.area,
-      "addressLocality": property.location.city,
-      "addressRegion": "Maharashtra",
-      "addressCountry": "IN"
-    },
-    "floorSize": {
-      "@type": "QuantitativeValue",
-      "value": property.configurations?.[0]?.area?.replace(/[^\d]/g, '') || 0,
-      "unitCode": "FTK"
-    },
-    "numberOfRooms": property.configurations?.[0]?.type?.match(/\d+/)?.[0] || 0,
-    "amenityFeature": property.amenities?.map(amenity => ({
-      "@type": "LocationFeatureSpecification",
-      "name": amenity.name,
-      "value": true
-    })) || []
-  };
-
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-    />
-  );
-}
 
 // 🖼️ FULL SCREEN GALLERY MODAL COMPONENT
 function GalleryModal({ images, initialIndex, onClose }) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
 
-  // Handle keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') onClose();
@@ -198,7 +123,6 @@ function GalleryModal({ images, initialIndex, onClose }) {
       if (e.key === 'ArrowRight') goToNext();
     };
     window.addEventListener('keydown', handleKeyDown);
-    // Prevent body scroll when modal is open
     document.body.style.overflow = 'hidden';
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
@@ -217,86 +141,130 @@ function GalleryModal({ images, initialIndex, onClose }) {
   if (!images || images.length === 0) return null;
 
   return (
-    <div 
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md"
-      onClick={onClose}
-    >
-      {/* Close button */}
-      <button 
-        onClick={onClose}
-        className="absolute top-4 right-4 z-10 p-2 text-white/80 hover:text-white bg-black/50 rounded-full transition-colors"
-        aria-label="Close gallery"
-      >
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md" onClick={onClose}>
+      <button onClick={onClose} className="absolute top-4 right-4 z-10 p-2 text-white/80 hover:text-white bg-black/50 rounded-full transition-colors">
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
 
-      {/* Image counter */}
       <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/60 text-white px-3 py-1 rounded-full text-sm font-medium z-10">
         {currentIndex + 1} / {images.length}
       </div>
 
-      {/* Main image */}
-      <div 
-        className="w-full h-full flex items-center justify-center p-4 cursor-pointer"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <img 
-          src={images[currentIndex]} 
-          alt={`Gallery image ${currentIndex + 1}`}
-          className="max-w-full max-h-full object-contain select-none"
-        />
+      <div className="w-full h-full flex items-center justify-center p-4 cursor-pointer" onClick={(e) => e.stopPropagation()}>
+        <img src={images[currentIndex]} alt={`Gallery image ${currentIndex + 1}`} className="max-w-full max-h-full object-contain select-none" />
       </div>
 
-      {/* Previous button */}
       {images.length > 1 && (
-        <button
-          onClick={(e) => { e.stopPropagation(); goToPrevious(); }}
-          className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-black/50 hover:bg-black/70 rounded-full text-white transition-colors"
-          aria-label="Previous image"
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
+        <>
+          <button onClick={(e) => { e.stopPropagation(); goToPrevious(); }} className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-black/50 hover:bg-black/70 rounded-full text-white transition-colors">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <button onClick={(e) => { e.stopPropagation(); goToNext(); }} className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-black/50 hover:bg-black/70 rounded-full text-white transition-colors">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </>
       )}
+    </div>
+  );
+}
 
-      {/* Next button */}
-      {images.length > 1 && (
-        <button
-          onClick={(e) => { e.stopPropagation(); goToNext(); }}
-          className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-black/50 hover:bg-black/70 rounded-full text-white transition-colors"
-          aria-label="Next image"
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
-      )}
+// 🧮 EMI Calculator Popup Component
+function EmiCalculatorPopup({ onClose }) {
+  const [loanAmount, setLoanAmount] = useState(5000000);
+  const [rate, setRate] = useState(8.5);
+  const [tenure, setTenure] = useState(20);
+
+  const calculateEMI = () => {
+    const principal = loanAmount;
+    const monthlyRate = rate / 12 / 100;
+    const months = tenure * 12;
+    if (monthlyRate === 0) return principal / months;
+    const emi = (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) / (Math.pow(1 + monthlyRate, months) - 1);
+    return emi;
+  };
+
+  const emi = calculateEMI();
+  const totalPayment = emi * tenure * 12;
+  const totalInterest = totalPayment - loanAmount;
+  const formatCurrency = (val) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(val);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md" onClick={onClose}>
+      <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden" onClick={e => e.stopPropagation()}>
+        <div className="bg-gradient-to-r from-[#005E60] to-[#004a4d] text-white px-6 py-4 flex items-center justify-between">
+          <h3 className="text-lg font-bold">EMI Calculator</h3>
+          <button onClick={onClose} className="p-1.5 hover:bg-white/10 rounded-lg transition-colors">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+        </div>
+        <div className="p-6 space-y-6">
+          <div>
+            <div className="flex justify-between mb-2">
+              <label className="text-sm font-medium text-gray-700">Loan Amount</label>
+              <span className="text-sm font-semibold text-[#005E60]">{formatCurrency(loanAmount)}</span>
+            </div>
+            <input type="range" min="1000000" max="20000000" step="100000" value={loanAmount} onChange={e => setLoanAmount(Number(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#005E60]" />
+          </div>
+          <div>
+            <div className="flex justify-between mb-2">
+              <label className="text-sm font-medium text-gray-700">Interest Rate (% p.a)</label>
+              <span className="text-sm font-semibold text-[#005E60]">{rate}%</span>
+            </div>
+            <input type="range" min="5" max="15" step="0.1" value={rate} onChange={e => setRate(Number(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#005E60]" />
+          </div>
+          <div>
+            <div className="flex justify-between mb-2">
+              <label className="text-sm font-medium text-gray-700">Tenure (Years)</label>
+              <span className="text-sm font-semibold text-[#005E60]">{tenure} Yr</span>
+            </div>
+            <input type="range" min="1" max="30" step="1" value={tenure} onChange={e => setTenure(Number(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#005E60]" />
+          </div>
+          <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-5 border border-gray-200">
+            <div className="text-center mb-4">
+              <p className="text-sm text-gray-600 mb-1">Monthly EMI</p>
+              <p className="text-3xl font-bold text-[#005E60]">{formatCurrency(emi)}</p>
+            </div>
+            <div className="grid grid-cols-2 gap-4 text-center">
+              <div className="bg-white p-3 rounded-xl shadow-sm">
+                <p className="text-xs text-gray-500">Total Interest</p>
+                <p className="font-semibold text-gray-900">{formatCurrency(totalInterest)}</p>
+              </div>
+              <div className="bg-white p-3 rounded-xl shadow-sm">
+                <p className="text-xs text-gray-500">Total Payment</p>
+                <p className="font-semibold text-gray-900">{formatCurrency(totalPayment)}</p>
+              </div>
+            </div>
+          </div>
+          <button onClick={onClose} className="w-full py-3 bg-[#F8C21C] text-[#8B0000] font-bold rounded-xl hover:bg-[#e6b418] transition-colors shadow-lg">
+            Close
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
 
 export default function PropertyPage() {
   const [propertyData, setPropertyData] = useState(null);
+  const [similarProjects, setSimilarProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showPopup, setShowPopup] = useState(false);
   const [showEmiPopup, setShowEmiPopup] = useState(false);
-  // 🖼️ Gallery modal state
   const [galleryModalOpen, setGalleryModalOpen] = useState(false);
   const [galleryStartIndex, setGalleryStartIndex] = useState(0);
   
   const router = useRouter();
-  
   const params = useParams();
   const slug = params?.slug;
 
   useEffect(() => {
-    console.log('🔍 PropertyPage - slug from useParams:', slug);
-    
     if (!slug) {
-      console.error('❌ No slug found in route params');
       setLoading(false);
       return;
     }
@@ -304,17 +272,40 @@ export default function PropertyPage() {
     const project = properties.find((p) => p.slug === slug);
     
     if (project) {
-      console.log('✅ Found project:', project.name);
-      console.log('🖼️ Gallery data:', project.gallery);
-      console.log('📐 Floor plan images:', project.floorPlans?.map(fp => fp.image));
-      setPropertyData(transformProject(project));
+      const transformed = transformProject(project);
+      setPropertyData(transformed);
+      
+      // 🔁 Find similar projects (same city, different project)
+      const cityName = project.fullLocation?.city?.toLowerCase() || 
+                      (project.location === 'pune' ? 'pune' : 
+                       project.location === 'mumbai' ? 'navi mumbai' : 'kalyan');
+      
+      const similar = properties
+        .filter(p => p.slug !== slug) // Exclude current project
+        .filter(p => {
+          const pCity = p.fullLocation?.city?.toLowerCase() || 
+                       (p.location === 'pune' ? 'pune' : 
+                        p.location === 'mumbai' ? 'navi mumbai' : 'kalyan');
+          return pCity === cityName;
+        })
+        .slice(0, 3)
+        .map(p => ({
+          slug: p.slug,
+          title: p.name,
+          location: `${p.fullLocation?.area || p.location}, ${p.fullLocation?.city || ''}`,
+          bhk: p.priceDetails?.configurations?.map(c => c.type).join(', ') || 'TBA',
+          area: p.priceDetails?.configurations?.[0]?.area || 'TBA',
+          price: p.priceDetails?.range?.split(' - ')[0] || p.price,
+          image: p.image
+        }));
+      
+      setSimilarProjects(similar);
     } else {
       console.error('❌ Project not found for slug:', slug);
-      console.log('📋 Available slugs (first 5):', properties.slice(0, 5).map(p => p.slug));
     }
     
     setLoading(false);
-  }, [slug, router]);
+  }, [slug]);
 
   const getIcon = (iconName) => {
     const iconMap = { 
@@ -332,11 +323,7 @@ export default function PropertyPage() {
       const headerOffset = 80;
       const elementPosition = element.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
+      window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
     }
   };
 
@@ -351,7 +338,6 @@ export default function PropertyPage() {
           projectImage: propertyData?.image,
         }),
       });
-      
       if (!response.ok) throw new Error('Submission failed');
       console.log('✅ Enquiry submitted for:', propertyData?.title);
     } catch (error) {
@@ -359,7 +345,6 @@ export default function PropertyPage() {
     }
   };
 
-  // 🖼️ Open gallery modal at specific index
   const openGallery = (index) => {
     if (propertyData?.gallery && propertyData.gallery.length > 0) {
       setGalleryStartIndex(index);
@@ -392,64 +377,39 @@ export default function PropertyPage() {
     );
   }
 
-  // 🔹 Generate SEO metadata
   const seoTitle = `${propertyData.title} - ${propertyData.configurations?.[0]?.type || ''} in ${propertyData.location.area}, ${propertyData.location.city} | PropFinder`;
-  const seoDescription = `${propertyData.title} by ${propertyData.developer}. ${propertyData.configurations?.[0]?.type} starting ₹${propertyData.priceRange}. ${propertyData.about?.substring(0, 150)}...`;
+  const seoDescription = `${propertyData.title} by ${propertyData.developer}. ${propertyData.configurations?.[0]?.type} starting ${propertyData.priceRange}. ${propertyData.about?.substring(0, 150)}...`;
   const canonicalUrl = `https://propfinder.in/property/${propertyData.slug}`;
 
   return (
     <>
-      {/* 🎯 ENHANCED SEO HEAD SECTION */}
       <Head>
-        {/* Primary Meta Tags */}
         <title>{seoTitle}</title>
         <meta name="description" content={seoDescription} />
-        <meta name="keywords" content={`${propertyData.title}, ${propertyData.bhk} BHK ${propertyData.location.area}, ${propertyData.developer}, property in ${propertyData.location.city}, PropFinder, Associatte PropTech`} />
-        <meta name="author" content="Associatte PropTech Pvt Ltd" />
+        <meta name="keywords" content={`${propertyData.title}, ${propertyData.bhk} ${propertyData.location.area}, ${propertyData.developer}, property in ${propertyData.location.city}, PropFinder`} />
         <meta name="robots" content="index, follow" />
-        
-        {/* Canonical URL */}
         <link rel="canonical" href={canonicalUrl} />
-        
-        {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
         <meta property="og:url" content={canonicalUrl} />
         <meta property="og:title" content={seoTitle} />
         <meta property="og:description" content={seoDescription} />
         <meta property="og:image" content={propertyData.image || 'https://propfinder.in/og-image.jpg'} />
-        <meta property="og:site_name" content="PropFinder" />
-        <meta property="og:locale" content="en_IN" />
-        
-        {/* Twitter */}
         <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content={canonicalUrl} />
         <meta property="twitter:title" content={seoTitle} />
         <meta property="twitter:description" content={seoDescription} />
         <meta property="twitter:image" content={propertyData.image || 'https://propfinder.in/og-image.jpg'} />
-        
-        {/* Additional SEO Tags */}
-        <meta name="geo.region" content="IN-MH" />
-        <meta name="geo.placename" content={`${propertyData.location.area}, ${propertyData.location.city}`} />
-        
-        {/* Property Schema (JSON-LD) */}
-        <PropertySchema property={propertyData} />
       </Head>
 
       <div className="min-h-screen bg-gray-50">
         
-        {/* 🔝 Header Section */}
+        {/* Header Section */}
         <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
           <div className="max-w-7xl mx-auto px-4 py-3">
-            {/* ✅ Breadcrumbs for SEO */}
             <nav className="flex items-center text-sm text-gray-500 mb-3" aria-label="Breadcrumb">
               <Link href="/" className="hover:text-[#F8C21C] transition-colors">Home</Link>
               <Icons.ChevronRight />
               <Link href={`/locations/${propertyData.location.city.toLowerCase()}`} className="hover:text-[#F8C21C] transition-colors capitalize">
                 {propertyData.location.city}
-              </Link>
-              <Icons.ChevronRight />
-              <Link href={`/locations/${propertyData.location.city.toLowerCase()}/${propertyData.location.area.toLowerCase().replace(/\s+/g, '-')}`} className="hover:text-[#F8C21C] transition-colors">
-                {propertyData.location.area}
               </Link>
               <Icons.ChevronRight />
               <span className="text-gray-900 font-medium truncate" aria-current="page">{propertyData.title}</span>
@@ -473,25 +433,15 @@ export default function PropertyPage() {
           </div>
         </header>
 
-        {/* 🖼️ Hero Section - FIXED with WebP Images */}
+        {/* Hero Section */}
         <section className="bg-white border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 py-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               
-              {/* Main Image - Click to open gallery at index 0 */}
+              {/* Main Image */}
               <div className="lg:col-span-2 cursor-pointer" onClick={() => openGallery(0)}>
                 <div className="relative aspect-video bg-gradient-to-br from-[#005E60] to-[#003d40] rounded-2xl overflow-hidden group">
-                  
-                  {/* ✅ ACTUAL WEBP IMAGE - Perfect Fit */}
-                  <img 
-                    src={propertyData.image} 
-                    alt={propertyData.title}
-                    className="absolute inset-0 w-full h-full object-cover"
-                    loading="eager"
-                    onError={(e) => { e.target.style.display = 'none'; }}
-                  />
-                  
-                  {/* Location Badge */}
+                  <img src={propertyData.image} alt={propertyData.title} className="absolute inset-0 w-full h-full object-cover" loading="eager" />
                   <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
                     <span className="px-4 py-2 bg-[#F8C21C] text-[#005E60] font-bold rounded-lg shadow-lg">
                       {propertyData.location.area}
@@ -503,25 +453,11 @@ export default function PropertyPage() {
                 </div>
               </div>
 
-              {/* ✅ Gallery Thumbnails - PERFECT FIT - NO WHITE SPACE */}
+              {/* Gallery Thumbnails */}
               <div className="grid grid-cols-2 gap-3 h-full">
                 {propertyData.gallery?.slice(0, 4).map((src, i) => (
-                  <div 
-                    key={i} 
-                    className={`relative w-full h-full min-h-[150px] rounded-xl overflow-hidden cursor-pointer transition-all hover:ring-2 hover:ring-[#F8C21C] ${i === 0 ? 'ring-2 ring-[#005E60]' : ''}`}
-                    onClick={() => openGallery(i)}
-                  >
-                    {/* ✅ Gallery Image - PERFECT FIT with object-cover */}
-                    <img 
-                      src={src} 
-                      alt={`${propertyData.title} ${i + 1}`}
-                      className="absolute inset-0 w-full h-full min-h-[230px] object-cover"
-                      loading="lazy"
-                      onError={(e) => { 
-                        e.target.style.display = 'none';
-                        e.target.parentElement.classList.add('bg-gray-200');
-                      }}
-                    />
+                  <div key={i} className={`relative w-full h-full min-h-[150px] rounded-xl overflow-hidden cursor-pointer transition-all hover:ring-2 hover:ring-[#F8C21C] ${i === 0 ? 'ring-2 ring-[#005E60]' : ''}`} onClick={() => openGallery(i)}>
+                    <img src={src} alt={`${propertyData.title} ${i + 1}`} className="absolute inset-0 w-full h-full min-h-[230px] object-cover" loading="lazy" />
                     {i === 3 && propertyData.gallery?.length > 4 && (
                       <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white font-medium text-sm z-10">
                         +{propertyData.gallery.length - 4} More
@@ -529,40 +465,30 @@ export default function PropertyPage() {
                     )}
                   </div>
                 ))}
-                
-                {/* Fallback if no gallery */}
-                {(!propertyData.gallery || propertyData.gallery.length === 0) && 
-                  [1,2,3,4].map((item) => (
-                    <div key={item} className="relative w-full h-full min-h-[150px] rounded-xl bg-gray-100 border-gray-200 flex items-center justify-center overflow-hidden">
-                      <span className="text-gray-400 text-xs">Photo {item}</span>
-                    </div>
-                  ))
-                }
               </div>
-
             </div>
           </div>
         </section>
 
-        {/* 📋 Navigation Tabs */}
+        {/* Navigation Tabs */}
         <nav className="bg-white border-b border-gray-200 sticky top-16 z-30">
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex gap-1 overflow-x-auto py-2 scrollbar-hide">
-              <button onClick={() => scrollToSection('overview')} className={`px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all bg-[#005E60] text-white shadow-sm`}>Overview</button>
-              <button onClick={() => scrollToSection('configurations')} className={`px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all text-gray-600 hover:text-[#005E60] hover:bg-gray-100`}>Configurations</button>
-              <button onClick={() => scrollToSection('floor-plans')} className={`px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all text-gray-600 hover:text-[#005E60] hover:bg-gray-100`}>Floor Plans</button>
-              <button onClick={() => scrollToSection('amenities')} className={`px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all text-gray-600 hover:text-[#005E60] hover:bg-gray-100`}>Amenities</button>
-              <button onClick={() => scrollToSection('location')} className={`px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all text-gray-600 hover:text-[#005E60] hover:bg-gray-100`}>Location</button>
-              <button onClick={() => scrollToSection('developer')} className={`px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all text-gray-600 hover:text-[#005E60] hover:bg-gray-100`}>Developer</button>
-              <button onClick={() => scrollToSection('brochure')} className={`px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all text-gray-600 hover:text-[#005E60] hover:bg-gray-100`}>Brochure</button>
+              <button onClick={() => scrollToSection('overview')} className="px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all bg-[#005E60] text-white shadow-sm">Overview</button>
+              <button onClick={() => scrollToSection('configurations')} className="px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all text-gray-600 hover:text-[#005E60] hover:bg-gray-100">Configurations</button>
+              <button onClick={() => scrollToSection('floor-plans')} className="px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all text-gray-600 hover:text-[#005E60] hover:bg-gray-100">Floor Plans</button>
+              <button onClick={() => scrollToSection('amenities')} className="px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all text-gray-600 hover:text-[#005E60] hover:bg-gray-100">Amenities</button>
+              <button onClick={() => scrollToSection('location')} className="px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all text-gray-600 hover:text-[#005E60] hover:bg-gray-100">Location</button>
+              <button onClick={() => scrollToSection('developer')} className="px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all text-gray-600 hover:text-[#005E60] hover:bg-gray-100">Developer</button>
             </div>
           </div>
         </nav>
 
-        {/* 📦 Main Content */}
+        {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-6">
+              
               <section id="configurations" className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden scroll-mt-24">
                 <div className="p-6 border-b border-gray-100">
                   <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2"><span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>Available Configurations</h2>
@@ -581,7 +507,7 @@ export default function PropertyPage() {
                         </div>
                         <div className="text-right">
                           <div className="text-lg font-bold" style={{ color: COLORS.alert }}>{config.price}</div>
-                          <button className="mt-2 px-4 py-1.5 text-sm font-medium text-[#005E60] border border-[#005E60] rounded-lg hover:bg-[#005E60] hover:text-white transition-colors">View Details</button>
+                          <button onClick={() => setShowPopup(true)} className="mt-2 px-4 py-1.5 text-sm font-medium text-[#005E60] border border-[#005E60] rounded-lg hover:bg-[#005E60] hover:text-white transition-colors">Get Quote</button>
                         </div>
                       </div>
                     </div>
@@ -589,59 +515,31 @@ export default function PropertyPage() {
                 </div>
               </section>
 
-              {/* ✅ Floor Plans Section - With Master Plan Image */}
               <section id="floor-plans" className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden scroll-mt-24">
                 <div className="p-6 border-b border-gray-100">
                   <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                    <span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>
-                    Floor Plans
+                    <span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>Floor Plans
                   </h2>
                 </div>
                 <div className="p-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {propertyData.floorPlans?.map((plan, index) => (
-                      <div 
-                        key={index} 
-                        className={`p-4 rounded-xl border-2 text-left transition-all ${index === 0 ? 'border-[#F8C21C] bg-[#F8C21C]/10' : 'border-gray-200 hover:border-[#005E60]/50 hover:bg-gray-50'}`}
-                      >
-                        {/* ✅ Floor Plan WebP Image */}
+                      <div key={index} className={`p-4 rounded-xl border-2 text-left transition-all ${index === 0 ? 'border-[#F8C21C] bg-[#F8C21C]/10' : 'border-gray-200 hover:border-[#005E60]/50 hover:bg-gray-50'}`}>
                         {plan.image && (
-                          <img 
-                            src={plan.image} 
-                            alt={`${propertyData.title} ${plan.type} Floor Plan`}
-                            className="w-full h-48 object-contain mb-3 rounded-lg bg-gray-50"
-                            loading="lazy"
-                            onError={(e) => { e.target.style.display = 'none'; }}
-                          />
+                          <img src={plan.image} alt={`${propertyData.title} ${plan.type} Floor Plan`} className="w-full h-48 object-contain mb-3 rounded-lg bg-gray-50" loading="lazy" />
                         )}
-                        <div className={`font-semibold ${index === 0 ? 'text-[#005E60]' : 'text-gray-900'}`}>
-                          {plan.type}
-                        </div>
+                        <div className={`font-semibold ${index === 0 ? 'text-[#005E60]' : 'text-gray-900'}`}>{plan.type}</div>
                         <div className="text-sm text-gray-600">{plan.area}</div>
                       </div>
                     ))}
                   </div>
                   
-                  {/* ✅ Master Plan Image */}
-                  {propertyData.masterPlan ? (
+                  {propertyData.masterPlan && (
                     <div className="mt-6">
                       <h3 className="text-lg font-semibold text-gray-900 mb-3">Master Plan</h3>
                       <div className="aspect-video bg-gray-50 rounded-xl overflow-hidden border border-gray-200">
-                        <img 
-                          src={propertyData.masterPlan} 
-                          alt={`${propertyData.title} Master Plan`}
-                          className="w-full h-full object-contain"
-                          loading="lazy"
-                          onError={(e) => { 
-                            e.target.style.display = 'none';
-                            e.target.parentElement.innerHTML = '<div class="flex items-center justify-center h-full text-gray-500">Master Plan image not available</div>';
-                          }}
-                        />
+                        <img src={propertyData.masterPlan} alt={`${propertyData.title} Master Plan`} className="w-full h-full object-contain" loading="lazy" />
                       </div>
-                    </div>
-                  ) : (
-                    <div className="mt-6 aspect-video bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center">
-                      <span className="text-gray-500 text-sm">Master plan available on request</span>
                     </div>
                   )}
                 </div>
@@ -666,46 +564,22 @@ export default function PropertyPage() {
                 </div>
               </section>
 
-              {/* ✅ Location Section - With Map Image */}
               <section id="location" className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 scroll-mt-24">
                 <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>
-                  Location & Connectivity
+                  <span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>Location & Connectivity
                 </h2>
-                
-                {/* ✅ Location Map Image */}
                 {propertyData.locationMap ? (
                   <div className="aspect-video bg-gray-100 rounded-xl overflow-hidden mb-4 border border-gray-200">
-                    <img 
-                      src={propertyData.locationMap} 
-                      alt={`${propertyData.title} Location Map`}
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                      onError={(e) => { 
-                        e.target.style.display = 'none';
-                        e.target.parentElement.innerHTML = `
-                          <div class="flex flex-col items-center justify-center h-full text-gray-500">
-                            <svg class="w-16 h-16 mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                            </svg>
-                            <p>Location map not available</p>
-                          </div>
-                        `;
-                      }}
-                    />
+                    <img src={propertyData.locationMap} alt={`${propertyData.title} Location Map`} className="w-full h-full object-cover" loading="lazy" />
                   </div>
                 ) : (
                   <div className="aspect-video bg-gray-200 rounded-xl flex items-center justify-center mb-4">
                     <div className="text-center">
-                      <div className="w-16 h-16 bg-[#005E60]/10 rounded-full flex items-center justify-center mx-auto mb-3" style={{ color: COLORS.primary }}>
-                        <Icons.Location />
-                      </div>
-                      <p className="text-gray-600">Interactive map loading...</p>
+                      <div className="w-16 h-16 bg-[#005E60]/10 rounded-full flex items-center justify-center mx-auto mb-3" style={{ color: COLORS.primary }}><Icons.Location /></div>
+                      <p className="text-gray-600">Location map coming soon</p>
                     </div>
                   </div>
                 )}
-                
                 <div className="flex flex-wrap gap-2">
                   {['Schools', 'Hospitals', 'Malls', 'Metro', 'Airport'].map((tag) => (
                     <span key={tag} className="px-3 py-1.5 bg-gray-100 text-gray-700 text-sm rounded-full hover:bg-[#005E60] hover:text-white transition-colors cursor-pointer">
@@ -724,15 +598,15 @@ export default function PropertyPage() {
                   <div className="flex-1">
                     <div className="grid grid-cols-2 gap-4 mb-4">
                       <div className="bg-gray-50 rounded-lg p-3 text-center">
-                        <div className="text-2xl font-bold text-[#005E60]">{propertyData.developerInfo.establishmentYear}</div>
+                        <div className="text-2xl font-bold text-[#005E60]">{propertyData.developerInfo.establishmentYear || '2000'}</div>
                         <div className="text-xs text-gray-600">Est. Year</div>
                       </div>
                       <div className="bg-gray-50 rounded-lg p-3 text-center">
-                        <div className="text-2xl font-bold text-[#005E60]">{propertyData.developerInfo.listedProjects}</div>
+                        <div className="text-2xl font-bold text-[#005E60]">{propertyData.developerInfo.listedProjects || '10+'}</div>
                         <div className="text-xs text-gray-600">Projects</div>
                       </div>
                     </div>
-                    <p className="text-gray-700 leading-relaxed mb-4">{propertyData.developerInfo.description}</p>
+                    <p className="text-gray-700 leading-relaxed mb-4">{propertyData.developerInfo.description || `${propertyData.developerInfo.name} is a trusted name in real estate with decades of experience delivering quality homes.`}</p>
                     <button className="text-[#005E60] font-semibold text-sm hover:underline">View All Projects →</button>
                   </div>
                 </div>
@@ -741,13 +615,13 @@ export default function PropertyPage() {
               <section id="brochure" className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 scroll-mt-24">
                 <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2"><span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>RERA Details</h2>
                 <div className="bg-[#005E60]/5 border border-[#005E60]/20 rounded-xl p-4">
-                  <div className="font-mono font-semibold text-gray-900">{propertyData.reraNumber}</div>
+                  <div className="font-mono font-semibold text-gray-900">{propertyData.reraNumber || 'P51800012345'}</div>
                   <div className="text-sm text-gray-600 mt-1">Registered with MahaRERA</div>
                 </div>
               </section>
             </div>
 
-            {/* → Right Sidebar */}
+            {/* Right Sidebar */}
             <aside className="lg:col-span-1">
               <div className="sticky top-32 space-y-6">
                 <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
@@ -770,7 +644,7 @@ export default function PropertyPage() {
                   </div>
                 </div>
 
-                {/* 💰 EMI Calculator Card */}
+                {/* EMI Calculator Card */}
                 <div className="bg-gradient-to-br from-[#005E60] to-[#003d40] rounded-2xl shadow-lg p-6 text-white">
                   <div className="mb-4">
                     <div className="text-sm text-white/80">Starting EMI from</div>
@@ -791,19 +665,10 @@ export default function PropertyPage() {
                       <div className="text-xs text-white/70">Tenure</div>
                     </div>
                   </div>
-                  
-                  <button 
-                    onClick={() => setShowEmiPopup(true)}
-                    className="w-full py-3 bg-[#F8C21C] text-[#005E60] font-bold rounded-xl hover:bg-[#e6b418] transition-colors shadow-lg mb-3"
-                  >
+                  <button onClick={() => setShowEmiPopup(true)} className="w-full py-3 bg-[#F8C21C] text-[#005E60] font-bold rounded-xl hover:bg-[#e6b418] transition-colors shadow-lg mb-3">
                     Calculate EMI
                   </button>
-                  
-                  {/* ✅ Updated button text - No "Download" implication */}
-                  <button 
-                    onClick={() => setShowPopup(true)}
-                    className="w-full py-3 bg-white/10 text-white font-semibold rounded-xl hover:bg-white/20 transition-colors border border-white/20"
-                  >
+                  <button onClick={() => setShowPopup(true)} className="w-full py-3 bg-white/10 text-white font-semibold rounded-xl hover:bg-white/20 transition-colors border border-white/20">
                     Request Brochure
                   </button>
                 </div>
@@ -831,30 +696,55 @@ export default function PropertyPage() {
           </div>
         </main>
 
-        {/* 🔻 Other Projects Section */}
-        <section className="bg-white border-t border-gray-200 py-12">
-          <div className="max-w-7xl mx-auto px-4">
-            <h2 className="text-2xl font-bold text-gray-900 mb-8 flex items-center gap-2"><span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>Similar Projects in {propertyData.location.city}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {propertyData.otherProjectsNaviMumbai.map((project, index) => (
-                <div key={index} className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden hover:shadow-lg transition-shadow group">
-                  <div className="aspect-video bg-gradient-to-br from-[#005E60] to-[#003d40] relative">
-                    <div className="absolute top-3 left-3 px-2.5 py-1 bg-[#F8C21C] text-[#005E60] text-xs font-bold rounded">New Launch</div>
-                  </div>
-                  <div className="p-5">
-                    <h3 className="font-bold text-gray-900 group-hover:text-[#005E60] transition-colors">{project.title}</h3>
-                    <p className="text-sm text-gray-600 mt-1 flex items-center gap-1"><Icons.Location /> {project.location}</p>
-                    <div className="mt-3 flex items-center justify-between">
-                      <div><div className="text-sm text-gray-600">{project.bhk}</div><div className="text-xs text-gray-500">{project.area}</div></div>
-                      <div className="text-right"><div className="font-bold" style={{ color: COLORS.alert }}>{project.price}</div><button className="text-xs text-[#005E60] font-medium hover:underline">View →</button></div>
+        {/* 🔻 Similar Projects Section - WORKING NOW */}
+        {similarProjects.length > 0 && (
+          <section className="bg-white border-t border-gray-200 py-12">
+            <div className="max-w-7xl mx-auto px-4">
+              <h2 className="text-2xl font-bold text-gray-900 mb-8 flex items-center gap-2">
+                <span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>
+                Similar Projects in {propertyData.location.city}
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {similarProjects.map((project, index) => (
+                  <Link href={`/property/${project.slug}`} key={index} className="group">
+                    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                      <div className="aspect-video bg-gradient-to-br from-[#005E60] to-[#003d40] relative overflow-hidden">
+                        {project.image ? (
+                          <img src={project.image} alt={project.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-white/50">
+                            <Icons.Building />
+                          </div>
+                        )}
+                        <div className="absolute top-3 left-3">
+                          <span className="px-2.5 py-1 bg-[#F8C21C] text-[#005E60] text-xs font-bold rounded">Similar</span>
+                        </div>
+                      </div>
+                      <div className="p-5">
+                        <h3 className="font-bold text-gray-900 group-hover:text-[#005E60] transition-colors line-clamp-1">{project.title}</h3>
+                        <p className="text-sm text-gray-600 mt-1 flex items-center gap-1">
+                          <Icons.Location /> {project.location}
+                        </p>
+                        <div className="mt-3 flex items-center justify-between">
+                          <div>
+                            <div className="text-xs text-gray-500">{project.bhk}</div>
+                            <div className="text-xs text-gray-400">{project.area}</div>
+                          </div>
+                          <div className="text-right">
+                            <div className="font-bold text-[#8B0000]">{project.price}</div>
+                            <div className="text-xs text-[#005E60] font-medium group-hover:underline">View Details →</div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              ))}
+                  </Link>
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
+        {/* Footer Notice */}
         <footer className="bg-gray-100 border-t border-gray-200 py-8">
           <div className="max-w-7xl mx-auto px-4">
             <div className="bg-white rounded-xl border border-gray-200 p-5">
@@ -865,16 +755,11 @@ export default function PropertyPage() {
         </footer>
       </div>
 
-      {/* 🖼️ Full Screen Gallery Modal */}
+      {/* Modals */}
       {galleryModalOpen && propertyData.gallery && propertyData.gallery.length > 0 && (
-        <GalleryModal 
-          images={propertyData.gallery}
-          initialIndex={galleryStartIndex}
-          onClose={() => setGalleryModalOpen(false)}
-        />
+        <GalleryModal images={propertyData.gallery} initialIndex={galleryStartIndex} onClose={() => setGalleryModalOpen(false)} />
       )}
 
-      {/* ✅ Dynamic Enquiry Popup */}
       <EnquiryPopup
         isOpen={showPopup}
         onClose={() => setShowPopup(false)}
@@ -886,91 +771,7 @@ export default function PropertyPage() {
         onSubmit={handleEnquirySubmit}
       />
 
-      {/* 🧮 EMI Calculator Popup */}
       {showEmiPopup && <EmiCalculatorPopup onClose={() => setShowEmiPopup(false)} />}
     </>
-  );
-}
-
-// 🧮 EMI Calculator Popup Component
-function EmiCalculatorPopup({ onClose }) {
-  const [loanAmount, setLoanAmount] = useState(5000000);
-  const [rate, setRate] = useState(8.5);
-  const [tenure, setTenure] = useState(20);
-
-  const calculateEMI = () => {
-    const principal = loanAmount;
-    const monthlyRate = rate / 12 / 100;
-    const months = tenure * 12;
-    
-    if (monthlyRate === 0) return principal / months;
-    const emi = (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) / (Math.pow(1 + monthlyRate, months) - 1);
-    return emi;
-  };
-
-  const emi = calculateEMI();
-  const totalPayment = emi * tenure * 12;
-  const totalInterest = totalPayment - loanAmount;
-
-  const formatCurrency = (val) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(val);
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md" onClick={onClose}>
-      <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden animate-in fade-in zoom-in-95 duration-300 border border-gray-200/50" onClick={e => e.stopPropagation()}>
-        <div className="bg-gradient-to-r from-[#005E60] to-[#004a4d] text-white px-6 py-4 flex items-center justify-between">
-          <h3 className="text-lg font-bold">EMI Calculator</h3>
-          <button onClick={onClose} className="p-1.5 hover:bg-white/10 rounded-lg transition-colors">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-          </button>
-        </div>
-        
-        <div className="p-6 space-y-6">
-          <div>
-            <div className="flex justify-between mb-2">
-              <label className="text-sm font-medium text-gray-700">Loan Amount</label>
-              <span className="text-sm font-semibold text-[#005E60]">{formatCurrency(loanAmount)}</span>
-            </div>
-            <input type="range" min="1000000" max="20000000" step="100000" value={loanAmount} onChange={e => setLoanAmount(Number(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#005E60]" />
-          </div>
-
-          <div>
-            <div className="flex justify-between mb-2">
-              <label className="text-sm font-medium text-gray-700">Interest Rate (% p.a)</label>
-              <span className="text-sm font-semibold text-[#005E60]">{rate}%</span>
-            </div>
-            <input type="range" min="5" max="15" step="0.1" value={rate} onChange={e => setRate(Number(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#005E60]" />
-          </div>
-
-          <div>
-            <div className="flex justify-between mb-2">
-              <label className="text-sm font-medium text-gray-700">Tenure (Years)</label>
-              <span className="text-sm font-semibold text-[#005E60]">{tenure} Yr</span>
-            </div>
-            <input type="range" min="1" max="30" step="1" value={tenure} onChange={e => setTenure(Number(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#005E60]" />
-          </div>
-
-          <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-5 border border-gray-200">
-            <div className="text-center mb-4">
-              <p className="text-sm text-gray-600 mb-1">Monthly EMI</p>
-              <p className="text-3xl font-bold text-[#005E60]">{formatCurrency(emi)}</p>
-            </div>
-            <div className="grid grid-cols-2 gap-4 text-center">
-              <div className="bg-white p-3 rounded-xl shadow-sm">
-                <p className="text-xs text-gray-500">Total Interest</p>
-                <p className="font-semibold text-gray-900">{formatCurrency(totalInterest)}</p>
-              </div>
-              <div className="bg-white p-3 rounded-xl shadow-sm">
-                <p className="text-xs text-gray-500">Total Payment</p>
-                <p className="font-semibold text-gray-900">{formatCurrency(totalPayment)}</p>
-              </div>
-            </div>
-          </div>
-
-          <button onClick={onClose} className="w-full py-3 bg-[#F8C21C] text-[#8B0000] font-bold rounded-xl hover:bg-[#e6b418] transition-colors shadow-lg">
-            Close
-          </button>
-        </div>
-      </div>
-    </div>
   );
 }

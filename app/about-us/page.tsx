@@ -63,44 +63,44 @@ export default function AboutUs() {
   ];
 
   // 👤 Founder/Owner
-  const founder = {
-    name: 'Priya Sharma',
-    role: 'Founder & CEO',
-    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&h=400&q=80',
-    bio: '12+ years in real estate & PropTech. Passionate about making homeownership accessible and transparent for every Indian family.',
-    social: { linkedin: '#', twitter: '#', email: 'priya@associatte.com' },
-  };
+const founder = {
+  name: 'Vikram Malik',
+  role: 'Founder & CEO',
+  image: '/Team/Sir.webp',
+  bio: 'With 20+ years in India’s real estate sector, Vikram founded Associatte to bring transparency, trust, and customer-first solutions to property buying. He’s driven by a single mission: making quality homeownership accessible, stress-free, and completely brokerage-free for every family.',
+  social: { linkedin: '#', twitter: '#', email: 'info@associatte.co.in' },
+};
 
   // 👥 Teams - 4 members each
   const teams = [
     {
       location: 'Pune',
-      description: 'Serving Baner, Wakad, Hinjewadi & surrounding areas',
+      description: 'Serving Magarpatta, surrounding areas',
       members: [
-        { name: 'Rahul Mehta', role: 'Head of Technology', img: 'https://i.pravatar.cc/150?img=11', social: { linkedin: '#', twitter: '#' } },
-        { name: 'Sneha Deshmukh', role: 'Senior Property Advisor', img: 'https://i.pravatar.cc/150?img=32', social: { linkedin: '#', twitter: '#' } },
-        { name: 'Amit Patil', role: 'Sales Operations', img: 'https://i.pravatar.cc/150?img=13', social: { linkedin: '#', twitter: '#' } },
-        { name: 'Pooja Joshi', role: 'Customer Success', img: 'https://i.pravatar.cc/150?img=47', social: { linkedin: '#', twitter: '#' } },
+        { name: 'Sonal Gaikwad', role: 'General Manager', img: '/Team/Pune/Sonal.webp', social: { linkedin: '#', twitter: '#' } },
+        { name: 'Rekha Rathod', role: 'Sales Executive', img: '/Team/Pune/Rekha.webp', social: { linkedin: '#', twitter: '#' } },
+        { name: 'Pallavi Khomane', role: 'Sales Executive', img: '/Team/Pune/Pallavi.webp', social: { linkedin: '#', twitter: '#' } },
+        // { name: 'Pooja Joshi', role: 'Customer Success', img: 'https://i.pravatar.cc/150?img=47', social: { linkedin: '#', twitter: '#' } },
       ],
     },
     {
       location: 'Mumbai',
-      description: 'Serving Kharghar, Panvel, Taloja & Navi Mumbai',
+      description: 'Serving Mumbai',
       members: [
-        { name: 'Vikram Singh', role: 'Regional Head', img: 'https://i.pravatar.cc/150?img=14', social: { linkedin: '#', twitter: '#' } },
-        { name: 'Ananya Patel', role: 'Property Consultant', img: 'https://i.pravatar.cc/150?img=33', social: { linkedin: '#', twitter: '#' } },
-        { name: 'Rajesh Kumar', role: 'Market Analyst', img: 'https://i.pravatar.cc/150?img=15', social: { linkedin: '#', twitter: '#' } },
-        { name: 'Kavita Reddy', role: 'Client Relations', img: 'https://i.pravatar.cc/150?img=48', social: { linkedin: '#', twitter: '#' } },
+        { name: 'Pratiksha Pandey', role: 'Area Manager', img: '/Team/Mumbai/Pratiksha.webp', social: { linkedin: '#', twitter: '#' } },
+        { name: 'Simran Das', role: 'Sales Manager', img: '/Team/Mumbai/SImran Das.webp', social: { linkedin: '#', twitter: '#' } },
+        { name: 'Sanjay Mane', role: 'Team Leader', img: '/Team/Mumbai/Sanjay.webp', social: { linkedin: '#', twitter: '#' } },
+        { name: 'Sharvari Ambre', role: 'Sales Executive KDMC', img: '/Team/Mumbai/Sharvari.webp', social: { linkedin: '#', twitter: '#' } },
       ],
     },
     {
       location: 'Digital & Tech',
-      description: 'Building the future of PropTech innovation',
+      description: 'Building the future of Associatte innovation',
       members: [
-        { name: 'Arjun Kapoor', role: 'Lead Developer', img: 'https://i.pravatar.cc/150?img=16', social: { linkedin: '#', twitter: '#' } },
-        { name: 'Meera Iyer', role: 'UX/UI Designer', img: 'https://i.pravatar.cc/150?img=34', social: { linkedin: '#', twitter: '#' } },
-        { name: 'Karan Malhotra', role: 'AI/ML Engineer', img: 'https://i.pravatar.cc/150?img=17', social: { linkedin: '#', twitter: '#' } },
-        { name: 'Divya Nair', role: 'Product Manager', img: 'https://i.pravatar.cc/150?img=49', social: { linkedin: '#', twitter: '#' } },
+        { name: 'Neha Uparkar', role: 'Digital Marketing Manager', img: '/Team/Digital/Neha Uparkar.webp', social: { linkedin: '#', twitter: '#' } },
+        { name: 'Divya Gate', role: 'Web Developer', img: '/Team/Digital/Divya Gate.webp', social: { linkedin: '#', twitter: '#' } },
+        { name: 'Karan Malhotra', role: 'Social Media Manager', img: '/Team/Digital/Krima.webp', social: { linkedin: '#', twitter: '#' } },
+        // { name: 'Divya Nair', role: 'Product Manager', img: 'https://i.pravatar.cc/150?img=49', social: { linkedin: '#', twitter: '#' } },
       ],
     },
   ];
@@ -161,7 +161,7 @@ export default function AboutUs() {
                     transition={{ delay: 0.2 }}
                     className="text-slate-600 text-base sm:text-lg leading-relaxed mb-6"
                   >
-                    Associatte is a PropTech platform that helps customers find and secure their dream properties.{' '}
+                    Associatte is a Associatte platform that helps customers find and secure their dream properties.{' '}
                     <span className="font-semibold" style={{ color: '#005E60' }}>
                       We act as a channel partner with top builders & banks and provide end-to-end property assistance.
                     </span>
@@ -660,7 +660,7 @@ export default function AboutUs() {
       <footer className="py-8 border-t border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-500">
-            <p>© 2026 Associatte PropTech Pvt Ltd. All rights reserved.</p>
+            <p>© 2026 Associatte Associatte Pvt Ltd. All rights reserved.</p>
             <div className="flex items-center gap-5 sm:gap-6">
               <a href="mailto:info@associatte.co.in" className="flex items-center gap-2 hover:text-[#005E60] transition-colors">
                 <Mail className="w-4 h-4" /> info@associatte.co.in
