@@ -65,6 +65,7 @@ export default function TopDevelopersCarousel({ city }: TopDevelopersCarouselPro
     return 5;
   }, [viewportWidth]);
 
+  // ✅ FIXED: Safe developer mapping with proper type checking
   const developers: Developer[] = useMemo(() => {
     const devMap = new Map<string, Developer>();
     
@@ -76,6 +77,19 @@ export default function TopDevelopersCarousel({ city }: TopDevelopersCarouselPro
       const internalId = toSlug(name);
       const logoConfig = getBuilderLogo(name);
       
+      // ✅ Safe logo source extraction with type assertion
+      let logoSrc = '';
+      let logoType: 'image' | 'text' = 'image';
+      
+      if (typeof logoConfig === 'string') {
+        logoSrc = logoConfig;
+        logoType = 'image';
+      } else if (logoConfig && typeof logoConfig === 'object') {
+        const config = logoConfig as any;
+        logoSrc = config.src || '';
+        logoType = config.type === 'text' ? 'text' : 'image';
+      }
+      
       if (!devMap.has(internalId)) {
         devMap.set(internalId, {
           id: internalId,
@@ -83,8 +97,8 @@ export default function TopDevelopersCarousel({ city }: TopDevelopersCarouselPro
           slug: navSlug,
           years: getBuilderYears(name),
           projects: 0,
-          logoSrc: typeof logoConfig === 'string' ? logoConfig : logoConfig?.src || '',
-          logoType: typeof logoConfig === 'object' ? logoConfig.type || 'image' : 'image',
+          logoSrc,
+          logoType,
           rating: getDeterministicRating(navSlug, 0),
         });
       }
@@ -115,7 +129,6 @@ export default function TopDevelopersCarousel({ city }: TopDevelopersCarouselPro
     } else if (currentIndex === maxIndex) {
       setCurrentIndex(0);
     }
-    // Reset progress bar animation
     if (progressRef.current) {
       progressRef.current.style.animation = 'none';
       setTimeout(() => {
@@ -134,7 +147,6 @@ export default function TopDevelopersCarousel({ city }: TopDevelopersCarouselPro
     }
   }, [currentIndex, maxIndex]);
 
-  // Auto-play functionality
   useEffect(() => {
     if (isAutoPlaying && maxIndex > 0 && developers.length > itemsPerView) {
       autoPlayRef.current = setInterval(() => {
@@ -389,7 +401,7 @@ export default function TopDevelopersCarousel({ city }: TopDevelopersCarouselPro
                                 if (parent) {
                                   const fallback = document.createElement('div');
                                   fallback.className = `w-14 h-14 rounded-full bg-gradient-to-br ${theme.gradient} flex items-center justify-center shadow-md`;
-                                  fallback.innerHTML = `<span class="text-white text-xl font-bold">${dev.name.charAt(0).toUpperCase()}</span>`;
+                                  fallback.innerHTML = `<span className="text-white text-xl font-bold">${dev.name.charAt(0).toUpperCase()}</span>`;
                                   parent.appendChild(fallback);
                                 }
                               }}
@@ -405,9 +417,12 @@ export default function TopDevelopersCarousel({ city }: TopDevelopersCarouselPro
                       </div>
                     </div>
 
-                    {/* Content Section */}
+                    {/* Content Section - FIXED: Removed invalid style object */}
                     <div className="p-5 pt-3 text-center">
-                      <h3 className="font-bold text-gray-800 text-base md:text-lg mb-2 transition-colors duration-300 line-clamp-1 group-hover" style={{ groupHover: { color: theme.primary } }}>
+                      <h3 
+                        className="font-bold text-gray-800 text-base md:text-lg mb-2 transition-colors duration-300 line-clamp-1 group-hover:text-[--hover-color]" 
+                        style={{ '--hover-color': theme.primary } as React.CSSProperties}
+                      >
                         {dev.name}
                       </h3>
                       

@@ -1,8 +1,7 @@
-// @/app/about-us/page.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
-import { motion, useScroll, useInView, useTransform, type Variants } from 'framer-motion';
+import { useRef } from 'react';
+import { motion, useScroll, useInView, type Variants, type EasingFunction } from 'framer-motion';
 import { 
   Users, Building2, MapPin, Star, ShieldCheck, Heart, 
   ArrowRight, Check, Home, Key, TrendingUp, Clock,
@@ -18,7 +17,9 @@ const COLORS = {
   yellowAccent: '#F8C21C',
 };
 
-const easeOut = [0.22, 1, 0.36, 1];
+// ✅ Fixed: Use proper easing type
+const easeOut: EasingFunction = [0.22, 1, 0.36, 1] as unknown as EasingFunction;
+
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 24 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: easeOut } }
@@ -31,15 +32,17 @@ const stagger: Variants = {
 export default function AboutUs() {
   const { scrollYProgress } = useScroll();
   
-  const statsRef = typeof document !== 'undefined' ? { current: null as HTMLElement | null } : { current: null as HTMLElement | null };
-  const servicesRef = typeof document !== 'undefined' ? { current: null as HTMLElement | null } : { current: null as HTMLElement | null };
-  const valuesRef = typeof document !== 'undefined' ? { current: null as HTMLElement | null } : { current: null as HTMLElement | null };
-  const teamRef = typeof document !== 'undefined' ? { current: null as HTMLElement | null } : { current: null as HTMLElement | null };
+  // ✅ Fixed: Proper ref typing for useInView
+  const statsRef = useRef<HTMLElement>(null);
+  const servicesRef = useRef<HTMLElement>(null);
+  const valuesRef = useRef<HTMLElement>(null);
+  const teamRef = useRef<HTMLElement>(null);
 
-  const statsInView = useInView({ current: statsRef.current }, { once: true, margin: "-10%" });
-  const servicesInView = useInView({ current: servicesRef.current }, { once: true, margin: "-10%" });
-  const valuesInView = useInView({ current: valuesRef.current }, { once: true, margin: "-10%" });
-  const teamInView = useInView({ current: teamRef.current }, { once: true, margin: "-10%" });
+  // These are used for animation triggers
+  useInView(statsRef, { once: true, margin: "-10%" });
+  useInView(servicesRef, { once: true, margin: "-10%" });
+  useInView(valuesRef, { once: true, margin: "-10%" });
+  useInView(teamRef, { once: true, margin: "-10%" });
 
   const stats = [
     { value: '25K+', label: 'Happy Homeowners', icon: Users, gradient: COLORS.redGreen },
@@ -58,20 +61,20 @@ export default function AboutUs() {
   const values = [
     { icon: ShieldCheck, title: 'Trusted & Transparent', desc: 'Every property verified with real documents. Zero hidden charges.' },
     { icon: Heart, title: 'Customer First', desc: 'Personalized solutions that match your budget & lifestyle.' },
-    { icon: Target, title: 'Results Focused', desc: 'We don\'t just list — we match you with your perfect home.' },
+    { icon: Target, title: 'Results Focused', desc: "We don't just list — we match you with your perfect home." },
     { icon: Globe, title: 'Pan India Reach', desc: '12+ cities covered with local expertise in every market.' },
   ];
 
   // 👤 Founder/Owner
-const founder = {
-  name: 'Vikram Malik',
-  role: 'Founder & CEO',
-  image: '/Team/Sir.webp',
-  bio: 'With 20+ years in India’s real estate sector, Vikram founded Associatte to bring transparency, trust, and customer-first solutions to property buying. He’s driven by a single mission: making quality homeownership accessible, stress-free, and completely brokerage-free for every family.',
-  social: { linkedin: '#', twitter: '#', email: 'info@associatte.co.in' },
-};
+  const founder = {
+    name: 'Vikram Malik',
+    role: 'Founder & CEO',
+    image: '/Team/Sir.webp',
+    bio: "With 20+ years in India's real estate sector, Vikram founded Associatte to bring transparency, trust, and customer-first solutions to property buying. He's driven by a single mission: making quality homeownership accessible, stress-free, and completely brokerage-free for every family.",
+    social: { linkedin: '#', twitter: '#', email: 'info@associatte.co.in' },
+  };
 
-  // 👥 Teams - 4 members each
+  // 👥 Teams
   const teams = [
     {
       location: 'Pune',
@@ -80,7 +83,6 @@ const founder = {
         { name: 'Sonal Gaikwad', role: 'General Manager', img: '/Team/Pune/Sonal.webp', social: { linkedin: '#', twitter: '#' } },
         { name: 'Rekha Rathod', role: 'Sales Executive', img: '/Team/Pune/Rekha.webp', social: { linkedin: '#', twitter: '#' } },
         { name: 'Pallavi Khomane', role: 'Sales Executive', img: '/Team/Pune/Pallavi.webp', social: { linkedin: '#', twitter: '#' } },
-        // { name: 'Pooja Joshi', role: 'Customer Success', img: 'https://i.pravatar.cc/150?img=47', social: { linkedin: '#', twitter: '#' } },
       ],
     },
     {
@@ -88,7 +90,7 @@ const founder = {
       description: 'Serving Mumbai',
       members: [
         { name: 'Pratiksha Pandey', role: 'Area Manager', img: '/Team/Mumbai/Pratiksha.webp', social: { linkedin: '#', twitter: '#' } },
-        { name: 'Simran Das', role: 'Sales Manager', img: '/Team/Mumbai/SImran Das.webp', social: { linkedin: '#', twitter: '#' } },
+        { name: 'Simran Das', role: 'Sales Manager', img: '/Team/Mumbai/Simran Das.webp', social: { linkedin: '#', twitter: '#' } },
         { name: 'Sanjay Mane', role: 'Team Leader', img: '/Team/Mumbai/Sanjay.webp', social: { linkedin: '#', twitter: '#' } },
         { name: 'Sharvari Ambre', role: 'Sales Executive KDMC', img: '/Team/Mumbai/Sharvari.webp', social: { linkedin: '#', twitter: '#' } },
       ],
@@ -100,10 +102,15 @@ const founder = {
         { name: 'Neha Uparkar', role: 'Digital Marketing Manager', img: '/Team/Digital/Neha Uparkar.webp', social: { linkedin: '#', twitter: '#' } },
         { name: 'Divya Gate', role: 'Web Developer', img: '/Team/Digital/Divya Gate.webp', social: { linkedin: '#', twitter: '#' } },
         { name: 'Karan Malhotra', role: 'Social Media Manager', img: '/Team/Digital/Krima.webp', social: { linkedin: '#', twitter: '#' } },
-        // { name: 'Divya Nair', role: 'Product Manager', img: 'https://i.pravatar.cc/150?img=49', social: { linkedin: '#', twitter: '#' } },
       ],
     },
   ];
+
+  // ✅ Image fallback handler
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const target = e.target as HTMLImageElement;
+    target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 150 150"%3E%3Crect fill="%23f1f5f9" width="150" height="150"/%3E%3Ctext fill="%2394a3b8" font-family="sans-serif" font-size="14" x="50%25" y="50%25" text-anchor="middle" dominant-baseline="middle"%3ENo Image%3C/text%3E%3C/svg%3E';
+  };
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50">
@@ -138,7 +145,7 @@ const founder = {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.1 }}
                     className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 w-fit"
-                    style={{ backgroundColor: '#005E60/10', border: '1px solid #005E60/20' }}
+                    style={{ backgroundColor: '#005E6010', border: '1px solid #005E6020' }}
                   >
                     <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: '#005E60' }} />
                     <span className="text-sm font-semibold" style={{ color: '#005E60' }}>Who We Are</span>
@@ -161,7 +168,7 @@ const founder = {
                     transition={{ delay: 0.2 }}
                     className="text-slate-600 text-base sm:text-lg leading-relaxed mb-6"
                   >
-                    Associatte is a Associatte platform that helps customers find and secure their dream properties.{' '}
+                    Associatte is a platform that helps customers find and secure their dream properties.{' '}
                     <span className="font-semibold" style={{ color: '#005E60' }}>
                       We act as a channel partner with top builders & banks and provide end-to-end property assistance.
                     </span>
@@ -269,13 +276,13 @@ const founder = {
                       <div className="px-4 sm:px-6 py-3 sm:py-4 bg-white/80 backdrop-blur-sm border-t border-slate-200/50">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#005E60/10' }}>
+                            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#005E6010' }}>
                               <Award className="w-4 h-4" style={{ color: '#005E60' }} />
                             </div>
                             <span className="text-xs font-semibold text-slate-600">Trusted Since 2020</span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#F8C21C/20' }}>
+                            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#F8C21C20' }}>
                               <Star className="w-4 h-4" style={{ color: '#F8C21C' }} />
                             </div>
                             <span className="text-xs font-semibold text-slate-600">4.9 Rating</span>
@@ -292,7 +299,7 @@ const founder = {
       </section>
 
       {/* Stats Section */}
-      <section ref={statsRef as any} className="pb-16 lg:pb-20">
+      <section ref={statsRef} className="pb-16 lg:pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             variants={stagger}
@@ -327,7 +334,7 @@ const founder = {
       </section>
 
       {/* Services Section */}
-      <section ref={servicesRef as any} className="py-16 lg:py-20 bg-white">
+      <section ref={servicesRef} className="py-16 lg:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -335,7 +342,7 @@ const founder = {
             viewport={{ once: true }}
             className="text-center max-w-2xl mx-auto mb-12 lg:mb-14"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-5" style={{ backgroundColor: '#005E60/10', border: '1px solid #005E60/20' }}>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-5" style={{ backgroundColor: '#005E6010', border: '1px solid #005E6020' }}>
               <Target className="w-4 h-4" style={{ color: '#005E60' }} />
               <span className="text-sm font-semibold" style={{ color: '#005E60' }}>Our Services</span>
             </div>
@@ -377,7 +384,7 @@ const founder = {
       </section>
 
       {/* Values Section */}
-      <section ref={valuesRef as any} className="py-16 lg:py-20 bg-gradient-to-b from-white to-slate-50">
+      <section ref={valuesRef} className="py-16 lg:py-20 bg-gradient-to-b from-white to-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -385,7 +392,7 @@ const founder = {
             viewport={{ once: true }}
             className="text-center max-w-2xl mx-auto mb-12 lg:mb-14"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-5" style={{ backgroundColor: '#8B0000/10', border: '1px solid #8B0000/20' }}>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-5" style={{ backgroundColor: '#8B000010', border: '1px solid #8B000020' }}>
               <Heart className="w-4 h-4" style={{ color: '#8B0000' }} />
               <span className="text-sm font-semibold" style={{ color: '#8B0000' }}>Our Values</span>
             </div>
@@ -413,7 +420,7 @@ const founder = {
                   whileHover={{ y: -6 }}
                   className="group relative bg-white rounded-2xl p-5 sm:p-6 border border-slate-100 hover:shadow-xl transition-all duration-300 text-center"
                 >
-                  <div className="inline-flex p-3 sm:p-4 rounded-xl mb-4 mx-auto transition-all duration-300" style={{ backgroundColor: '#005E60/10' }}>
+                  <div className="inline-flex p-3 sm:p-4 rounded-xl mb-4 mx-auto transition-all duration-300" style={{ backgroundColor: '#005E6010' }}>
                     <Icon className="w-5 h-5 sm:w-6 sm:h-6 transition-colors duration-300" style={{ color: '#005E60' }} />
                   </div>
                   <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-2">{value.title}</h3>
@@ -425,8 +432,8 @@ const founder = {
         </div>
       </section>
 
-      {/* Team Section - Owner + 3 Teams */}
-      <section ref={teamRef as any} className="py-16 lg:py-20 bg-white">
+      {/* Team Section */}
+      <section ref={teamRef} className="py-16 lg:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -434,7 +441,7 @@ const founder = {
             viewport={{ once: true }}
             className="text-center max-w-2xl mx-auto mb-12 lg:mb-14"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-5" style={{ backgroundColor: '#F8C21C/20', border: '1px solid #F8C21C/40' }}>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-5" style={{ backgroundColor: '#F8C21C20', border: '1px solid #F8C21C40' }}>
               <Users className="w-4 h-4" style={{ color: '#8B0000' }} />
               <span className="text-sm font-semibold" style={{ color: '#8B0000' }}>Our Team</span>
             </div>
@@ -457,14 +464,19 @@ const founder = {
           >
             <div className="max-w-4xl mx-auto">
               <div className="relative group">
-                <div className="relative bg-gradient-to-br from-slate-50 to-white rounded-3xl border-2 shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300" style={{ borderColor: '#005E60/20' }}>
+                <div className="relative bg-gradient-to-br from-slate-50 to-white rounded-3xl border-2 shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300" style={{ borderColor: '#005E6020' }}>
                   <div className="absolute top-0 left-0 right-0 h-2" style={{ background: COLORS.redGreen }} />
                   
                   <div className="p-6 sm:p-8 lg:p-10">
                     <div className="flex flex-col sm:flex-row items-center gap-6 sm:gap-8">
                       <div className="relative">
                         <div className="w-28 h-28 sm:w-36 sm:h-36 lg:w-40 lg:h-40 rounded-full overflow-hidden border-4 shadow-xl" style={{ borderColor: '#005E60' }}>
-                          <img src={founder.image} alt={founder.name} className="w-full h-full object-cover" />
+                          <img 
+                            src={founder.image} 
+                            alt={founder.name} 
+                            className="w-full h-full object-cover"
+                            onError={handleImageError}
+                          />
                         </div>
                         <motion.div 
                           animate={{ scale: [1, 1.1, 1] }}
@@ -477,7 +489,7 @@ const founder = {
                       </div>
                       
                       <div className="flex-1 text-center sm:text-left">
-                        <div className="inline-flex items-center gap-2 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full mb-3 sm:mb-4" style={{ backgroundColor: '#F8C21C/20', border: '1px solid #F8C21C/40' }}>
+                        <div className="inline-flex items-center gap-2 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full mb-3 sm:mb-4" style={{ backgroundColor: '#F8C21C20', border: '1px solid #F8C21C40' }}>
                           <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4" style={{ color: '#8B0000' }} />
                           <span className="text-xs font-bold" style={{ color: '#8B0000' }}>Founder & CEO</span>
                         </div>
@@ -496,7 +508,7 @@ const founder = {
                               whileHover={{ scale: 1.15, y: -4 }} 
                               whileTap={{ scale: 0.95 }}
                               className="p-2.5 sm:p-3 rounded-xl transition-colors border focus:outline-none focus:ring-2"
-                              style={{ backgroundColor: '#005E60/10', borderColor: '#005E60/20', color: '#005E60' }}
+                              style={{ backgroundColor: '#005E6010', borderColor: '#005E6020', color: '#005E60' }}
                               aria-label={label}
                             >
                               <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -511,7 +523,7 @@ const founder = {
             </div>
           </motion.div>
 
-          {/* Teams - 3 Rows */}
+          {/* Teams */}
           <div className="space-y-10 lg:space-y-14">
             {teams.map((team, ti) => (
               <motion.div 
@@ -535,7 +547,7 @@ const founder = {
                   </div>
                 </div>
 
-                {/* Team Members Grid - 4 per row */}
+                {/* Team Members Grid */}
                 <motion.div 
                   variants={stagger}
                   initial="hidden"
@@ -555,6 +567,7 @@ const founder = {
                           src={member.img} 
                           alt={member.name}
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                          onError={handleImageError}
                         />
                         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: `linear-gradient(to top, ${COLORS.redGreen}, transparent)` }} />
                         
@@ -636,7 +649,7 @@ const founder = {
                 <motion.button 
                   whileHover={{ scale: 1.04, boxShadow: "0 20px 40px -15px rgba(0,0,0,0.3)" }}
                   whileTap={{ scale: 0.98 }}
-                  className="px-6 sm:px-8 py-3 sm:py-4 text-white font-bold rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base"
+                  className="px-6 sm:px-8 py-3 sm:py-4 font-bold rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base"
                   style={{ backgroundColor: '#F8C21C', color: '#8B0000' }}
                 >
                   <Home className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -660,7 +673,7 @@ const founder = {
       <footer className="py-8 border-t border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-500">
-            <p>© 2026 Associatte Associatte Pvt Ltd. All rights reserved.</p>
+            <p>© 2026 Associatte PropTech Pvt Ltd. All rights reserved.</p>
             <div className="flex items-center gap-5 sm:gap-6">
               <a href="mailto:info@associatte.co.in" className="flex items-center gap-2 hover:text-[#005E60] transition-colors">
                 <Mail className="w-4 h-4" /> info@associatte.co.in

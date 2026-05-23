@@ -256,20 +256,20 @@ export default function HomePage() {
           <BlogSection city={config.name} />
         </section>
 
-        {/* ✅ Enquiry Popup - Renders when isPopupOpen is true */}
-        <EnquiryPopup
-          isOpen={isPopupOpen}
-          onClose={() => setIsPopupOpen(false)}
-          projectName={`Properties in ${config.name}`}
-          projectTagline="Get exclusive details & pricing"
-          onSubmit={handleEnquirySubmit}
-          trackingData={{
-            source: 'homepage',
-            campaign: 'free_consultation',
-            medium: 'website',
-            city: config.name
-          }}
-        />
+        {/* ✅ Enquiry Popup - Fixed: Removed 'city' from trackingData */}
+    <EnquiryPopup
+  isOpen={isPopupOpen}
+  onClose={() => setIsPopupOpen(false)}
+  projectName={`Properties in ${config.name}`}
+  projectTagline="Get exclusive details & pricing"
+  onSubmit={handleEnquirySubmit}
+  trackingData={{
+    source: 'homepage',
+    campaign: 'free_consultation',
+    medium: 'website'
+    // ✅ REMOVE the 'city' line from here
+  }}
+/>
         
       </main>
     </>

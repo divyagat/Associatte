@@ -56,7 +56,8 @@ export default function BuilderProjectCard({ project }: BuilderProjectCardProps)
     : project.sqft || project.priceDetails?.configurations?.[0]?.area || null;
 
   const displayBuilder = project.developer?.name || null;
-  const displayType = project.propertyType || null;
+  // ✅ FIX: Change null to undefined to match getBadgeColors parameter type
+  const displayType = project.propertyType || undefined;
 
   // ✅ Badge colors based on property type
   const getBadgeColors = (type?: string) => {
