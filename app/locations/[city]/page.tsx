@@ -1,4 +1,3 @@
-// client/app/city/[city]/page.tsx
 'use client';
 
 import { useState, useMemo, useCallback, useEffect } from 'react';
@@ -1024,13 +1023,12 @@ export default function CityPage() {
           </section>
         )}
 
-        {/* ✅ Dynamic Enquiry Popup */}
+        {/* ✅ Dynamic Enquiry Popup - FIXED: Removed theme prop */}
         <EnquiryPopup
           isOpen={showPopup}
           onClose={() => setShowPopup(false)}
           projectName={`Properties in ${cityDisplayName}`}
           projectTagline="Get personalized property recommendations"
-          theme="gradient"
           trackingData={{
             source: 'city_page',
             campaign: cityDisplayName,

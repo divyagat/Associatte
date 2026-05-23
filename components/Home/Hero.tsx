@@ -25,20 +25,6 @@ export interface SearchFilters {
   locality?: string;
 }
 
-export interface City {
-  name: CityName;
-  projects: number;
-  localities: string[];
-  description: string;
-  slug: CitySlug;
-}
-
-interface HeroProps {
-  initialCity?: string;
-  onSearch?: (params: { city: string; query?: string; filters?: SearchFilters }) => void;
-  onFilterChange?: (params: { city: string; filters: SearchFilters }) => void;
-}
-
 // 🎨 Brand Colors
 const BRAND = {
   green: '#005E60',
@@ -47,7 +33,7 @@ const BRAND = {
 } as const;
 
 // 🗺️ Cities Data with KDMC Support
-export const CITIES: readonly City[] = [
+export const CITIES = [
   { 
     name: 'Pune', 
     projects: 1923, 
@@ -74,6 +60,21 @@ export const CITIES: readonly City[] = [
 export type CitySlug = typeof CITIES[number]['slug'];
 export type CityName = typeof CITIES[number]['name'];
 
+// Define City interface AFTER types are declared
+export interface City {
+  name: CityName;
+  projects: number;
+  localities: string[];
+  description: string;
+  slug: CitySlug;
+}
+
+interface HeroProps {
+  initialCity?: string;
+  onSearch?: (params: { city: string; query?: string; filters?: SearchFilters }) => void;
+  onFilterChange?: (params: { city: string; filters: SearchFilters }) => void;
+}
+
 // 🔍 Search suggestions
 const SEARCH_SUGGESTIONS = [
   '3 BHK in Kharghar', 
@@ -97,7 +98,7 @@ export interface Category {
   gradient: string;
 }
 
-export const CATEGORIES: readonly Category[] = [
+export const CATEGORIES = [
   { id: 'residential', label: 'Residential', icon: Home, color: BRAND.green, gradient: `from-[${BRAND.green}] to-[#004a4d]` },
   { id: 'commercial', label: 'Commercial', icon: Building2, color: BRAND.red, gradient: `from-[${BRAND.red}] to-[#6a0000]` },
   { id: 'underConstruction', label: 'Pre-Launch', icon: Construction, color: BRAND.yellow, gradient: `from-[${BRAND.yellow}] to-[#d4a017]` },
@@ -108,7 +109,7 @@ export const CATEGORIES: readonly Category[] = [
 export const BHK_OPTIONS = ['1 RK', '1 BHK', '2 BHK', '3 BHK', '4 BHK', '4+ BHK'] as const;
 export const BUILDER_OPTIONS = ['Mantra Developers', 'Lodha Group', 'Shapoorji Pallonji', 'Paradise Group', 'Today Global', 'Birla Estates', 'Panchshil Realty'] as const;
 export const PROPERTY_TYPES = ['Apartment', 'Villa', 'Plot', 'Studio', 'Penthouse', 'Office Space'] as const;
-export const PRICE_RANGES: readonly { label: string; min: number; max: number }[] = [
+export const PRICE_RANGES = [
   { label: 'Under ₹75L', min: 0, max: 7500000 },
   { label: '₹75L - ₹1Cr', min: 7500000, max: 10000000 },
   { label: '₹1Cr - ₹2Cr', min: 10000000, max: 20000000 },
@@ -143,6 +144,7 @@ function useMousePosition() {
       document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
       document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
     };
+    // ✅ FIX: Change 'mouse-move' to 'mousemove'
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
@@ -249,7 +251,7 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
     navigateToLocation(newCity);
   }, [navigateToLocation]);
 
-  // ✅ Navigate to properties page with filters - Same as dropdown behavior
+  // ✅ Navigate to properties page with filters
   const navigateToProperties = useCallback((searchParamsObj: URLSearchParams) => {
     router.push(`/properties?${searchParamsObj.toString()}`, { scroll: false });
   }, [router]);
@@ -284,13 +286,12 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
     if (filters.locality) queryParams.append('locality', filters.locality);
     
     try {
-      // ✅ Navigate to separate properties page (same as dropdown behavior)
       await navigateToProperties(queryParams);
       onSearch?.({ city: selectedCity, query: searchQuery.trim(), filters: hasFilters ? filters : undefined });
       setIsCityDropdownOpen(false);
     } catch (error) { console.error('Search navigation error:', error); }
     finally { setTimeout(() => setIsSearching(false), 200); }
-  }, [selectedCity, searchQuery, filters, onSearch, navigateToProperties, isSearching]);
+  }, [selectedCity, searchQuery, filters, onSearch, navigateToProperties, isSearching, router]);
 
   // ✅ Handle filter selection - Navigate immediately to properties page
   const handleFilterSelect = useCallback((filterType: keyof SearchFilters, value: unknown) => {
@@ -419,7 +420,7 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
     onSuggestionClick: handleSuggestionClick, 
     onFilterToggle: () => setShowFilters(true),
     onSearch: handleSearch,
-  }), [activeTab, selectedCity, searchQuery, filters, isCityDropdownOpen, filteredSuggestions.length, isSearching, handleCityDropdownOpen, handleSuggestionClick, handleSearch, handleCityChange]);
+  }), [activeTab, selectedCity, searchQuery, filters, isCityDropdownOpen, filteredSuggestions, isSearching, handleCityDropdownOpen, handleSuggestionClick, handleSearch, handleCityChange]);
 
   const stickySearchProps = useMemo(() => ({
     activeTab, selectedCity, searchQuery,
