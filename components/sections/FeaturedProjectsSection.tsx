@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, ChevronLeft, ChevronRight, MapPin, Home } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import properties from '@/data/properties.json';
 
 // ✅ ADD city PROP
@@ -26,7 +27,7 @@ function mapProjectToFeatured(project: any): FeaturedProject {
   const getBadge = (p: any) => {
     const possession = p.possessionDate?.toLowerCase() || '';
     if (possession.includes('ready') || possession.includes('dec 2024') || possession.includes('jan 2025')) {
-      return { text: 'Ready', color: 'bg-[#005E60]' };
+      return { text: 'Ready to Move', color: 'bg-[#005E60]' };
     }
     if (possession.includes('2026') || possession.includes('2027') || possession.includes('2028')) {
       return { text: 'Under Construction', color: 'bg-[#F8C21C] text-[#005E60]' };
@@ -36,7 +37,6 @@ function mapProjectToFeatured(project: any): FeaturedProject {
 
   const { text: badgeText, color: badgeColor } = getBadge(project);
   const bhkTypes = project.priceDetails?.configurations?.map((c: any) => c.type) || [];
-  // ✅ FIX: Use Array.from for Set iteration with proper typing
   const uniqueBhk = Array.from(new Set(bhkTypes.map((t: any) => String(t || '').trim()))).filter(Boolean).join(', ') || 'TBA';
 
   return {
@@ -54,10 +54,14 @@ function mapProjectToFeatured(project: any): FeaturedProject {
 const MAX_FEATURED_PROJECTS = 8;
 const VISIBLE_CARDS = 6;
 
+// Fallback image for broken links
+const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&q=80';
+
 export default function FeaturedProjectsSection({ city }: FeaturedProjectsSectionProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [direction, setDirection] = useState(0);
+  const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const featuredProjects = useMemo(() => {
@@ -97,6 +101,10 @@ export default function FeaturedProjectsSection({ city }: FeaturedProjectsSectio
     setDirection(index > currentIndex ? 1 : -1);
     setCurrentIndex(index);
     resetInterval();
+  };
+
+  const handleImageError = (slug: string) => {
+    setImageErrors(prev => ({ ...prev, [slug]: true }));
   };
 
   const slideVariants = {
@@ -157,27 +165,56 @@ export default function FeaturedProjectsSection({ city }: FeaturedProjectsSectio
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.4 }}
-                      className="group bg-white rounded-xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col"
+                      className="group bg-white rounded-xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full"
                     >
-                      <div className="relative h-36 overflow-hidden flex-shrink-0">
-                        <img src={project.image} alt={project.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
-                        <div className={`absolute top-2 left-2 px-2 py-0.5 rounded text-[10px] font-semibold text-white ${project.badgeColor}`}>{project.badge}</div>
-                        <button className="absolute top-2 right-2 w-7 h-7 bg-white/90 backdrop-blur rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110">
-                          <svg className="w-4 h-4 text-gray-600 hover:text-[#8B0000]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                      {/* ✅ FIXED IMAGE CONTAINER - Consistent aspect ratio 4:3 */}
+                      <div className="relative w-full aspect-[4/3] overflow-hidden flex-shrink-0 bg-gray-100">
+                        <Image
+                          src={imageErrors[project.slug] ? FALLBACK_IMAGE : (project.image || FALLBACK_IMAGE)}
+                          alt={project.name}
+                          fill
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 16vw"
+                          className="object-cover transition-transform duration-500 group-hover:scale-110"
+                          onError={() => handleImageError(project.slug)}
+                          priority={currentIndex === 0}
+                        />
+                        
+                        {/* Badge */}
+                        <div className={`absolute top-2 left-2 px-2 py-0.5 rounded text-[10px] font-semibold text-white z-10 ${project.badgeColor}`}>
+                          {project.badge}
+                        </div>
+                        
+                        {/* Favorite Button */}
+                        <button className="absolute top-2 right-2 w-7 h-7 bg-white/90 backdrop-blur rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110 z-10">
+                          <svg className="w-4 h-4 text-gray-600 hover:text-[#8B0000]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                          </svg>
                         </button>
                       </div>
+                      
+                      {/* Content */}
                       <div className="p-3 flex flex-col flex-grow">
-                        <h3 className="font-bold text-sm text-gray-900 mb-0.5 group-hover:text-[#005E60] transition-colors line-clamp-1">{project.name}</h3>
+                        <h3 className="font-bold text-sm text-gray-900 mb-0.5 group-hover:text-[#005E60] transition-colors line-clamp-1">
+                          {project.name}
+                        </h3>
                         <div className="flex items-center gap-1 text-xs text-gray-600 mb-1">
                           <MapPin size={12} style={{ color: COLORS.alert }} />
                           <span className="line-clamp-1">{project.location}</span>
                         </div>
-                        <p className="font-bold text-sm mb-0.5" style={{ color: COLORS.alert }}>{project.price}</p>
-                        <div className="flex items-center gap-1 text-xs text-gray-500 mb-2">
+                        <p className="font-bold text-sm mb-0.5" style={{ color: COLORS.alert }}>
+                          {project.price}
+                        </p>
+                        <div className="flex items-center gap-1 text-xs text-gray-500 mb-3">
                           <Home size={12} />
-                          <span>{project.bhk}</span>
+                          <span className="line-clamp-1">{project.bhk}</span>
                         </div>
-                        <Link href={`/property/${project.slug}`} className="w-full py-1.5 rounded-lg font-semibold text-xs transition-all duration-300 text-center mt-auto" style={{ backgroundColor: COLORS.primary, color: 'white' }}>View Details</Link>
+                        <Link 
+                          href={`/property/${project.slug}`} 
+                          className="w-full py-1.5 rounded-lg font-semibold text-xs transition-all duration-300 text-center mt-auto hover:opacity-90"
+                          style={{ backgroundColor: COLORS.primary, color: 'white' }}
+                        >
+                          View Details
+                        </Link>
                       </div>
                     </motion.div>
                   ))}
@@ -188,7 +225,13 @@ export default function FeaturedProjectsSection({ city }: FeaturedProjectsSectio
             {featuredProjects.length > VISIBLE_CARDS && (
               <div className="flex justify-center gap-2 mt-6">
                 {Array.from({ length: maxIndex + 1 }).map((_, index) => (
-                  <button key={index} onClick={() => handleDotClick(index)} className={`h-2 rounded-full transition-all duration-300 ${index === currentIndex ? 'w-6' : 'w-2 bg-gray-300 hover:bg-gray-400'}`} style={{ backgroundColor: index === currentIndex ? COLORS.primary : undefined }} aria-label={`Go to slide ${index + 1}`} />
+                  <button
+                    key={index}
+                    onClick={() => handleDotClick(index)}
+                    className={`h-2 rounded-full transition-all duration-300 ${index === currentIndex ? 'w-6' : 'w-2 bg-gray-300 hover:bg-gray-400'}`}
+                    style={{ backgroundColor: index === currentIndex ? COLORS.primary : undefined }}
+                    aria-label={`Go to slide ${index + 1}`}
+                  />
                 ))}
               </div>
             )}

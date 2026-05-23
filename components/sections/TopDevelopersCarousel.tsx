@@ -1,7 +1,7 @@
 'use client';
 
-import { ChevronLeft, ChevronRight, Building2, Star, ArrowRight } from 'lucide-react';
-import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { ChevronLeft, ChevronRight, Building2, ArrowRight, Star, Sparkles, Shield } from 'lucide-react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import properties from '../../data/properties.json';
 import { 
@@ -28,9 +28,6 @@ interface TopDevelopersCarouselProps {
   city: 'Pune' | 'Mumbai' | 'KDMC';
 }
 
-const BREAKPOINTS = { mobile: 640, tablet: 1024, desktop: 1280 };
-
-// ✅ Deterministic rating function
 function getDeterministicRating(slug: string, projects: number): number {
   const knownRatings: Record<string, number> = {
     'lodha': 4.9, 'mantra': 4.7, 'godrej': 4.8, 'birla': 4.6,
@@ -44,34 +41,29 @@ function getDeterministicRating(slug: string, projects: number): number {
 }
 
 export default function TopDevelopersCarousel({ city }: TopDevelopersCarouselProps) {
-  const [offset, setOffset] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [viewportWidth, setViewportWidth] = useState(1280);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [touchStart, setTouchStart] = useState(0);
+  const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setViewportWidth(window.innerWidth);
       const handleResize = () => setViewportWidth(window.innerWidth);
-      window.addEventListener('resize', handleResize, { passive: true });
+      window.addEventListener('resize', handleResize);
       return () => window.removeEventListener('resize', handleResize);
     }
   }, []);
 
-  const cardWidth = useMemo(() => {
-    if (viewportWidth < BREAKPOINTS.mobile) return 310;
-    if (viewportWidth < BREAKPOINTS.tablet) return 340;
-    return 370;
+  const itemsPerView = useMemo(() => {
+    if (viewportWidth < 640) return 1;
+    if (viewportWidth < 768) return 2;
+    if (viewportWidth < 1024) return 3;
+    if (viewportWidth < 1280) return 4;
+    return 5;
   }, [viewportWidth]);
-
-  const gapSize = useMemo(() => 
-    viewportWidth < 640 ? 20 : viewportWidth < 1024 ? 24 : 28
-  , [viewportWidth]);
-  
-  const logoBoxSize = useMemo(() => 
-    viewportWidth < 640 ? 90 : viewportWidth < 1024 ? 110 : 130
-  , [viewportWidth]);
 
   const developers: Developer[] = useMemo(() => {
     const devMap = new Map<string, Developer>();
@@ -107,303 +99,418 @@ export default function TopDevelopersCarousel({ city }: TopDevelopersCarouselPro
       .sort((a, b) => b.projects - a.projects);
   }, []);
 
-  const extendedDevelopers = useMemo(() => {
-    if (developers.length <= 4) return developers;
-    return [...developers, ...developers.slice(0, Math.min(4, developers.length))];
-  }, [developers]);
+  const maxIndex = useMemo(() => {
+    if (developers.length <= itemsPerView) return 0;
+    return Math.max(0, Math.ceil(developers.length / itemsPerView) - 1);
+  }, [developers.length, itemsPerView]);
 
-  const STEP = cardWidth + gapSize;
-  const SPEED = 0.04;
+  const getVisibleDevelopers = useCallback(() => {
+    const start = currentIndex * itemsPerView;
+    return developers.slice(start, start + itemsPerView);
+  }, [developers, currentIndex, itemsPerView]);
 
+  const nextSlide = useCallback(() => {
+    if (currentIndex < maxIndex) {
+      setCurrentIndex(prev => prev + 1);
+    } else if (currentIndex === maxIndex) {
+      setCurrentIndex(0);
+    }
+    // Reset progress bar animation
+    if (progressRef.current) {
+      progressRef.current.style.animation = 'none';
+      setTimeout(() => {
+        if (progressRef.current) {
+          progressRef.current.style.animation = 'progress 4s linear forwards';
+        }
+      }, 10);
+    }
+  }, [currentIndex, maxIndex]);
+
+  const prevSlide = useCallback(() => {
+    if (currentIndex > 0) {
+      setCurrentIndex(prev => prev - 1);
+    } else if (currentIndex === 0) {
+      setCurrentIndex(maxIndex);
+    }
+  }, [currentIndex, maxIndex]);
+
+  // Auto-play functionality
   useEffect(() => {
-    if (isPaused || developers.length <= 4) return;
-    let animationFrame: number;
-    let lastTime = 0;
-
-    const animate = (time: number) => {
-      if (!lastTime) lastTime = time;
-      const delta = time - lastTime;
-      lastTime = time;
-      setOffset(prev => {
-        const newOffset = prev + SPEED * delta;
-        return newOffset >= STEP * developers.length ? 0 : newOffset;
-      });
-      animationFrame = requestAnimationFrame(animate);
+    if (isAutoPlaying && maxIndex > 0 && developers.length > itemsPerView) {
+      autoPlayRef.current = setInterval(() => {
+        nextSlide();
+      }, 4000);
+    }
+    return () => {
+      if (autoPlayRef.current) clearInterval(autoPlayRef.current);
     };
-    animationFrame = requestAnimationFrame(animate);
-    return () => { if (animationFrame) cancelAnimationFrame(animationFrame); };
-  }, [isPaused, developers.length, STEP]);
+  }, [isAutoPlaying, maxIndex, nextSlide, developers.length, itemsPerView]);
 
-  const scrollByCards = useCallback((direction: 'left' | 'right') => {
-    const container = containerRef.current;
-    if (!container) return;
-    const scrollAmount = direction === 'left' ? -STEP : STEP;
-    container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+  const handleMouseEnter = () => {
+    setIsAutoPlaying(false);
+    if (progressRef.current) {
+      progressRef.current.style.animationPlayState = 'paused';
+    }
+  };
+  
+  const handleMouseLeave = () => {
+    setIsAutoPlaying(true);
+    if (progressRef.current) {
+      progressRef.current.style.animationPlayState = 'running';
+    }
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.touches[0].clientX);
+    setIsAutoPlaying(false);
+    if (progressRef.current) {
+      progressRef.current.style.animationPlayState = 'paused';
+    }
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStart === 0) return;
+    const diff = e.changedTouches[0].clientX - touchStart;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) {
+        prevSlide();
+      } else {
+        nextSlide();
+      }
+    }
+    setTouchStart(0);
     setTimeout(() => {
-      const newIndex = direction === 'left' 
-        ? Math.max(0, activeIndex - 1) 
-        : Math.min(developers.length - 1, activeIndex + 1);
-      setActiveIndex(newIndex);
-      setOffset(container.scrollLeft);
-    }, 300);
-  }, [STEP, activeIndex, developers.length]);
+      setIsAutoPlaying(true);
+      if (progressRef.current) {
+        progressRef.current.style.animationPlayState = 'running';
+      }
+    }, 3000);
+  };
 
-  const handlePause = useCallback(() => setIsPaused(true), []);
-  const handleResume = useCallback(() => setIsPaused(false), []);
+  const getCityTheme = () => {
+    switch(city) {
+      case 'Pune':
+        return { 
+          primary: '#0D9488', 
+          light: '#E6F7F5', 
+          dark: '#0F766E', 
+          gradient: 'from-teal-500 to-emerald-500',
+          glow: '0 0 30px rgba(13,148,136,0.2)'
+        };
+      case 'Mumbai':
+        return { 
+          primary: '#2563EB', 
+          light: '#EFF6FF', 
+          dark: '#1D4ED8', 
+          gradient: 'from-blue-500 to-indigo-500',
+          glow: '0 0 30px rgba(37,99,235,0.2)'
+        };
+      case 'KDMC':
+        return { 
+          primary: '#EA580C', 
+          light: '#FFF7ED', 
+          dark: '#C2410C', 
+          gradient: 'from-orange-500 to-amber-500',
+          glow: '0 0 30px rgba(234,88,12,0.2)'
+        };
+      default:
+        return { 
+          primary: '#0D9488', 
+          light: '#E6F7F5', 
+          dark: '#0F766E', 
+          gradient: 'from-teal-500 to-emerald-500',
+          glow: '0 0 30px rgba(13,148,136,0.2)'
+        };
+    }
+  };
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (developers.length <= 4) return;
-      if (e.key === 'ArrowLeft') { e.preventDefault(); scrollByCards('left'); }
-      else if (e.key === 'ArrowRight') { e.preventDefault(); scrollByCards('right'); }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [developers.length, scrollByCards]);
+  const theme = getCityTheme();
 
   if (!developers?.length) return null;
 
   return (
-    <section className="py-16 lg:py-24 bg-gradient-to-b from-white to-gray-50/50">
+    <section className="py-16 md:py-24 bg-gradient-to-br from-slate-50 via-white to-slate-50 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Header */}
-        <div className="text-center mb-12 lg:mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#005E60]/10 to-[#F8C21C]/10 rounded-full mb-4">
-            <Building2 className="w-4 h-4 text-[#005E60]" />
-            <span className="text-xs font-semibold text-[#005E60] uppercase tracking-wide">
-              Verified Developers
-            </span>
+        {/* Header Section */}
+        <div className="text-center mb-12 md:mb-16">
+          <div 
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-5 shadow-sm"
+            style={{ backgroundColor: theme.light }}
+          >
+            <Sparkles className="w-4 h-4" style={{ color: theme.primary }} />
+            <span className="text-sm font-semibold" style={{ color: theme.primary }}>INDIA'S TOP BUILDERS</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-            Top Developers in{' '}
-            <span className="bg-gradient-to-r from-[#005E60] to-[#004a4d] bg-clip-text text-transparent">
-              {city}
+          
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
+            <span className="text-gray-900">Trusted Developers in</span>
+            <br />
+            <span className="relative inline-block mt-2">
+              <span className="relative z-10" style={{ color: theme.primary }}>
+                {city}
+              </span>
+              <svg className="absolute -bottom-2 left-0 w-full" height="12" viewBox="0 0 200 8" preserveAspectRatio="none">
+                <path d="M0 4 Q 50 0, 100 4 T 200 4" stroke={theme.primary} strokeWidth="3" fill="none" opacity="0.3" />
+              </svg>
             </span>
           </h2>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-            Trusted builders with proven track records. RERA registered, transparent pricing, and quality construction.
+          
+          <p className="text-gray-500 text-base md:text-lg max-w-2xl mx-auto">
+            Partnering with India's most trusted and reputed real estate developers
           </p>
         </div>
 
-        {/* Carousel */}
-        <div className="relative">
-          {developers.length > 4 && (
+        {/* Carousel Container */}
+        <div 
+          className="relative"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
+          {/* Progress Bar */}
+          {developers.length > itemsPerView && isAutoPlaying && (
+            <div className="absolute -top-8 left-0 right-0 h-0.5 bg-gray-100 rounded-full overflow-hidden">
+              <div 
+                ref={progressRef}
+                className="h-full rounded-full"
+                style={{ 
+                  backgroundColor: theme.primary,
+                  width: '0%',
+                  animation: 'progress 4s linear forwards'
+                }}
+              />
+            </div>
+          )}
+
+          {/* Navigation Arrows */}
+          {developers.length > itemsPerView && (
             <>
-              <button 
-                onClick={() => scrollByCards('left')}
-                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 lg:-translate-x-8 z-10 w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-white shadow-lg border border-gray-100 flex items-center justify-center text-gray-600 hover:text-[#005E60] hover:border-[#005E60]/30 hover:shadow-xl transition-all duration-300 group"
-                aria-label="Previous developers"
+              <button
+                onClick={() => {
+                  setIsAutoPlaying(false);
+                  prevSlide();
+                  setTimeout(() => setIsAutoPlaying(true), 3000);
+                }}
+                className="absolute -left-4 md:-left-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white shadow-lg border border-gray-100 flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-xl"
+                style={{ boxShadow: theme.glow }}
               >
-                <ChevronLeft size={24} className="group-hover:-translate-x-0.5 transition-transform" />
+                <ChevronLeft size={20} className="md:w-5 md:h-5" style={{ color: theme.primary }} />
               </button>
-              <button 
-                onClick={() => scrollByCards('right')}
-                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 lg:translate-x-8 z-10 w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-white shadow-lg border border-gray-100 flex items-center justify-center text-gray-600 hover:text-[#005E60] hover:border-[#005E60]/30 hover:shadow-xl transition-all duration-300 group"
-                aria-label="Next developers"
+
+              <button
+                onClick={() => {
+                  setIsAutoPlaying(false);
+                  nextSlide();
+                  setTimeout(() => setIsAutoPlaying(true), 3000);
+                }}
+                className="absolute -right-4 md:-right-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white shadow-lg border border-gray-100 flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-xl"
+                style={{ boxShadow: theme.glow }}
               >
-                <ChevronRight size={24} className="group-hover:translate-x-0.5 transition-transform" />
+                <ChevronRight size={20} className="md:w-5 md:h-5" style={{ color: theme.primary }} />
               </button>
             </>
           )}
 
-          <div 
-            ref={containerRef}
-            className="overflow-x-auto overflow-y-hidden scroll-smooth"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', paddingLeft: '12px', paddingRight: '12px' }}
-            onMouseEnter={handlePause}
-            onMouseLeave={handleResume}
-            onTouchStart={handlePause}
-            onTouchEnd={handleResume}
-          >
+          {/* Cards Grid */}
+          <div className="overflow-visible">
             <div 
-              className="flex"
-              style={{ 
-                gap: `${gapSize}px`,
-                transform: `translateX(-${offset}px)`,
-                transition: isPaused ? 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
-                width: `${STEP * extendedDevelopers.length}px`
+              className="grid transition-all duration-500 ease-out gap-5 md:gap-6"
+              style={{
+                gridTemplateColumns: `repeat(${itemsPerView}, minmax(0, 1fr))`,
               }}
             >
-              {extendedDevelopers.map((dev, idx) => {
-                const isActive = idx % developers.length === activeIndex;
-                
-                return (
-                  <a
-                    key={`${dev.id}-${idx}`} 
-                    href={`/builders/${dev.slug}`}
-                    className="flex-shrink-0 group"
-                    style={{ width: `${cardWidth}px` }}
-                    onClick={(e) => {
-                      setIsPaused(true);
-                      setActiveIndex(idx % developers.length);
-                      setTimeout(() => setIsPaused(false), 500);
-                    }}
-                  >
-                    <div className={`
-                      relative bg-white rounded-3xl overflow-hidden transition-all duration-500
-                      ${isActive 
-                        ? 'shadow-2xl shadow-[#005E60]/10 ring-2 ring-[#005E60]/20 scale-[1.02]' 
-                        : 'shadow-lg hover:shadow-xl hover:-translate-y-1'
-                      }
-                    `}>
-                      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#005E60] via-[#007a7c] to-[#F8C21C]" />
-                      
-                      {/* ✅ Logo Section with Safe src Handling */}
-                      <div className="relative bg-gradient-to-br from-gray-50 via-white to-gray-50 px-8 pt-8 pb-6">
-                        <div className="absolute inset-0 opacity-[0.02]" 
-                          style={{ 
-                            backgroundImage: `radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)`,
-                            backgroundSize: '24px 24px'
-                          }} 
-                        />
-                        <div className="relative flex items-center justify-center" style={{ height: `${logoBoxSize}px` }}>
-                          
-                          {/* ✅ TEXT LOGO (Lodha) */}
-                          {dev.logoType === 'text' || dev.slug === 'lodha' ? (
-                            <div className="text-center">
-                              <span 
-                                className="font-black text-gray-900 tracking-tight leading-none"
-                                style={{ 
-                                  fontSize: viewportWidth < 640 ? '32px' : viewportWidth < 1024 ? '40px' : '48px',
-                                  fontFamily: 'system-ui, -apple-system, sans-serif'
-                                }}
-                              >
-                                Lodha
-                              </span>
-                              <span className="block text-gray-400 text-sm font-medium mt-1 tracking-wide">
+              {getVisibleDevelopers().map((dev, idx) => (
+                <a
+                  key={dev.id}
+                  href={`/builders/${dev.slug}`}
+                  className="group block transform transition-all duration-500 hover:-translate-y-2"
+                >
+                  <div className="relative bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500">
+                    
+                    {/* Animated Gradient Top Border */}
+                    <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${theme.gradient} transform origin-left transition-transform duration-500 scale-x-0 group-hover:scale-x-100`} />
+                    
+                    {/* Premium Badge for Top 3 */}
+                    {idx < 3 && (
+                      <div className="absolute top-3 right-3 z-10">
+                        <div className="flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-full shadow-lg">
+                          <Star size={10} className="fill-white" />
+                          <span className="text-[10px] font-bold">TOP {idx + 1}</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Rating Badge */}
+                    <div className="absolute top-3 left-3 z-10">
+                      <div className="flex items-center gap-1 px-2 py-1 bg-white/95 backdrop-blur-sm rounded-full shadow-sm">
+                        <Star size={10} className="fill-yellow-400 text-yellow-400" />
+                        <span className="text-xs font-bold text-gray-800">{dev.rating.toFixed(1)}</span>
+                      </div>
+                    </div>
+
+                    {/* Logo Section */}
+                    <div className="bg-gradient-to-br from-gray-50 via-white to-gray-50 p-6 md:p-8 flex items-center justify-center min-h-[180px] md:min-h-[200px]">
+                      <div className="relative flex items-center justify-center w-full">
+                        
+                        {/* Text Logo */}
+                        {(dev.logoType === 'text' || dev.slug === 'lodha') ? (
+                          <div className="text-center transform transition-all duration-500 group-hover:scale-105">
+                            <span 
+                              className="font-black text-gray-800 tracking-tight leading-none block"
+                              style={{ 
+                                fontSize: 'clamp(24px, 5vw, 36px)',
+                                fontFamily: 'system-ui, -apple-system, sans-serif'
+                              }}
+                            >
+                              {dev.name.split(' ')[0]}
+                            </span>
+                            {dev.name.includes('Group') && (
+                              <span className="text-gray-400 text-xs font-medium mt-1 block tracking-wider">
                                 GROUP
                               </span>
-                            </div>
-                          ) : dev.logoSrc && dev.logoSrc !== '' ? (
-                            /* ✅ IMAGE LOGO (Only if src is not empty) */
-                            <div className="relative w-full h-full flex items-center justify-center p-2">
-                              <Image
-                                src={dev.logoSrc}
-                                alt={`${dev.name} logo`}
-                                width={240}
-                                height={logoBoxSize}
-                                className="object-contain object-center drop-shadow-sm"
-                                style={{ maxHeight: `${logoBoxSize}px`, maxWidth: '100%' }}
-                                priority={idx < 4}
-                                unoptimized
-                              />
-                            </div>
-                          ) : (
-                            /* ✅ FALLBACK (First Letter) */
-                            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#005E60] flex items-center justify-center">
-                              <span className="text-white text-2xl sm:text-3xl font-bold">
-                                {dev.name.charAt(0).toUpperCase()}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Content Section */}
-                      <div className="px-6 pb-6 pt-2">
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex items-center gap-1.5">
-                            <Star className="w-4 h-4 fill-[#F8C21C] text-[#F8C21C]" />
-                            <span 
-                              className="text-sm font-semibold text-gray-900"
-                              suppressHydrationWarning={true}
-                            >
-                              {dev.rating.toFixed(1)}
+                            )}
+                          </div>
+                        ) : dev.logoSrc && dev.logoSrc !== '' ? (
+                          <div className="relative w-full flex items-center justify-center p-3">
+                            <Image
+                              src={dev.logoSrc}
+                              alt={dev.name}
+                              width={140}
+                              height={70}
+                              className="object-contain transition-all duration-500 group-hover:scale-110 group-hover:drop-shadow-xl"
+                              style={{ maxHeight: '70px', width: 'auto' }}
+                              priority={idx < 6}
+                              unoptimized
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = 'none';
+                                const parent = target.parentElement;
+                                if (parent) {
+                                  const fallback = document.createElement('div');
+                                  fallback.className = `w-14 h-14 rounded-full bg-gradient-to-br ${theme.gradient} flex items-center justify-center shadow-md`;
+                                  fallback.innerHTML = `<span class="text-white text-xl font-bold">${dev.name.charAt(0).toUpperCase()}</span>`;
+                                  parent.appendChild(fallback);
+                                }
+                              }}
+                            />
+                          </div>
+                        ) : (
+                          <div className={`w-14 h-14 rounded-full bg-gradient-to-br ${theme.gradient} flex items-center justify-center shadow-md transform transition-all duration-500 group-hover:scale-110`}>
+                            <span className="text-white text-xl font-bold">
+                              {dev.name.charAt(0).toUpperCase()}
                             </span>
                           </div>
-                          <span className="text-xs font-bold text-[#005E60] bg-[#005E60]/10 px-3 py-1 rounded-full">
-                            {dev.years}
-                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Content Section */}
+                    <div className="p-5 pt-3 text-center">
+                      <h3 className="font-bold text-gray-800 text-base md:text-lg mb-2 transition-colors duration-300 line-clamp-1 group-hover" style={{ groupHover: { color: theme.primary } }}>
+                        {dev.name}
+                      </h3>
+                      
+                      <div className="flex items-center justify-center gap-2 mb-3">
+                        <div className="flex items-center gap-1">
+                          <Building2 size={12} style={{ color: theme.primary }} />
+                          <span className="text-xs text-gray-600">{dev.projects}+ Projects</span>
                         </div>
-                        <h3 className="font-bold text-gray-900 mb-2 group-hover:text-[#005E60] transition-colors line-clamp-1 text-lg">
-                          {dev.name}
-                        </h3>
-                        <p className="text-sm text-gray-500 mb-5 line-clamp-1">
-                          Serving {city} & surrounding areas
-                        </p>
-                        <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                          <div>
-                            <span className="text-3xl font-black text-[#005E60]">{dev.projects}</span>
-                            <span className="text-sm text-gray-500 ml-1">projects</span>
-                          </div>
-                          <div className="flex items-center gap-1.5 text-[#005E60] text-sm font-semibold group-hover:gap-2 transition-all">
-                            Explore
-                            <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-                          </div>
+                        <div className="w-1 h-1 rounded-full bg-gray-300" />
+                        <div className="flex items-center gap-1">
+                          <Shield size={10} style={{ color: theme.primary }} />
+                          <span className="text-xs text-gray-500">RERA</span>
                         </div>
                       </div>
 
-                      <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-                        style={{ 
-                          background: 'radial-gradient(ellipse at top, rgba(0,94,96,0.08) 0%, transparent 70%)'
-                        }} 
-                      />
+                      {/* Explore Button */}
+                      <div className="mt-3 pt-3 border-t border-gray-100">
+                        <span className="inline-flex items-center gap-1 text-xs font-medium transition-all group-hover:gap-2" style={{ color: theme.primary }}>
+                          Explore Projects
+                          <ArrowRight size={12} className="transition-transform group-hover:translate-x-0.5" />
+                        </span>
+                      </div>
                     </div>
-                  </a>
-                );
-              })}
+
+                    {/* Hover Glow Effect */}
+                    <div 
+                      className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                      style={{ 
+                        background: `radial-gradient(ellipse at 50% 0%, ${theme.primary}08 0%, transparent 70%)`,
+                        boxShadow: `inset 0 0 0 1px ${theme.primary}20`
+                      }} 
+                    />
+                  </div>
+                </a>
+              ))}
             </div>
           </div>
 
-          {developers.length > 4 && (
-            <div className="flex justify-center gap-2 mt-8">
-              {developers.slice(0, 5).map((_, idx) => (
+          {/* Pagination Dots */}
+          {maxIndex > 0 && (
+            <div className="flex justify-center gap-2 mt-10">
+              {Array.from({ length: maxIndex + 1 }).map((_, index) => (
                 <button
-                  key={idx}
+                  key={index}
                   onClick={() => {
-                    setActiveIndex(idx);
-                    const container = containerRef.current;
-                    if (container) {
-                      container.scrollTo({ left: idx * STEP, behavior: 'smooth' });
-                      setOffset(idx * STEP);
-                    }
+                    setIsAutoPlaying(false);
+                    setCurrentIndex(index);
+                    setTimeout(() => setIsAutoPlaying(true), 3000);
                   }}
-                  className={`transition-all duration-300 rounded-full ${
-                    activeIndex === idx 
-                      ? 'w-8 h-2 bg-gradient-to-r from-[#005E60] to-[#004a4d]' 
-                      : 'w-2 h-2 bg-gray-300 hover:bg-gray-400'
+                  className={`rounded-full transition-all duration-300 ${
+                    index === currentIndex 
+                      ? 'w-8 h-2' 
+                      : 'w-2 h-2 bg-gray-200 hover:bg-gray-300'
                   }`}
-                  aria-label={`Go to developer ${idx + 1}`}
-                  aria-current={activeIndex === idx ? 'true' : 'false'}
+                  style={{ backgroundColor: index === currentIndex ? theme.primary : undefined }}
+                  aria-label={`Go to slide ${index + 1}`}
                 />
               ))}
-              {developers.length > 5 && (
-                <span className="w-2 h-2 bg-gray-200 rounded-full" title={`${developers.length - 5} more`} />
-              )}
             </div>
           )}
         </div>
 
-        {viewportWidth < BREAKPOINTS.tablet && developers.length > 4 && (
-          <div className="flex justify-center mt-6">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm border border-gray-100">
-              <ChevronLeft size={14} className="text-gray-400" />
-              <span className="text-xs text-gray-500 font-medium">Swipe to explore</span>
-              <ChevronRight size={14} className="text-gray-400" />
+        {/* Auto-play Toggle Hint */}
+        {developers.length > itemsPerView && (
+          <div className="text-center mt-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white rounded-full shadow-sm border border-gray-100">
+              <div className={`w-1.5 h-1.5 rounded-full ${isAutoPlaying ? 'animate-pulse' : ''}`} style={{ backgroundColor: isAutoPlaying ? theme.primary : '#9CA3AF' }} />
+              <span className="text-[10px] text-gray-500">
+                {isAutoPlaying ? 'Auto-scrolling active' : 'Paused — click arrows to navigate'}
+              </span>
             </div>
           </div>
         )}
 
-        <div className="text-center mt-12">
+        {/* View All Link */}
+        <div className="text-center mt-10">
           <a 
             href="/builders"
-            className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-[#005E60] to-[#004a4d] text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-[#005E60]/25 transition-all duration-300 group"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 group"
+            style={{ backgroundColor: theme.primary, color: 'white' }}
           >
-            View All Developers
-            <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+            <span>View All Developers in {city}</span>
+            <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
           </a>
-          <p className="text-sm text-gray-500 mt-3">
-            {developers.length}+ verified builders in {city}
+          <p className="text-xs text-gray-400 mt-3">
+            {developers.length}+ verified RERA registered builders
           </p>
         </div>
 
       </div>
 
-      <style jsx global>{`
-        [style*="scrollbar-width:none"]::-webkit-scrollbar { display: none; }
-        .scroll-smooth { scroll-behavior: smooth; }
-        * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+      <style jsx>{`
+        @keyframes progress {
+          0% { width: 0%; }
+          100% { width: 100%; }
+        }
+        @keyframes pulse {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.5; transform: scale(0.8); }
+        }
+        .animate-pulse {
+          animation: pulse 1.5s ease-in-out infinite;
+        }
       `}</style>
     </section>
   );

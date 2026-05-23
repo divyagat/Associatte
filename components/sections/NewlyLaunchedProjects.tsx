@@ -3,11 +3,12 @@
 import { ChevronLeft, ChevronRight, MapPin, Bed, Square, Tag, Filter } from 'lucide-react';
 import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import Link from 'next/link';
+import Image from 'next/image'; // ✅ Added Next.js Image import
 
 // ✅ Import SearchFilters type from Hero
 import type { SearchFilters } from '../Home/Hero';
 
-// ✅ Project interface - SAME as your original + extra fields for filtering
+// ✅ Project interface
 interface Project {
   id: number;
   name: string;
@@ -16,14 +17,14 @@ interface Project {
   sqft: string;
   price: string;
   image: string;
-  // ✅ Extra fields for filtering (internal use only)
+  // ✅ Extra fields for filtering
   city?: 'pune' | 'mumbai' | 'kdmc';
   priceNumeric?: number;
   builder?: string;
   propertyType?: string;
 }
 
-// ✅ Your EXACT Pune projects (unchanged - same data, same keys)
+// ✅ Pune projects
 const PUNE_PROJECTS: Project[] = [
   {
     id: 1,
@@ -32,7 +33,7 @@ const PUNE_PROJECTS: Project[] = [
     bhk: '3 & 4 BHK',
     sqft: '1270 - 1858 SQ.FT.',
     price: '₹1.48 Crore',
-    image: 'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=400&q=80',
+    image: '/projects/shapoorji-tree-cloud.webp',
     city: 'pune',
     priceNumeric: 14800000,
     builder: 'Shapoorji Pallonji',
@@ -45,7 +46,7 @@ const PUNE_PROJECTS: Project[] = [
     bhk: '2, 2.5 & 3 BHK',
     sqft: '755 - 1190 SQ.FT.',
     price: '₹73.85 Lakh',
-    image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400&q=80',
+    image: '/projects/magarpatta-rvc-flamingo.webp',
     city: 'pune',
     priceNumeric: 7385000,
     builder: 'Paradise Group',
@@ -58,7 +59,7 @@ const PUNE_PROJECTS: Project[] = [
     bhk: '3, 4 &5 BHK',
     sqft: '1859 - 3314 SQ.FT.',
     price: '₹3.96 Crore',
-    image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&q=80',
+    image: '/projects/shapoorji-tree-cloud.webp',
     city: 'pune',
     priceNumeric: 39600000,
     builder: 'Tribeca',
@@ -71,7 +72,7 @@ const PUNE_PROJECTS: Project[] = [
     bhk: 'Premium Offices ',
     sqft: '3000 - 18000 SQ.FT.',
     price: '₹8.10 Crore',
-    image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&q=80',
+    image: '/projects/tribeca-trump-tower.webp',
     city: 'pune',
     priceNumeric: 81000000,
     builder: 'Tribeca',
@@ -84,7 +85,7 @@ const PUNE_PROJECTS: Project[] = [
     bhk: '3.5 & 4.5 BHK',
     sqft: '758 -1185 SQ.FT.',
     price: '₹4 Crore',
-    image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&q=80',
+    image: '/projects/panchshil-57avenue.webp',
     city: 'pune',
     priceNumeric: 40000000,
     builder: 'Panchshil Realty',
@@ -92,7 +93,7 @@ const PUNE_PROJECTS: Project[] = [
   },
 ];
 
-// ✅ Mumbai projects - SAME structure as Pune (for consistent filtering)
+// ✅ Mumbai projects
 const MUMBAI_PROJECTS: Project[] = [
   {
     id: 101,
@@ -114,7 +115,7 @@ const MUMBAI_PROJECTS: Project[] = [
     bhk: '1, 2 & 3 BHK',
     sqft: '450 - 1100 SQ.FT.',
     price: '₹65 Lakh',
-    image: 'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=400&q=80',
+    image: '/projects/runwal-gardens.webp',
     city: 'mumbai',
     priceNumeric: 6500000,
     builder: 'Runwal',
@@ -127,7 +128,7 @@ const MUMBAI_PROJECTS: Project[] = [
     bhk: '1 & 2 BHK',
     sqft: '415 - 675 SQ.FT.',
     price: '₹42 Lakh',
-    image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&q=80',
+    image: '/projects/shapoorji-tree-topia.webp',
     city: 'mumbai',
     priceNumeric: 4200000,
     builder: 'Shapoorji Pallonji',
@@ -161,7 +162,7 @@ const MUMBAI_PROJECTS: Project[] = [
   },
 ];
 
-// ✅ KDMC projects - NEW section with affordable options
+// ✅ KDMC projects
 const KDMC_PROJECTS: Project[] = [
   {
     id: 201,
@@ -230,21 +231,21 @@ const KDMC_PROJECTS: Project[] = [
   },
 ];
 
-// ✅ Your EXACT slug mapping (unchanged - with trailing spaces preserved)
+// ✅ Slug mapping
 const PROJECT_SLUG_MAP: Record<string, string> = {
-  // Pune slugs
+  // Pune
   'Shapoorji Everra at Tree Cloud': 'shapoorji-tree-cloud',
   'Flamingo Park At Riverview City': 'magarpatta-city-rvc-flamingo',
   'Tribeca Everett': 'tribeca-lulla-nagar',
   'Tribeca Trump world Center ': 'tribeca-trump-tower',
   '57Avenue Panchshil ': 'panchshil-57avenue',
-  // Mumbai slugs
+  // Mumbai
   'Lodha Belmondo': 'lodha-belmondo-kharghar',
   'Runwal Gardens': 'runwal-gardens-dombivli',
   'Shapoorji Pallonji Joyville': 'joyville-virar',
   'Lodha Fiore': 'lodha-fiore-thane',
   'Birla Aerya': 'birla-aerya-andheri',
-  // KDMC slugs
+  // KDMC
   'Paradise Sai World City': 'paradise-sai-world-city-kalyan',
   'Today Global Anantam': 'today-global-anantam-dombivli',
   'Runwal Bliss': 'runwal-bliss-badlapur',
@@ -252,11 +253,14 @@ const PROJECT_SLUG_MAP: Record<string, string> = {
   'Shapoorji Pallonji Joyville Hadapsar': 'joyville-ulhasnagar',
 };
 
-// ✅ Props interface - FIXED: added kdmc to union type
+// ✅ Props interface
 interface NewlyLaunchedProjectsProps {
   selectedCity: 'pune' | 'mumbai' | 'kdmc';
   filters?: SearchFilters;
 }
+
+// ✅ Fallback image path (ensure this file exists in /public/images/)
+const FALLBACK_IMAGE = '/images/placeholder-property.webp';
 
 export default function NewlyLaunchedProjects({ 
   selectedCity = 'pune', 
@@ -266,9 +270,8 @@ export default function NewlyLaunchedProjects({
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
 
-  // ✅ Filter logic - SAME behavior as Hero, works with original data structure
+  // ✅ Filter logic
   const filteredProjects = useMemo(() => {
-    // Step 1: Select projects by city (NOW INCLUDES KDMC)
     let projects: Project[] = [];
     if (selectedCity === 'pune') {
       projects = [...PUNE_PROJECTS];
@@ -278,7 +281,6 @@ export default function NewlyLaunchedProjects({
       projects = [...KDMC_PROJECTS];
     }
 
-    // Step 2: Apply BHK filter (case-insensitive partial match)
     if (filters.bhk?.length) {
       projects = projects.filter(p => 
         filters.bhk!.some(bhk => 
@@ -287,7 +289,6 @@ export default function NewlyLaunchedProjects({
       );
     }
 
-    // Step 3: Apply price range filter
     if (filters.priceRange) {
       const { min, max } = filters.priceRange;
       projects = projects.filter(p => {
@@ -296,7 +297,6 @@ export default function NewlyLaunchedProjects({
       });
     }
 
-    // Step 4: Apply builder filter (case-insensitive partial match)
     if (filters.builder?.length) {
       projects = projects.filter(p => 
         filters.builder!.some(builder => 
@@ -305,7 +305,6 @@ export default function NewlyLaunchedProjects({
       );
     }
 
-    // Step 5: Apply property type filter
     if (filters.propertyType?.length) {
       projects = projects.filter(p => 
         filters.propertyType!.some(type => 
@@ -314,7 +313,6 @@ export default function NewlyLaunchedProjects({
       );
     }
 
-    // Step 6: Apply locality filter (partial match on location)
     if (filters.locality) {
       projects = projects.filter(p => 
         p.location.toLowerCase().includes(filters.locality!.toLowerCase().trim())
@@ -324,7 +322,7 @@ export default function NewlyLaunchedProjects({
     return projects;
   }, [selectedCity, filters]);
 
-  // ✅ Check scroll buttons visibility
+  // ✅ Scroll button visibility
   const checkScrollButtons = useCallback(() => {
     if (scrollContainerRef.current) {
       const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
@@ -364,11 +362,19 @@ export default function NewlyLaunchedProjects({
     }
   };
 
+  // ✅ Handle image error with fallback
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    const img = e.currentTarget;
+    if (img.src !== FALLBACK_IMAGE) {
+      img.src = FALLBACK_IMAGE;
+    }
+  };
+
   return (
     <section className="py-12 bg-gray-50">
       <div className="max-w-7xl mx-auto px-6">
         
-        {/* Header with Dynamic City */}
+        {/* Header */}
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
@@ -379,7 +385,6 @@ export default function NewlyLaunchedProjects({
             </p>
           </div>
           
-          {/* Show active filters badge */}
           {Object.keys(filters).length > 0 && (
             <div className="flex items-center gap-2 text-sm text-gray-600">
               <Filter size={16} className="text-[#D97941]" />
@@ -388,7 +393,7 @@ export default function NewlyLaunchedProjects({
           )}
         </div>
 
-        {/* Show message if no projects match filters */}
+        {/* No results message */}
         {filteredProjects.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-xl border border-gray-100">
             <p className="text-gray-500 text-lg">No projects match your filters in {selectedCity}</p>
@@ -416,16 +421,13 @@ export default function NewlyLaunchedProjects({
               style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
               {filteredProjects.map((project) => {
-                // ✅ Get slug using EXACT key match (preserves trailing spaces)
                 const slug = PROJECT_SLUG_MAP[project.name] || '#';
                 
                 return (
-                  // ✅ SAME navigation behavior as original
                   <Link 
                     key={project.id}
                     href={slug !== '#' ? `/property/${slug}` : '#'}
                     className="group block"
-                    // ✅ SAME onClick handler for fallback
                     onClick={(e) => {
                       if (slug === '#') {
                         e.preventDefault();
@@ -445,35 +447,32 @@ export default function NewlyLaunchedProjects({
 
                       {/* Content */}
                       <div className="flex gap-3 mt-6">
-                        {/* Circular Image */}
+                        {/* ✅ FIXED: Circular Image with Next.js Image */}
                         <div className="flex-shrink-0">
-                          <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-gray-200 group-hover:border-[#D97941] transition-colors duration-300 shadow-md">
-                            <img
+                          <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-gray-200 group-hover:border-[#D97941] transition-colors duration-300 shadow-md relative">
+                            <Image
                               src={project.image}
                               alt={project.name}
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                              loading="lazy"
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&q=80';
-                              }}
+                              fill
+                              className="object-cover object-center group-hover:scale-110 transition-transform duration-500"
+                              sizes="96px"
+                              priority={false}
+                              onError={handleImageError}
                             />
                           </div>
                         </div>
 
                         {/* Details */}
                         <div className="flex-1 min-w-0">
-                          {/* Project Name */}
                           <h3 className="text-lg font-bold text-[#D97941] mb-1 group-hover:text-[#b86435] transition-colors truncate">
                             {project.name}
                           </h3>
 
-                          {/* Location */}
                           <div className="flex items-center gap-1 text-xs text-gray-600 mb-1.5">
                             <MapPin size={12} className="text-gray-400 flex-shrink-0" />
                             <span className="truncate">{project.location}</span>
                           </div>
 
-                          {/* BHK & SQFT */}
                           <div className="flex items-center gap-2 text-xs text-gray-600 mb-2">
                             <div className="flex items-center gap-1">
                               <Bed size={12} className="text-gray-400 flex-shrink-0" />
@@ -486,7 +485,6 @@ export default function NewlyLaunchedProjects({
                             </div>
                           </div>
 
-                          {/* Price Badge */}
                           <div className="inline-block px-3 py-1 bg-[#FFE8D6] text-[#D97941] text-xs font-bold rounded-full">
                             {project.price}
                           </div>
