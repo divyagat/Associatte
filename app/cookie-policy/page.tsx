@@ -15,8 +15,8 @@ export default function CookiePolicyPage() {
       content: (
         <p>
           This is the Cookie Policy for <strong>Associatte PropTech Private Limited</strong>, accessible from{' '}
-          <a href="https://associatte.co.in" className="text-[#005E60] hover:text-[#8B0000] hover:underline transition-colors font-medium">
-            https://associatte.co.in
+          <a href="https://associatte.com" className="text-[#005E60] hover:text-[#8B0000] hover:underline transition-colors font-medium">
+            https://associatte.com
           </a>
         </p>
       ),
@@ -178,8 +178,8 @@ export default function CookiePolicyPage() {
               </div>
               <div>
                 <p className="font-semibold text-[#8B0000] mb-1">Email Support</p>
-                <a href="mailto:info@associatte.co.in" className="text-[#005E60] hover:text-[#8B0000] hover:underline transition-colors text-lg font-medium">
-                  info@associatte.co.in
+                <a href="mailto:info@associatte.com" className="text-[#005E60] hover:text-[#8B0000] hover:underline transition-colors text-lg font-medium">
+                  info@associatte.com
                 </a>
                 <p className="text-sm text-gray-500 mt-1">We typically respond within 1-2 business days</p>
               </div>
