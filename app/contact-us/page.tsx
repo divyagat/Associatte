@@ -1,7 +1,8 @@
-// app/contact-us/page.tsx
 "use client";
 
 import { useState, FormEvent, ChangeEvent } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 type FormData = {
   name: string;
@@ -22,7 +23,19 @@ const COLORS = {
   yellow: '#F8C21C',
 };
 
+// Predefined locations for autocomplete/suggestions
+const POPULAR_LOCATIONS = [
+  "Wakad", "Hinjewadi", "Baner", "Balewadi", "Kharadi", 
+  "Viman Nagar", "Hadapsar", "Magarpatta", "Koregaon Park", 
+  "Andheri", "Powai", "Thane", "Dombivli", "Kalyan"
+];
+
+// Correct Office Address
+const OFFICE_ADDRESS = "Associatte PropTech Pvt Ltd, 303, Naren Pearl, Magarpatta Rd, above Axis Bank, Hadapsar, Pune, Maharashtra 411036";
+const MAPS_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("Associatte PropTech Pvt Ltd 303 Naren Pearl Magarpatta Road Hadapsar Pune")}`;
+
 export default function ContactUsPage() {
+  const router = useRouter();
   const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",
@@ -35,14 +48,37 @@ export default function ContactUsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
   const [errors, setErrors] = useState<FormErrors>({});
+  const [locationSuggestions, setLocationSuggestions] = useState<string[]>([]);
+  const [showLocationSuggestions, setShowLocationSuggestions] = useState(false);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    
+    // Clear error for this field when user types
     if (errors[name as keyof FormData]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+
+    // Handle location suggestions
+    if (name === "preferredLocation" && value.length > 1) {
+      const filtered = POPULAR_LOCATIONS.filter(loc => 
+        loc.toLowerCase().includes(value.toLowerCase())
+      );
+      setLocationSuggestions(filtered.slice(0, 5));
+      setShowLocationSuggestions(true);
+    } else if (name === "preferredLocation" && value.length === 0) {
+      setShowLocationSuggestions(false);
+    }
+  };
+
+  const selectLocation = (location: string) => {
+    setFormData(prev => ({ ...prev, preferredLocation: location }));
+    setShowLocationSuggestions(false);
+    if (errors.preferredLocation) {
+      setErrors(prev => ({ ...prev, preferredLocation: "" }));
     }
   };
 
@@ -74,14 +110,46 @@ export default function ContactUsPage() {
     setStatus("idle");
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      setStatus("success");
-      setFormData({ name: "", email: "", phone: "", propertyType: "", budget: "", preferredLocation: "", message: "" });
+      // Simulate API call - Replace with actual API endpoint
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      
+      if (response.ok) {
+        setStatus("success");
+        setFormData({ 
+          name: "", email: "", phone: "", propertyType: "", 
+          budget: "", preferredLocation: "", message: "" 
+        });
+        // Auto-hide success message after 5 seconds
+        setTimeout(() => setStatus("idle"), 5000);
+      } else {
+        throw new Error("Submission failed");
+      }
     } catch {
       setStatus("error");
+      setTimeout(() => setStatus("idle"), 5000);
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleBrowseProperties = () => {
+    router.push("/properties");
+  };
+
+  const handleCall = () => {
+    window.location.href = "tel:+918881188181";
+  };
+
+  const handleEmail = () => {
+    window.location.href = "mailto:info@associatte.com";
+  };
+
+  const handleMapRedirect = () => {
+    window.open(MAPS_URL, "_blank");
   };
 
   return (
@@ -102,51 +170,60 @@ export default function ContactUsPage() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         
-        {/* Top Contact Cards */}
+        {/* Top Contact Cards - All Clickable */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {/* Call Us */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 text-center hover:shadow-lg transition-shadow">
-            <div className="w-14 h-14 mx-auto mb-4 rounded-xl flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${COLORS.green}, #004a4d)` }}>
+          <button 
+            onClick={handleCall}
+            className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group"
+          >
+            <div className="w-14 h-14 mx-auto mb-4 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105" style={{ background: `linear-gradient(135deg, ${COLORS.green}, #004a4d)` }}>
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
               </svg>
             </div>
             <h3 className="text-lg font-semibold text-slate-900 mb-2">Call Us</h3>
-            <a href="tel:+918881188181" className="font-bold hover:underline transition" style={{ color: COLORS.green }}>{'+91 8881188181'}</a>
+            <p className="font-bold transition group-hover:scale-105" style={{ color: COLORS.green }}>+91 8881188181</p>
             <p className="text-sm text-slate-500 mt-1">Tue-Mon 10AM-7PM IST</p>
-          </div>
+          </button>
 
           {/* Email Us */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 text-center hover:shadow-lg transition-shadow">
-            <div className="w-14 h-14 mx-auto mb-4 rounded-xl flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${COLORS.green}, #004a4d)` }}>
+          <button 
+            onClick={handleEmail}
+            className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group"
+          >
+            <div className="w-14 h-14 mx-auto mb-4 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105" style={{ background: `linear-gradient(135deg, ${COLORS.green}, #004a4d)` }}>
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
             </div>
             <h3 className="text-lg font-semibold text-slate-900 mb-2">Email Us</h3>
-            <a href="mailto:info@associatte.co.in" className="font-bold hover:underline transition" style={{ color: COLORS.green }}>info@associatte.co.in</a>
+            <p className="font-bold transition group-hover:scale-105" style={{ color: COLORS.green }}>info@associatte.com</p>
             <p className="text-sm text-slate-500 mt-1">Response within 24-48 hrs</p>
-          </div>
+          </button>
 
-          {/* Visit Us */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 text-center hover:shadow-lg transition-shadow">
-            <div className="w-14 h-14 mx-auto mb-4 rounded-xl flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${COLORS.green}, #004a4d)` }}>
+          {/* Visit Us - Opens Google Maps */}
+          <button 
+            onClick={handleMapRedirect}
+            className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group"
+          >
+            <div className="w-14 h-14 mx-auto mb-4 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105" style={{ background: `linear-gradient(135deg, ${COLORS.green}, #004a4d)` }}>
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
             </div>
             <h3 className="text-lg font-semibold text-slate-900 mb-2">Visit Us</h3>
-            <p className="font-bold text-sm leading-relaxed" style={{ color: COLORS.green }}>
-              302 & 303, Naren Pearl, 3rd Floor,<br />
-              Magarpatta Road, Hadapsar,<br />
-              Pune - 411028
+            <p className="font-bold text-sm leading-relaxed transition group-hover:scale-105" style={{ color: COLORS.green }}>
+              Associatte PropTech Pvt Ltd<br />
+              303, Naren Pearl, Magarpatta Rd<br />
+              above Axis Bank, Hadapsar, Pune - 411036
             </p>
-            <span className="text-xs text-slate-500 mt-1 block">Head Office</span>
-          </div>
+            <span className="text-xs text-slate-500 mt-1 block">Click for directions →</span>
+          </button>
 
           {/* Business Hours */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 text-center hover:shadow-lg transition-shadow">
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 text-center hover:shadow-lg transition-all duration-300">
             <div className="w-14 h-14 mx-auto mb-4 rounded-xl flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${COLORS.green}, #004a4d)` }}>
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -232,13 +309,29 @@ export default function ContactUsPage() {
                     />
                     {errors.budget && <p className="mt-1.5 text-sm" style={{ color: COLORS.red }}>{errors.budget}</p>}
                   </div>
-                  <div>
+                  <div className="relative">
                     <label htmlFor="preferredLocation" className="block text-sm font-medium text-slate-700 mb-1.5">Preferred Location</label>
                     <input
                       type="text" id="preferredLocation" name="preferredLocation" value={formData.preferredLocation} onChange={handleChange}
                       className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#005E60]/20 focus:border-[#005E60] transition"
                       placeholder="e.g., Wakad, Hinjewadi, Baner"
+                      onFocus={() => formData.preferredLocation.length > 1 && setShowLocationSuggestions(true)}
+                      onBlur={() => setTimeout(() => setShowLocationSuggestions(false), 200)}
                     />
+                    {showLocationSuggestions && locationSuggestions.length > 0 && (
+                      <div className="absolute z-10 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
+                        {locationSuggestions.map((loc, idx) => (
+                          <button
+                            key={idx}
+                            type="button"
+                            onClick={() => selectLocation(loc)}
+                            className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+                          >
+                            {loc}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -255,16 +348,20 @@ export default function ContactUsPage() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full sm:w-auto px-8 py-3.5 text-white font-semibold rounded-xl transition shadow-lg flex items-center justify-center gap-2"
+                    className="w-full sm:w-auto px-8 py-3.5 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                     style={{ 
                       background: `linear-gradient(135deg, ${COLORS.green}, #004a4d)`,
                       boxShadow: `0 10px 25px -5px ${COLORS.green}40`
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.background = `linear-gradient(135deg, #004a4d, #003537)`;
+                      if (!isSubmitting) {
+                        e.currentTarget.style.background = `linear-gradient(135deg, #004a4d, #003537)`;
+                      }
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.background = `linear-gradient(135deg, ${COLORS.green}, #004a4d)`;
+                      if (!isSubmitting) {
+                        e.currentTarget.style.background = `linear-gradient(135deg, ${COLORS.green}, #004a4d)`;
+                      }
                     }}
                   >
                     {isSubmitting ? (
@@ -285,7 +382,7 @@ export default function ContactUsPage() {
                 </div>
 
                 {status === "success" && (
-                  <div className="p-4 rounded-xl flex items-start gap-3" style={{ backgroundColor: '#005E60/10', border: `1px solid ${COLORS.green}30`, color: COLORS.green }}>
+                  <div className="p-4 rounded-xl flex items-start gap-3 animate-in fade-in duration-300" style={{ backgroundColor: '#005E60/10', border: `1px solid ${COLORS.green}30`, color: COLORS.green }}>
                     <svg className="w-5 h-5 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: COLORS.green }}>
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
@@ -296,7 +393,7 @@ export default function ContactUsPage() {
                   </div>
                 )}
                 {status === "error" && (
-                  <div className="p-4 rounded-xl flex items-start gap-3" style={{ backgroundColor: `${COLORS.red}10`, border: `1px solid ${COLORS.red}30`, color: COLORS.red }}>
+                  <div className="p-4 rounded-xl flex items-start gap-3 animate-in fade-in duration-300" style={{ backgroundColor: `${COLORS.red}10`, border: `1px solid ${COLORS.red}30`, color: COLORS.red }}>
                     <svg className="w-5 h-5 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: COLORS.red }}>
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
@@ -313,26 +410,60 @@ export default function ContactUsPage() {
           {/* Right Panel: CTA & FAQ */}
           <div className="lg:col-span-5 space-y-6">
             {/* Property Search CTA */}
-            <div className="rounded-2xl p-6 sm:p-8 text-white shadow-lg" style={{ background: `linear-gradient(135deg, ${COLORS.green}, #004a4d, #003537)` }}>
+            <button 
+              onClick={handleBrowseProperties}
+              className="w-full rounded-2xl p-6 sm:p-8 text-white shadow-lg transition-all duration-300 hover:scale-105 text-left group"
+              style={{ background: `linear-gradient(135deg, ${COLORS.green}, #004a4d, #003537)` }}
+            >
               <h3 className="text-2xl font-bold mb-3">Looking for Properties?</h3>
               <p className="text-white/90 mb-6">
                 Browse our verified listings in Pune, Mumbai & KDMC. Get instant access to exclusive deals and pre-launch projects.
               </p>
-              <button className="px-6 py-3 font-semibold rounded-xl transition shadow-lg flex items-center gap-2 group" style={{ backgroundColor: COLORS.yellow, color: COLORS.red }}>
+              <div className="inline-flex items-center px-6 py-3 font-semibold rounded-xl transition-all duration-300 shadow-lg gap-2 group-hover:gap-3" style={{ backgroundColor: COLORS.yellow, color: COLORS.red }}>
                 Browse Properties
-                <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>
-              </button>
+              </div>
               <p className="text-xs text-white/60 mt-4">*100% verified listings • Zero brokerage on select properties</p>
+            </button>
+
+            {/* Google Maps Embedded View */}
+            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
+              <div className="p-4 pb-0">
+                <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+                  <MapPin size={18} style={{ color: COLORS.green }} />
+                  Our Location
+                </h3>
+                <p className="text-sm text-slate-500 mt-1">303, Naren Pearl, Magarpatta Rd, above Axis Bank, Hadapsar, Pune</p>
+              </div>
+              <div className="h-48 w-full mt-2">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3783.676517088379!2d73.926046!3d18.504167!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc2c1e8a5d8f2d7%3A0x8e5d4f3e7c6b8a9f!2sAssociatte%20PropTech%20Pvt%20Ltd!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Associatte PropTech Office Location"
+                ></iframe>
+              </div>
+              <button
+                onClick={handleMapRedirect}
+                className="w-full p-3 text-center text-sm font-medium transition-colors border-t border-slate-200"
+                style={{ color: COLORS.green }}
+              >
+                Open in Google Maps →
+              </button>
             </div>
 
             {/* Why Choose Us */}
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow">
               <h3 className="text-xl font-bold text-slate-900 mb-4">Why Choose Associatte?</h3>
               <ul className="space-y-3">
-                <li className="flex items-start gap-3">
-                  <svg className="w-5 h-5 mt-0.5 flex-shrink-0" style={{ color: COLORS.green }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <li className="flex items-start gap-3 group">
+                  <svg className="w-5 h-5 mt-0.5 flex-shrink-0 transition-transform group-hover:scale-110" style={{ color: COLORS.green }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                   <div>
@@ -340,17 +471,17 @@ export default function ContactUsPage() {
                     <p className="text-sm text-slate-600">Every listing is physically verified with real photos & documents</p>
                   </div>
                 </li>
-                <li className="flex items-start gap-3">
-                  <svg className="w-5 h-5 mt-0.5 flex-shrink-0" style={{ color: COLORS.green }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <li className="flex items-start gap-3 group">
+                  <svg className="w-5 h-5 mt-0.5 flex-shrink-0 transition-transform group-hover:scale-110" style={{ color: COLORS.green }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                   <div>
                     <p className="font-medium text-slate-900">Expert Guidance</p>
-                    <p className="text-sm text-slate-600">15+ years of real estate expertise at your service</p>
+                    <p className="text-sm text-slate-600">20+ years of real estate expertise at your service</p>
                   </div>
                 </li>
-                <li className="flex items-start gap-3">
-                  <svg className="w-5 h-5 mt-0.5 flex-shrink-0" style={{ color: COLORS.green }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <li className="flex items-start gap-3 group">
+                  <svg className="w-5 h-5 mt-0.5 flex-shrink-0 transition-transform group-hover:scale-110" style={{ color: COLORS.green }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                   <div>
@@ -358,8 +489,8 @@ export default function ContactUsPage() {
                     <p className="text-sm text-slate-600">No hidden charges, complete transparency in every transaction</p>
                   </div>
                 </li>
-                <li className="flex items-start gap-3">
-                  <svg className="w-5 h-5 mt-0.5 flex-shrink-0" style={{ color: COLORS.green }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <li className="flex items-start gap-3 group">
+                  <svg className="w-5 h-5 mt-0.5 flex-shrink-0 transition-transform group-hover:scale-110" style={{ color: COLORS.green }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                   <div>
@@ -370,31 +501,46 @@ export default function ContactUsPage() {
               </ul>
             </div>
 
-            {/* FAQ Section */}
+            {/* FAQ Section with Expand/Collapse */}
             <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
               <h3 className="text-xl font-bold text-slate-900 mb-6">Frequently Asked Questions</h3>
               
               <div className="space-y-4">
-                <div className="border-b border-slate-100 pb-4">
-                  <h4 className="font-semibold text-slate-900 mb-2">How do I schedule a site visit?</h4>
-                  <p className="text-sm text-slate-600 leading-relaxed">
+                <details className="group border-b border-slate-100 pb-4">
+                  <summary className="font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between">
+                    <span>How do I schedule a site visit?</span>
+                    <svg className="w-5 h-5 text-slate-500 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </summary>
+                  <p className="text-sm text-slate-600 leading-relaxed mt-3 pl-2">
                     Simply fill out this form or call us at +91 8881188181. Our team will coordinate with the builder/owner and schedule a convenient time for you to visit the property.
                   </p>
-                </div>
+                </details>
                 
-                <div className="border-b border-slate-100 pb-4">
-                  <h4 className="font-semibold text-slate-900 mb-2">Do you charge brokerage fees?</h4>
-                  <p className="text-sm text-slate-600 leading-relaxed">
+                <details className="group border-b border-slate-100 pb-4">
+                  <summary className="font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between">
+                    <span>Do you charge brokerage fees?</span>
+                    <svg className="w-5 h-5 text-slate-500 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </summary>
+                  <p className="text-sm text-slate-600 leading-relaxed mt-3 pl-2">
                     For most properties, we don't charge any brokerage from buyers. We work on a transparent fee structure that will be clearly communicated upfront.
                   </p>
-                </div>
+                </details>
                 
-                <div>
-                  <h4 className="font-semibold text-slate-900 mb-2">What documents are needed to buy a property?</h4>
-                  <p className="text-sm text-slate-600 leading-relaxed">
+                <details className="group">
+                  <summary className="font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between">
+                    <span>What documents are needed to buy a property?</span>
+                    <svg className="w-5 h-5 text-slate-500 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </summary>
+                  <p className="text-sm text-slate-600 leading-relaxed mt-3 pl-2">
                     Typically you'll need ID proof (PAN, Aadhaar), address proof, income documents, and photographs. Our team will guide you through the complete documentation process.
                   </p>
-                </div>
+                </details>
               </div>
             </div>
           </div>
@@ -403,3 +549,6 @@ export default function ContactUsPage() {
     </div>
   );
 }
+
+// Missing MapPin import
+import { MapPin } from "lucide-react";

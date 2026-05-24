@@ -73,7 +73,7 @@ export default function CtaFormSection({ city, title, subtitle, buttonText, form
             </motion.div>
 
             <motion.div variants={containerVariants} className="space-y-3">
-              {[{ icon: Phone, label: 'Call Us', value: '+91 87435 63546', href: 'tel:+918743563546' }, { icon: Mail, label: 'Email', value: '8743563546@noemail.paradise.com', href: 'mailto:8743563546@noemail.paradise.com' }, { icon: MapPin, label: 'Visit', value: `${city} Offices`, href: '/contact' }].map((item, index) => (
+              {[{ icon: Phone, label: 'Call Us', value: '+91 8881188181', href: 'tel:+918881188181' }, { icon: Mail, label: 'Email', value: 'info@associatte.com', href: 'mailto:info@associatte.com' }, { icon: MapPin, label: 'Visit', value: `${city} Offices`, href: '/contact' }].map((item, index) => (
                 <motion.a key={item.label} variants={itemVariants} href={item.href} className="flex items-center gap-3 text-gray-200 hover:text-white transition-colors group">
                   <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center group-hover:bg-[#F8C21C] transition-colors">
                     <item.icon className="w-5 h-5 text-[#F8C21C] group-hover:text-[#005E60] transition-colors" />

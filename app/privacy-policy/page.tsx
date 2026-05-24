@@ -15,8 +15,8 @@ export default function PrivacyPolicyPage() {
       content: (
         <p>
           This privacy policy ("Policy") describes how we collect, protect and use the personally identifiable information ("Personal Information") you ("User", "you" or "your") provide on the{' '}
-          <a href="https://associatte.co.in" className="text-[#005E60] hover:text-[#8B0000] hover:underline transition-colors">
-            https://associatte.co.in
+          <a href="https://associatte.com" className="text-[#005E60] hover:text-[#8B0000] hover:underline transition-colors">
+            https://associatte.com
           </a>{' '}
           website and any of its products or services (collectively, "Website" or "Services"). It also describes the choices available to you regarding our use of your personal information and how you can access and update this information. This Policy does not apply to the practices of companies that we do not own or control, or to individuals that we do not employ or manage.
         </p>
@@ -134,8 +134,8 @@ export default function PrivacyPolicyPage() {
             <p className="text-gray-700">Hadapsar, Pune - 411028</p>
             <p className="mt-2">
               <strong className="text-[#005E60]">Email:</strong>{' '}
-              <a href="mailto:info@associatte.co.in" className="text-[#005E60] hover:text-[#8B0000] hover:underline transition-colors">
-                info@associatte.co.in
+              <a href="mailto:info@associatte.com" className="text-[#005E60] hover:text-[#8B0000] hover:underline transition-colors">
+                info@associatte.com
               </a>
             </p>
           </address>

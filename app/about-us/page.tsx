@@ -70,8 +70,8 @@ export default function AboutUs() {
     name: 'Vikram Malik',
     role: 'Founder & CEO',
     image: '/Team/Sir.webp',
-    bio: "With 20+ years in India's real estate sector, Vikram founded Associatte to bring transparency, trust, and customer-first solutions to property buying. He's driven by a single mission: making quality homeownership accessible, stress-free, and completely brokerage-free for every family.",
-    social: { linkedin: '#', twitter: '#', email: 'info@associatte.co.in' },
+    bio: "With 25+ years in India's real estate sector, Vikram founded Associatte to bring transparency, trust, and customer-first solutions to property buying. He's driven by a single mission: making quality homeownership accessible, stress-free, and completely brokerage-free for every family.",
+    social: { linkedin: '#', twitter: '#', email: 'info@associatte.com' },
   };
 
   // 👥 Teams
@@ -675,8 +675,8 @@ export default function AboutUs() {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-500">
             <p>© 2026 Associatte PropTech Pvt Ltd. All rights reserved.</p>
             <div className="flex items-center gap-5 sm:gap-6">
-              <a href="mailto:info@associatte.co.in" className="flex items-center gap-2 hover:text-[#005E60] transition-colors">
-                <Mail className="w-4 h-4" /> info@associatte.co.in
+              <a href="mailto:info@associatte.com" className="flex items-center gap-2 hover:text-[#005E60] transition-colors">
+                <Mail className="w-4 h-4" /> info@associatte.com
               </a>
               <a href="tel:+918743563546" className="flex items-center gap-2 hover:text-[#8B0000] transition-colors">
                 <Phone className="w-4 h-4" /> +91 88 8118 8181

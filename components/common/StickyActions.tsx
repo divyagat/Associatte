@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // ⭐ Premium icons
-import { FaWhatsapp, FaFacebookF, FaInstagram } from 'react-icons/fa';
+import { FaWhatsapp, FaFacebookF, FaInstagram, FaLinkedinIn } from 'react-icons/fa';
 import { FiPhoneCall } from 'react-icons/fi';
 import { HiOutlineCalculator } from 'react-icons/hi';
 import { IoArrowUp } from 'react-icons/io5';
@@ -58,6 +58,15 @@ const ACTIONS: Array<{
     color: '#E4405F',
     type: 'external',
     url: 'https://www.instagram.com/vikramm.associatte?igsh=MXM5aXhmNmZsYThicg==',
+  },
+   // ✅ NEW: LinkedIn Button
+  {
+    id: 'linkedin',
+    label: 'LinkedIn',
+    icon: FaLinkedinIn,
+    color: '#0A66C2',
+    type: 'external',
+    url: 'https://www.linkedin.com/company/associatteindia/posts/?feedView=all', // 🔗 Replace with your actual LinkedIn URL
   },
 ];
 
