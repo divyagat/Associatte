@@ -1,8 +1,31 @@
 "use client";
 
-import { useState, FormEvent, ChangeEvent } from "react";
+import { useState, FormEvent, ChangeEvent, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { 
+  MapPin, 
+  Phone, 
+  Mail, 
+  Clock, 
+  Building2, 
+  CheckCircle2, 
+  AlertCircle,
+  ChevronDown,
+  Send,
+  Home,
+  Briefcase,
+  Mountain,
+  Key,
+  TrendingUp,
+  Star,
+  Shield,
+  Users,
+  FileCheck,
+  Sparkles,
+  ArrowRight,
+  Navigation
+} from "lucide-react";
 
 type FormData = {
   name: string;
@@ -16,21 +39,29 @@ type FormData = {
 
 type FormErrors = Partial<Record<keyof FormData, string>>;
 
-// ✅ Brand Colors
+// Brand Colors
 const COLORS = {
   red: '#8B0000',
   green: '#005E60',
   yellow: '#F8C21C',
 };
 
-// Predefined locations for autocomplete/suggestions
+// Predefined locations
 const POPULAR_LOCATIONS = [
   "Wakad", "Hinjewadi", "Baner", "Balewadi", "Kharadi", 
   "Viman Nagar", "Hadapsar", "Magarpatta", "Koregaon Park", 
   "Andheri", "Powai", "Thane", "Dombivli", "Kalyan"
 ];
 
-// Correct Office Address
+const PROPERTY_TYPES = [
+  { value: "residential", label: "Residential Apartment", icon: Home },
+  { value: "villa", label: "Villa / Bungalow", icon: Mountain },
+  { value: "commercial", label: "Commercial Space", icon: Briefcase },
+  { value: "plot", label: "Plot / Land", icon: Building2 },
+  { value: "rent", label: "Rental Property", icon: Key },
+  { value: "investment", label: "Investment Property", icon: TrendingUp },
+];
+
 const OFFICE_ADDRESS = "Associatte PropTech Pvt Ltd, 303, Naren Pearl, Magarpatta Rd, above Axis Bank, Hadapsar, Pune, Maharashtra 411036";
 const MAPS_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("Associatte PropTech Pvt Ltd 303 Naren Pearl Magarpatta Road Hadapsar Pune")}`;
 
@@ -50,6 +81,8 @@ export default function ContactUsPage() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [locationSuggestions, setLocationSuggestions] = useState<string[]>([]);
   const [showLocationSuggestions, setShowLocationSuggestions] = useState(false);
+  const [activeFaq, setActiveFaq] = useState<number | null>(null);
+  const locationInputRef = useRef<HTMLInputElement>(null);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -57,12 +90,10 @@ export default function ContactUsPage() {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     
-    // Clear error for this field when user types
     if (errors[name as keyof FormData]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
     }
 
-    // Handle location suggestions
     if (name === "preferredLocation" && value.length > 1) {
       const filtered = POPULAR_LOCATIONS.filter(loc => 
         loc.toLowerCase().includes(value.toLowerCase())
@@ -110,7 +141,6 @@ export default function ContactUsPage() {
     setStatus("idle");
 
     try {
-      // Simulate API call - Replace with actual API endpoint
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -123,7 +153,6 @@ export default function ContactUsPage() {
           name: "", email: "", phone: "", propertyType: "", 
           budget: "", preferredLocation: "", message: "" 
         });
-        // Auto-hide success message after 5 seconds
         setTimeout(() => setStatus("idle"), 5000);
       } else {
         throw new Error("Submission failed");
@@ -136,197 +165,210 @@ export default function ContactUsPage() {
     }
   };
 
-  const handleBrowseProperties = () => {
-    router.push("/properties");
-  };
+  const contactMethods = [
+    { 
+      icon: Phone, 
+      title: "Call Us", 
+      detail: "+91 8881188181", 
+      sub: "Tue-Mon 10AM-7PM IST",
+      action: () => window.location.href = "tel:+918881188181",
+      gradient: "from-emerald-600 to-teal-700"
+    },
+    { 
+      icon: Mail, 
+      title: "Email Us", 
+      detail: "info@associatte.com", 
+      sub: "Response within 24-48 hrs",
+      action: () => window.location.href = "mailto:info@associatte.com",
+      gradient: "from-blue-600 to-indigo-700"
+    },
+    { 
+      icon: MapPin, 
+      title: "Visit Us", 
+      detail: "Hadapsar, Pune", 
+      sub: "Get directions on map",
+      action: () => window.open(MAPS_URL, "_blank"),
+      gradient: "from-amber-600 to-orange-700"
+    },
+    { 
+      icon: Clock, 
+      title: "Business Hours", 
+      detail: "10:00 AM - 7:00 PM", 
+      sub: "Tuesday to Monday",
+      action: null,
+      gradient: "from-purple-600 to-pink-700"
+    },
+  ];
 
-  const handleCall = () => {
-    window.location.href = "tel:+918881188181";
-  };
+  const faqs = [
+    {
+      q: "How do I schedule a site visit?",
+      a: "Simply fill out the form or call us at +91 8881188181. Our team will coordinate with the builder and schedule a convenient time for you to visit the property.",
+    },
+    {
+      q: "Do you charge brokerage fees?",
+      a: "For most properties, we don't charge any brokerage from buyers. We work on a transparent fee structure that will be clearly communicated upfront.",
+    },
+    {
+      q: "What documents are needed to buy a property?",
+      a: "Typically you'll need ID proof (PAN, Aadhaar), address proof, income documents, and photographs. Our team will guide you through the complete documentation process.",
+    },
+    {
+      q: "Do you offer property management services?",
+      a: "Yes! We provide end-to-end property management including tenant finding, rent collection, maintenance, and legal compliance for property owners.",
+    },
+  ];
 
-  const handleEmail = () => {
-    window.location.href = "mailto:info@associatte.com";
-  };
-
-  const handleMapRedirect = () => {
-    window.open(MAPS_URL, "_blank");
-  };
+  const benefits = [
+    { icon: Shield, title: "Verified Properties", desc: "Every listing physically verified with real photos & documents" },
+    { icon: Users, title: "Expert Guidance", desc: "20+ years of real estate expertise at your service" },
+    { icon: FileCheck, title: "Transparent Process", desc: "No hidden charges, complete transparency in every transaction" },
+    { icon: Sparkles, title: "End-to-End Support", desc: "From property search to registration & beyond" },
+  ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
-      {/* Header */}
-      <section className="relative overflow-hidden border-b border-slate-200 bg-white py-12 px-4 sm:px-6 lg:px-8">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-[#005E60]/10 via-transparent to-transparent" />
-        <div className="relative max-w-7xl mx-auto text-center">
-          <p className="text-sm font-semibold tracking-widest" style={{ color: COLORS.green }}>Get in Touch</p>
-          <h1 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
-            Find Your Dream Property Today
-          </h1>
-          <p className="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">
-            Whether you&apos;re buying, selling, or investing, our expert team is here to guide you every step of the way.
-          </p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-white border-b border-slate-100">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#005E60]/5 via-transparent to-[#F8C21C]/5" />
+        <div className="absolute top-20 right-10 w-72 h-72 bg-[#005E60]/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 left-10 w-80 h-80 bg-[#F8C21C]/10 rounded-full blur-3xl" />
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
+          <div className="text-center max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#005E60]/10 mb-6">
+              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS.green }} />
+              <span className="text-sm font-medium" style={{ color: COLORS.green }}>Get in Touch</span>
+            </div>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900 mb-6">
+              Find Your{' '}
+              <span className="relative inline-block">
+                Dream Property
+                <svg className="absolute -bottom-2 left-0 w-full" height="8" viewBox="0 0 200 8" fill="none">
+                  <path d="M0 4L200 4" stroke={COLORS.yellow} strokeWidth="6" strokeLinecap="round"/>
+                </svg>
+              </span>
+            </h1>
+            <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto">
+              Whether you&apos;re buying, selling, or investing, our expert team is here to guide you every step of the way.
+            </p>
+          </div>
         </div>
       </section>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
         
-        {/* Top Contact Cards - All Clickable */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          {/* Call Us */}
-          <button 
-            onClick={handleCall}
-            className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group"
-          >
-            <div className="w-14 h-14 mx-auto mb-4 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105" style={{ background: `linear-gradient(135deg, ${COLORS.green}, #004a4d)` }}>
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-semibold text-slate-900 mb-2">Call Us</h3>
-            <p className="font-bold transition group-hover:scale-105" style={{ color: COLORS.green }}>+91 8881188181</p>
-            <p className="text-sm text-slate-500 mt-1">Tue-Mon 10AM-7PM IST</p>
-          </button>
-
-          {/* Email Us */}
-          <button 
-            onClick={handleEmail}
-            className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group"
-          >
-            <div className="w-14 h-14 mx-auto mb-4 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105" style={{ background: `linear-gradient(135deg, ${COLORS.green}, #004a4d)` }}>
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-semibold text-slate-900 mb-2">Email Us</h3>
-            <p className="font-bold transition group-hover:scale-105" style={{ color: COLORS.green }}>info@associatte.com</p>
-            <p className="text-sm text-slate-500 mt-1">Response within 24-48 hrs</p>
-          </button>
-
-          {/* Visit Us - Opens Google Maps */}
-          <button 
-            onClick={handleMapRedirect}
-            className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group"
-          >
-            <div className="w-14 h-14 mx-auto mb-4 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105" style={{ background: `linear-gradient(135deg, ${COLORS.green}, #004a4d)` }}>
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-semibold text-slate-900 mb-2">Visit Us</h3>
-            <p className="font-bold text-sm leading-relaxed transition group-hover:scale-105" style={{ color: COLORS.green }}>
-              Associatte PropTech Pvt Ltd<br />
-              303, Naren Pearl, Magarpatta Rd<br />
-              above Axis Bank, Hadapsar, Pune - 411036
-            </p>
-            <span className="text-xs text-slate-500 mt-1 block">Click for directions →</span>
-          </button>
-
-          {/* Business Hours */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 text-center hover:shadow-lg transition-all duration-300">
-            <div className="w-14 h-14 mx-auto mb-4 rounded-xl flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${COLORS.green}, #004a4d)` }}>
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-semibold text-slate-900 mb-2">Business Hours</h3>
-            <p className="font-bold" style={{ color: COLORS.green }}>10:00 AM - 7:00 PM</p>
-            <p className="text-sm text-slate-500 mt-1">Tuesday to Monday</p>
-          </div>
+        {/* Contact Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-16">
+          {contactMethods.map((method, idx) => (
+            <button
+              key={idx}
+              onClick={method.action || undefined}
+              className={`group relative bg-white rounded-2xl p-6 text-center transition-all duration-500 hover:-translate-y-2 hover:shadow-xl border border-slate-100 ${method.action ? 'cursor-pointer' : 'cursor-default'}`}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity duration-500" style={{ background: `linear-gradient(135deg, ${COLORS.green}, ${COLORS.yellow})` }} />
+              <div className={`relative w-14 h-14 mx-auto mb-4 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg bg-gradient-to-br ${method.gradient}`}>
+                <method.icon className="w-6 h-6 text-white" strokeWidth={1.5} />
+              </div>
+              <h3 className="text-lg font-semibold text-slate-900 mb-1">{method.title}</h3>
+              <p className="font-bold text-lg" style={{ color: COLORS.green }}>{method.detail}</p>
+              <p className="text-sm text-slate-400 mt-1">{method.sub}</p>
+            </button>
+          ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
           
-          {/* Left Panel: Contact Form */}
+          {/* Contact Form */}
           <div className="lg:col-span-7">
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${COLORS.green}, #004a4d)` }}>
-                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                  </svg>
+            <div className="bg-white rounded-3xl border border-slate-100 p-6 sm:p-8 shadow-xl shadow-slate-100/50">
+              <div className="flex items-center gap-3 mb-8">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-[#005E60] to-[#004a4d] shadow-lg">
+                  <Send className="w-5 h-5 text-white" />
                 </div>
-                <h2 className="text-2xl font-bold text-slate-900">Send us a Message</h2>
+                <div>
+                  <h2 className="text-2xl font-bold text-slate-900">Send us a Message</h2>
+                  <p className="text-slate-500 text-sm mt-0.5">Fill in the details below and we'll get back to you</p>
+                </div>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+              <form onSubmit={handleSubmit} className="space-y-6" noValidate>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-1.5">Full Name *</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">Full Name <span className="text-red-500">*</span></label>
                     <input
-                      type="text" id="name" name="name" value={formData.name} onChange={handleChange}
-                      className={`w-full px-4 py-3 rounded-xl border text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 transition ${errors.name ? `border-[${COLORS.red}] focus:ring-[${COLORS.red}]/20` : `border-slate-200 focus:ring-[${COLORS.green}]/20 focus:border-[${COLORS.green}]`}`}
+                      type="text" name="name" value={formData.name} onChange={handleChange}
+                      className={`w-full px-4 py-3 rounded-xl border bg-slate-50/50 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:bg-white transition-all duration-200 ${errors.name ? 'border-red-400 focus:ring-red-200' : 'border-slate-200 focus:ring-[#005E60]/20 focus:border-[#005E60]'}`}
                       placeholder="Enter your full name"
                     />
-                    {errors.name && <p className="mt-1.5 text-sm" style={{ color: COLORS.red }}>{errors.name}</p>}
+                    {errors.name && <p className="mt-1.5 text-sm text-red-500 flex items-center gap-1"><AlertCircle size={14} />{errors.name}</p>}
                   </div>
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1.5">Email Address *</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">Email Address <span className="text-red-500">*</span></label>
                     <input
-                      type="email" id="email" name="email" value={formData.email} onChange={handleChange}
-                      className={`w-full px-4 py-3 rounded-xl border text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 transition ${errors.email ? `border-[${COLORS.red}] focus:ring-[${COLORS.red}]/20` : `border-slate-200 focus:ring-[${COLORS.green}]/20 focus:border-[${COLORS.green}]`}`}
+                      type="email" name="email" value={formData.email} onChange={handleChange}
+                      className={`w-full px-4 py-3 rounded-xl border bg-slate-50/50 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:bg-white transition-all duration-200 ${errors.email ? 'border-red-400 focus:ring-red-200' : 'border-slate-200 focus:ring-[#005E60]/20 focus:border-[#005E60]'}`}
                       placeholder="Enter your email"
                     />
-                    {errors.email && <p className="mt-1.5 text-sm" style={{ color: COLORS.red }}>{errors.email}</p>}
+                    {errors.email && <p className="mt-1.5 text-sm text-red-500 flex items-center gap-1"><AlertCircle size={14} />{errors.email}</p>}
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
-                    <label htmlFor="phone" className="block text-sm font-medium text-slate-700 mb-1.5">Phone Number *</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">Phone Number <span className="text-red-500">*</span></label>
                     <input
-                      type="tel" id="phone" name="phone" value={formData.phone} onChange={handleChange}
-                      className={`w-full px-4 py-3 rounded-xl border text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 transition ${errors.phone ? `border-[${COLORS.red}] focus:ring-[${COLORS.red}]/20` : `border-slate-200 focus:ring-[${COLORS.green}]/20 focus:border-[${COLORS.green}]`}`}
+                      type="tel" name="phone" value={formData.phone} onChange={handleChange}
+                      className={`w-full px-4 py-3 rounded-xl border bg-slate-50/50 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:bg-white transition-all duration-200 ${errors.phone ? 'border-red-400 focus:ring-red-200' : 'border-slate-200 focus:ring-[#005E60]/20 focus:border-[#005E60]'}`}
                       placeholder="Enter 10-digit mobile number"
                     />
-                    {errors.phone && <p className="mt-1.5 text-sm" style={{ color: COLORS.red }}>{errors.phone}</p>}
+                    {errors.phone && <p className="mt-1.5 text-sm text-red-500 flex items-center gap-1"><AlertCircle size={14} />{errors.phone}</p>}
                   </div>
                   <div>
-                    <label htmlFor="propertyType" className="block text-sm font-medium text-slate-700 mb-1.5">Property Type *</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">Property Type <span className="text-red-500">*</span></label>
                     <select
-                      id="propertyType" name="propertyType" value={formData.propertyType} onChange={handleChange}
-                      className={`w-full px-4 py-3 rounded-xl border text-slate-900 focus:outline-none focus:ring-2 transition appearance-none bg-white ${errors.propertyType ? `border-[${COLORS.red}] focus:ring-[${COLORS.red}]/20` : `border-slate-200 focus:ring-[${COLORS.green}]/20 focus:border-[${COLORS.green}]`}`}
+                      name="propertyType" value={formData.propertyType} onChange={handleChange}
+                      className={`w-full px-4 py-3 rounded-xl border bg-slate-50/50 text-slate-900 focus:outline-none focus:ring-2 focus:bg-white transition-all duration-200 appearance-none ${errors.propertyType ? 'border-red-400 focus:ring-red-200' : 'border-slate-200 focus:ring-[#005E60]/20 focus:border-[#005E60]'}`}
                     >
                       <option value="" disabled>Select property type</option>
-                      <option value="residential">Residential (Apartment/Villa)</option>
-                      <option value="commercial">Commercial (Office/Shop)</option>
-                      <option value="plot">Plot/Land</option>
-                      <option value="rent">Rental Property</option>
-                      <option value="investment">Investment Property</option>
-                      <option value="other">Other</option>
+                      {PROPERTY_TYPES.map(type => (
+                        <option key={type.value} value={type.value}>{type.label}</option>
+                      ))}
                     </select>
-                    {errors.propertyType && <p className="mt-1.5 text-sm" style={{ color: COLORS.red }}>{errors.propertyType}</p>}
+                    {errors.propertyType && <p className="mt-1.5 text-sm text-red-500 flex items-center gap-1"><AlertCircle size={14} />{errors.propertyType}</p>}
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
-                    <label htmlFor="budget" className="block text-sm font-medium text-slate-700 mb-1.5">Budget Range *</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">Budget Range <span className="text-red-500">*</span></label>
                     <input
-                      type="text" id="budget" name="budget" value={formData.budget} onChange={handleChange}
-                      className={`w-full px-4 py-3 rounded-xl border text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 transition ${errors.budget ? `border-[${COLORS.red}] focus:ring-[${COLORS.red}]/20` : `border-slate-200 focus:ring-[${COLORS.green}]/20 focus:border-[${COLORS.green}]`}`}
+                      type="text" name="budget" value={formData.budget} onChange={handleChange}
+                      className={`w-full px-4 py-3 rounded-xl border bg-slate-50/50 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:bg-white transition-all duration-200 ${errors.budget ? 'border-red-400 focus:ring-red-200' : 'border-slate-200 focus:ring-[#005E60]/20 focus:border-[#005E60]'}`}
                       placeholder="e.g., ₹50L - ₹75L"
                     />
-                    {errors.budget && <p className="mt-1.5 text-sm" style={{ color: COLORS.red }}>{errors.budget}</p>}
+                    {errors.budget && <p className="mt-1.5 text-sm text-red-500 flex items-center gap-1"><AlertCircle size={14} />{errors.budget}</p>}
                   </div>
                   <div className="relative">
-                    <label htmlFor="preferredLocation" className="block text-sm font-medium text-slate-700 mb-1.5">Preferred Location</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">Preferred Location</label>
                     <input
-                      type="text" id="preferredLocation" name="preferredLocation" value={formData.preferredLocation} onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#005E60]/20 focus:border-[#005E60] transition"
+                      ref={locationInputRef}
+                      type="text" name="preferredLocation" value={formData.preferredLocation} onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#005E60]/20 focus:border-[#005E60] focus:bg-white transition-all duration-200"
                       placeholder="e.g., Wakad, Hinjewadi, Baner"
                       onFocus={() => formData.preferredLocation.length > 1 && setShowLocationSuggestions(true)}
                       onBlur={() => setTimeout(() => setShowLocationSuggestions(false), 200)}
                     />
                     {showLocationSuggestions && locationSuggestions.length > 0 && (
-                      <div className="absolute z-10 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
+                      <div className="absolute z-10 w-full mt-2 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
                         {locationSuggestions.map((loc, idx) => (
                           <button
                             key={idx}
                             type="button"
                             onClick={() => selectLocation(loc)}
-                            className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+                            className="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-2"
                           >
+                            <MapPin size={14} style={{ color: COLORS.green }} />
                             {loc}
                           </button>
                         ))}
@@ -336,34 +378,21 @@ export default function ContactUsPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-slate-700 mb-1.5">Message <span className="text-slate-400 font-normal">(Optional)</span></label>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Message <span className="text-slate-400 font-normal">(Optional)</span></label>
                   <textarea
-                    id="message" name="message" rows={4} value={formData.message} onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#005E60]/20 focus:border-[#005E60] transition resize-none"
+                    name="message" rows={4} value={formData.message} onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#005E60]/20 focus:border-[#005E60] focus:bg-white transition-all duration-200 resize-none"
                     placeholder="Tell us about your requirements, preferred amenities, timeline..."
                   />
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 pt-2">
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full sm:w-auto px-8 py-3.5 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
-                    style={{ 
-                      background: `linear-gradient(135deg, ${COLORS.green}, #004a4d)`,
-                      boxShadow: `0 10px 25px -5px ${COLORS.green}40`
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!isSubmitting) {
-                        e.currentTarget.style.background = `linear-gradient(135deg, #004a4d, #003537)`;
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isSubmitting) {
-                        e.currentTarget.style.background = `linear-gradient(135deg, ${COLORS.green}, #004a4d)`;
-                      }
-                    }}
-                  >
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="group relative w-full sm:w-auto px-8 py-3.5 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg overflow-hidden disabled:opacity-70 disabled:cursor-not-allowed"
+                  style={{ background: `linear-gradient(135deg, ${COLORS.green}, #004a4d)` }}
+                >
+                  <span className="relative z-10 flex items-center justify-center gap-2">
                     {isSubmitting ? (
                       <>
                         <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -373,33 +402,29 @@ export default function ContactUsPage() {
                         Submitting...
                       </>
                     ) : (
-                      "Submit Inquiry"
+                      <>
+                        Submit Inquiry
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      </>
                     )}
-                  </button>
-                  <p className="text-sm text-slate-500">
-                    Our property experts will contact you within 24-48 hours.
-                  </p>
-                </div>
+                  </span>
+                </button>
 
                 {status === "success" && (
-                  <div className="p-4 rounded-xl flex items-start gap-3 animate-in fade-in duration-300" style={{ backgroundColor: '#005E60/10', border: `1px solid ${COLORS.green}30`, color: COLORS.green }}>
-                    <svg className="w-5 h-5 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: COLORS.green }}>
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
+                  <div className="p-4 rounded-xl flex items-start gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300" style={{ backgroundColor: '#005E60/10', border: `1px solid ${COLORS.green}30` }}>
+                    <CheckCircle2 className="w-5 h-5 mt-0.5 shrink-0" style={{ color: COLORS.green }} />
                     <div>
-                      <p className="font-semibold">Inquiry Submitted Successfully!</p>
-                      <p className="text-sm mt-1">Thank you for your interest. Our property consultant will reach out to you shortly with personalized recommendations.</p>
+                      <p className="font-semibold" style={{ color: COLORS.green }}>Inquiry Submitted Successfully!</p>
+                      <p className="text-sm text-slate-600 mt-0.5">Thank you for your interest. Our property consultant will reach out to you shortly.</p>
                     </div>
                   </div>
                 )}
                 {status === "error" && (
-                  <div className="p-4 rounded-xl flex items-start gap-3 animate-in fade-in duration-300" style={{ backgroundColor: `${COLORS.red}10`, border: `1px solid ${COLORS.red}30`, color: COLORS.red }}>
-                    <svg className="w-5 h-5 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: COLORS.red }}>
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
+                  <div className="p-4 rounded-xl flex items-start gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300" style={{ backgroundColor: '#8B0000/10', border: `1px solid ${COLORS.red}30` }}>
+                    <AlertCircle className="w-5 h-5 mt-0.5 shrink-0" style={{ color: COLORS.red }} />
                     <div>
-                      <p className="font-semibold">Submission Failed</p>
-                      <p className="text-sm mt-1">Please try again or call us directly at +91 8881188181.</p>
+                      <p className="font-semibold" style={{ color: COLORS.red }}>Submission Failed</p>
+                      <p className="text-sm text-slate-600 mt-0.5">Please try again or call us directly at +91 8881188181.</p>
                     </div>
                   </div>
                 )}
@@ -407,37 +432,45 @@ export default function ContactUsPage() {
             </div>
           </div>
 
-          {/* Right Panel: CTA & FAQ */}
-          <div className="lg:col-span-5 space-y-6">
+          {/* Right Panel */}
+          <div className="lg:col-span-5 space-y-8">
+            
             {/* Property Search CTA */}
             <button 
-              onClick={handleBrowseProperties}
-              className="w-full rounded-2xl p-6 sm:p-8 text-white shadow-lg transition-all duration-300 hover:scale-105 text-left group"
+              onClick={() => router.push("/properties")}
+              className="group relative w-full rounded-2xl p-8 text-white shadow-xl transition-all duration-500 hover:scale-[1.02] text-left overflow-hidden"
               style={{ background: `linear-gradient(135deg, ${COLORS.green}, #004a4d, #003537)` }}
             >
-              <h3 className="text-2xl font-bold mb-3">Looking for Properties?</h3>
-              <p className="text-white/90 mb-6">
-                Browse our verified listings in Pune, Mumbai & KDMC. Get instant access to exclusive deals and pre-launch projects.
-              </p>
-              <div className="inline-flex items-center px-6 py-3 font-semibold rounded-xl transition-all duration-300 shadow-lg gap-2 group-hover:gap-3" style={{ backgroundColor: COLORS.yellow, color: COLORS.red }}>
-                Browse Properties
-                <svg className="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
+              <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-700" />
+              <div className="relative">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center">
+                    <Building2 className="w-6 h-6" />
+                  </div>
+                  <span className="text-sm font-medium tracking-wider bg-white/20 px-3 py-1 rounded-full">Limited Time</span>
+                </div>
+                <h3 className="text-2xl font-bold mb-3">Looking for Properties?</h3>
+                <p className="text-white/80 mb-6 leading-relaxed">
+                  Browse our verified listings in Pune, Mumbai & KDMC. Get instant access to exclusive deals and pre-launch projects.
+                </p>
+                <div className="inline-flex items-center gap-2 px-6 py-3 font-semibold rounded-xl bg-[#F8C21C] text-[#8B0000] transition-all duration-300 group-hover:gap-3 group-hover:shadow-lg">
+                  Browse Properties
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </div>
+                <p className="text-xs text-white/50 mt-4">*100% verified listings • Zero brokerage on select properties</p>
               </div>
-              <p className="text-xs text-white/60 mt-4">*100% verified listings • Zero brokerage on select properties</p>
             </button>
 
-            {/* Google Maps Embedded View */}
-            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
-              <div className="p-4 pb-0">
-                <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
-                  <MapPin size={18} style={{ color: COLORS.green }} />
-                  Our Location
-                </h3>
-                <p className="text-sm text-slate-500 mt-1">303, Naren Pearl, Magarpatta Rd, above Axis Bank, Hadapsar, Pune</p>
+            {/* Map Card */}
+            <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300">
+              <div className="p-5 pb-2">
+                <div className="flex items-center gap-2 mb-1">
+                  <Navigation className="w-5 h-5" style={{ color: COLORS.green }} />
+                  <h3 className="text-lg font-semibold text-slate-900">Our Location</h3>
+                </div>
+                <p className="text-sm text-slate-500">303, Naren Pearl, Magarpatta Rd, above Axis Bank, Hadapsar, Pune</p>
               </div>
-              <div className="h-48 w-full mt-2">
+              <div className="h-52 w-full mt-2">
                 <iframe
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3783.676517088379!2d73.926046!3d18.504167!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc2c1e8a5d8f2d7%3A0x8e5d4f3e7c6b8a9f!2sAssociatte%20PropTech%20Pvt%20Ltd!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
                   width="100%"
@@ -450,97 +483,60 @@ export default function ContactUsPage() {
                 ></iframe>
               </div>
               <button
-                onClick={handleMapRedirect}
-                className="w-full p-3 text-center text-sm font-medium transition-colors border-t border-slate-200"
+                onClick={() => window.open(MAPS_URL, "_blank")}
+                className="w-full py-3.5 text-center text-sm font-medium transition-all border-t border-slate-100 hover:bg-slate-50 flex items-center justify-center gap-2"
                 style={{ color: COLORS.green }}
               >
-                Open in Google Maps →
+                <MapPin size={16} />
+                Open in Google Maps
               </button>
             </div>
 
             {/* Why Choose Us */}
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow">
-              <h3 className="text-xl font-bold text-slate-900 mb-4">Why Choose Associatte?</h3>
-              <ul className="space-y-3">
-                <li className="flex items-start gap-3 group">
-                  <svg className="w-5 h-5 mt-0.5 flex-shrink-0 transition-transform group-hover:scale-110" style={{ color: COLORS.green }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <div>
-                    <p className="font-medium text-slate-900">Verified Properties</p>
-                    <p className="text-sm text-slate-600">Every listing is physically verified with real photos & documents</p>
+            <div className="bg-white rounded-2xl border border-slate-100 p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+              <div className="flex items-center gap-2 mb-6">
+                <Star className="w-5 h-5" style={{ color: COLORS.yellow, fill: COLORS.yellow }} />
+                <h3 className="text-xl font-bold text-slate-900">Why Choose Associatte?</h3>
+              </div>
+              <div className="space-y-5">
+                {benefits.map((benefit, idx) => (
+                  <div key={idx} className="flex gap-4 group">
+                    <div className="w-10 h-10 rounded-lg bg-[#005E60]/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
+                      <benefit.icon className="w-5 h-5" style={{ color: COLORS.green }} />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-slate-900">{benefit.title}</p>
+                      <p className="text-sm text-slate-500 leading-relaxed">{benefit.desc}</p>
+                    </div>
                   </div>
-                </li>
-                <li className="flex items-start gap-3 group">
-                  <svg className="w-5 h-5 mt-0.5 flex-shrink-0 transition-transform group-hover:scale-110" style={{ color: COLORS.green }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <div>
-                    <p className="font-medium text-slate-900">Expert Guidance</p>
-                    <p className="text-sm text-slate-600">20+ years of real estate expertise at your service</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-3 group">
-                  <svg className="w-5 h-5 mt-0.5 flex-shrink-0 transition-transform group-hover:scale-110" style={{ color: COLORS.green }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <div>
-                    <p className="font-medium text-slate-900">Transparent Process</p>
-                    <p className="text-sm text-slate-600">No hidden charges, complete transparency in every transaction</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-3 group">
-                  <svg className="w-5 h-5 mt-0.5 flex-shrink-0 transition-transform group-hover:scale-110" style={{ color: COLORS.green }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <div>
-                    <p className="font-medium text-slate-900">End-to-End Support</p>
-                    <p className="text-sm text-slate-600">From property search to registration & beyond</p>
-                  </div>
-                </li>
-              </ul>
+                ))}
+              </div>
             </div>
 
-            {/* FAQ Section with Expand/Collapse */}
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-              <h3 className="text-xl font-bold text-slate-900 mb-6">Frequently Asked Questions</h3>
+            {/* FAQ */}
+            <div className="bg-white rounded-2xl border border-slate-100 p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+              <div className="flex items-center gap-2 mb-6">
+                <div className="w-8 h-8 rounded-lg bg-[#F8C21C]/20 flex items-center justify-center">
+                  <span className="text-lg font-bold" style={{ color: COLORS.red }}>?</span>
+                </div>
+                <h3 className="text-xl font-bold text-slate-900">Frequently Asked Questions</h3>
+              </div>
               
-              <div className="space-y-4">
-                <details className="group border-b border-slate-100 pb-4">
-                  <summary className="font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between">
-                    <span>How do I schedule a site visit?</span>
-                    <svg className="w-5 h-5 text-slate-500 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </summary>
-                  <p className="text-sm text-slate-600 leading-relaxed mt-3 pl-2">
-                    Simply fill out this form or call us at +91 8881188181. Our team will coordinate with the builder/owner and schedule a convenient time for you to visit the property.
-                  </p>
-                </details>
-                
-                <details className="group border-b border-slate-100 pb-4">
-                  <summary className="font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between">
-                    <span>Do you charge brokerage fees?</span>
-                    <svg className="w-5 h-5 text-slate-500 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </summary>
-                  <p className="text-sm text-slate-600 leading-relaxed mt-3 pl-2">
-                    For most properties, we don't charge any brokerage from buyers. We work on a transparent fee structure that will be clearly communicated upfront.
-                  </p>
-                </details>
-                
-                <details className="group">
-                  <summary className="font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between">
-                    <span>What documents are needed to buy a property?</span>
-                    <svg className="w-5 h-5 text-slate-500 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </summary>
-                  <p className="text-sm text-slate-600 leading-relaxed mt-3 pl-2">
-                    Typically you'll need ID proof (PAN, Aadhaar), address proof, income documents, and photographs. Our team will guide you through the complete documentation process.
-                  </p>
-                </details>
+              <div className="space-y-3">
+                {faqs.map((faq, idx) => (
+                  <div key={idx} className="border-b border-slate-100 last:border-0">
+                    <button
+                      onClick={() => setActiveFaq(activeFaq === idx ? null : idx)}
+                      className="w-full py-4 flex items-center justify-between text-left font-medium text-slate-900 hover:text-[#005E60] transition-colors"
+                    >
+                      <span>{faq.q}</span>
+                      <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform duration-300 ${activeFaq === idx ? 'rotate-180' : ''}`} />
+                    </button>
+                    <div className={`overflow-hidden transition-all duration-300 ${activeFaq === idx ? 'max-h-32 pb-4' : 'max-h-0'}`}>
+                      <p className="text-sm text-slate-500 leading-relaxed pr-4">{faq.a}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -549,6 +545,3 @@ export default function ContactUsPage() {
     </div>
   );
 }
-
-// Missing MapPin import
-import { MapPin } from "lucide-react";
