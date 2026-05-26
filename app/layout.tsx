@@ -1,8 +1,6 @@
-// app/layout.tsx
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
 import Header from "../components/Layout/Header";
 import Footer from "../components/Layout/Footer";
 import { Providers } from "./providers";
@@ -95,33 +93,6 @@ const organizationSchema = {
   "priceRange": "₹75L - ₹1Cr+"
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <html lang="en">
-      <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ 
-            __html: JSON.stringify(organizationSchema) 
-          }}
-        />
-      </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Header />
-        
-        <Providers>
-          <main className="min-h-screen">{children}</main>
-        </Providers>
-        
-        <Footer />
-        
-        {/* ✅ Sticky Actions now manages its own modal */}
-        <StickyActions showScrollTop={true} />
-      </body>
-    </html>
-  );
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (<html lang="en" suppressHydrationWarning><head><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }} /></head><body className={`${geistSans.variable} ${geistMono.variable} antialiased`} suppressHydrationWarning><Header /><Providers><main className="min-h-screen">{children}</main></Providers><Footer /><StickyActions showScrollTop={true} /></body></html>);
 }
