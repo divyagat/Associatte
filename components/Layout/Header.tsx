@@ -56,18 +56,18 @@ export default function Header() {
   const navLinks = [
     { name: 'Home', href: '/' },
     { name: 'Projects', href: '/projects' },
-    { 
-      name: 'Properties', 
-      href: '/properties',
-      dropdown: [
-        { label: 'Residential', href: '/properties?type=residential', icon: Home, color: COLORS.green },
-        { label: 'Commercial', href: '/properties?type=commercial', icon: Building, color: COLORS.red },
-        { label: 'Pre-Launch', href: '/properties?type=pre-launch', icon: Construction, color: COLORS.yellow },
-        { label: 'Ready', href: '/properties?type=ready', icon: KeyRound, color: COLORS.green },
-        { label: 'Rent', href: '/properties?type=rent', icon: Tag, color: COLORS.red },
-        { label: 'Plots', href: '/properties?type=plots', icon: MapPin, color: COLORS.yellow },
-      ]
-    },
+    // { 
+    //   name: 'Properties', 
+    //   href: '/properties',
+    //   dropdown: [
+    //     { label: 'Residential', href: '/properties?type=residential', icon: Home, color: COLORS.green },
+    //     { label: 'Commercial', href: '/properties?type=commercial', icon: Building, color: COLORS.red },
+    //     { label: 'Pre-Launch', href: '/properties?type=pre-launch', icon: Construction, color: COLORS.yellow },
+    //     { label: 'Ready', href: '/properties?type=ready', icon: KeyRound, color: COLORS.green },
+    //     { label: 'Rent', href: '/properties?type=rent', icon: Tag, color: COLORS.red },
+    //     { label: 'Plots', href: '/properties?type=plots', icon: MapPin, color: COLORS.yellow },
+    //   ]
+    // },
     { name: 'About Us', href: '/about-us' },
     { 
       name: 'Services', 
