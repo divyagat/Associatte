@@ -7,6 +7,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import properties from '../../../data/properties.json';
 import EnquiryPopup from '@/components/common/EnquiryPopup';
+import { getBuilderLogo, getBuilderSlug } from '../../../lib/builder-slugs';
 
 // 🎨 Strategic Color Palette
 const COLORS = {
@@ -26,6 +27,11 @@ function transformProject(project) {
   const bhkTypes = project.priceDetails?.configurations?.map(c => c.type) || [];
   const uniqueBhk = [...new Set(bhkTypes)].filter(Boolean).join(', ');
   
+  // Get builder logo and slug
+  const developerName = project.developer?.name || '';
+  const developerLogo = getBuilderLogo(developerName);
+  const developerSlug = getBuilderSlug(developerName);
+  
   return {
     title: project.name,
     slug: project.slug,
@@ -33,6 +39,8 @@ function transformProject(project) {
     priceRange: project.priceDetails?.range || project.price,
     pricePerSqft: project.priceDetails?.perSqft,
     developer: project.developer?.name,
+    developerLogo: developerLogo,
+    developerSlug: developerSlug,
     image: project.image,
     bhk: uniqueBhk,
     
@@ -89,7 +97,9 @@ function transformProject(project) {
       name: project.developer?.name,
       establishmentYear: project.developer?.established,
       listedProjects: project.developer?.projectsCount?.toString(),
-      description: project.developer?.description
+      description: project.developer?.description,
+      logo: developerLogo,
+      slug: developerSlug
     },
     reraNumber: project.reraNumber,
     // Store original project for similar projects filtering
@@ -423,7 +433,16 @@ export default function PropertyPage() {
                     <span className="px-2.5 py-1 text-xs font-semibold bg-[#005E60] text-white rounded-full">RERA Verified</span>
                   )}
                 </div>
-                <p className="text-gray-600 mt-1">By <span className="font-semibold text-[#005E60]">{propertyData.developer}</span></p>
+                {/* Developer name with link to projects page */}
+                <p className="text-gray-600 mt-1">
+                  By{' '}
+                  <Link 
+                    href={`/projects?builder=${encodeURIComponent(propertyData.developer)}`}
+                    className="font-semibold text-[#005E60] hover:underline transition-colors"
+                  >
+                    {propertyData.developer}
+                  </Link>
+                </p>
               </div>
               <div className="text-right">
                 <div className="text-2xl lg:text-3xl font-bold" style={{ color: COLORS.alert }}>{propertyData.priceRange}</div>
@@ -589,11 +608,27 @@ export default function PropertyPage() {
                 </div>
               </section>
 
+              {/* Developer Section with Logo and Link to Projects */}
               <section id="developer" className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 scroll-mt-24">
                 <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2"><span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>About {propertyData.developerInfo.name}</h2>
                 <div className="flex flex-col md:flex-row gap-6 items-start">
-                  <div className="w-24 h-24 bg-gradient-to-br from-[#005E60] to-[#003d40] rounded-2xl flex items-center justify-center text-white font-bold text-lg shadow-lg flex-shrink-0">
-                    {propertyData.developerInfo.name?.substring(0, 5).toUpperCase() || 'BUILDER'}
+                  {/* Builder Logo */}
+                  <div className="w-24 h-24 bg-white rounded-2xl border border-gray-200 flex items-center justify-center shadow-sm p-2 flex-shrink-0">
+                    {propertyData.developerLogo ? (
+                      <img 
+                        src={propertyData.developerLogo} 
+                        alt={propertyData.developer} 
+                        className="max-w-full max-h-full object-contain"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.parentElement.innerHTML = `<div class="w-full h-full bg-gradient-to-br from-[#005E60] to-[#003d40] rounded-xl flex items-center justify-center text-white font-bold text-lg">${propertyData.developerInfo.name?.substring(0, 2).toUpperCase()}</div>`;
+                        }}
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-[#005E60] to-[#003d40] rounded-xl flex items-center justify-center text-white font-bold text-lg">
+                        {propertyData.developerInfo.name?.substring(0, 2).toUpperCase() || 'B'}
+                      </div>
+                    )}
                   </div>
                   <div className="flex-1">
                     <div className="grid grid-cols-2 gap-4 mb-4">
@@ -607,7 +642,14 @@ export default function PropertyPage() {
                       </div>
                     </div>
                     <p className="text-gray-700 leading-relaxed mb-4">{propertyData.developerInfo.description || `${propertyData.developerInfo.name} is a trusted name in real estate with decades of experience delivering quality homes.`}</p>
-                    <button className="text-[#005E60] font-semibold text-sm hover:underline">View All Projects →</button>
+                    {/* Link to projects page filtered by builder */}
+                    <Link 
+                      href={`/projects?builder=${encodeURIComponent(propertyData.developer)}`}
+                      className="inline-flex items-center gap-1 text-[#005E60] font-semibold text-sm hover:gap-2 transition-all duration-300"
+                    >
+                      View All Projects by {propertyData.developerInfo.name?.split(' ')[0]}
+                      <Icons.ArrowRight />
+                    </Link>
                   </div>
                 </div>
               </section>
@@ -696,7 +738,7 @@ export default function PropertyPage() {
           </div>
         </main>
 
-        {/* 🔻 Similar Projects Section - WORKING NOW */}
+        {/* Similar Projects Section */}
         {similarProjects.length > 0 && (
           <section className="bg-white border-t border-gray-200 py-12">
             <div className="max-w-7xl mx-auto px-4">
