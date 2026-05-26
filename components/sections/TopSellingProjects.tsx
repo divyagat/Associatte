@@ -2,11 +2,12 @@
 
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import Link from 'next/link';
-import { MapPin, Heart, ChevronRight, ChevronLeft, Star, Phone, Filter, X, TrendingUp, Award, Shield } from 'lucide-react';
+import { MapPin, Heart, ChevronRight, ChevronLeft, Star, Phone, Filter, X, TrendingUp, Award } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import type { SearchFilters } from '../Home/Hero';
 import properties from '@/data/properties.json';
+import EnquiryPopup from '@/components/common/EnquiryPopup';
 
 export interface CardProject {
   slug: string;
@@ -76,7 +77,6 @@ function mapProjectToCard(project: any): CardProject {
     : areas[0] || 'Area On Request';
   
   const bhkTypes = project.priceDetails?.configurations?.map((c: any) => c.type) || [];
-  const uniqueBhk = [...new Set(bhkTypes)].filter(Boolean).join(', ') || 'TBA';
   const bhkValues: string[] = [...new Set(bhkTypes)]
     .map((t: any) => String(t || '').trim())
     .filter(Boolean) as string[];
@@ -92,7 +92,7 @@ function mapProjectToCard(project: any): CardProject {
     city,
     price: project.priceDetails?.range || project.price || 'Price On Request',
     area: areaRange,
-    type: uniqueBhk,
+    type: bhkValues.join(', ') || 'TBA',
     image: project.image || project.images?.[0] || 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&q=80',
     rating: typeof project.rating === 'number' ? project.rating : 4.5,
     priceNumeric: parsePriceToNumeric(project.priceDetails?.range || project.price),
@@ -127,6 +127,10 @@ export default function TopSellingProjects({
   const [viewportWidth, setViewportWidth] = useState(1280);
   const carouselRef = useRef<HTMLDivElement>(null);
   const [touchStart, setTouchStart] = useState(0);
+  
+  // Popup state
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<CardProject | null>(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -302,6 +306,22 @@ export default function TopSellingProjects({
     return count;
   }, [filters]);
 
+  // Popup handlers
+  const handleOpenPopup = (project: CardProject) => {
+    setSelectedProject(project);
+    setIsPopupOpen(true);
+  };
+
+  const handleClosePopup = () => {
+    setIsPopupOpen(false);
+    setSelectedProject(null);
+  };
+
+  const handleFormSubmit = (payload: any) => {
+    console.log('Enquiry submitted:', payload);
+    // You can add API call here to send the enquiry
+  };
+
   const getCityColor = () => {
     switch(city) {
       case 'Pune': return '#005E60';
@@ -413,10 +433,10 @@ export default function TopSellingProjects({
                     className="flex-shrink-0"
                     style={{ width: `calc(${100 / itemsPerView}% - ${gapSize * (itemsPerView - 1) / itemsPerView}px)` }}
                   >
-                    <Link href={`/property/${project.slug}`}>
-                      <div className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                        
-                        {/* Image */}
+                    <div className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                      
+                      {/* Image */}
+                      <Link href={`/property/${project.slug}`}>
                         <div className="relative h-48 overflow-hidden bg-gray-100">
                           <img
                             src={project.image}
@@ -467,48 +487,58 @@ export default function TopSellingProjects({
                             {project.price}
                           </div>
                         </div>
+                      </Link>
 
-                        {/* Content */}
-                        <div className="p-4">
-                          <h3 className="font-semibold text-gray-900 text-base mb-1 line-clamp-1">
+                      {/* Content */}
+                      <div className="p-4">
+                        <Link href={`/property/${project.slug}`}>
+                          <h3 className="font-semibold text-gray-900 text-base mb-1 line-clamp-1 hover:text-[#005E60] transition-colors">
                             {project.name}
                           </h3>
-                          
-                          <div className="flex items-center gap-1 text-gray-500 text-xs mb-2">
-                            <MapPin size={10} />
-                            <span className="line-clamp-1">{project.location}</span>
-                          </div>
+                        </Link>
+                        
+                        <div className="flex items-center gap-1 text-gray-500 text-xs mb-2">
+                          <MapPin size={10} />
+                          <span className="line-clamp-1">{project.location}</span>
+                        </div>
 
-                          {/* BHK Tags */}
-                          <div className="flex flex-wrap gap-1.5 mb-3">
-                            {project.bhkValues?.slice(0, 2).map((bhk) => (
-                              <span key={bhk} className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-xs">
-                                {bhk} BHK
-                              </span>
-                            ))}
-                            {project.bhkValues && project.bhkValues.length > 2 && (
-                              <span className="px-2 py-0.5 bg-gray-100 text-gray-500 rounded text-xs">
-                                +{project.bhkValues.length - 2}
-                              </span>
-                            )}
-                          </div>
+                        {/* BHK Tags */}
+                        <div className="flex flex-wrap gap-1.5 mb-3">
+                          {project.bhkValues?.slice(0, 2).map((bhk) => (
+                            <span key={bhk} className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-xs">
+                              {bhk} BHK
+                            </span>
+                          ))}
+                          {project.bhkValues && project.bhkValues.length > 2 && (
+                            <span className="px-2 py-0.5 bg-gray-100 text-gray-500 rounded text-xs">
+                              +{project.bhkValues.length - 2}
+                            </span>
+                          )}
+                        </div>
 
-                          {/* Divider */}
-                          <div className="border-t border-gray-100 my-3"></div>
+                        {/* Divider */}
+                        <div className="border-t border-gray-100 my-3"></div>
 
-                          {/* Actions */}
-                          <div className="flex gap-2">
-                            <div className="flex-1 text-center py-1.5 border rounded-lg text-sm font-medium transition-colors hover:bg-gray-50" style={{ borderColor: cityColor, color: cityColor }}>
-                              Details
-                            </div>
-                            <button className="flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg text-white text-sm" style={{ backgroundColor: cityColor }}>
-                              <Phone size={12} />
-                              <span>Call</span>
-                            </button>
-                          </div>
+                        {/* Actions */}
+                        <div className="flex gap-2">
+                          <Link 
+                            href={`/property/${project.slug}`}
+                            className="flex-1 text-center py-1.5 border rounded-lg text-sm font-medium transition-colors hover:bg-gray-50"
+                            style={{ borderColor: cityColor, color: cityColor }}
+                          >
+                            Details
+                          </Link>
+                          <button 
+                            onClick={() => handleOpenPopup(project)}
+                            className="flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg text-white text-sm transition-all hover:scale-105"
+                            style={{ backgroundColor: cityColor }}
+                          >
+                            <Phone size={12} />
+                            <span>Call</span>
+                          </button>
                         </div>
                       </div>
-                    </Link>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -545,6 +575,23 @@ export default function TopSellingProjects({
         </div>
 
       </div>
+
+      {/* Enquiry Popup */}
+      <EnquiryPopup
+        isOpen={isPopupOpen}
+        onClose={handleClosePopup}
+        projectName={selectedProject?.name || 'Properties'}
+        projectTagline={`Get details about ${selectedProject?.name || 'this property'} from our experts`}
+        theme="gradient"
+        onSubmit={handleFormSubmit}
+        trackingData={{
+          source: 'top_selling_projects',
+          campaign: 'call_button_enquiry',
+          medium: 'organic',
+          city: city.toLowerCase()
+        }}
+        simplified={true}
+      />
     </section>
   );
 }

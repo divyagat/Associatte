@@ -1,12 +1,13 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { motion, useScroll, useInView, type Variants, type EasingFunction } from 'framer-motion';
 import { 
   Users, Building2, MapPin, Star, ShieldCheck, Heart, 
   ArrowRight, Check, Home, Key, TrendingUp, Clock,
   Globe, Mail, Phone, Award, Target, Share2,
 } from 'lucide-react';
+import EnquiryPopup from '@/components/common/EnquiryPopup';
 
 // ✅ Brand Colors
 const COLORS = {
@@ -31,6 +32,9 @@ const stagger: Variants = {
 
 export default function AboutUs() {
   const { scrollYProgress } = useScroll();
+  
+  // ✅ Popup state
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
   
   // ✅ Fixed: Proper ref typing for useInView
   const statsRef = useRef<HTMLElement>(null);
@@ -110,6 +114,20 @@ export default function AboutUs() {
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     const target = e.target as HTMLImageElement;
     target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 150 150"%3E%3Crect fill="%23f1f5f9" width="150" height="150"/%3E%3Ctext fill="%2394a3b8" font-family="sans-serif" font-size="14" x="50%25" y="50%25" text-anchor="middle" dominant-baseline="middle"%3ENo Image%3C/text%3E%3C/svg%3E';
+  };
+
+  // ✅ Handle popup open/close
+  const handleOpenPopup = () => {
+    setIsPopupOpen(true);
+  };
+
+  const handleClosePopup = () => {
+    setIsPopupOpen(false);
+  };
+
+  const handleFormSubmit = (payload: any) => {
+    console.log('Enquiry submitted:', payload);
+    // You can add API call here to send the enquiry
   };
 
   return (
@@ -649,6 +667,7 @@ export default function AboutUs() {
                 <motion.button 
                   whileHover={{ scale: 1.04, boxShadow: "0 20px 40px -15px rgba(0,0,0,0.3)" }}
                   whileTap={{ scale: 0.98 }}
+                  onClick={handleOpenPopup}
                   className="px-6 sm:px-8 py-3 sm:py-4 font-bold rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base"
                   style={{ backgroundColor: '#F8C21C', color: '#8B0000' }}
                 >
@@ -685,6 +704,22 @@ export default function AboutUs() {
           </div>
         </div>
       </footer>
+
+      {/* Enquiry Popup */}
+      <EnquiryPopup
+        isOpen={isPopupOpen}
+        onClose={handleClosePopup}
+        projectName="Properties at Associatte"
+        projectTagline="Get personalized property recommendations from our experts"
+        theme="gradient"
+        onSubmit={handleFormSubmit}
+        trackingData={{
+          source: 'about_us_page',
+          campaign: 'about_us_enquiry',
+          medium: 'organic',
+          city: 'national'
+        }}
+      />
     </main>
   );
 }

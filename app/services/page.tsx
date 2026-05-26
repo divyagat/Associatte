@@ -41,7 +41,7 @@ const SERVICES = [
       'Negotiation support & price analysis',
       'Post-purchase assistance',
     ],
-    stats: { value: '20+', label: 'Years Experience', icon: Award },
+    stats: { value: '25+', label: 'Years Experience', icon: Award },
     cta: 'Book Free Consultation',
     ctaHref: '/contact-us?service=consultation',
   },
