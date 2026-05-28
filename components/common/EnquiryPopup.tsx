@@ -19,7 +19,7 @@ interface EnquiryPopupProps {
   theme?: 'default' | 'gradient';
   trackingData?: TrackingData;
   onSubmit?: (payload: any) => void;
-  simplified?: boolean; // If true, shows only Name, Phone, Email(optional)
+  simplified?: boolean;
 }
 
 interface FormErrors {
@@ -44,20 +44,17 @@ export default function EnquiryPopup({
 
   if (!isOpen) return null;
 
-  // Validate phone number (Indian format)
   const validatePhone = (phone: string): boolean => {
-    const phoneRegex = /^[6-9]\d{9}$/; // Indian mobile number: starts with 6-9 and 10 digits total
+    const phoneRegex = /^[6-9]\d{9}$/;
     return phoneRegex.test(phone);
   };
 
-  // Validate email (optional but if provided must be valid)
   const validateEmail = (email: string): boolean => {
-    if (!email) return true; // Email is optional
+    if (!email) return true;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
-  // Validate name
   const validateName = (name: string): boolean => {
     return name.trim().length >= 2;
   };
@@ -70,7 +67,6 @@ export default function EnquiryPopup({
     const email = formData.get('email') as string;
     const message = simplified ? `Interested in ${projectName}` : (formData.get('message') as string);
 
-    // Validation
     const newErrors: FormErrors = {};
     
     if (!validateName(name)) {
@@ -105,10 +101,20 @@ export default function EnquiryPopup({
     
     console.log('📩 Enquiry Submitted:', payload);
     
-    // Simulate API call (replace with your actual API)
     try {
-      // await fetch('/api/enquiry', { method: 'POST', body: JSON.stringify(payload) });
-      await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
+      const response = await fetch('/api/enquiry', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Submission failed');
+      }
       
       setSubmitSuccess(true);
       
@@ -116,13 +122,14 @@ export default function EnquiryPopup({
         onSubmit(payload);
       }
       
-      // Close popup after success
       setTimeout(() => {
         setSubmitSuccess(false);
         onClose?.();
       }, 1500);
+      
     } catch (error) {
       console.error('Error submitting enquiry:', error);
+      alert('Failed to submit. Please try again or contact us directly.');
     } finally {
       setIsSubmitting(false);
     }
@@ -137,7 +144,6 @@ export default function EnquiryPopup({
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -146,7 +152,6 @@ export default function EnquiryPopup({
             className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
           />
           
-          {/* Popup Modal */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -155,7 +160,6 @@ export default function EnquiryPopup({
             className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-[90%] max-w-md"
           >
             <div className={`${isGradient ? gradientStyle : 'bg-white'} rounded-2xl shadow-2xl overflow-hidden`}>
-              {/* Header */}
               <div className={`flex justify-between items-center p-6 ${isGradient ? 'border-b border-white/20' : 'border-b border-gray-100'}`}>
                 <div>
                   <h2 className={`text-2xl font-bold ${isGradient ? 'text-white' : 'bg-gradient-to-r from-[#8B0000] to-[#005E60] bg-clip-text text-transparent'}`}>
@@ -174,7 +178,6 @@ export default function EnquiryPopup({
                 </button>
               </div>
               
-              {/* Project Name Badge */}
               {projectName && (
                 <div className={`px-6 py-3 ${isGradient ? 'bg-white/5' : 'bg-gray-50'} border-b ${isGradient ? 'border-white/10' : 'border-gray-100'}`}>
                   <div className="flex items-center gap-2">
@@ -186,7 +189,6 @@ export default function EnquiryPopup({
                 </div>
               )}
               
-              {/* Success Message */}
               {submitSuccess && (
                 <div className="m-4 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2">
                   <CheckCircle className="w-5 h-5 text-green-500" />
@@ -194,9 +196,7 @@ export default function EnquiryPopup({
                 </div>
               )}
               
-              {/* Form */}
               <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                {/* Name Field */}
                 <div>
                   <label className={`block text-sm font-medium mb-2 ${isGradient ? 'text-white/90' : 'text-gray-700'}`}>
                     Full Name *
@@ -225,7 +225,6 @@ export default function EnquiryPopup({
                   )}
                 </div>
                 
-                {/* Phone Field */}
                 <div>
                   <label className={`block text-sm font-medium mb-2 ${isGradient ? 'text-white/90' : 'text-gray-700'}`}>
                     Phone Number *
@@ -256,7 +255,6 @@ export default function EnquiryPopup({
                   )}
                 </div>
                 
-                {/* Email Field - Optional */}
                 <div>
                   <label className={`block text-sm font-medium mb-2 ${isGradient ? 'text-white/90' : 'text-gray-700'}`}>
                     Email Address <span className="text-xs opacity-70">(Optional)</span>
@@ -284,7 +282,6 @@ export default function EnquiryPopup({
                   )}
                 </div>
                 
-                {/* Message Field - Only for full form */}
                 {!simplified && (
                   <div>
                     <label className={`block text-sm font-medium mb-2 ${isGradient ? 'text-white/90' : 'text-gray-700'}`}>
