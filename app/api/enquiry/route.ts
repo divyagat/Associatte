@@ -1,7 +1,8 @@
+// app/api/enquiry/route.ts
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const ZAPIER_WEBHOOK_URL = 'https://hooks.zapier.com/hooks/catch/13262817/3gs59wo/';
+const B2BBRICKS_WEBHOOK_URL = 'https://connector.b2bbricks.com/api/Integration/hook/43d25585-78eb-4866-85d8-ef77d6dedb4e';
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,8 +17,8 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // Prepare data for Zapier/CRM
-    const crmData = {
+    // Prepare data for B2B Bricks
+    const b2bData = {
       name: name.trim(),
       phone: phone.trim(),
       email: email || '',
@@ -37,28 +38,28 @@ export async function POST(request: NextRequest) {
       pageUrl: request.headers.get('referer') || ''
     };
     
-    console.log('📤 Sending to Zapier CRM:', {
-      name: crmData.name,
-      phone: crmData.phone,
-      project: crmData.projectName,
-      time: crmData.submittedTime
+    console.log('📤 Sending to B2B Bricks:', {
+      name: b2bData.name,
+      phone: b2bData.phone,
+      project: b2bData.projectName,
+      time: b2bData.submittedTime
     });
     
-    // Send to Zapier webhook
-    const zapierResponse = await fetch(ZAPIER_WEBHOOK_URL, {
+    // Send to B2B Bricks webhook
+    const response = await fetch(B2BBRICKS_WEBHOOK_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(crmData),
+      body: JSON.stringify(b2bData),
     });
     
-    if (!zapierResponse.ok) {
-      throw new Error(`Zapier webhook failed with status ${zapierResponse.status}`);
+    if (!response.ok) {
+      throw new Error(`B2B Bricks webhook failed with status ${response.status}`);
     }
     
-    const zapierResult = await zapierResponse.text();
-    console.log('✅ Successfully sent to CRM:', zapierResult);
+    const result = await response.text();
+    console.log('✅ Successfully sent to B2B Bricks:', result);
     
     // Return success response
     return NextResponse.json(
@@ -66,16 +67,16 @@ export async function POST(request: NextRequest) {
         success: true, 
         message: 'Enquiry submitted successfully',
         data: { 
-          name: crmData.name, 
-          phone: crmData.phone,
-          projectName: crmData.projectName
+          name: b2bData.name, 
+          phone: b2bData.phone,
+          projectName: b2bData.projectName
         }
       },
       { status: 200 }
     );
     
   } catch (error) {
-    console.error('❌ Error processing enquiry:', error);
+    console.error('❌ Error sending to B2B Bricks:', error);
     
     return NextResponse.json(
       { 

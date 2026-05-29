@@ -261,10 +261,10 @@ function EmiCalculatorPopup({ onClose }) {
 }
 
 export default function PropertyPage() {
-  const [propertyData, setPropertyData] = useState(null);
+   const [propertyData, setPropertyData] = useState(null);
   const [similarProjects, setSimilarProjects] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showPopup, setShowPopup] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);  // ← ADD THIS
   const [showEmiPopup, setShowEmiPopup] = useState(false);
   const [galleryModalOpen, setGalleryModalOpen] = useState(false);
   const [galleryStartIndex, setGalleryStartIndex] = useState(0);
@@ -802,16 +802,18 @@ export default function PropertyPage() {
         <GalleryModal images={propertyData.gallery} initialIndex={galleryStartIndex} onClose={() => setGalleryModalOpen(false)} />
       )}
 
-      <EnquiryPopup
-        isOpen={showPopup}
-        onClose={() => setShowPopup(false)}
-        projectName={propertyData.title}
-        projectImage={propertyData.image}
-        projectTagline={`Get pricing & floor plans for ${propertyData.title}`}
-        theme="gradient"
-        trackingData={{ source: 'property_detail', campaign: propertyData.slug || 'unknown', medium: 'organic' }}
-        onSubmit={handleEnquirySubmit}
-      />
+   <EnquiryPopup
+  isOpen={showPopup}
+  onClose={() => setShowPopup(false)}
+  projectName={propertyData?.title || "Properties"}
+  projectTagline={`Get detailed information about ${propertyData?.title}`}
+  trackingData={{
+    source: 'property_page',
+    campaign: 'property_enquiry',
+    medium: 'organic',
+    city: propertyData?.location?.city
+  }}
+/>
 
       {showEmiPopup && <EmiCalculatorPopup onClose={() => setShowEmiPopup(false)} />}
     </>
