@@ -1,13 +1,26 @@
-// app/api/enquiry/route.ts
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 const B2BBRICKS_WEBHOOK_URL = 'https://connector.b2bbricks.com/api/Integration/hook/43d25585-78eb-4866-85d8-ef77d6dedb4e';
 
+function getClientIp(request: NextRequest): string {
+  const forwardedFor = request.headers.get('x-forwarded-for');
+  const realIp = request.headers.get('x-real-ip');
+  const cfConnectingIp = request.headers.get('cf-connecting-ip');
+  const trueClientIp = request.headers.get('true-client-ip');
+  
+  if (forwardedFor) return forwardedFor.split(',')[0].trim();
+  if (realIp) return realIp;
+  if (cfConnectingIp) return cfConnectingIp;
+  if (trueClientIp) return trueClientIp;
+  
+  return 'Unknown';
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, phone, email, message, projectName, trackingData } = body;
+    const { name, phone, email, project, remark } = body;
     
     // Validate required fields
     if (!name || !phone) {
@@ -17,32 +30,36 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // Prepare data for B2B Bricks
-    const b2bData = {
+    // Extract ONLY the last 10 digits from mobile number
+    let mobileNumber = phone.trim();
+    // Remove any non-digit characters (+, spaces, -, etc.)
+    const digitsOnly = mobileNumber.replace(/\D/g, '');
+    // Get the last 10 digits (handles cases with country code)
+    const last10Digits = digitsOnly.slice(-10);
+    
+    // Validate that we have exactly 10 digits
+    if (last10Digits.length !== 10) {
+      return NextResponse.json(
+        { error: 'Invalid mobile number. Please enter a valid 10-digit number.' },
+        { status: 400 }
+      );
+    }
+    
+    // Prepare data for CRM - mobile field only contains 10-digit number
+    const crmData = {
       name: name.trim(),
-      phone: phone.trim(),
+      mobile: last10Digits, // ONLY 10-digit number (e.g., "8228377777")
       email: email || '',
-      message: message || `Interested in ${projectName}`,
-      projectName: projectName || 'General Enquiry',
-      source: trackingData?.source || 'website',
-      campaign: trackingData?.campaign || '',
-      medium: trackingData?.medium || 'organic',
-      city: trackingData?.city || '',
-      submittedAt: new Date().toISOString(),
-      submittedDate: new Date().toLocaleDateString('en-IN'),
-      submittedTime: new Date().toLocaleTimeString('en-IN'),
-      userAgent: request.headers.get('user-agent') || '',
-      ipAddress: request.headers.get('x-forwarded-for') || 
-                 request.headers.get('x-real-ip') || 
-                 'Unknown',
-      pageUrl: request.headers.get('referer') || ''
+      project: project || 'General Enquiry',
+      remark: remark || `Website Enquiry | IP: ${getClientIp(request)}`
     };
     
-    console.log('📤 Sending to B2B Bricks:', {
-      name: b2bData.name,
-      phone: b2bData.phone,
-      project: b2bData.projectName,
-      time: b2bData.submittedTime
+    console.log('📤 Sending to B2B Bricks CRM:', {
+      name: crmData.name,
+      mobile: crmData.mobile,
+      mobileLength: crmData.mobile.length,
+      project: crmData.project,
+      remark: crmData.remark
     });
     
     // Send to B2B Bricks webhook
@@ -51,15 +68,17 @@ export async function POST(request: NextRequest) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(b2bData),
+      body: JSON.stringify(crmData),
     });
     
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error('❌ B2B Bricks error response:', errorText);
       throw new Error(`B2B Bricks webhook failed with status ${response.status}`);
     }
     
     const result = await response.text();
-    console.log('✅ Successfully sent to B2B Bricks:', result);
+    console.log('✅ Successfully sent to B2B Bricks CRM:', result);
     
     // Return success response
     return NextResponse.json(
@@ -67,9 +86,9 @@ export async function POST(request: NextRequest) {
         success: true, 
         message: 'Enquiry submitted successfully',
         data: { 
-          name: b2bData.name, 
-          phone: b2bData.phone,
-          projectName: b2bData.projectName
+          name: crmData.name, 
+          mobile: crmData.mobile,
+          project: crmData.project
         }
       },
       { status: 200 }
@@ -88,7 +107,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Handle OPTIONS request for CORS if needed
+// Handle OPTIONS request for CORS
 export async function OPTIONS() {
   return new NextResponse(null, {
     status: 200,
