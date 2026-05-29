@@ -802,17 +802,19 @@ export default function PropertyPage() {
         <GalleryModal images={propertyData.gallery} initialIndex={galleryStartIndex} onClose={() => setGalleryModalOpen(false)} />
       )}
 
-   <EnquiryPopup
+ <EnquiryPopup
   isOpen={showPopup}
   onClose={() => setShowPopup(false)}
   projectName={propertyData?.title || "Properties"}
   projectTagline={`Get detailed information about ${propertyData?.title}`}
+  formName={`Property Enquiry - ${propertyData?.title}`} // This will appear in remark field
   trackingData={{
     source: 'property_page',
     campaign: 'property_enquiry',
     medium: 'organic',
     city: propertyData?.location?.city
   }}
+  showLegalLinks={true}
 />
 
       {showEmiPopup && <EmiCalculatorPopup onClose={() => setShowEmiPopup(false)} />}
