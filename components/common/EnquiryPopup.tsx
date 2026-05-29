@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Mail, Phone, User, MessageSquare, Sparkles, CheckCircle, AlertCircle } from 'lucide-react';
+import { X, Mail, Phone, User, CheckCircle, AlertCircle } from 'lucide-react';
 import { useState } from 'react';
 
 interface TrackingData {
@@ -19,7 +19,6 @@ interface EnquiryPopupProps {
   theme?: 'default' | 'gradient';
   trackingData?: TrackingData;
   onSubmit?: (payload: any) => void;
-  simplified?: boolean;
 }
 
 interface FormErrors {
@@ -35,8 +34,7 @@ export default function EnquiryPopup({
   projectTagline = 'Get personalized property recommendations',
   theme = 'default',
   trackingData,
-  onSubmit,
-  simplified = false
+  onSubmit
 }: EnquiryPopupProps) {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -50,7 +48,7 @@ export default function EnquiryPopup({
   };
 
   const validateEmail = (email: string): boolean => {
-    if (!email) return true;
+    if (!email) return true; // Email is optional
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
@@ -65,7 +63,6 @@ export default function EnquiryPopup({
     const name = formData.get('name') as string;
     const phone = formData.get('phone') as string;
     const email = formData.get('email') as string;
-    const message = simplified ? `Interested in ${projectName}` : (formData.get('message') as string);
 
     const newErrors: FormErrors = {};
     
@@ -91,9 +88,9 @@ export default function EnquiryPopup({
 
     const payload = {
       name: name.trim(),
-      email: email || '',
       phone: phone.trim(),
-      message,
+      email: email || '',
+      message: `Interested in ${projectName}`,
       projectName,
       trackingData,
       timestamp: new Date().toISOString()
@@ -163,7 +160,7 @@ export default function EnquiryPopup({
               <div className={`flex justify-between items-center p-6 ${isGradient ? 'border-b border-white/20' : 'border-b border-gray-100'}`}>
                 <div>
                   <h2 className={`text-2xl font-bold ${isGradient ? 'text-white' : 'bg-gradient-to-r from-[#8B0000] to-[#005E60] bg-clip-text text-transparent'}`}>
-                    {simplified ? 'Request Callback' : 'Enquiry Form'}
+                    Request Callback
                   </h2>
                   <p className={`text-sm mt-1 ${isGradient ? 'text-white/80' : 'text-gray-500'}`}>
                     {projectTagline}
@@ -178,19 +175,8 @@ export default function EnquiryPopup({
                 </button>
               </div>
               
-              {projectName && (
-                <div className={`px-6 py-3 ${isGradient ? 'bg-white/5' : 'bg-gray-50'} border-b ${isGradient ? 'border-white/10' : 'border-gray-100'}`}>
-                  <div className="flex items-center gap-2">
-                    <Sparkles className={`w-4 h-4 ${isGradient ? 'text-[#F8C21C]' : 'text-[#005E60]'}`} />
-                    <span className={`text-sm font-medium ${isGradient ? 'text-white/90' : 'text-gray-700'}`}>
-                      Interested in: <span className="font-bold">{projectName}</span>
-                    </span>
-                  </div>
-                </div>
-              )}
-              
               {submitSuccess && (
-                <div className="m-4 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2">
+                <div className="mx-4 mt-4 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2">
                   <CheckCircle className="w-5 h-5 text-green-500" />
                   <span className="text-sm text-green-700">Thank you! We'll contact you soon.</span>
                 </div>
@@ -282,27 +268,6 @@ export default function EnquiryPopup({
                   )}
                 </div>
                 
-                {!simplified && (
-                  <div>
-                    <label className={`block text-sm font-medium mb-2 ${isGradient ? 'text-white/90' : 'text-gray-700'}`}>
-                      Message
-                    </label>
-                    <div className="relative">
-                      <MessageSquare className={`absolute left-3 top-3 w-4 h-4 ${isGradient ? 'text-white/50' : 'text-gray-400'}`} />
-                      <textarea
-                        name="message"
-                        rows={4}
-                        placeholder="Tell us about your property requirements..."
-                        className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60] focus:border-transparent transition-all resize-none ${
-                          isGradient 
-                            ? 'bg-white/10 border-white/20 text-white placeholder-white/50' 
-                            : 'bg-white border-gray-200 text-gray-900'
-                        }`}
-                      />
-                    </div>
-                  </div>
-                )}
-                
                 <button
                   type="submit"
                   disabled={isSubmitting}
@@ -319,7 +284,7 @@ export default function EnquiryPopup({
                       Submitting...
                     </span>
                   ) : (
-                    simplified ? 'Request Callback' : 'Submit Enquiry'
+                    'Request Callback'
                   )}
                 </button>
               </form>
