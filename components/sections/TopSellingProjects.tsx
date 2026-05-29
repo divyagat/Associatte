@@ -577,21 +577,21 @@ export default function TopSellingProjects({
       </div>
 
       {/* Enquiry Popup */}
-      <EnquiryPopup
-        isOpen={isPopupOpen}
-        onClose={handleClosePopup}
-        projectName={selectedProject?.name || 'Properties'}
-        projectTagline={`Get details about ${selectedProject?.name || 'this property'} from our experts`}
-        theme="gradient"
-        onSubmit={handleFormSubmit}
-        trackingData={{
-          source: 'top_selling_projects',
-          campaign: 'call_button_enquiry',
-          medium: 'organic',
-          city: city.toLowerCase()
-        }}
-        simplified={true}
-      />
+   <EnquiryPopup
+  isOpen={isPopupOpen}
+  onClose={handleClosePopup}
+  projectName={selectedProject?.name || 'Properties'}
+  projectTagline={`Get details about ${selectedProject?.name || 'this property'} from our experts`}
+  theme="gradient"
+  onSubmit={handleFormSubmit}
+  trackingData={{
+    source: 'top_selling_projects',
+    campaign: 'call_button_enquiry',
+    medium: 'organic',
+    city: city.toLowerCase()
+  }}
+  // simplified prop removed - the new component is already simplified
+/>
     </section>
   );
 }

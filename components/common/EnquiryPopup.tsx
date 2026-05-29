@@ -1,8 +1,8 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Mail, Phone, User, CheckCircle, AlertCircle, Globe } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { X, Mail, Phone, User, CheckCircle, AlertCircle, Globe, ChevronDown } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 
 interface TrackingData {
@@ -31,6 +31,27 @@ interface FormErrors {
   consent?: string;
 }
 
+interface CountryCode {
+  code: string;
+  flag: string;
+  name: string;
+}
+
+const countryCodes: CountryCode[] = [
+  { code: '+91', flag: '🇮🇳', name: 'India' },
+  { code: '+1', flag: '🇺🇸', name: 'USA' },
+  { code: '+44', flag: '🇬🇧', name: 'UK' },
+  { code: '+971', flag: '🇦🇪', name: 'UAE' },
+  { code: '+65', flag: '🇸🇬', name: 'Singapore' },
+  { code: '+61', flag: '🇦🇺', name: 'Australia' },
+  { code: '+49', flag: '🇩🇪', name: 'Germany' },
+  { code: '+33', flag: '🇫🇷', name: 'France' },
+  { code: '+81', flag: '🇯🇵', name: 'Japan' },
+  { code: '+852', flag: '🇭🇰', name: 'Hong Kong' },
+  { code: '+86', flag: '🇨🇳', name: 'China' },
+  { code: '+7', flag: '🇷🇺', name: 'Russia' },
+];
+
 export default function EnquiryPopup({
   isOpen = false,
   onClose,
@@ -47,33 +68,25 @@ export default function EnquiryPopup({
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [consentGiven, setConsentGiven] = useState(false);
   const [clientIp, setClientIp] = useState<string>('');
-  const [countryCode, setCountryCode] = useState<string>('+91'); // Default India
+  const [countryCode, setCountryCode] = useState<string>('+91');
+  const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Fetch client IP and country code
   useEffect(() => {
     const fetchIpAndCountry = async () => {
       try {
-        // Fetch IP
         const ipResponse = await fetch('https://api.ipify.org?format=json');
         const ipData = await ipResponse.json();
         setClientIp(ipData.ip);
 
-        // Fetch country code based on IP
         const countryResponse = await fetch(`https://ipapi.co/${ipData.ip}/json/`);
         const countryData = await countryResponse.json();
         if (countryData.country_code) {
-          // Map country code to dial code
           const dialCodes: { [key: string]: string } = {
-            'IN': '+91', // India
-            'US': '+1',  // USA
-            'GB': '+44', // UK
-            'AE': '+971', // UAE
-            'SG': '+65', // Singapore
-            'AU': '+61', // Australia
-            'CA': '+1',  // Canada
-            'DE': '+49', // Germany
-            'FR': '+33', // France
-            'JP': '+81', // Japan
+            'IN': '+91', 'US': '+1', 'GB': '+44', 'AE': '+971',
+            'SG': '+65', 'AU': '+61', 'CA': '+1', 'DE': '+49',
+            'FR': '+33', 'JP': '+81', 'HK': '+852', 'CN': '+86', 'RU': '+7',
           };
           setCountryCode(dialCodes[countryData.country_code] || '+91');
         }
@@ -89,15 +102,24 @@ export default function EnquiryPopup({
     }
   }, [isOpen]);
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsCountryDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   if (!isOpen) return null;
 
-  // Validation: Name should only contain letters and spaces
   const validateName = (name: string): boolean => {
     const nameRegex = /^[A-Za-z\s]{2,}$/;
     return nameRegex.test(name.trim());
   };
 
-  // Validation: Phone should be exactly 10 digits (without country code)
   const validatePhone = (phone: string): boolean => {
     const phoneRegex = /^[6-9]\d{9}$/;
     return phoneRegex.test(phone);
@@ -113,18 +135,16 @@ export default function EnquiryPopup({
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
     const name = formData.get('name') as string;
-    const phone = formData.get('phone') as string; // This should be only 10 digits
+    const phone = formData.get('phone') as string;
     const email = formData.get('email') as string;
     const selectedCountryCode = formData.get('countryCode') as string;
 
     const newErrors: FormErrors = {};
 
-    // Name validation - only characters
     if (!validateName(name)) {
       newErrors.name = 'Please enter a valid name (only letters and spaces, minimum 2 characters)';
     }
 
-    // Phone validation - exactly 10 digits
     if (!validatePhone(phone)) {
       newErrors.phone = 'Please enter a valid 10-digit mobile number (starts with 6-9)';
     }
@@ -145,16 +165,12 @@ export default function EnquiryPopup({
     setErrors({});
     setIsSubmitting(true);
 
-    // IMPORTANT: Send ONLY the 10-digit phone number
-    const cleanPhoneNumber = phone.trim(); // This is already 10 digits from input
-
-    // Create remark with form name, IP address, and country code
+    const cleanPhoneNumber = phone.trim();
     const remark = `${formName} | IP: ${clientIp} | Country Code: ${selectedCountryCode}`;
 
-    // Prepare payload for CRM - phone is sent as plain 10-digit number
     const payload = {
       name: name.trim(),
-      phone: cleanPhoneNumber, // ONLY the 10-digit number (e.g., "8228377777")
+      phone: cleanPhoneNumber,
       email: email || '',
       project: projectName,
       remark: remark
@@ -162,7 +178,7 @@ export default function EnquiryPopup({
 
     console.log('📩 Enquiry Submitted to CRM:', {
       name: payload.name,
-      mobile: payload.phone, // Will be 10 digits only
+      mobile: payload.phone,
       mobileLength: payload.phone.length,
       email: payload.email,
       project: payload.project,
@@ -175,7 +191,7 @@ export default function EnquiryPopup({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(payload), // This sends the 10-digit number
+        body: JSON.stringify(payload),
       });
 
       const data = await response.json();
@@ -208,6 +224,10 @@ export default function EnquiryPopup({
   const gradientStyle = isGradient
     ? 'bg-gradient-to-r from-[#8B0000] to-[#005E60]'
     : 'bg-white';
+
+  const getSelectedCountry = () => {
+    return countryCodes.find(c => c.code === countryCode) || countryCodes[0];
+  };
 
   return (
     <AnimatePresence>
@@ -255,7 +275,7 @@ export default function EnquiryPopup({
               )}
 
               <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                {/* Name Field - Only Characters */}
+                {/* Name Field */}
                 <div>
                   <label className={`block text-sm font-medium mb-2 ${isGradient ? 'text-white/90' : 'text-gray-700'}`}>
                     Full Name *
@@ -266,7 +286,7 @@ export default function EnquiryPopup({
                       type="text"
                       name="name"
                       required
-                      placeholder="Enter your full name (letters only)"
+                      placeholder="Enter your full name"
                       pattern="[A-Za-z\s]{2,}"
                       title="Only letters and spaces allowed"
                       className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60] focus:border-transparent transition-all ${errors.name
@@ -276,7 +296,6 @@ export default function EnquiryPopup({
                             : 'bg-white border-gray-200 text-gray-900'
                         }`}
                       onInput={(e) => {
-                        // Remove any numbers or special characters in real-time
                         e.currentTarget.value = e.currentTarget.value.replace(/[^A-Za-z\s]/g, '');
                       }}
                     />
@@ -287,38 +306,67 @@ export default function EnquiryPopup({
                       {errors.name}
                     </p>
                   )}
-                  <p className={`text-xs mt-1 ${isGradient ? 'text-white/50' : 'text-gray-400'}`}>
-                    Only letters and spaces allowed
-                  </p>
                 </div>
 
-                {/* Phone Field with Country Code */}
+                {/* Phone Field with Enhanced Country Code */}
                 <div>
                   <label className={`block text-sm font-medium mb-2 ${isGradient ? 'text-white/90' : 'text-gray-700'}`}>
                     Phone Number *
                   </label>
                   <div className="flex gap-2">
-                    {/* Country Code Dropdown */}
-                    <div className="relative w-24">
-                      <Globe className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 ${isGradient ? 'text-white/50' : 'text-gray-400'}`} />
-                      <select
-                        name="countryCode"
-                        defaultValue={countryCode}
-                        className={`w-full pl-10 pr-2 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60] focus:border-transparent transition-all ${isGradient
-                            ? 'bg-white/10 border-white/20 text-white'
-                            : 'bg-white border-gray-200 text-gray-900'
+                    {/* Custom Country Code Dropdown */}
+                    <div className="relative" ref={dropdownRef}>
+                      <button
+                        type="button"
+                        onClick={() => setIsCountryDropdownOpen(!isCountryDropdownOpen)}
+                        className={`flex items-center gap-2 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60] transition-all ${isGradient
+                            ? 'bg-white/10 border-white/20 text-white hover:bg-white/20'
+                            : 'bg-white border-gray-200 text-gray-900 hover:border-gray-300'
                           }`}
                       >
-                        <option value="+91">+91 (India)</option>
-                        <option value="+1">+1 (USA/Canada)</option>
-                        <option value="+44">+44 (UK)</option>
-                        <option value="+971">+971 (UAE)</option>
-                        <option value="+65">+65 (Singapore)</option>
-                        <option value="+61">+61 (Australia)</option>
-                        <option value="+49">+49 (Germany)</option>
-                        <option value="+33">+33 (France)</option>
-                        <option value="+81">+81 (Japan)</option>
-                      </select>
+                        <span className="text-lg">{getSelectedCountry().flag}</span>
+                        <span className="font-medium">{getSelectedCountry().code}</span>
+                        <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isCountryDropdownOpen ? 'rotate-180' : ''}`} />
+                      </button>
+
+                      {/* Dropdown Menu */}
+                      {isCountryDropdownOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          className={`absolute top-full left-0 mt-1 w-48 rounded-lg shadow-lg border overflow-hidden z-20 ${isGradient
+                              ? 'bg-[#1a1a1a] border-white/20'
+                              : 'bg-white border-gray-200'
+                            }`}
+                        >
+                          <div className="max-h-60 overflow-y-auto">
+                            {countryCodes.map((country) => (
+                              <button
+                                key={country.code}
+                                type="button"
+                                onClick={() => {
+                                  setCountryCode(country.code);
+                                  setIsCountryDropdownOpen(false);
+                                }}
+                                className={`w-full flex items-center gap-3 px-3 py-2 text-sm transition-colors ${country.code === countryCode
+                                    ? 'bg-[#F8C21C]/10 text-[#F8C21C]'
+                                    : isGradient
+                                      ? 'text-white hover:bg-white/10'
+                                      : 'text-gray-700 hover:bg-gray-50'
+                                  }`}
+                              >
+                                <span className="text-lg">{country.flag}</span>
+                                <span className="font-medium">{country.code}</span>
+                                <span className="text-xs opacity-70">{country.name}</span>
+                              </button>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                      
+                      {/* Hidden input to store selected country code */}
+                      <input type="hidden" name="countryCode" value={countryCode} />
                     </div>
 
                     {/* Phone Number Input */}
@@ -328,7 +376,7 @@ export default function EnquiryPopup({
                         type="tel"
                         name="phone"
                         required
-                        placeholder="Enter 10-digit number"
+                        placeholder="9876543210"
                         maxLength={10}
                         pattern="[6-9][0-9]{9}"
                         className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60] focus:border-transparent transition-all ${errors.phone
@@ -338,7 +386,6 @@ export default function EnquiryPopup({
                               : 'bg-white border-gray-200 text-gray-900'
                           }`}
                         onInput={(e) => {
-                          // Only allow numbers and limit to 10 digits
                           e.currentTarget.value = e.currentTarget.value.replace(/[^0-9]/g, '').slice(0, 10);
                         }}
                       />
@@ -355,7 +402,7 @@ export default function EnquiryPopup({
                   </p>
                 </div>
 
-                {/* Email Field - Optional */}
+                {/* Email Field */}
                 <div>
                   <label className={`block text-sm font-medium mb-2 ${isGradient ? 'text-white/90' : 'text-gray-700'}`}>
                     Email Address <span className="text-xs opacity-70">(Optional)</span>
