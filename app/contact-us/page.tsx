@@ -297,7 +297,7 @@ export default function ContactUsPage() {
 
   const benefits = [
     { icon: Shield, title: "Verified Properties", desc: "Every listing physically verified with real photos & documents" },
-    { icon: Users, title: "Expert Guidance", desc: "20+ years of real estate expertise at your service" },
+    { icon: Users, title: "Expert Guidance", desc: "25+ years of real estate expertise at your service" },
     { icon: FileCheck, title: "Transparent Process", desc: "No hidden charges, complete transparency in every transaction" },
     { icon: Sparkles, title: "End-to-End Support", desc: "From property search to registration & beyond" },
   ];
