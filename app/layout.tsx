@@ -95,4 +95,4 @@ const organizationSchema = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (<html lang="en" suppressHydrationWarning><head><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }} /></head><body className={`${geistSans.variable} ${geistMono.variable} antialiased`} suppressHydrationWarning><Header /><Providers><main className="min-h-screen">{children}</main></Providers><Footer /><StickyActions showScrollTop={true} /></body></html>);
-} 
+}
