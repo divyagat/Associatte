@@ -119,7 +119,7 @@ const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComp
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="hover:text-[#F8C21C] transition-colors inline-flex items-center gap-1 group">
+                <Link href="/contact-us" className="hover:text-[#F8C21C] transition-colors inline-flex items-center gap-1 group">
                   Contact Us
                   <ChevronRight size={12} className="opacity-0 group-hover:opacity-100 transition-all -translate-x-1 group-hover:translate-x-0" />
                 </Link>

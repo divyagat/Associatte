@@ -1,10 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Phone, Mail, MapPin, CheckCircle2, ArrowRight, Shield, Clock, Users } from 'lucide-react';
 
-// ✅ ADD PROPER PROPS INTERFACE
 interface CtaFormSectionProps {
   city: 'Pune' | 'Mumbai' | 'KDMC';
   title: string;
@@ -13,11 +12,9 @@ interface CtaFormSectionProps {
   formId?: string;
 }
 
-// ✅ Google Maps Configuration
 const OFFICE_ADDRESS = "Associatte PropTech Pvt Ltd, 303 Naren Pearl, Magarpatta Road, Hadapsar, Pune, Maharashtra 411028";
 const GOOGLE_MAPS_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(OFFICE_ADDRESS)}`;
 
-// City-specific display names for the Visit section
 const CITY_DISPLAY_NAMES: Record<'Pune' | 'Mumbai' | 'KDMC', string> = {
   'Pune': 'Pune Office',
   'Mumbai': 'Mumbai Office',
@@ -25,34 +22,132 @@ const CITY_DISPLAY_NAMES: Record<'Pune' | 'Mumbai' | 'KDMC', string> = {
 };
 
 export default function CtaFormSection({ city, title, subtitle, buttonText, formId = 'cta-form' }: CtaFormSectionProps) {
-  const [formData, setFormData] = useState({ name: '', phone: '', budget: '', propertyType: '', message: '' });
+  const [formData, setFormData] = useState({ 
+    name: '', 
+    phone: '', 
+    budget: '', 
+    propertyType: '', 
+    message: '' 
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [clientIp, setClientIp] = useState<string>('');
+  const [errors, setErrors] = useState<{ name?: string; phone?: string }>({});
+
+  // Fetch client IP
+  useEffect(() => {
+    const fetchIp = async () => {
+      try {
+        const ipResponse = await fetch('https://api.ipify.org?format=json');
+        const ipData = await ipResponse.json();
+        setClientIp(ipData.ip);
+      } catch (error) {
+        console.error('Failed to fetch IP:', error);
+        setClientIp('Unknown');
+      }
+    };
+    fetchIp();
+  }, []);
 
   const COLORS = { primary: '#005E60', accent: '#F8C21C', alert: '#8B0000', bgDark: '#003d40' };
 
+  // Validation functions
+  const validateName = (name: string): boolean => {
+    const nameRegex = /^[A-Za-z\s]{2,}$/;
+    return nameRegex.test(name.trim());
+  };
+
+  const validatePhone = (phone: string): boolean => {
+    const phoneRegex = /^[6-9]\d{9}$/;
+    return phoneRegex.test(phone);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    const newErrors: { name?: string; phone?: string } = {};
+    
+    if (!validateName(formData.name)) {
+      newErrors.name = 'Please enter a valid name (only letters, min 2 characters)';
+    }
+    
+    if (!validatePhone(formData.phone)) {
+      newErrors.phone = 'Please enter a valid 10-digit mobile number';
+    }
+    
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    
+    setErrors({});
     setIsSubmitting(true);
     
-    // Simulate API call - Replace with actual submission logic
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    // Prepare message with all form data
+    const fullMessage = `Budget: ${formData.budget || 'Not specified'} | Property Type: ${formData.propertyType || 'Not specified'} | Requirements: ${formData.message || 'None'} | Source: CTA Form - ${city}`;
     
-    // TODO: Add your actual form submission here
-    // Example: await fetch('/api/enquiry', { method: 'POST', body: JSON.stringify(formData) });
+    // Create remark with form name, IP address, and source
+    const remark = `CTA Form - ${city} | IP: ${clientIp} | Budget: ${formData.budget} | Property: ${formData.propertyType}`;
     
-    setIsSubmitting(false);
-    setIsSubmitted(true);
+    // Prepare payload for CRM (matching your EnquiryPopup format)
+    const payload = {
+      name: formData.name.trim(),
+      phone: formData.phone.trim(),
+      email: '', // Email not collected in this form
+      project: title || 'Property Consultation',
+      remark: remark
+    };
     
-    // Reset form after showing success message
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({ name: '', phone: '', budget: '', propertyType: '', message: '' });
-    }, 3000);
+    console.log('📩 CTA Form Submitted to CRM:', payload);
+    
+    try {
+      const response = await fetch('/api/enquiry', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Submission failed');
+      }
+      
+      console.log('✅ CTA Form submitted successfully');
+      setIsSubmitted(true);
+      
+      // Reset form after showing success message
+      setTimeout(() => {
+        setIsSubmitted(false);
+        setFormData({ name: '', phone: '', budget: '', propertyType: '', message: '' });
+      }, 3000);
+      
+    } catch (error) {
+      console.error('Error submitting CTA form:', error);
+      alert('Failed to submit. Please try again or call us directly at +91 8881188181');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    
+    // Real-time validation for phone
+    if (name === 'phone') {
+      const cleaned = value.replace(/[^0-9]/g, '').slice(0, 10);
+      setFormData(prev => ({ ...prev, [name]: cleaned }));
+    } 
+    // Real-time validation for name (only letters and spaces)
+    else if (name === 'name') {
+      const cleaned = value.replace(/[^A-Za-z\s]/g, '');
+      setFormData(prev => ({ ...prev, [name]: cleaned }));
+    }
+    else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   const containerVariants = { 
@@ -65,7 +160,6 @@ export default function CtaFormSection({ city, title, subtitle, buttonText, form
     visible: { opacity: 1, y: 0, transition: { duration: 0.4 } } 
   };
 
-  // Contact items with dynamic Maps URL
   const contactItems = [
     { 
       icon: Phone, 
@@ -215,7 +309,7 @@ export default function CtaFormSection({ city, title, subtitle, buttonText, form
                 <>
                   <div className="text-center mb-6">
                     <h3 className="text-xl font-bold text-gray-900 mb-1">Get Your Free Consultation</h3>
-                    <p className="text-gray-500 text-sm">Fill the form & we&apos;ll contact you shortly</p>
+                    <p className="text-gray-500 text-sm">Fill the form & we'll contact you shortly</p>
                   </div>
                   
                   <form id={formId} onSubmit={handleSubmit} className="space-y-4">
@@ -230,8 +324,13 @@ export default function CtaFormSection({ city, title, subtitle, buttonText, form
                           onChange={handleChange} 
                           required 
                           placeholder="Enter your name" 
-                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#005E60] focus:border-transparent transition-all bg-gray-50 hover:bg-white" 
+                          className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#005E60] focus:border-transparent transition-all bg-gray-50 hover:bg-white ${
+                            errors.name ? 'border-red-500' : 'border-gray-200'
+                          }`} 
                         />
+                        {errors.name && (
+                          <p className="text-xs text-red-500 mt-1">{errors.name}</p>
+                        )}
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number *</label>
@@ -241,10 +340,15 @@ export default function CtaFormSection({ city, title, subtitle, buttonText, form
                           value={formData.phone} 
                           onChange={handleChange} 
                           required 
-                          placeholder="+91 XXXXX XXXXX" 
-                          pattern="[0-9]{10}"
-                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#005E60] focus:border-transparent transition-all bg-gray-50 hover:bg-white" 
+                          placeholder="9876543210" 
+                          maxLength={10}
+                          className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#005E60] focus:border-transparent transition-all bg-gray-50 hover:bg-white ${
+                            errors.phone ? 'border-red-500' : 'border-gray-200'
+                          }`} 
                         />
+                        {errors.phone && (
+                          <p className="text-xs text-red-500 mt-1">{errors.phone}</p>
+                        )}
                       </div>
                     </div>
                     
@@ -259,10 +363,10 @@ export default function CtaFormSection({ city, title, subtitle, buttonText, form
                           className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#005E60] focus:border-transparent transition-all bg-gray-50 hover:bg-white appearance-none cursor-pointer"
                         >
                           <option value="">Select Budget</option>
-                          <option value="&lt;50L">Below ₹50 Lakh</option>
-                          <option value="50L-1Cr">₹50 Lakh - ₹1 Cr</option>
-                          <option value="1Cr-2Cr">₹1 Cr - ₹2 Cr</option>
-                          <option value="2Cr+">Above ₹2 Cr</option>
+                          <option value="Below ₹50 Lakh">&lt; ₹50 Lakh</option>
+                          <option value="₹50 Lakh - ₹1 Cr">₹50 Lakh - ₹1 Cr</option>
+                          <option value="₹1 Cr - ₹2 Cr">₹1 Cr - ₹2 Cr</option>
+                          <option value="Above ₹2 Cr">Above ₹2 Cr</option>
                         </select>
                       </div>
                       <div>
@@ -274,10 +378,10 @@ export default function CtaFormSection({ city, title, subtitle, buttonText, form
                           className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#005E60] focus:border-transparent transition-all bg-gray-50 hover:bg-white appearance-none cursor-pointer"
                         >
                           <option value="">Select Type</option>
-                          <option value="apartment">Apartment</option>
-                          <option value="villa">Villa</option>
-                          <option value="plot">Plot</option>
-                          <option value="commercial">Commercial</option>
+                          <option value="Apartment">Apartment</option>
+                          <option value="Villa">Villa</option>
+                          <option value="Plot">Plot</option>
+                          <option value="Commercial">Commercial</option>
                         </select>
                       </div>
                     </div>
@@ -324,8 +428,8 @@ export default function CtaFormSection({ city, title, subtitle, buttonText, form
                     
                     {/* Privacy Note */}
                     <p className="text-xs text-gray-400 text-center">
-                      By submitting, you agree to our <a href="/privacy" className="text-[#005E60] hover:underline">Privacy Policy</a>. 
-                      We&apos;ll never share your data.
+                      By submitting, you agree to our <a href="/privacy-policy" className="text-[#005E60] hover:underline">Privacy Policy</a>. 
+                      We'll never share your data.
                     </p>
                   </form>
                 </>
