@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from "framer-motion";
-import { MapPin, ArrowRight } from "lucide-react";
+import { MapPin, ArrowRight, Star } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
 
@@ -11,11 +11,11 @@ interface PropertyTypesSectionProps {
 }
 
 const cities = [
-  { name: "Mumbai", slug: "mumbai", projects: 48, image: "https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=400&q=80" },
-  { name: "Pune", slug: "pune", projects: 31, image: "https://images.unsplash.com/photo-1599661046289-e31897846e41?w=400&q=80" },
-  { name: "KDMC", slug: "kdmc", projects: 24, image: "/popular cities/KDMC.webp" },
-  { name: "Thane", slug: "thane", projects: 12, image: "/popular cities/thane-img.webp" },
-  { name: "Navi Mumbai", slug: "mumbai", projects: 37, image: "/popular cities/Navi-mumbai.webp" }
+  { name: "Mumbai", slug: "mumbai", projects: 48, image: "https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=400&q=80", popular: true },
+  { name: "Pune", slug: "pune", projects: 31, image: "https://images.unsplash.com/photo-1599661046289-e31897846e41?w=400&q=80", popular: false },
+  { name: "KDMC", slug: "kdmc", projects: 24, image: "/popular cities/KDMC.webp", popular: true },
+  { name: "Thane", slug: "thane", projects: 12, image: "/popular cities/thane-img.webp", popular: false },
+  { name: "Navi Mumbai", slug: "navi-mumbai", projects: 37, image: "/popular cities/Navi-mumbai.webp", popular: true }
 ];
 
 export default function PropertyTypesSection({ city }: PropertyTypesSectionProps) {
@@ -39,6 +39,13 @@ export default function PropertyTypesSection({ city }: PropertyTypesSectionProps
     }
   };
 
+  // Sort cities to show popular ones first
+  const sortedCities = [...cities].sort((a, b) => {
+    if (a.popular && !b.popular) return -1;
+    if (!a.popular && b.popular) return 1;
+    return 0;
+  });
+
   return (
     <section className="py-24 bg-white">
       <div className="max-w-7xl mx-auto px-6">
@@ -55,6 +62,9 @@ export default function PropertyTypesSection({ city }: PropertyTypesSectionProps
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 font-montserrat">
               Popular Cities in {city}
             </h2>
+            <p className="text-gray-500 mt-3 max-w-2xl">
+              Discover the most sought-after real estate destinations with the best investment opportunities
+            </p>
           </div>
           <Link 
             href="/locations"
@@ -72,7 +82,7 @@ export default function PropertyTypesSection({ city }: PropertyTypesSectionProps
           viewport={{ once: true }}
           className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4"
         >
-          {cities.map((cityItem, index) => {
+          {sortedCities.map((cityItem, index) => {
             const isActive = activeCity === cityItem.name;
             
             return (
@@ -92,6 +102,7 @@ export default function PropertyTypesSection({ city }: PropertyTypesSectionProps
                       ? 'border-[#005E60] shadow-lg scale-[1.03]' 
                       : 'border-transparent shadow-sm hover:shadow-md hover:border-gray-200'
                     }
+                    ${cityItem.popular ? 'ring-2 ring-[#F8C21C]/50 ring-offset-2' : ''}
                   `}>
                     <img 
                       src={cityItem.image} 
@@ -100,6 +111,17 @@ export default function PropertyTypesSection({ city }: PropertyTypesSectionProps
                       loading="lazy"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                    
+                    {/* Popular Badge */}
+                    {cityItem.popular && (
+                      <div className="absolute top-3 right-3">
+                        <div className="flex items-center gap-1 bg-[#F8C21C]/90 backdrop-blur-sm px-2 py-1 rounded-full">
+                          <Star size={12} className="text-[#8B0000] fill-[#8B0000]" />
+                          <span className="text-[#8B0000] text-xs font-bold">POPULAR</span>
+                        </div>
+                      </div>
+                    )}
+                    
                     <div className="absolute bottom-0 left-0 right-0 p-4">
                       <div className="flex items-center gap-2 mb-2">
                         <MapPin size={14} className="text-[#F8C21C]" />
