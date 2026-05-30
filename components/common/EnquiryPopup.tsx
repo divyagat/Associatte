@@ -1,7 +1,8 @@
+// components/EnquiryPopup.tsx
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Mail, Phone, User, CheckCircle, AlertCircle, Globe, ChevronDown } from 'lucide-react';
+import { X, Mail, Phone, User, CheckCircle, AlertCircle, ChevronDown } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 
@@ -18,10 +19,10 @@ interface EnquiryPopupProps {
   projectName?: string;
   projectTagline?: string;
   theme?: 'default' | 'gradient';
-  trackingData?: TrackingData;
-  onSubmit?: (payload: any) => void;
   showLegalLinks?: boolean;
   formName?: string;
+  onSubmit?: (payload: any) => void;
+  trackingData?: TrackingData;  // ✅ ADD THIS
 }
 
 interface FormErrors {
@@ -58,10 +59,10 @@ export default function EnquiryPopup({
   projectName = 'Properties',
   projectTagline = 'Get personalized property recommendations',
   theme = 'default',
-  trackingData,
-  onSubmit,
   showLegalLinks = true,
-  formName = 'Website Enquiry Form'
+  formName = 'Website Enquiry Form',
+  onSubmit,
+  trackingData,  // ✅ ADD THIS
 }: EnquiryPopupProps) {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -72,33 +73,21 @@ export default function EnquiryPopup({
   const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Fetch client IP and country code
+  // Fetch client IP
   useEffect(() => {
-    const fetchIpAndCountry = async () => {
+    const fetchIp = async () => {
       try {
         const ipResponse = await fetch('https://api.ipify.org?format=json');
         const ipData = await ipResponse.json();
         setClientIp(ipData.ip);
-
-        const countryResponse = await fetch(`https://ipapi.co/${ipData.ip}/json/`);
-        const countryData = await countryResponse.json();
-        if (countryData.country_code) {
-          const dialCodes: { [key: string]: string } = {
-            'IN': '+91', 'US': '+1', 'GB': '+44', 'AE': '+971',
-            'SG': '+65', 'AU': '+61', 'CA': '+1', 'DE': '+49',
-            'FR': '+33', 'JP': '+81', 'HK': '+852', 'CN': '+86', 'RU': '+7',
-          };
-          setCountryCode(dialCodes[countryData.country_code] || '+91');
-        }
       } catch (error) {
-        console.error('Failed to fetch IP/country:', error);
+        console.error('Failed to fetch IP:', error);
         setClientIp('Unknown');
-        setCountryCode('+91');
       }
     };
 
     if (isOpen) {
-      fetchIpAndCountry();
+      fetchIp();
     }
   }, [isOpen]);
 
@@ -137,7 +126,6 @@ export default function EnquiryPopup({
     const name = formData.get('name') as string;
     const phone = formData.get('phone') as string;
     const email = formData.get('email') as string;
-    const selectedCountryCode = formData.get('countryCode') as string;
 
     const newErrors: FormErrors = {};
 
@@ -166,24 +154,28 @@ export default function EnquiryPopup({
     setIsSubmitting(true);
 
     const cleanPhoneNumber = phone.trim();
-    const remark = `${formName} | IP: ${clientIp} | Country Code: ${selectedCountryCode}`;
+    
+    // Build remark with tracking data if provided
+    let remark = `${formName} | IP: ${clientIp} | Country Code: ${countryCode}`;
+    if (trackingData) {
+      remark += ` | Source: ${trackingData.source} | Campaign: ${trackingData.campaign} | Medium: ${trackingData.medium} | City: ${trackingData.city || 'N/A'}`;
+    }
 
     const payload = {
       name: name.trim(),
       phone: cleanPhoneNumber,
       email: email || '',
       project: projectName,
-      remark: remark
+      remark: remark,
+      trackingData: trackingData // Include tracking data in payload
     };
 
-    console.log('📩 Enquiry Submitted to CRM:', {
-      name: payload.name,
-      mobile: payload.phone,
-      mobileLength: payload.phone.length,
-      email: payload.email,
-      project: payload.project,
-      remark: payload.remark
-    });
+    console.log('📩 Enquiry Submitted:', payload);
+
+    // Call onSubmit callback if provided
+    if (onSubmit) {
+      onSubmit(payload);
+    }
 
     try {
       const response = await fetch('/api/enquiry', {
@@ -203,10 +195,6 @@ export default function EnquiryPopup({
       console.log('✅ Enquiry submitted successfully');
       setSubmitSuccess(true);
 
-      if (onSubmit) {
-        onSubmit(payload);
-      }
-
       setTimeout(() => {
         setSubmitSuccess(false);
         onClose?.();
@@ -221,9 +209,6 @@ export default function EnquiryPopup({
   };
 
   const isGradient = theme === 'gradient';
-  const gradientStyle = isGradient
-    ? 'bg-gradient-to-r from-[#8B0000] to-[#005E60]'
-    : 'bg-white';
 
   const getSelectedCountry = () => {
     return countryCodes.find(c => c.code === countryCode) || countryCodes[0];
@@ -248,7 +233,7 @@ export default function EnquiryPopup({
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
             className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-[90%] max-w-md max-h-[90vh] overflow-y-auto"
           >
-            <div className={`${isGradient ? gradientStyle : 'bg-white'} rounded-2xl shadow-2xl overflow-hidden`}>
+            <div className={`${isGradient ? 'bg-gradient-to-r from-[#8B0000] to-[#005E60]' : 'bg-white'} rounded-2xl shadow-2xl overflow-hidden`}>
               <div className={`flex justify-between items-center p-6 ${isGradient ? 'border-b border-white/20' : 'border-b border-gray-100'}`}>
                 <div>
                   <h2 className={`text-2xl font-bold ${isGradient ? 'text-white' : 'bg-gradient-to-r from-[#8B0000] to-[#005E60] bg-clip-text text-transparent'}`}>
@@ -287,16 +272,14 @@ export default function EnquiryPopup({
                       name="name"
                       required
                       placeholder="Enter your full name"
-                      pattern="[A-Za-z\s]{2,}"
-                      title="Only letters and spaces allowed"
-                      className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60] focus:border-transparent transition-all ${errors.name
+                      className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F8C21C] focus:border-transparent transition-all ${errors.name
                           ? 'border-red-500'
                           : isGradient
                             ? 'bg-white/10 border-white/20 text-white placeholder-white/50'
                             : 'bg-white border-gray-200 text-gray-900'
                         }`}
                       onInput={(e) => {
-                        e.currentTarget.value = e.currentTarget.value.replace(/[^A-Za-z\s]/g, '');
+                        (e.target as HTMLInputElement).value = (e.target as HTMLInputElement).value.replace(/[^A-Za-z\s]/g, '');
                       }}
                     />
                   </div>
@@ -308,18 +291,17 @@ export default function EnquiryPopup({
                   )}
                 </div>
 
-                {/* Phone Field with Enhanced Country Code */}
+                {/* Phone Field */}
                 <div>
                   <label className={`block text-sm font-medium mb-2 ${isGradient ? 'text-white/90' : 'text-gray-700'}`}>
                     Phone Number *
                   </label>
                   <div className="flex gap-2">
-                    {/* Custom Country Code Dropdown */}
                     <div className="relative" ref={dropdownRef}>
                       <button
                         type="button"
                         onClick={() => setIsCountryDropdownOpen(!isCountryDropdownOpen)}
-                        className={`flex items-center gap-2 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60] transition-all ${isGradient
+                        className={`flex items-center gap-2 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F8C21C] transition-all ${isGradient
                             ? 'bg-white/10 border-white/20 text-white hover:bg-white/20'
                             : 'bg-white border-gray-200 text-gray-900 hover:border-gray-300'
                           }`}
@@ -329,17 +311,11 @@ export default function EnquiryPopup({
                         <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isCountryDropdownOpen ? 'rotate-180' : ''}`} />
                       </button>
 
-                      {/* Dropdown Menu */}
                       {isCountryDropdownOpen && (
-                        <motion.div
-                          initial={{ opacity: 0, y: -10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -10 }}
-                          className={`absolute top-full left-0 mt-1 w-48 rounded-lg shadow-lg border overflow-hidden z-20 ${isGradient
-                              ? 'bg-[#1a1a1a] border-white/20'
-                              : 'bg-white border-gray-200'
-                            }`}
-                        >
+                        <div className={`absolute top-full left-0 mt-1 w-48 rounded-lg shadow-lg border overflow-hidden z-20 ${isGradient
+                            ? 'bg-[#1a1a1a] border-white/20'
+                            : 'bg-white border-gray-200'
+                          }`}>
                           <div className="max-h-60 overflow-y-auto">
                             {countryCodes.map((country) => (
                               <button
@@ -362,14 +338,10 @@ export default function EnquiryPopup({
                               </button>
                             ))}
                           </div>
-                        </motion.div>
+                        </div>
                       )}
-                      
-                      {/* Hidden input to store selected country code */}
-                      <input type="hidden" name="countryCode" value={countryCode} />
                     </div>
 
-                    {/* Phone Number Input */}
                     <div className="relative flex-1">
                       <Phone className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 ${isGradient ? 'text-white/50' : 'text-gray-400'}`} />
                       <input
@@ -378,15 +350,14 @@ export default function EnquiryPopup({
                         required
                         placeholder="9876543210"
                         maxLength={10}
-                        pattern="[6-9][0-9]{9}"
-                        className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60] focus:border-transparent transition-all ${errors.phone
+                        className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F8C21C] focus:border-transparent transition-all ${errors.phone
                             ? 'border-red-500'
                             : isGradient
                               ? 'bg-white/10 border-white/20 text-white placeholder-white/50'
                               : 'bg-white border-gray-200 text-gray-900'
                           }`}
                         onInput={(e) => {
-                          e.currentTarget.value = e.currentTarget.value.replace(/[^0-9]/g, '').slice(0, 10);
+                          (e.target as HTMLInputElement).value = (e.target as HTMLInputElement).value.replace(/[^0-9]/g, '').slice(0, 10);
                         }}
                       />
                     </div>
@@ -397,9 +368,6 @@ export default function EnquiryPopup({
                       {errors.phone}
                     </p>
                   )}
-                  <p className={`text-xs mt-1 ${isGradient ? 'text-white/50' : 'text-gray-400'}`}>
-                    Enter 10-digit mobile number (e.g., 9876543210)
-                  </p>
                 </div>
 
                 {/* Email Field */}
@@ -413,7 +381,7 @@ export default function EnquiryPopup({
                       type="email"
                       name="email"
                       placeholder="Enter your email address"
-                      className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60] focus:border-transparent transition-all ${errors.email
+                      className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F8C21C] focus:border-transparent transition-all ${errors.email
                           ? 'border-red-500'
                           : isGradient
                             ? 'bg-white/10 border-white/20 text-white placeholder-white/50'
@@ -438,7 +406,7 @@ export default function EnquiryPopup({
                         id="consent"
                         checked={consentGiven}
                         onChange={(e) => setConsentGiven(e.target.checked)}
-                        className="mt-1 w-4 h-4 text-[#005E60] border-gray-300 rounded focus:ring-[#005E60]"
+                        className="mt-1 w-4 h-4 text-[#F8C21C] border-gray-300 rounded focus:ring-[#F8C21C]"
                       />
                       <label htmlFor="consent" className={`text-xs ${isGradient ? 'text-white/80' : 'text-gray-600'} leading-relaxed`}>
                         I agree to the{' '}
