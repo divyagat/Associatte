@@ -400,7 +400,7 @@
     "price": "₹80 Lakh onwards",
     "image": "/projects/shapoorji-villa.webp",
     "masterPlan": "/floorplans/shapoorji-villa-master.webp",
-    "locationMap": "/maps/shapoorji-villa-location.webp",
+    "locationMap": "/maps/comming-soon.webp",
     "fullLocation": { "area": "Undri", "city": "Pune", "state": "Maharashtra", "pincode": "411060", "landmark": "Near Amanora Park Town" },
     "priceDetails": { "range": "₹1.2 Cr - ₹2.5 Cr", "perSqft": "₹10,500/sq.ft", "configurations": [
       { "type": "3 BHK Villa", "area": "1800 sq.ft", "price": "₹1.2 Cr", "description": "Premium villa with private garden" },
@@ -410,12 +410,12 @@
     "about": "Shapoorji Villa in Undri offers exclusive villa living with private gardens, premium amenities, and the trusted Shapoorji quality.",
     "amenities": ["Private Pool", "Gym", "Kids Play Area", "Jogging Track", "24/7 Security", "Power Backup", "Clubhouse", "Landscaped Gardens"],
     "floorPlans": [
-      { "type": "3 BHK Villa", "area": "1800 sq.ft", "image": "/floorplans/villa-3bhk.webp" },
-      { "type": "4 BHK Villa", "area": "2400 sq.ft", "image": "/floorplans/villa-4bhk.webp" }
+      { "type": "3 BHK Villa", "area": "1800 sq.ft", "image": "/floorplans/shapoorji-villa-3bhk.webp" },
+      { "type": "4 BHK Villa", "area": "2400 sq.ft", "image": "/floorplans/shapoorji-villa-4bhk.webp" }
     ],
     "possessionDate": "Dec 2027",
     "reraNumber": "P52100048137",
-    "gallery": ["/gallery/villa-1.webp", "/gallery/villa-2.webp"],
+    "gallery": ["/gallery/shapoorji-villa-1.webp", "/gallery/shapoorji-villa-2.webp","/gallery/shapoorji-villa-3.webp"],
     "mapCoords": { "lat": 18.4512, "lng": 73.9298 },
     "nearbyPlaces": [
       { "type": "Mall", "name": "Amanora Mall", "distance": "1.5 km" },
@@ -535,7 +535,7 @@
     ],
     "possessionDate": "Ready to Register",
     "reraNumber": "P52100048141",
-    "gallery": ["/gallery/lohegaon-1.webp", "/gallery/lohegaon-2.webp"],
+    "gallery": ["/gallery/lohegaon-1.webp", "/gallery/lohegaon-2.webp","/gallery/lohegaon-3.webp","/gallery/lohegaon-4.webp","/gallery/lohegaon-5.webp","/gallery/lohegaon-6.webp","/gallery/lohegaon-7.webp","/gallery/lohegaon-8.webp","/gallery/lohegaon-9.webp","/gallery/lohegaon-10.webp","/gallery/lohegaon-11.webp","/gallery/lohegaon-12.webp"],
     "mapCoords": { "lat": 18.5812, "lng": 73.9098 },
     "nearbyPlaces": [
       { "type": "Airport", "name": "Pune Airport", "distance": "2.0 km" },
@@ -878,7 +878,7 @@
     ],
     "possessionDate": "Jun 2027",
     "reraNumber": "P52000048041",
-    "gallery": ["/gallery/airoli-1.webp", "/gallery/airoli-2.webp"],
+    "gallery": ["/gallery/airoli-1.webp", "/gallery/airoli-2.webp", "/gallery/airoli-3.webp","/gallery/airoli-4.webp","/gallery/airoli-5.webp","/gallery/airoli-6.webp","/gallery/airoli-7.webp"],
     "mapCoords": { "lat": 19.1567, "lng": 72.9989 },
     "nearbyPlaces": [
       { "type": "IT Park", "name": "Airoli IT Park", "distance": "0.8 km" },
@@ -904,13 +904,13 @@
     "about": "Today Kharghar offers premium residences near Central Park with world-class amenities and excellent connectivity across Mumbai.",
     "amenities": ["Clubhouse", "Swimming Pool", "Gym", "Kids Play Area", "Jogging Track", "24/7 Security", "Power Backup", "Landscaped Gardens"],
     "floorPlans": [
-      { "type": "1 BHK", "area": "475 sq.ft", "image": "/floorplans/kharghar-1bhk.webp" },
-      { "type": "2 BHK", "area": "775 sq.ft", "image": "/floorplans/kharghar-2bhk.webp" },
-      { "type": "3 BHK", "area": "1130 sq.ft", "image": "/floorplans/kharghar-3bhk.webp" }
+      { "type": "1 BHK", "area": "475 sq.ft", "image": "/floorplans/Comming soon.webp" },
+      { "type": "2 BHK", "area": "775 sq.ft", "image": "/floorplans/Comming soon.webp" },
+      { "type": "3 BHK", "area": "1130 sq.ft", "image": "/floorplans/Comming soon.webp" }
     ],
     "possessionDate": "Dec 2027",
     "reraNumber": "P52000048042",
-    "gallery": ["/gallery/kharghar-1.webp", "/gallery/kharghar-2.webp"],
+    "gallery": ["/gallery/kharghar-1.webp", "/gallery/kharghar-2.webp","/gallery/kharghar-3.webp","/gallery/kharghar-4.webp","/gallery/kharghar-5.webp","/gallery/kharghar-6.webp"],
     "mapCoords": { "lat": 19.0448, "lng": 73.0678 },
     "nearbyPlaces": [
       { "type": "Park", "name": "Central Park", "distance": "0.3 km" },
