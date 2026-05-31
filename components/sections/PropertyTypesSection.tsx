@@ -11,11 +11,11 @@ interface PropertyTypesSectionProps {
 }
 
 const cities = [
-  { name: "Mumbai", slug: "mumbai", projects: 48, image: "https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=400&q=80", popular: true },
-  { name: "Pune", slug: "pune", projects: 31, image: "https://images.unsplash.com/photo-1599661046289-e31897846e41?w=400&q=80", popular: false },
+  { name: "Mumbai", slug: "mumbai", projects: 48, image: "/popular cities/MUMBAI.webp", popular: true },
+  { name: "Pune", slug: "pune", projects: 31, image: "/popular cities/PUNE.webp", popular: false },
   { name: "KDMC", slug: "kdmc", projects: 24, image: "/popular cities/KDMC.webp", popular: true },
-  { name: "Thane", slug: "thane", projects: 12, image: "/popular cities/thane-img.webp", popular: false },
-  { name: "Navi Mumbai", slug: "navi-mumbai", projects: 37, image: "/popular cities/Navi-mumbai.webp", popular: true }
+  { name: "Thane", slug: "thane", projects: 12, image: "/popular cities/THANE.webp", popular: false },
+  { name: "Navi Mumbai", slug: "navi-mumbai", projects: 37, image: "/popular cities/NAVIMUMBAI.webp", popular: true }
 ];
 
 export default function PropertyTypesSection({ city }: PropertyTypesSectionProps) {

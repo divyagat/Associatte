@@ -12,9 +12,9 @@ interface CategorySectionProps {
 
 const categories = [
   { type: 'residential', title: 'Apartments', image: '/Explore By Category/Apartments.webp', icon: Building2 },
-  { type: 'plots', title: 'Plots & Land', image: '/Explore By Category/PlotsLand lands.webp', icon: Map },
-  { type: 'ready', title: 'Ready To Move', image: '/Explore By Category/readyto.webp', icon: Home },
-  { type: 'pre-launch', title: 'Investment Projects', image: '/Explore By Category/prelaunch.webp', icon: TrendingUp },
+  { type: 'plots', title: 'Plots & Land', image: '/Explore By Category/PlotLand.webp', icon: Map },
+  { type: 'ready', title: 'Ready To Move', image: '/Explore By Category/ReadytoMoveIn.webp', icon: Home },
+  { type: 'pre-launch', title: 'Investment Projects', image: '/Explore By Category/Investment.webp', icon: TrendingUp },
 ];
 
 export default function CategorySection({ city, featuredLocalities }: CategorySectionProps) {
