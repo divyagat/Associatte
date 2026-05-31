@@ -5,6 +5,7 @@ import Header from "../components/Layout/Header";
 import Footer from "../components/Layout/Footer";
 import { Providers } from "./providers";
 import StickyActions from "@/components/common/StickyActions";
+import Chatbot from "@/components/Chatbot"; // Add this import
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
@@ -94,5 +95,20 @@ const organizationSchema = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (<html lang="en" suppressHydrationWarning><head><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }} /></head><body className={`${geistSans.variable} ${geistMono.variable} antialiased`} suppressHydrationWarning><Header /><Providers><main className="min-h-screen">{children}</main></Providers><Footer /><StickyActions showScrollTop={true} /></body></html>);
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }} />
+      </head>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} suppressHydrationWarning>
+        <Header />
+        <Providers>
+          <main className="min-h-screen">{children}</main>
+        </Providers>
+        <Footer />
+        <StickyActions showScrollTop={true} />
+        <Chatbot /> {/* Add the Chatbot component here */}
+      </body>
+    </html>
+  );
 }

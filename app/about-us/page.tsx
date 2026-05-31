@@ -86,7 +86,7 @@ export default function AboutUs() {
       members: [
         { name: 'Sonal Gaikwad', role: 'General Manager', img: '/Team/Pune/Sonal.webp', social: { linkedin: '#', twitter: '#' } },
         { name: 'Rekha Rathod', role: 'Sales Executive', img: '/Team/Pune/Rekha.webp', social: { linkedin: '#', twitter: '#' } },
-        { name: 'Pallavi Khomane', role: 'Sales Executive', img: '/Team/Pune/Pallavi.webp', social: { linkedin: '#', twitter: '#' } },
+        { name: 'Pallavi Khomane', role: 'Pre-Sales', img: '/Team/Pune/Pallavi.webp', social: { linkedin: '#', twitter: '#' } },
       ],
     },
     {
@@ -105,7 +105,7 @@ export default function AboutUs() {
       members: [
         { name: 'Neha Uparkar', role: 'Digital Marketing Manager', img: '/Team/Digital/Neha Uparkar.webp', social: { linkedin: '#', twitter: '#' } },
         { name: 'Divya Gate', role: 'Web Developer', img: '/Team/Digital/Divya Gate.webp', social: { linkedin: '#', twitter: '#' } },
-        { name: 'Karan Malhotra', role: 'Social Media Manager', img: '/Team/Digital/Krima.webp', social: { linkedin: '#', twitter: '#' } },
+        { name: 'Krima Kothari ', role: 'Social Media Manager', img: '/Team/Digital/Krima.webp', social: { linkedin: '#', twitter: '#' } },
       ],
     },
   ];
