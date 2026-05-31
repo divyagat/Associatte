@@ -68,14 +68,14 @@ function toSafeLowerString(value: any): string {
 }
 
 function mapProjectToCard(project: any): CardProject {
-  const areas = project.priceDetails?.configurations?.map((c: any) => 
+  const areas = project.priceDetails?.configurations?.map((c: any) =>
     String(c.area || '').replace(' sq.ft', '').replace(' sq. ft', '').trim()
   ) || [];
-  
-  const areaRange = areas.length > 1 
+
+  const areaRange = areas.length > 1
     ? `${areas[0]} to ${areas[areas.length - 1]} sq.ft`
     : areas[0] || 'Area On Request';
-  
+
   const bhkTypes = project.priceDetails?.configurations?.map((c: any) => c.type) || [];
   const bhkValues: string[] = [...new Set(bhkTypes)]
     .map((t: any) => String(t || '').trim())
@@ -109,16 +109,16 @@ function mapProjectToCard(project: any): CardProject {
 
 const CITY_SLUG_MAP: Record<CityName, string> = {
   'Pune': 'pune',
-  'Mumbai': 'mumbai', 
+  'Mumbai': 'mumbai',
   'KDMC': 'kdmc'
 };
 
 const DEFAULT_PROJECT_LIMIT = 8;
 const BREAKPOINTS = { mobile: 640, tablet: 1024, desktop: 1280 };
 
-export default function TopSellingProjects({ 
-  city, 
-  filters = {}, 
+export default function TopSellingProjects({
+  city,
+  filters = {},
   limit = DEFAULT_PROJECT_LIMIT,
   className = ''
 }: TopSellingProjectsProps) {
@@ -127,7 +127,7 @@ export default function TopSellingProjects({
   const [viewportWidth, setViewportWidth] = useState(1280);
   const carouselRef = useRef<HTMLDivElement>(null);
   const [touchStart, setTouchStart] = useState(0);
-  
+
   // Popup state
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<CardProject | null>(null);
@@ -153,18 +153,18 @@ export default function TopSellingProjects({
     return 24;
   }, [viewportWidth]);
 
-  const allCardProjects = useMemo(() => 
-    (properties || []).map(mapProjectToCard), 
-  [properties]);
+  const allCardProjects = useMemo(() =>
+    (properties || []).map(mapProjectToCard),
+    [properties]);
 
   const filteredProjects = useMemo(() => {
     let projects = [...allCardProjects];
     const citySlug = CITY_SLUG_MAP[city];
     projects = projects.filter(p => p.city === citySlug);
     projects = projects.filter(p => p.isTopSelling || p.rating >= 4.0);
-    
+
     if (filters.bhk?.length) {
-      projects = projects.filter(p => 
+      projects = projects.filter(p =>
         filters.bhk!.some(bhk => {
           const searchBhk = bhk.toUpperCase().trim();
           return (
@@ -184,23 +184,23 @@ export default function TopSellingProjects({
     }
 
     if (filters.builder?.length) {
-      projects = projects.filter(p => 
-        filters.builder!.some(builder => 
+      projects = projects.filter(p =>
+        filters.builder!.some(builder =>
           (p.builder || '').includes(builder.toLowerCase().trim())
         )
       );
     }
 
     if (filters.propertyType?.length) {
-      projects = projects.filter(p => 
-        filters.propertyType!.some(type => 
+      projects = projects.filter(p =>
+        filters.propertyType!.some(type =>
           (p.propertyType || '').includes(type.toLowerCase().trim())
         )
       );
     }
 
     if (filters.locality) {
-      projects = projects.filter(p => 
+      projects = projects.filter(p =>
         p.location.toLowerCase().includes(filters.locality!.toLowerCase().trim())
       );
     }
@@ -213,9 +213,9 @@ export default function TopSellingProjects({
     return projects;
   }, [city, filters, allCardProjects]);
 
-  const limitedProjects = useMemo(() => 
+  const limitedProjects = useMemo(() =>
     filteredProjects.slice(0, limit),
-  [filteredProjects, limit]);
+    [filteredProjects, limit]);
 
   const orderedProjects = useMemo(() => {
     const prioritySlugs: Record<CityName, string[]> = {
@@ -223,21 +223,21 @@ export default function TopSellingProjects({
       'Mumbai': ['sai-world-one', 'paradise-sai-world-empire', 'today-global'],
       'KDMC': ['paradise-sai-world-city', 'kolte-patil-life-republic-kalyan']
     };
-    
+
     const priorities = prioritySlugs[city] || [];
     if (priorities.length === 0) return limitedProjects;
-    
+
     const withPriority = limitedProjects.map(p => ({
       ...p,
       _priority: priorities.indexOf(p.slug)
     }));
-    
+
     withPriority.sort((a, b) => {
       const aPrio = a._priority === -1 ? 999 : a._priority;
       const bPrio = b._priority === -1 ? 999 : b._priority;
       return aPrio - bPrio;
     });
-    
+
     return withPriority.map(({ _priority, ...rest }) => rest);
   }, [limitedProjects, city]);
 
@@ -248,8 +248,8 @@ export default function TopSellingProjects({
 
   const toggleFavorite = useCallback((slug: string) => {
     setFavorites(prev => {
-      const newFavorites = prev.includes(slug) 
-        ? prev.filter(f => f !== slug) 
+      const newFavorites = prev.includes(slug)
+        ? prev.filter(f => f !== slug)
         : [...prev, slug];
       if (typeof window !== 'undefined') {
         localStorage.setItem('propfinder_favorites', JSON.stringify(newFavorites));
@@ -323,7 +323,7 @@ export default function TopSellingProjects({
   };
 
   const getCityColor = () => {
-    switch(city) {
+    switch (city) {
       case 'Pune': return '#005E60';
       case 'Mumbai': return '#1E3A8A';
       case 'KDMC': return '#C2410C';
@@ -336,19 +336,19 @@ export default function TopSellingProjects({
   return (
     <section className={`py-12 md:py-16 bg-gray-50 ${className}`.trim()}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Header */}
         <div className="text-center mb-10 md:mb-12">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-white rounded-full shadow-sm mb-4">
             <TrendingUp size={14} className="text-orange-500" />
             <span className="text-xs font-medium text-gray-600">Hot Properties</span>
           </div>
-          
+
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3">
             Top Selling Projects in{' '}
             <span style={{ color: cityColor }}>{city}</span>
           </h2>
-          
+
           <p className="text-gray-500 text-sm max-w-2xl mx-auto">
             Most booked properties this month
           </p>
@@ -377,7 +377,7 @@ export default function TopSellingProjects({
               <MapPin size={24} className="text-gray-400" />
             </div>
             <p className="text-gray-500">No projects found</p>
-            <Link 
+            <Link
               href={`/properties?city=${CITY_SLUG_MAP[city]}`}
               className="inline-block mt-4 px-5 py-2 rounded-lg text-white text-sm font-medium"
               style={{ backgroundColor: cityColor }}
@@ -387,16 +387,15 @@ export default function TopSellingProjects({
           </div>
         ) : (
           <div className="relative">
-            
+
             {/* Navigation Arrows */}
             {orderedProjects.length > itemsPerView && (
               <>
                 <button
                   onClick={() => goToSlide(currentSlide - 1)}
                   disabled={currentSlide === 0}
-                  className={`hidden md:flex absolute -left-4 top-1/2 -translate-y-1/2 z-10 w-9 h-9 bg-white rounded-full shadow-md items-center justify-center transition-all ${
-                    currentSlide === 0 ? 'opacity-40 cursor-not-allowed' : 'hover:shadow-lg'
-                  }`}
+                  className={`hidden md:flex absolute -left-4 top-1/2 -translate-y-1/2 z-10 w-9 h-9 bg-white rounded-full shadow-md items-center justify-center transition-all ${currentSlide === 0 ? 'opacity-40 cursor-not-allowed' : 'hover:shadow-lg'
+                    }`}
                 >
                   <ChevronLeft size={18} className="text-gray-600" />
                 </button>
@@ -404,9 +403,8 @@ export default function TopSellingProjects({
                 <button
                   onClick={() => goToSlide(currentSlide + 1)}
                   disabled={currentSlide >= maxSlide}
-                  className={`hidden md:flex absolute -right-4 top-1/2 -translate-y-1/2 z-10 w-9 h-9 bg-white rounded-full shadow-md items-center justify-center transition-all ${
-                    currentSlide >= maxSlide ? 'opacity-40 cursor-not-allowed' : 'hover:shadow-lg'
-                  }`}
+                  className={`hidden md:flex absolute -right-4 top-1/2 -translate-y-1/2 z-10 w-9 h-9 bg-white rounded-full shadow-md items-center justify-center transition-all ${currentSlide >= maxSlide ? 'opacity-40 cursor-not-allowed' : 'hover:shadow-lg'
+                    }`}
                 >
                   <ChevronRight size={18} className="text-gray-600" />
                 </button>
@@ -414,15 +412,15 @@ export default function TopSellingProjects({
             )}
 
             {/* Carousel */}
-            <div 
+            <div
               ref={carouselRef}
               className="overflow-hidden"
               onTouchStart={handleTouchStart}
               onTouchEnd={handleTouchEnd}
             >
-              <div 
+              <div
                 className="flex transition-transform duration-300 ease-out"
-                style={{ 
+                style={{
                   gap: `${gapSize}px`,
                   transform: `translateX(-${currentSlide * (100 / itemsPerView)}%)`
                 }}
@@ -434,7 +432,7 @@ export default function TopSellingProjects({
                     style={{ width: `calc(${100 / itemsPerView}% - ${gapSize * (itemsPerView - 1) / itemsPerView}px)` }}
                   >
                     <div className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                      
+
                       {/* Image */}
                       <Link href={`/property/${project.slug}`}>
                         <div className="relative h-48 overflow-hidden bg-gray-100">
@@ -451,7 +449,7 @@ export default function TopSellingProjects({
                               }
                             }}
                           />
-                          
+
                           {/* Rating */}
                           <div className="absolute top-3 left-3 flex items-center gap-1 px-2 py-1 bg-white/90 rounded-full text-xs">
                             <Star size={10} className="fill-yellow-400 text-yellow-400" />
@@ -466,8 +464,8 @@ export default function TopSellingProjects({
                             }}
                             className="absolute top-3 right-3 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center"
                           >
-                            <Heart 
-                              size={14} 
+                            <Heart
+                              size={14}
                               className={favorites.includes(project.slug) ? 'fill-red-500 text-red-500' : 'text-gray-600'}
                             />
                           </button>
@@ -496,7 +494,7 @@ export default function TopSellingProjects({
                             {project.name}
                           </h3>
                         </Link>
-                        
+
                         <div className="flex items-center gap-1 text-gray-500 text-xs mb-2">
                           <MapPin size={10} />
                           <span className="line-clamp-1">{project.location}</span>
@@ -521,14 +519,14 @@ export default function TopSellingProjects({
 
                         {/* Actions */}
                         <div className="flex gap-2">
-                          <Link 
+                          <Link
                             href={`/property/${project.slug}`}
                             className="flex-1 text-center py-1.5 border rounded-lg text-sm font-medium transition-colors hover:bg-gray-50"
                             style={{ borderColor: cityColor, color: cityColor }}
                           >
                             Details
                           </Link>
-                          <button 
+                          <button
                             onClick={() => handleOpenPopup(project)}
                             className="flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg text-white text-sm transition-all hover:scale-105"
                             style={{ backgroundColor: cityColor }}
@@ -551,9 +549,8 @@ export default function TopSellingProjects({
                   <button
                     key={index}
                     onClick={() => goToSlide(index)}
-                    className={`h-1.5 rounded-full transition-all ${
-                      index === currentSlide ? 'w-6' : 'w-1.5 bg-gray-300'
-                    }`}
+                    className={`h-1.5 rounded-full transition-all ${index === currentSlide ? 'w-6' : 'w-1.5 bg-gray-300'
+                      }`}
                     style={{ backgroundColor: index === currentSlide ? cityColor : undefined }}
                   />
                 ))}
@@ -564,7 +561,7 @@ export default function TopSellingProjects({
 
         {/* View All */}
         <div className="text-center mt-8">
-          <Link 
+          <Link
             href={`/properties?city=${CITY_SLUG_MAP[city]}&sort=top-selling`}
             className="inline-flex items-center gap-1 text-sm font-medium hover:gap-2 transition-all"
             style={{ color: cityColor }}
@@ -577,21 +574,21 @@ export default function TopSellingProjects({
       </div>
 
       {/* Enquiry Popup */}
-   <EnquiryPopup
-  isOpen={isPopupOpen}
-  onClose={handleClosePopup}
-  projectName={selectedProject?.name || 'Properties'}
-  projectTagline={`Get details about ${selectedProject?.name || 'this property'} from our experts`}
-  theme="gradient"
-  onSubmit={handleFormSubmit}
-  trackingData={{
-    source: 'top_selling_projects',
-    campaign: 'call_button_enquiry',
-    medium: 'organic',
-    city: city.toLowerCase()
-  }}
-  // simplified prop removed - the new component is already simplified
-/>
+      <EnquiryPopup
+        isOpen={isPopupOpen}
+        onClose={handleClosePopup}
+        projectName={selectedProject?.name || 'Properties'}
+        projectTagline={`Get details about ${selectedProject?.name || 'this property'} from our experts`}
+        theme="gradient"
+        onSubmit={handleFormSubmit}
+        trackingData={{
+          source: 'top_selling_projects',
+          campaign: 'call_button_enquiry',
+          medium: 'organic',
+          city: city.toLowerCase()
+        }}
+      // simplified prop removed - the new component is already simplified
+      />
     </section>
   );
 }
