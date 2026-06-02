@@ -189,7 +189,7 @@ export default function ServicesPage() {
             </div>
             
             {/* Main Heading */}
-            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-6 leading-tight animate-fade-in-up">
+            <h1 className="page-title mb-6 animate-fade-in-up">
               <span className="text-white">Your One-Stop Solution for</span>
               <span className="block text-[#F8C21C] mt-3 relative inline-block">
                 All Property Needs

@@ -92,7 +92,7 @@ export default async function ProjectsPage({
       {/* 🔹 Hero Section */}
       <section className="bg-gradient-to-br from-[#005E60] to-[#004a4d] text-white py-12 lg:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl lg:text-4xl font-bold mb-4">All Projects</h1>
+          <h1 className="page-title mb-4">All Projects</h1>
           <p className="text-lg text-white/90 mb-6">
             Discover {filteredProjects.length} premium projects across Pune, Mumbai & KDMC
           </p>

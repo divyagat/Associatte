@@ -185,7 +185,7 @@ export default function CtaFormSection({ city, title, subtitle, buttonText, form
   ];
 
   return (
-    <section className="py-16 bg-gradient-to-br from-[#003d40] via-[#005E60] to-[#004a4d] relative overflow-hidden">
+    <section className="py-10 md:py-14 bg-gradient-to-br from-[#003d40] via-[#005E60] to-[#004a4d] relative overflow-hidden">
       {/* Decorative Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#F8C21C]/10 rounded-full blur-3xl" />

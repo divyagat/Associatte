@@ -8,11 +8,12 @@
   --background: #ffffff;
   --foreground: #171717;
   
-  /* ✅ Brand Colors for Blog */
-  --color-primary: #234E70;
-  --color-primary-dark: #1a3d57;
-  --color-secondary: #0E8744;
-  --color-secondary-light: #1a9e52;
+  /* ✅ Brand Colors (Associatte) — Green / Red / Gold */
+  --color-primary: #005E60;        /* Green (Teal) */
+  --color-primary-dark: #004a4b;   /* Dark Green */
+  --color-secondary: #8B0000;      /* Red (Burgundy) */
+  --color-secondary-light: #a31d1d;
+  --color-gold: #F8C21C;           /* Yellow / Gold */
   --color-accent: #ECF1F8;
   --color-text: #1f2937;
   --color-text-light: #6b7280;
@@ -294,6 +295,28 @@ img {
     color: var(--color-secondary);
     font-weight: 700;
     font-size: 1.125rem;
+  }
+}
+
+/* ✅ Unified page-hero heading — single source of truth for all page titles.
+   Pages keep their own color/margin utilities; only typography is standardized here. */
+@layer components {
+  .page-title {
+    font-size: 1.875rem;      /* text-3xl */
+    line-height: 1.15;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  @media (min-width: 640px) {
+    .page-title {
+      font-size: 2.25rem;     /* text-4xl */
+    }
+  }
+  @media (min-width: 1024px) {
+    .page-title {
+      font-size: 3rem;        /* text-5xl */
+      line-height: 1.1;
+    }
   }
 }
 

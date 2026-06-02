@@ -132,7 +132,7 @@ export default function LocationsPage() {
               <MapPin size={16} />
               <span>Explore Locations</span>
             </div>
-            <h1 className="text-3xl md:text-5xl font-bold mb-4">
+            <h1 className="page-title mb-4">
               Find Your Dream Home Across Maharashtra
             </h1>
             <p className="text-lg text-white/90 mb-8">

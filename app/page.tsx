@@ -181,14 +181,14 @@ export default function HomePage() {
           onSearch={handleSearch}
         />
         
-        <section className="py-12 md:py-16" aria-labelledby="newly-launched-heading">
+        <section aria-labelledby="newly-launched-heading">
           <NewlyLaunchedProjects 
             selectedCity={newlyLaunchedProps.selectedCity}
             filters={newlyLaunchedProps.filters}
           />
         </section>
         
-        <section className="py-12 md:py-16 bg-white" aria-labelledby="top-selling-heading">
+        <section aria-labelledby="top-selling-heading">
           <TopSellingProjects 
             city={config.name} 
             filters={heroFilters.filters}
@@ -196,53 +196,50 @@ export default function HomePage() {
           />
         </section>
         
-        <section className="py-12 md:py-16" aria-labelledby="developers-heading">
+        <section aria-labelledby="developers-heading">
           <TopDevelopersCarousel city={config.name} />
         </section>
         
         {/* ✅ Trust Section - Button opens popup */}
-        <section className="py-12 md:py-16 bg-white" aria-labelledby="trust-heading">
+        <section aria-labelledby="trust-heading">
           <TrustFeaturesSection 
             city={config.name} 
             onConsultationClick={() => setIsPopupOpen(true)} 
           />
         </section>
         
-        <section className="py-12 md:py-16" aria-labelledby="types-heading">
+        <section aria-labelledby="types-heading">
           <PropertyTypesSection city={config.name} />
         </section>
         
-        <section className="py-12 md:py-16 bg-white" aria-labelledby="categories-heading">
+        <section aria-labelledby="categories-heading">
           <CategorySection 
             city={config.name}
             featuredLocalities={config.featuredLocalities}
           />
         </section>
         
-        <section className="py-12 md:py-16" aria-labelledby="services-heading">
+        <section aria-labelledby="services-heading">
           <ServicesSection city={config.name} />
         </section>
         
-        <section className="py-12 md:py-16 bg-white" aria-labelledby="featured-heading">
+        <section aria-labelledby="featured-heading">
           <FeaturedProjectsSection city={config.name} />
         </section>
         
-        <section className="py-12 md:py-16" aria-labelledby="testimonials-heading">
+        <section aria-labelledby="testimonials-heading">
           <TestimonialsAchievementsSection city={config.name} />
         </section>
         
         {/* ✅ Investment CTA Section - Button opens popup */}
-        <section 
-          className="py-12 md:py-16 bg-gradient-to-br from-[#005E60] via-[#004a4d] to-[#00383a]" 
-          aria-labelledby="investment-heading"
-        >
+        <section aria-labelledby="investment-heading">
           <InvestmentCtaSection 
             city={config.name} 
             onConsultationClick={() => setIsPopupOpen(true)} 
           />
         </section>
         
-        <section className="py-12 md:py-16 bg-white" aria-labelledby="contact-heading">
+        <section aria-labelledby="contact-heading">
           <CtaFormSection 
             city={config.name}
             title={`Get Personalized Property Recommendations in ${config.name}`}
@@ -252,7 +249,7 @@ export default function HomePage() {
           />
         </section>
         
-        <section className="py-12 md:py-16" aria-labelledby="blog-heading">
+        <section aria-labelledby="blog-heading">
           <BlogSection city={config.name} />
         </section>
 

@@ -40,7 +40,7 @@ export default function BlogSection({ city }: BlogSectionProps) {
   }
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="py-10 md:py-14 bg-gray-50">
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center gap-8 mb-8">
           <h2 className="text-2xl md:text-3xl font-bold text-[#D97941]">Recent Articles in {city}</h2>

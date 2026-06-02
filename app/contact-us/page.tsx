@@ -316,7 +316,7 @@ export default function ContactUsPage() {
               <span className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS.green }} />
               <span className="text-xs sm:text-sm font-medium" style={{ color: COLORS.green }}>Get in Touch</span>
             </div>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight text-slate-900 mb-4 sm:mb-6">
+            <h1 className="page-title text-slate-900 mb-4 sm:mb-6">
               Find Your{' '}
               <span className="relative inline-block">
                 Dream Property

@@ -16,8 +16,8 @@ const config: Config = {
       
       // ✅ Keep your existing colors + add blog brand colors
       colors: {
-        primary: "#234E70",       // Blue
-        secondary: "#0E8744",     // Green
+        primary: "#005E60",       // Green (Teal)
+        secondary: "#8B0000",     // Red (Burgundy)
         accent: "#ECF1F8",        // Light background
         
         // ✅ Blog Brand Colors (Associatte)

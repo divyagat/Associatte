@@ -66,7 +66,7 @@ export default function TrustFeaturesSection({
   const features = FEATURES[city];
 
   return (
-    <section className="relative py-20 lg:py-28 bg-gradient-to-b from-white via-gray-50 to-white overflow-hidden">
+    <section className="relative py-10 md:py-14 bg-gradient-to-b from-white via-gray-50 to-white overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-20 left-10 w-72 h-72 bg-[#005E60]/5 rounded-full blur-3xl" />
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#F8C21C]/10 rounded-full blur-3xl" />

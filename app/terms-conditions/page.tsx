@@ -167,7 +167,7 @@ export default function TermsConditionsPage() {
         <header className="bg-gradient-to-r from-[#8B0000] to-[#005E60] text-white px-6 py-8 sm:px-10">
           <div className="flex items-center gap-3 mb-2">
             <span className="inline-block w-2 h-8 bg-[#F8C21C] rounded-full"></span>
-            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">Terms of Service</h1>
+            <h1 className="page-title">Terms of Service</h1>
           </div>
           <p className="mt-2 text-white/90 text-sm sm:text-base">
             Last Updated: {new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}
