@@ -57,7 +57,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
 
       {/* Details Section */}
       <div className="p-4">
-        <h3 className="font-bold text-[#234E70] text-lg">{property.name}</h3>
+        <h3 className="font-bold text-[#005E60] text-lg">{property.name}</h3>
         <p className="text-xs text-gray-500 mt-1">by <span className="text-[#005E60] underline">{property.builder}</span></p>
         <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
           📍 {property.location}
@@ -81,7 +81,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
         <div className="mt-3 bg-[#ECF1F8] rounded-lg p-2 text-xs">
           {property.configs.map((cfg, idx) => (
             <div key={idx} className="flex justify-between py-1 border-b border-gray-200 last:border-0">
-              <span className="font-medium text-[#234E70]">{cfg.type}</span>
+              <span className="font-medium text-[#005E60]">{cfg.type}</span>
               <span className="text-gray-600">{cfg.sqft} sqft</span>
               <span className="font-semibold text-[#005E60]">₹{cfg.price} Cr</span>
             </div>

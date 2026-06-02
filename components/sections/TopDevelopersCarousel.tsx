@@ -241,7 +241,7 @@ export default function TopDevelopersCarousel({ city }: TopDevelopersCarouselPro
   if (!developers?.length) return null;
 
   return (
-    <section className="py-16 md:py-24 bg-gradient-to-br from-slate-50 via-white to-slate-50 overflow-hidden">
+    <section className="py-10 md:py-14 bg-gradient-to-br from-slate-50 via-white to-slate-50 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header Section */}

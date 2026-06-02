@@ -37,7 +37,7 @@ export default function TestimonialsAchievementsSection({ city }: TestimonialsAc
   };
 
   return (
-    <section className="py-6 sm:py-8">
+    <section className="py-10 md:py-14">
       <div className="max-w-7xl mx-auto px-4">
         
         {/* ✅ Premium Google Review Badge */}

@@ -54,7 +54,7 @@ export default function BuilderHero({
         )}
 
         <div className="flex-1">
-          <h1 className="text-2xl md:text-3xl font-bold mb-1 capitalize">
+          <h1 className="page-title mb-1 capitalize">
             {formattedTitle}
           </h1>
           <p className="text-white/90 text-sm md:text-base">

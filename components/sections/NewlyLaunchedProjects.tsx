@@ -371,7 +371,7 @@ export default function NewlyLaunchedProjects({
   };
 
   return (
-    <section className="py-12 bg-gray-50">
+    <section className="py-10 md:py-14 bg-gray-50">
       <div className="max-w-7xl mx-auto px-6">
         
         {/* Header */}

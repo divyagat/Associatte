@@ -28,7 +28,7 @@ const services = [
 
 export default function ServicesSection({ city }: ServicesSectionProps) {
   return (
-    <section className="py-16 lg:py-24 bg-gradient-to-b from-gray-50 to-white">
+    <section className="py-10 md:py-14 bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}

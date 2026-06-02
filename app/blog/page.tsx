@@ -32,7 +32,7 @@ export default function BlogListingPage() {
               <Building2 size={16} />
               <span>Channel Partner Exclusive</span>
             </div>
-            <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
+            <h1 className="page-title text-white mb-4">
               Explore Premium Real Estate Projects
             </h1>
             <p className="text-lg text-white/90">

@@ -48,7 +48,7 @@ export default function BuilderHeader({
 
           {/* Builder Info */}
           <div className="flex-1 text-center md:text-left">
-            <h1 className="text-3xl lg:text-4xl font-bold mb-3 capitalize">{builderName}</h1>
+            <h1 className="page-title mb-3 capitalize">{builderName}</h1>
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-sm">
               <span className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full">
                 <svg className="w-5 h-5 text-[#F8C21C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">

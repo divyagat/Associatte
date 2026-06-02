@@ -458,7 +458,7 @@ export default function CityPage() {
                 </div>
                 
                 {/* ✅ H1 with location keyword */}
-                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">
+                <h1 className="page-title">
                   Discover Premium Properties in <span className="text-[#F8C21C]">{cityDisplayName}</span>
                 </h1>
                 

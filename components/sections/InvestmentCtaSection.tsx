@@ -38,7 +38,7 @@ export default function InvestmentCtaSection({ city, onConsultationClick }: Inve
   };
 
   return (
-    <section className="py-16 relative overflow-hidden">
+    <section className="py-10 md:py-14 relative overflow-hidden">
       {/* Background Image + Overlay */}
       <div className="absolute inset-0">
         <img 
