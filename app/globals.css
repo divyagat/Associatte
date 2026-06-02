@@ -413,3 +413,111 @@ img {
     border-radius: 10px;
   }
 }
+
+
+
+/* Responsive Breakpoints */
+@layer utilities {
+  /* Extra small devices (phones, 320px and up) */
+  @media (min-width: 320px) {
+    .xs\:inline {
+      display: inline;
+    }
+    .xs\:grid-cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  /* Small devices (landscape phones, 480px and up) */
+  @media (min-width: 480px) {
+    .sm\:text-base {
+      font-size: 1rem;
+    }
+  }
+
+  /* Medium devices (tablets, 768px and up) */
+  @media (min-width: 768px) {
+    .md\:w-\[420px\] {
+      width: 420px;
+    }
+    .md\:bottom-4 {
+      bottom: 1rem;
+    }
+  }
+
+  /* Large devices (desktops, 1024px and up) */
+  @media (min-width: 1024px) {
+    .lg\:w-\[450px\] {
+      width: 450px;
+    }
+    .lg\:bottom-6 {
+      bottom: 1.5rem;
+    }
+  }
+
+  /* Extra large devices (large desktops, 1280px and up) */
+  @media (min-width: 1280px) {
+    .xl\:w-\[480px\] {
+      width: 480px;
+    }
+  }
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 640px) {
+  .mobile\:max-h-screen {
+    max-height: 100vh;
+  }
+  
+  .mobile\:rounded-none {
+    border-radius: 0;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  button, 
+  [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  input,
+  textarea,
+  select {
+    font-size: 16px !important; /* Prevents zoom on focus in iOS */
+  }
+}
+
+/* Landscape mode optimizations for mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  .landscape\:h-\[80vh\] {
+    height: 80vh;
+  }
+}
+
+/* High-resolution displays */
+@media (min-resolution: 192dpi) {
+  .retina\:shadow-lg {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Safe area insets for notched devices */
+@supports (padding: max(0px)) {
+  .safe-top {
+    padding-top: max(1rem, env(safe-area-inset-top));
+  }
+  
+  .safe-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+  
+  .safe-left {
+    padding-left: max(1rem, env(safe-area-inset-left));
+  }
+  
+  .safe-right {
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+}
