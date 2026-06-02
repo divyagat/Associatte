@@ -8,7 +8,7 @@ import {
   Globe, Mail, Phone, Award, Target, Share2,
 } from 'lucide-react';
 import EnquiryPopup from '@/components/common/EnquiryPopup';
-
+// hello
 // ✅ Brand Colors
 const COLORS = {
   red: '#8B0000',
