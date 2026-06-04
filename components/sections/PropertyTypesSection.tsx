@@ -59,7 +59,7 @@ export default function PropertyTypesSection({ city }: PropertyTypesSectionProps
             <span className="inline-block px-4 py-1.5 bg-[#8B0000]/10 text-[#8B0000] text-xs font-bold uppercase tracking-[0.2em] rounded-full mb-4">
               Locations
             </span>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 font-montserrat">
+            <h2 className="section-title text-gray-900">
               Popular Cities in {city}
             </h2>
             <p className="text-gray-500 mt-3 max-w-2xl">

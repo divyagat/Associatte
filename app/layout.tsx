@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Montserrat, Jost, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "../components/Layout/Header";
 import Footer from "../components/Layout/Footer";
@@ -7,7 +7,9 @@ import { Providers } from "./providers";
 import StickyActions from "@/components/common/StickyActions";
 import Chatbot from "@/components/Chatbot"; // Add this import
 
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
+// ✅ Site-wide fonts: Montserrat (headings) + Jost (body), Geist_Mono (code)
+const montserrat = Montserrat({ variable: "--font-montserrat", subsets: ["latin"], display: "swap" });
+const jost = Jost({ variable: "--font-jost", subsets: ["latin"], display: "swap" });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -100,7 +102,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }} />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} suppressHydrationWarning>
+      <body className={`${montserrat.variable} ${jost.variable} ${geistMono.variable} antialiased`} suppressHydrationWarning>
         <Header />
         <Providers>
           <main className="min-h-screen">{children}</main>

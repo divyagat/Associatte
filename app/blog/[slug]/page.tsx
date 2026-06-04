@@ -112,8 +112,8 @@ export default function BlogDetailPage() {
       </div>
 
       {/* Cinematic Hero Section */}
-      <div className="relative bg-[#0a0a0a] overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#8B0000] via-[#004d4f] to-[#0a0a0a] opacity-90" />
+      <div className="relative bg-[#101C2E] overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#101C2E] via-[#101C2E] to-[#0a0a0a] opacity-90" />
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5" />
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#F8C21C]/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
         

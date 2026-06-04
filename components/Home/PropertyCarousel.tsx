@@ -49,7 +49,7 @@ const PropertyCarousel: React.FC<PropertyCarouselProps> = ({ properties, onViewM
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h2 className="text-2xl md:text-3xl font-bold font-montserrat text-[#005E60]">
+            <h2 className="section-title text-[#005E60]">
               Top New Launches In Mumbai
             </h2>
             <p className="text-gray-500 mt-1 text-sm">Discover the Latest Real Estate Projects in Mumbai</p>

@@ -254,7 +254,7 @@ export default function TopDevelopersCarousel({ city }: TopDevelopersCarouselPro
             <span className="text-sm font-semibold" style={{ color: theme.primary }}>INDIA'S TOP BUILDERS</span>
           </div>
           
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
+          <h2 className="section-title mb-4">
             <span className="text-gray-900">Trusted Developers in</span>
             <br />
             <span className="relative inline-block mt-2">

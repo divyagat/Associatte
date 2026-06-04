@@ -5,9 +5,15 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
+  /* ✅ Canonical site palette — same combination on every page */
+  --mainColor: #8B0000;            /* Red (Burgundy) */
+  --secondaryColor: #005E60;       /* Green (Teal) */
+  --bgColor: #f7f7f7;              /* Page background */
+  --footerColor: #848383;          /* Footer gray */
+
+  --background: var(--bgColor);
   --foreground: #171717;
-  
+
   /* ✅ Brand Colors (Associatte) — Green / Red / Gold */
   --color-primary: #005E60;        /* Green (Teal) */
   --color-primary-dark: #004a4b;   /* Dark Green */
@@ -27,7 +33,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-jost);
+  --font-heading: var(--font-montserrat);
   --font-mono: var(--font-geist-mono);
   
   /* ✅ Blog Theme Extensions */
@@ -64,7 +71,12 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-jost), "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+/* ✅ All headings site-wide use Montserrat — single source of truth */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-montserrat), "Segoe UI", Helvetica, Arial, sans-serif;
 }
 
 /* ✅ Smooth scrolling */
@@ -118,7 +130,7 @@ img {
 @layer components {
   .prose {
     color: var(--color-text);
-    font-family: var(--font-geist-sans);
+    font-family: var(--font-jost), "Segoe UI", Helvetica, Arial, sans-serif;
     line-height: 1.7;
   }
   
@@ -318,6 +330,134 @@ img {
       line-height: 1.1;
     }
   }
+}
+
+/* =====================================================================
+   ✅ SITE DESIGN SYSTEM — one color combination + typography, all pages
+   Palette: button #005F5F | hero #101C2E | accent #F8C21C (yellow)
+   ===================================================================== */
+@layer components {
+
+  /* ---- Primary / CTA button: #005F5F bg, white text ---- */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: #005F5F;
+    color: #ffffff;
+    font-family: var(--font-montserrat), "Segoe UI", sans-serif;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    line-height: 1.2;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 95, 95, 0.25);
+  }
+  .btn-primary:hover {
+    background: #004a4a;
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(0, 95, 95, 0.35);
+  }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+  @media (min-width: 768px) {
+    .btn-primary { font-size: 1rem; padding: 0.875rem 1.75rem; }
+  }
+
+  /* Outline variant on dark hero (secondary action) */
+  .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: transparent;
+    color: #ffffff;
+    font-family: var(--font-montserrat), "Segoe UI", sans-serif;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    line-height: 1.2;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    border: 1.5px solid rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+  }
+  .btn-outline:hover { background: rgba(255, 255, 255, 0.1); border-color: #ffffff; }
+
+  /* ---- Page hero: dark #101C2E band at the top of every page ---- */
+  .page-hero {
+    position: relative;
+    background: #101C2E;
+    color: #ffffff;
+    text-align: center;
+    padding: 4rem 1rem;
+    overflow: hidden;
+  }
+  @media (min-width: 768px) {
+    .page-hero { padding: 5.5rem 1.5rem; }
+  }
+  /* hero headings are white, with a yellow accent span */
+  .page-hero h1,
+  .page-hero h2,
+  .page-hero .page-title { color: #ffffff; }
+  .page-hero p { color: rgba(255, 255, 255, 0.82); }
+  /* yellow accent for emphasis words inside any heading */
+  .accent,
+  .page-hero .accent { color: #F8C21C; }
+  /* constrain + center hero content for consistent alignment */
+  .page-hero > .page-hero-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 56rem;
+    margin: 0 auto;
+  }
+
+  /* ---- Standard section heading (h2) — same size on every page ----
+     Size/weight only; color is left to each heading (black on light,
+     white/yellow on dark) so the heading colour scheme is preserved.
+     Element-qualified so it beats Tailwind text-* utilities on specificity. */
+  h1.section-title, h2.section-title, h3.section-title, .section-title {
+    font-family: var(--font-montserrat), "Segoe UI", sans-serif;
+    font-weight: 700;
+    font-size: 1.75rem;        /* mobile */
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  @media (min-width: 640px) {
+    h1.section-title, h2.section-title, h3.section-title, .section-title { font-size: 2rem; }
+  }
+  @media (min-width: 1024px) {
+    h1.section-title, h2.section-title, h3.section-title, .section-title { font-size: 2.25rem; }
+  }
+
+  /* Section sub-heading / lead text under a section title */
+  .section-subtitle {
+    font-family: var(--font-jost), "Segoe UI", sans-serif;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #4b5563;
+  }
+  @media (min-width: 768px) { .section-subtitle { font-size: 1.125rem; } }
+
+  /* Consistent content container + alignment helper */
+  .container-site {
+    max-width: 80rem;          /* 1280px */
+    margin: 0 auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  @media (min-width: 640px) { .container-site { padding-left: 1.5rem; padding-right: 1.5rem; } }
+  @media (min-width: 1024px) { .container-site { padding-left: 2rem; padding-right: 2rem; } }
 }
 
 /* ✅ Glassmorphism utilities */

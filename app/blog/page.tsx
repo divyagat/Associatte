@@ -23,8 +23,7 @@ export default function BlogListingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-[#8B0000] to-[#005E60] overflow-hidden">
-        <div className="absolute inset-0 bg-black/10" />
+      <div className="relative bg-[#101C2E] overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-[#F8C21C]/10 rounded-full blur-3xl" />
         <div className="relative container mx-auto px-4 py-16 md:py-20 max-w-7xl">
           <div className="max-w-3xl mx-auto text-center">
@@ -33,7 +32,7 @@ export default function BlogListingPage() {
               <span>Channel Partner Exclusive</span>
             </div>
             <h1 className="page-title text-white mb-4">
-              Explore Premium Real Estate Projects
+              Explore <span className="accent">Premium</span> Real Estate Projects
             </h1>
             <p className="text-lg text-white/90">
               Expert reviews, investment insights, and exclusive offers across Pune, Mumbai & KDMC

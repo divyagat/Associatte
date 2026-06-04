@@ -39,7 +39,7 @@ export default function ServicesSection({ city }: ServicesSectionProps) {
           <span className="inline-block px-3 py-1 bg-[#005E60]/10 text-[#005E60] text-sm font-semibold rounded-full mb-4">
             What We Offer
           </span>
-          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="section-title text-gray-900 mb-4">
             End-to-End Real Estate Services in {city}
           </h2>
           <p className="text-lg text-gray-600">

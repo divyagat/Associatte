@@ -344,7 +344,7 @@ export default function TopSellingProjects({
             <span className="text-xs font-medium text-gray-600">Hot Properties</span>
           </div>
 
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+          <h2 className="section-title text-gray-900 mb-3">
             Top Selling Projects in{' '}
             <span style={{ color: cityColor }}>{city}</span>
           </h2>

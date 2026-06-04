@@ -18,7 +18,7 @@ export const AnimatedBackground = memo(({
   
   const PRIMARY = '#005E60';
   const ACCENT = '#F8C21C';
-  const BASE = '#0f172a';
+  const BASE = '#101C2E';
 
   const variants = {
     light: { bgOpacity: '15', blur: 'blur-[80px]', orbOpacity: '14' },

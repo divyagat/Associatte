@@ -405,10 +405,10 @@ export default function CtaFormSection({ city, title, subtitle, buttonText, form
                       disabled={isSubmitting} 
                       whileHover={{ scale: isSubmitting ? 1 : 1.02 }} 
                       whileTap={{ scale: isSubmitting ? 1 : 0.98 }} 
-                      className={`w-full py-4 rounded-xl font-semibold text-white transition-all duration-300 flex items-center justify-center gap-2 ${
-                        isSubmitting 
-                          ? 'bg-gray-400 cursor-not-allowed' 
-                          : 'bg-[#F8C21C] hover:bg-[#e6b418] text-[#005E60] shadow-lg hover:shadow-xl'
+                      className={`w-full btn-primary ${
+                        isSubmitting
+                          ? 'opacity-60 cursor-not-allowed'
+                          : ''
                       }`}
                     >
                       {isSubmitting ? (

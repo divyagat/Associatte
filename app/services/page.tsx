@@ -150,7 +150,7 @@ export default function ServicesPage() {
       {/* 🔹 Modern Hero Section */}
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
         {/* Animated Gradient Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#005E60] via-[#004a4d] to-[#002d2f]" />
+        <div className="absolute inset-0 bg-[#101C2E]" />
         
         {/* Animated Grid Pattern */}
         <div className="absolute inset-0 opacity-10">
@@ -232,9 +232,9 @@ export default function ServicesPage() {
             
             {/* CTA Buttons */}
             <div className="flex flex-wrap justify-center gap-4 mb-12 animate-fade-in-up animation-delay-400">
-              <Link 
+              <Link
                 href="/contact-us"
-                className="group inline-flex items-center gap-2 px-8 py-4 bg-[#F8C21C] text-[#8B0000] font-semibold rounded-xl hover:bg-[#e6b010] transition-all duration-300 hover:scale-105 shadow-xl"
+                className="group btn-primary hover:scale-105 shadow-xl"
               >
                 <span>Get Free Consultation</span>
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -291,7 +291,7 @@ export default function ServicesPage() {
               <Shield className="w-4 h-4 text-[#005E60]" />
               <span className="text-sm font-semibold text-[#005E60]">Our Credentials</span>
             </div>
-            <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mt-2">Trusted by Thousands of Property Owners</h2>
+            <h2 className="section-title text-gray-900 mt-2">Trusted by Thousands of Property Owners</h2>
             <p className="text-gray-500 mt-2">We take pride in our track record of excellence</p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -334,7 +334,7 @@ export default function ServicesPage() {
                     <span className="text-sm font-semibold" style={{ color: service.color }}>{service.tagline}</span>
                   </div>
                   
-                  <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
+                  <h2 className="section-title text-gray-900 leading-tight">
                     {service.title}
                     <div className="w-16 h-1 mt-2 rounded-full" style={{ backgroundColor: service.color }} />
                   </h2>
@@ -423,7 +423,7 @@ export default function ServicesPage() {
               <Heart className="w-4 h-4 text-[#F8C21C]" />
               <span className="text-sm font-medium">Why Choose Us</span>
             </div>
-            <h2 className="text-3xl lg:text-4xl font-bold">The Associatte Advantage</h2>
+            <h2 className="section-title">The Associatte Advantage</h2>
             <p className="text-white/80 mt-3 max-w-2xl mx-auto">Setting new standards in real estate services</p>
           </div>
           
@@ -453,7 +453,7 @@ export default function ServicesPage() {
             <Zap className="w-4 h-4 text-[#F8C21C]" />
             <span className="text-sm font-medium">Limited Time Offer</span>
           </div>
-          <h2 className="text-3xl lg:text-5xl font-bold text-white mb-4">
+          <h2 className="section-title text-white mb-4">
             Ready to Start Your Property Journey?
           </h2>
           <p className="text-white/90 mb-8 text-lg">
@@ -487,7 +487,7 @@ export default function ServicesPage() {
               <Globe className="w-4 h-4 text-[#005E60]" />
               <span className="text-sm font-semibold text-[#005E60]">FAQ</span>
             </div>
-            <h2 className="text-3xl font-bold text-gray-900">Frequently Asked Questions</h2>
+            <h2 className="section-title text-gray-900">Frequently Asked Questions</h2>
             <p className="text-gray-500 mt-3">Everything you need to know about our services</p>
           </div>
           

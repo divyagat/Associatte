@@ -1,7 +1,7 @@
 export default function Featured() {
   return (
     <section className="max-w-6xl mx-auto px-6 py-16">
-      <h2 className="text-3xl font-bold text-center">
+      <h2 className="section-title text-center">
         Featured Properties
       </h2>
 
