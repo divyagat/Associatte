@@ -222,7 +222,7 @@ function SectionHeader({ badge, title, accentColor }: { badge: string; title: st
         {badge}
       </motion.span>
       
-      <h2 className="text-3xl md:text-4xl font-bold text-[#1B365D] font-montserrat tracking-tight">
+      <h2 className="section-title text-[#1B365D] tracking-tight">
         {title}
       </h2>
       

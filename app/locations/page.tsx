@@ -121,11 +121,10 @@ export default function LocationsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-[#8B0000] to-[#005E60] text-white overflow-hidden">
-        <div className="absolute inset-0 bg-black/10" />
+      <section className="relative bg-[#101C2E] text-white overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-[#F8C21C]/10 rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#F8C21C]/10 rounded-full blur-3xl" />
-        
+
         <div className="relative container mx-auto px-4 py-16 md:py-20 max-w-7xl">
           <div className="max-w-3xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 bg-[#F8C21C] text-[#8B0000] px-4 py-2 rounded-full text-sm font-semibold mb-6">
@@ -133,7 +132,7 @@ export default function LocationsPage() {
               <span>Explore Locations</span>
             </div>
             <h1 className="page-title mb-4">
-              Find Your Dream Home Across Maharashtra
+              Find Your <span className="accent">Dream Home</span> Across Maharashtra
             </h1>
             <p className="text-lg text-white/90 mb-8">
               Discover premium properties in Mumbai, Pune, Navi Mumbai, and more. 
@@ -330,7 +329,7 @@ export default function LocationsPage() {
             <Phone size={14} className="text-[#F8C21C]" />
             <span className="text-white">Need Expert Advice?</span>
           </div>
-          <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
+          <h2 className="section-title text-white mb-4">
             Can't Find Your Preferred Location?
           </h2>
           <p className="text-white/80 mb-8 max-w-2xl mx-auto">
@@ -358,7 +357,7 @@ export default function LocationsPage() {
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="text-center mb-10">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+            <h2 className="section-title text-gray-900 mb-3">
               Frequently Asked Questions
             </h2>
             <p className="text-gray-600">

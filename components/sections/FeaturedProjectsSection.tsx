@@ -120,7 +120,7 @@ export default function FeaturedProjectsSection({ city }: FeaturedProjectsSectio
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center mb-10">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900">
+            <h2 className="section-title text-gray-900">
               Featured <span style={{ color: COLORS.primary }}>Projects in {city}</span>
             </h2>
             <p className="text-gray-600 mt-1">Handpicked premium properties for you</p>

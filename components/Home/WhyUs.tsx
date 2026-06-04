@@ -1,7 +1,7 @@
 export default function WhyUs() {
   return (
     <section className="py-16">
-      <h2 className="text-3xl font-bold text-center">Why Choose Us</h2>
+      <h2 className="section-title text-center">Why Choose Us</h2>
 
       <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-8 mt-10 px-6">
         <div>

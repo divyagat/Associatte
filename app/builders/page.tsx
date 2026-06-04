@@ -85,10 +85,10 @@ export default async function BuildersPage({
 
   return (
     <main className="min-h-screen bg-gray-50">
-      <section className="bg-gradient-to-br from-[#005E60] to-[#004a4d] text-white py-12 lg:py-16">
+      <section className="bg-[#101C2E] text-white py-12 lg:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
-            <h1 className="page-title mb-4">Know Your Developer</h1>
+            <h1 className="page-title mb-4">Know Your <span className="accent">Developer</span></h1>
             <p className="text-lg text-white/90 mb-6">
               Discover {totalBuilders}+ verified builders with {totalProjects}+ projects across Pune, Mumbai & KDMC.
             </p>
@@ -115,9 +115,9 @@ export default async function BuildersPage({
                   <option key={loc} value={loc} className="text-gray-900">{loc}</option>
                 ))}
               </select>
-              <button 
-                type="submit" 
-                className="px-6 py-3 bg-[#F8C21C] text-[#8B0000] font-semibold rounded-xl hover:bg-[#d4a017] transition-colors"
+              <button
+                type="submit"
+                className="btn-primary"
               >
                 Search
               </button>

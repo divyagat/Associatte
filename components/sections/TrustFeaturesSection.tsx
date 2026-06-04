@@ -94,7 +94,7 @@ export default function TrustFeaturesSection({
                 Trusted by 5000+ Homebuyers
               </motion.span>
               
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
+              <h2 className="section-title text-gray-900 leading-tight">
                 Why Homebuyers{' '}
                 <span className="relative">
                   <span className="relative z-10 text-[#005E60]">Trust</span>

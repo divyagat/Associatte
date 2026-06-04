@@ -143,7 +143,7 @@ export default function AboutUs() {
       />
 
       {/* Hero Section */}
-      <section className="relative py-12 lg:py-20">
+      <section className="relative py-12 lg:py-20 bg-[#101C2E]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -364,7 +364,7 @@ export default function AboutUs() {
               <Target className="w-4 h-4" style={{ color: '#005E60' }} />
               <span className="text-sm font-semibold" style={{ color: '#005E60' }}>Our Services</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 mb-4">
+            <h2 className="section-title text-slate-900 mb-4">
               What We{' '}
               <span className="bg-clip-text text-transparent" style={{ backgroundImage: COLORS.redGreen }}>
                 Offer
@@ -414,7 +414,7 @@ export default function AboutUs() {
               <Heart className="w-4 h-4" style={{ color: '#8B0000' }} />
               <span className="text-sm font-semibold" style={{ color: '#8B0000' }}>Our Values</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 mb-4">
+            <h2 className="section-title text-slate-900 mb-4">
               Why Choose{' '}
               <span className="bg-clip-text text-transparent" style={{ backgroundImage: COLORS.redGreen }}>
                 Associatte
@@ -463,7 +463,7 @@ export default function AboutUs() {
               <Users className="w-4 h-4" style={{ color: '#8B0000' }} />
               <span className="text-sm font-semibold" style={{ color: '#8B0000' }}>Our Team</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 mb-4">
+            <h2 className="section-title text-slate-900 mb-4">
               Meet The{' '}
               <span className="bg-clip-text text-transparent" style={{ backgroundImage: COLORS.redGreen }}>
                 People Behind Success
@@ -656,7 +656,7 @@ export default function AboutUs() {
                 <span className="text-xs sm:text-sm font-semibold text-white">Start Your Property Journey</span>
               </div>
               
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white mb-4">
+              <h2 className="section-title text-white mb-4">
                 Ready to Find Your Dream Property?
               </h2>
               <p className="text-base sm:text-lg text-white/80 mb-6 sm:mb-8 max-w-xl mx-auto">

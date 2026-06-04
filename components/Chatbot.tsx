@@ -464,7 +464,7 @@ export default function Chatbot() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-[#005E60] text-white py-2 sm:py-3 rounded-lg sm:rounded-xl font-medium text-xs sm:text-sm hover:bg-[#003D3F] transition-all disabled:opacity-50 flex items-center justify-center gap-1 sm:gap-2"
+                    className="w-full bg-[#005F5F] text-white py-2 sm:py-3 rounded-lg sm:rounded-xl font-medium text-xs sm:text-sm hover:bg-[#004a4a] transition-all disabled:opacity-50 flex items-center justify-center gap-1 sm:gap-2"
                   >
                     {isSubmitting ? 'Submitting...' : 'Connect with Expert'}
                     <ArrowRight size={12} className="sm:w-3.5 sm:h-3.5" />

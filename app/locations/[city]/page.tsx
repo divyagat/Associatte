@@ -434,7 +434,7 @@ export default function CityPage() {
       <div className="min-h-screen bg-gray-50">
         
         {/* 🏙️ Hero Section */}
-        <section className="relative bg-gradient-to-br from-[#005E60] via-[#004a4d] to-[#003537] text-white overflow-hidden">
+        <section className="relative bg-[#101C2E] text-white overflow-hidden">
           <div className="absolute inset-0 opacity-10 pointer-events-none">
             <div className="absolute top-10 left-10 w-32 h-32 bg-white rounded-full blur-3xl" />
             <div className="absolute bottom-10 right-10 w-40 h-40 bg-[#F8C21C] rounded-full blur-3xl" />
@@ -491,7 +491,7 @@ export default function CityPage() {
                   
                   <button
                     onClick={() => setShowPopup(true)}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#F8C21C] text-[#8B0000] font-bold rounded-xl hover:bg-[#e6b418] transition-all shadow-lg hover:shadow-xl group"
+                    className="w-full sm:w-auto btn-primary shadow-lg hover:shadow-xl group"
                   >
                     <Sparkles className="w-4 h-4" /> Get Personalized Help
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />

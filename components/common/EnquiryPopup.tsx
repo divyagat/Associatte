@@ -431,7 +431,7 @@ export default function EnquiryPopup({
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className={`w-full py-3 bg-[#F8C21C] text-[#8B0000] font-bold rounded-lg hover:shadow-lg transform hover:scale-[1.02] transition-all duration-300 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
+                  className={`w-full btn-primary ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
                     }`}
                 >
                   {isSubmitting ? (

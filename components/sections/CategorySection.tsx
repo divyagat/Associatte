@@ -36,7 +36,7 @@ export default function CategorySection({ city, featuredLocalities }: CategorySe
     <section className="py-10 md:py-14 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
+          <h2 className="section-title text-gray-900">
             Explore by Category {city && `in ${city}`}
           </h2>
           <div className="w-16 h-1 bg-[#8B0000] mx-auto mt-2" />

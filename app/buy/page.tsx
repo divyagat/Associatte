@@ -10,11 +10,15 @@ export const metadata: Metadata = {
 
 export default function BuyPage() {
   return (
-    <main className="max-w-7xl mx-auto px-6 py-16">
-      <h1 className="page-title mb-6">Buy Property</h1>
-      <p className="text-lg text-gray-600">
-        Browse top residential projects across Pune, Mumbai and KDMC.
-      </p>
+    <main className="min-h-screen bg-gray-50">
+      <section className="page-hero">
+        <div className="page-hero-inner">
+          <h1 className="page-title mb-4">Buy <span className="accent">Property</span></h1>
+          <p className="text-lg text-white/80 max-w-2xl mx-auto">
+            Browse top residential projects across Pune, Mumbai and KDMC.
+          </p>
+        </div>
+      </section>
     </main>
   );
 }

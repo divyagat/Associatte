@@ -25,7 +25,7 @@ export default function BuilderHeader({
   const initial = builderName.charAt(0).toUpperCase();
 
   return (
-    <div className="bg-gradient-to-br from-[#005E60] to-[#004a4d] text-white py-12">
+    <div className="bg-[#101C2E] text-white py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row items-center gap-8">
           {/* Builder Logo */}

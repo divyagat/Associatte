@@ -17,7 +17,7 @@ export default function VirtualSiteVisitSection() {
         {/* 1. Header Section */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-8 mb-16">
           <div className="text-center md:text-left">
-            <h2 className="text-3xl lg:text-4xl font-bold font-montserrat text-[#8B0000] tracking-tight mb-4">
+            <h2 className="section-title text-[#8B0000] tracking-tight mb-4">
               Housiey Online Site Visit - <br className="hidden lg:block" /> 6 Simple Steps
             </h2>
             <p className="text-gray-500 text-lg">

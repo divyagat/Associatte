@@ -53,7 +53,7 @@ export default function InvestmentCtaSection({ city, onConsultationClick }: Inve
       {/* Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6 leading-tight">
+          <h2 className="section-title text-white mb-6 leading-tight">
             Looking to Invest in {city} Real Estate?
           </h2>
           

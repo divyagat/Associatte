@@ -90,9 +90,9 @@ export default async function ProjectsPage({
   return (
     <main className="min-h-screen bg-gray-50">
       {/* 🔹 Hero Section */}
-      <section className="bg-gradient-to-br from-[#005E60] to-[#004a4d] text-white py-12 lg:py-16">
+      <section className="bg-[#101C2E] text-white py-12 lg:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="page-title mb-4">All Projects</h1>
+          <h1 className="page-title mb-4">All <span className="accent">Projects</span></h1>
           <p className="text-lg text-white/90 mb-6">
             Discover {filteredProjects.length} premium projects across Pune, Mumbai & KDMC
           </p>
@@ -135,7 +135,7 @@ export default async function ProjectsPage({
             </select>
 
             {/* Submit */}
-            <button type="submit" className="lg:col-span-5 px-6 py-3 bg-[#F8C21C] text-[#8B0000] font-semibold rounded-xl hover:bg-[#d4a017] transition-colors">
+            <button type="submit" className="lg:col-span-5 w-full btn-primary">
               Filter Projects
             </button>
           </form>

@@ -29,7 +29,7 @@ export default function BuilderHero({
   const initial = builderName?.charAt(0).toUpperCase() || 'B'; // 👈 Fallback initial
 
   return (
-    <section className="bg-gradient-to-br from-[#005E60] to-[#004a4d] text-white p-6 rounded-xl shadow-sm">
+    <section className="bg-[#101C2E] text-white p-6 rounded-xl shadow-sm">
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
         
         {/* 👇 Logo with Fallback */}
@@ -95,7 +95,7 @@ export default function BuilderHero({
             className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-[#F8C21C] transition-all text-sm"
           />
         </div>
-        <button className="px-5 py-3 bg-[#F8C21C] text-[#8B0000] font-medium rounded-xl hover:bg-[#d4a017] transition-colors flex items-center justify-center gap-2">
+        <button className="btn-primary">
           <SlidersHorizontal className="w-4 h-4" />
           <span>Filters</span>
         </button>

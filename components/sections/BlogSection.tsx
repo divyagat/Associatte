@@ -43,7 +43,7 @@ export default function BlogSection({ city }: BlogSectionProps) {
     <section className="py-10 md:py-14 bg-gray-50">
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center gap-8 mb-8">
-          <h2 className="text-2xl md:text-3xl font-bold text-[#D97941]">Recent Articles in {city}</h2>
+          <h2 className="section-title text-[#D97941]">Recent Articles in {city}</h2>
           <div className="h-6 w-px bg-gray-300" />
           <span className="text-lg text-gray-700 font-medium">Knowledge centre</span>
         </div>

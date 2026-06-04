@@ -305,27 +305,26 @@ export default function ContactUsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-white border-b border-slate-100">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#005E60]/5 via-transparent to-[#F8C21C]/5" />
-        <div className="absolute top-20 right-10 w-72 h-72 bg-[#005E60]/10 rounded-full blur-3xl" />
+      <section className="relative overflow-hidden bg-[#101C2E] border-b border-slate-100">
+        <div className="absolute top-20 right-10 w-72 h-72 bg-[#005E60]/20 rounded-full blur-3xl" />
         <div className="absolute bottom-20 left-10 w-80 h-80 bg-[#F8C21C]/10 rounded-full blur-3xl" />
-        
+
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
           <div className="text-center max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#005E60]/10 mb-4 sm:mb-6">
-              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS.green }} />
-              <span className="text-xs sm:text-sm font-medium" style={{ color: COLORS.green }}>Get in Touch</span>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 mb-4 sm:mb-6">
+              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS.yellow }} />
+              <span className="text-xs sm:text-sm font-medium text-[#F8C21C]">Get in Touch</span>
             </div>
-            <h1 className="page-title text-slate-900 mb-4 sm:mb-6">
+            <h1 className="page-title text-white mb-4 sm:mb-6">
               Find Your{' '}
-              <span className="relative inline-block">
+              <span className="accent relative inline-block">
                 Dream Property
                 <svg className="absolute -bottom-2 left-0 w-full" height="6" viewBox="0 0 200 6" fill="none">
                   <path d="M0 3L200 3" stroke={COLORS.yellow} strokeWidth="4" strokeLinecap="round"/>
                 </svg>
               </span>
             </h1>
-            <p className="text-base sm:text-lg lg:text-xl text-slate-600 max-w-2xl mx-auto px-4">
+            <p className="text-base sm:text-lg lg:text-xl text-white/80 max-w-2xl mx-auto px-4">
               Whether you&apos;re buying, selling, or investing, our expert team is here to guide you every step of the way.
             </p>
           </div>
@@ -484,7 +483,7 @@ export default function ContactUsPage() {
                   type="submit"
                   disabled={isSubmitting}
                   className="group relative w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-3.5 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg overflow-hidden disabled:opacity-70 disabled:cursor-not-allowed"
-                  style={{ background: `linear-gradient(135deg, ${COLORS.green}, #004a4d)` }}
+                  style={{ background: '#005F5F' }}
                 >
                   <span className="relative z-10 flex items-center justify-center gap-2 text-sm sm:text-base">
                     {isSubmitting ? (
