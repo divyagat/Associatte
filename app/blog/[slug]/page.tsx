@@ -294,88 +294,102 @@ export default function BlogDetailPage() {
         </div>
       </header>
 
-      {/* ✨ REDESIGNED PREMIUM FEATURED IMAGE HERO ✨ */}
-      <section className="relative w-full max-w-7xl mx-auto px-4 md:px-6 pt-24 pb-8 md:pt-32 md:pb-12">
-        {/* Main Image Container with Premium Framing */}
-        <div className="relative group rounded-3xl overflow-hidden shadow-2xl ring-1 ring-black/5 bg-gray-900">
+      {/* ✨ COMPACT PREMIUM HERO BANNER ✨ */}
+      <section className="relative w-full max-w-7xl mx-auto px-4 md:px-6 pt-20 md:pt-24 pb-8">
+        <div className="relative w-full h-[350px] sm:h-[400px] md:h-[450px] lg:h-[480px] rounded-3xl overflow-hidden shadow-2xl ring-1 ring-black/5 group bg-gray-900">
           
-          {/* Cinematic Aspect Ratio Wrapper */}
-          <div className="relative w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden">
-            {/* Image with subtle zoom animation on load/hover */}
-            <img 
-              src={post.image} 
-              alt={post.title}
-              className="w-full h-full object-cover object-center transition-transform duration-1000 ease-out group-hover:scale-105 scale-100"
-            />
-            
-            {/* Multi-layer Premium Overlays for perfect text readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-black/30" />
-            <div className="absolute inset-0 bg-[#8B0000]/10 mix-blend-overlay" />
-          </div>
-
-          {/* Floating Content Overlay */}
-          <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 lg:p-12 animate-fade-in-up">
-            <div className="max-w-4xl mx-auto md:mx-0">
+          {/* Background Image - Constrained height ensures it's fully visible and perfectly framed */}
+          <img 
+            src={post.image} 
+            alt={post.title}
+            className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+          />
+          
+          {/* Elegant Gradient Overlays for perfect text readability without darkening the whole image */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-black/30" />
+          
+          {/* Content Container */}
+          <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 lg:p-12">
+            <div className="max-w-4xl mx-auto md:mx-0 space-y-4 animate-fade-in-up">
               
-              {/* Top Meta Row */}
-              <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-4">
-                <span className="inline-flex items-center gap-1.5 bg-gradient-to-r from-[#F8C21C] to-[#e6b018] text-[#8B0000] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg shadow-yellow-500/20">
+              {/* Category & Meta Badges */}
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 bg-[#F8C21C] text-[#8B0000] px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg">
                   <Sparkles size={12} />
                   {post.category}
                 </span>
-                <span className="inline-flex items-center gap-1.5 bg-white/15 backdrop-blur-md text-white px-3.5 py-1.5 rounded-full text-xs font-medium border border-white/20">
-                  <MapPin size={12} />
-                  {post.city}
-                </span>
-                <span className="inline-flex items-center gap-1.5 bg-white/15 backdrop-blur-md text-white px-3.5 py-1.5 rounded-full text-xs font-medium border border-white/20">
+                <span className="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-md text-white px-3.5 py-1.5 rounded-full text-xs font-medium border border-white/20">
                   <Clock size={12} />
                   {post.readTime}
                 </span>
+                <span className="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-md text-white px-3.5 py-1.5 rounded-full text-xs font-medium border border-white/20">
+                  <Calendar size={12} />
+                  {post.date}
+                </span>
               </div>
 
-              {/* Main Title */}
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-[1.15] text-white tracking-tight drop-shadow-lg">
+              {/* Title */}
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white leading-[1.15] tracking-tight drop-shadow-lg">
                 {post.title}
               </h1>
 
-              {/* Excerpt */}
-              <p className="text-white/90 text-base md:text-lg max-w-2xl mb-6 leading-relaxed font-light drop-shadow-md">
+              {/* Excerpt (Limited to 2 lines on mobile to guarantee compact, fully visible height) */}
+              <p className="text-white/85 text-base md:text-lg max-w-2xl leading-relaxed font-light line-clamp-2 md:line-clamp-none drop-shadow-md">
                 {post.excerpt}
               </p>
 
-              {/* Author & Meta Compact Card */}
-              <div className="inline-flex flex-wrap items-center gap-4 md:gap-6 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl px-5 py-3.5 shadow-2xl">
-                <div className="flex items-center gap-3">
-                  <div className="relative">
-                    <img 
-                      src={post.author.avatar} 
-                      alt={post.author.name}
-                      className="w-10 h-10 rounded-full border-2 border-[#F8C21C] object-cover shadow-md"
-                    />
-                    <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
-                  </div>
+              {/* Author & Actions Row */}
+              <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
+                <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-4 py-2.5">
+                  <img 
+                    src={post.author.avatar} 
+                    alt={post.author.name}
+                    className="w-9 h-9 rounded-full border-2 border-[#F8C21C] object-cover"
+                  />
                   <div className="text-left">
                     <p className="font-semibold text-white text-sm leading-tight">{post.author.name}</p>
                     <p className="text-[11px] text-white/70 leading-tight">{post.author.role}</p>
-                  </div>
+                </div>
                 </div>
 
-                <div className="hidden sm:block w-px h-8 bg-white/20" />
-
-                <div className="flex items-center gap-4 text-white/85 text-xs">
-                  <div className="flex items-center gap-1.5">
-                    <Calendar size={13} className="text-[#F8C21C]" />
-                    <span>{post.date}</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <Eye size={13} className="text-[#F8C21C]" />
-                    <span>2.8K</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <Heart size={13} className="text-[#F8C21C]" />
+                <div className="flex items-center gap-2">
+                  <button 
+                    onClick={() => {
+                      if (!liked) {
+                        setLikesCount(likesCount + 1);
+                        setLiked(true);
+                      } else {
+                        setLikesCount(likesCount - 1);
+                        setLiked(false);
+                      }
+                    }}
+                    className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-300 text-sm font-medium backdrop-blur-md border ${
+                      liked 
+                        ? 'bg-red-500/20 text-red-400 border-red-500/30' 
+                        : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
+                    }`}
+                  >
+                    <Heart size={16} fill={liked ? 'currentColor' : 'none'} />
                     <span>{likesCount}</span>
-                  </div>
+                  </button>
+                  
+                  <button 
+                    onClick={() => {
+                      const bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
+                      const newBookmarks = isBookmarked ? bookmarks.filter((b: string) => b !== slug) : [...bookmarks, slug];
+                      localStorage.setItem('bookmarks', JSON.stringify(newBookmarks));
+                      setIsBookmarked(!isBookmarked);
+                    }}
+                    className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-300 text-sm font-medium backdrop-blur-md border ${
+                      isBookmarked
+                        ? 'bg-[#F8C21C]/20 text-[#F8C21C] border-[#F8C21C]/30'
+                        : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
+                    }`}
+                  >
+                    <Bookmark size={16} fill={isBookmarked ? 'currentColor' : 'none'} />
+                    <span className="hidden sm:inline">{isBookmarked ? 'Saved' : 'Save'}</span>
+                  </button>
                 </div>
               </div>
 
