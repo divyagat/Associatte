@@ -7,7 +7,7 @@ import {
   ArrowLeft, Calendar, Clock, Share2, Bookmark, Copy, 
   Eye, Heart, ChevronRight, Mail, MapPin, Building2, 
   Tag, PhoneCall, Star, Sparkles, MessageCircle, Shield, 
-  Award, CheckCircle, ArrowUp, List, ChevronDown
+  Award, CheckCircle, ArrowUp, List
 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import EnquiryPopup from '../../../components/common/EnquiryPopup';
@@ -89,6 +89,18 @@ const getBlogBySlug = (slug: string): BlogPost | null => {
         <li><strong>Down Payment:</strong> While 20% avoids PMI, many programs accept 3-5%</li>
       </ul>
 
+      <!-- ✨ PREMIUM MID-ARTICLE IMAGE ✨ -->
+      <figure class="my-10">
+        <img 
+          src="https://images.unsplash.com/photo-1560184897-ae75f418493e?auto=format&fit=crop&w=1200&q=85" 
+          alt="Modern home interior representing successful home buying" 
+          class="w-full h-[400px] object-cover rounded-2xl shadow-xl border border-gray-100"
+        />
+        <figcaption class="text-center text-sm text-gray-500 mt-3 italic">
+          A thorough financial foundation is the key to unlocking your dream home.
+        </figcaption>
+      </figure>
+
       <h2 id="pre-approval">2. Get Pre-Approved, Not Just Pre-Qualified</h2>
       <p>There's a crucial difference between pre-qualification and pre-approval. Pre-qualification is an estimate based on self-reported information. Pre-approval involves a lender verifying your financial documents and committing to a specific loan amount.</p>
       
@@ -103,7 +115,8 @@ const getBlogBySlug = (slug: string): BlogPost | null => {
       <h2 id="inspection">5. Never Skip the Inspection</h2>
       <p>A thorough home inspection is your insurance policy against expensive surprises. Beyond the standard inspection, consider specialized inspections for pest damage, radon, sewer lines, and structural integrity, especially in older homes.</p>
     `,
-    image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=2000&q=80',
+    // HIGH-RESOLUTION IMAGE: w=1600&q=90 ensures it is crystal clear and not blurry
+    image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1600&q=90',
     category: 'Buying Tips',
     city: 'Mumbai',
     location: 'Mumbai, Maharashtra',
@@ -240,29 +253,20 @@ export default function BlogDetailPage() {
       <header className={`fixed top-[3px] left-0 right-0 z-50 transition-all duration-500 ${
         isScrolled 
           ? 'bg-white/95 backdrop-blur-xl shadow-lg border-b border-gray-100' 
-          : 'bg-transparent'
+          : 'bg-white/95 backdrop-blur-xl border-b border-gray-100'
       }`}>
         <div className="container mx-auto px-4 md:px-6 py-4 max-w-7xl">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Link 
-                href="/" 
-                className={`p-2 rounded-full transition-all duration-300 hover:bg-gray-100 ${
-                  isScrolled ? 'text-gray-700' : 'text-white bg-black/20 backdrop-blur-sm hover:bg-black/30'
-                }`}
-              >
+              <Link href="/" className="p-2 rounded-full hover:bg-gray-100 text-gray-700 transition-all duration-300">
                 <ArrowLeft size={18} />
               </Link>
-              <div className={`hidden md:flex items-center gap-2 text-sm transition-all duration-300 ${
-                isScrolled ? 'text-gray-500' : 'text-white/80'
-              }`}>
-                <Link href="/" className={`hover:text-[#8B0000] transition ${isScrolled ? '' : 'hover:text-[#F8C21C]'}`}>Home</Link>
+              <div className="hidden md:flex items-center gap-2 text-sm text-gray-500">
+                <Link href="/" className="hover:text-[#8B0000] transition">Home</Link>
                 <ChevronRight size={12} />
-                <Link href="/blog" className={`hover:text-[#8B0000] transition ${isScrolled ? '' : 'hover:text-[#F8C21C]'}`}>Blog</Link>
+                <Link href="/blog" className="hover:text-[#8B0000] transition">Blog</Link>
                 <ChevronRight size={12} />
-                <span className={`font-medium truncate max-w-[250px] ${isScrolled ? 'text-[#8B0000]' : 'text-white'}`}>
-                  {post.title}
-                </span>
+                <span className="font-medium text-gray-900 truncate max-w-[250px]">{post.title}</span>
               </div>
             </div>
             
@@ -281,11 +285,7 @@ export default function BlogDetailPage() {
                   localStorage.setItem('bookmarks', JSON.stringify(newBookmarks));
                   setIsBookmarked(!isBookmarked);
                 }}
-                className={`p-2.5 rounded-full transition-all duration-300 ${
-                  isScrolled 
-                    ? 'hover:bg-gray-100 text-gray-700' 
-                    : 'bg-black/20 backdrop-blur-sm text-white hover:bg-black/30'
-                }`}
+                className="p-2.5 rounded-full hover:bg-gray-100 text-gray-700 transition-all duration-300"
               >
                 <Bookmark size={18} className={isBookmarked ? "fill-[#F8C21C] text-[#F8C21C]" : ""} />
               </button>
@@ -294,20 +294,21 @@ export default function BlogDetailPage() {
         </div>
       </header>
 
-      {/* ✨ COMPACT PREMIUM HERO BANNER ✨ */}
+      {/* ✨ COMPACT PREMIUM HERO BANNER (Restored & Optimized for Clarity) ✨ */}
       <section className="relative w-full max-w-7xl mx-auto px-4 md:px-6 pt-20 md:pt-24 pb-8">
         <div className="relative w-full h-[350px] sm:h-[400px] md:h-[450px] lg:h-[480px] rounded-3xl overflow-hidden shadow-2xl ring-1 ring-black/5 group bg-gray-900">
           
-          {/* Background Image - Constrained height ensures it's fully visible and perfectly framed */}
+          {/* High-Resolution Background Image - No blurring, crisp rendering */}
           <img 
             src={post.image} 
             alt={post.title}
             className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+            loading="eager"
           />
           
-          {/* Elegant Gradient Overlays for perfect text readability without darkening the whole image */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-black/30" />
+          {/* Lighter Gradient Overlays: Ensures text is readable while keeping the image bright, vibrant, and clearly visible */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20" />
           
           {/* Content Container */}
           <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 lg:p-12">
@@ -334,8 +335,8 @@ export default function BlogDetailPage() {
                 {post.title}
               </h1>
 
-              {/* Excerpt (Limited to 2 lines on mobile to guarantee compact, fully visible height) */}
-              <p className="text-white/85 text-base md:text-lg max-w-2xl leading-relaxed font-light line-clamp-2 md:line-clamp-none drop-shadow-md">
+              {/* Excerpt */}
+              <p className="text-white/90 text-base md:text-lg max-w-2xl leading-relaxed font-light line-clamp-2 md:line-clamp-none drop-shadow-md">
                 {post.excerpt}
               </p>
 
@@ -350,7 +351,7 @@ export default function BlogDetailPage() {
                   <div className="text-left">
                     <p className="font-semibold text-white text-sm leading-tight">{post.author.name}</p>
                     <p className="text-[11px] text-white/70 leading-tight">{post.author.role}</p>
-                </div>
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-2">
