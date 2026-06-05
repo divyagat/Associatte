@@ -82,26 +82,24 @@ export default function Chatbot() {
       .catch(() => setUserIP('unknown'));
   }, []);
 
-  // Auto-open chat on page refresh (only once per session)
+  // Auto-open chat on page refresh/load
   useEffect(() => {
-    const autoOpened = sessionStorage.getItem('associatte_chat_auto_opened');
+    // Open chat automatically when page loads/refreshes
+    const timer = setTimeout(() => {
+      setIsOpen(true);
+      // Reset minimized state
+      setIsMinimized(false);
+    }, 1000); // 1 second delay for smooth appearance
     
-    if (!autoOpened) {
-      const timer = setTimeout(() => {
-        setIsOpen(true);
-        sessionStorage.setItem('associatte_chat_auto_opened', 'true');
-      }, 1500);
-      
-      return () => clearTimeout(timer);
-    }
-  }, []);
+    return () => clearTimeout(timer);
+  }, []); // Empty dependency array ensures this runs only on mount/refresh
 
   const quickReplies = [
-    { icon: Home, text: "🏠 Pune Properties", project: "Pune Properties Inquiry", color: "#0D9488" },
-    { icon: TrendingUp, text: "📈 Mumbai Properties", project: "Mumbai Properties Inquiry", color: "#2563EB" },
-    { icon: Shield, text: "✓ RERA Verified", project: "RERA Verification Request", color: "#F8C21C" },
-    { icon: Calendar, text: "📅 Schedule Visit", project: "Site Visit Scheduling", color: "#EA580C" },
-    { icon: Headphones, text: "🎧 Expert Advice", project: "Expert Consultation Request", color: "#7C3AED" },
+    { icon: Home, text: "Pune Properties", project: "Pune Properties Inquiry", emoji: "🏠" },
+    { icon: TrendingUp, text: "Mumbai Properties", project: "Mumbai Properties Inquiry", emoji: "📈" },
+    { icon: Shield, text: "RERA Verified", project: "RERA Verification Request", emoji: "✓" },
+    { icon: Calendar, text: "Schedule Visit", project: "Site Visit Scheduling", emoji: "📅" },
+    { icon: Headphones, text: "Expert Advice", project: "Expert Consultation Request", emoji: "🎧" },
   ];
 
   const validateName = (name: string): boolean => {
@@ -195,17 +193,17 @@ export default function Chatbot() {
     }
     
     if (!validateName(leadData.name)) {
-      setValidationErrors({ name: "Name should only contain letters and spaces" });
+      setValidationErrors({ name: "Only letters & spaces" });
       return;
     }
     
     if (!leadData.mobile) {
-      setValidationErrors({ mobile: "Mobile number is required" });
+      setValidationErrors({ mobile: "Mobile is required" });
       return;
     }
     
     if (!validateMobile(leadData.mobile)) {
-      setValidationErrors({ mobile: "Mobile number must be exactly 10 digits" });
+      setValidationErrors({ mobile: "Enter 10 digits" });
       return;
     }
 
@@ -227,7 +225,7 @@ export default function Chatbot() {
     if (success) {
       setMessages(prev => [...prev, {
         id: Date.now().toString(),
-        text: "✨ Thank you for connecting with Associatte PropTech! ✨\n\nOur expert will contact you within 2 hours.\n\nMeanwhile, feel free to explore properties on our website. Your dream home awaits! 🏠",
+        text: "✨ Thank you! Our expert will contact you within 2 hours. Your dream home awaits! 🏠",
         isUser: false,
         timestamp: new Date(),
         type: 'text'
@@ -239,7 +237,7 @@ export default function Chatbot() {
     } else {
       setMessages(prev => [...prev, {
         id: Date.now().toString(),
-        text: "⚠️ Unable to submit your request. Please try again or call us directly at +91 8881188181.",
+        text: "⚠️ Unable to submit. Please call +91 8881188181.",
         isUser: false,
         timestamp: new Date(),
         type: 'text'
@@ -252,130 +250,129 @@ export default function Chatbot() {
     return date.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
   };
 
-  // Closed State - Responsive positioning
+  // Closed State - Left side positioning (will only show if user manually closes)
   if (!isOpen) {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed left-3 sm:left-4 md:left-6 bottom-4 sm:bottom-5 md:bottom-6 z-50 group"
+        className="fixed left-3 bottom-4 z-50 group"
         aria-label="Open Chat"
       >
         <div className="relative">
           <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#005E60] to-[#F8C21C] animate-ping opacity-75"></div>
-          <div className="relative bg-gradient-to-r from-[#005E60] to-[#003D3F] px-3 sm:px-4 py-2.5 sm:py-3 rounded-full shadow-2xl flex items-center gap-2 sm:gap-3">
-            <Building2 size={16} className="sm:w-5 sm:h-5 text-[#F8C21C]" />
-            <span className="text-white text-xs sm:text-sm font-medium hidden xs:inline">Associatte PropTech</span>
-            <Sparkles size={10} className="sm:w-3 sm:h-3 text-[#F8C21C] hidden sm:block" />
-            <div className="absolute -top-1 -right-1 w-2 h-2 sm:w-2.5 sm:h-2.5 bg-green-500 rounded-full border-2 border-white"></div>
+          <div className="relative bg-gradient-to-r from-[#005E60] to-[#003D3F] px-3 py-2 rounded-full shadow-2xl flex items-center gap-1.5">
+            <MessageCircle size={14} className="text-[#F8C21C]" />
+            <span className="text-white text-[11px] font-medium">Chat</span>
+            <div className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-green-500 rounded-full border border-white"></div>
           </div>
         </div>
       </button>
     );
   }
 
-  // Open State - Fully responsive
+  // Open State - Left side positioning
   return (
     <>
-      {/* Mobile Backdrop - Improved for all devices */}
+      {/* Backdrop */}
       {isOpen && !isMinimized && (
         <div
-          className="fixed inset-0 bg-black/50 md:bg-black/20 z-40 transition-opacity duration-300"
+          className="fixed inset-0 bg-black/40 z-40 transition-opacity duration-300"
           onClick={() => setIsOpen(false)}
         />
       )}
 
-      {/* Chat Window - Fully Responsive */}
+      {/* Chat Window - Left side positioning */}
       <div
         className={`fixed z-50 bg-white shadow-2xl transition-all duration-300 ${
           isMinimized 
-            ? 'left-3 sm:left-4 md:left-6 bottom-4 sm:bottom-5 md:bottom-6 w-auto rounded-full'
-            : 'left-0 md:left-4 lg:left-6 bottom-0 md:bottom-4 lg:bottom-6 w-full sm:w-[400px] md:w-[420px] lg:w-[450px] rounded-t-2xl md:rounded-2xl'
+            ? 'left-3 bottom-4 w-auto rounded-full'
+            : 'left-2 bottom-2 right-2 sm:left-4 sm:right-auto sm:bottom-4 sm:w-[360px] rounded-xl'
         }`}
       >
         {isMinimized ? (
           <button
             onClick={() => setIsMinimized(false)}
-            className="bg-gradient-to-r from-[#005E60] to-[#003D3F] px-4 sm:px-5 py-2.5 sm:py-3 rounded-full flex items-center gap-2 shadow-xl"
+            className="bg-gradient-to-r from-[#005E60] to-[#003D3F] px-3 py-2 rounded-full flex items-center gap-1.5 shadow-xl"
           >
-            <MessageCircle size={16} className="sm:w-4 sm:h-4 text-[#F8C21C]" />
-            <span className="text-white text-xs sm:text-sm font-medium">Show Chat</span>
+            <MessageCircle size={12} className="text-[#F8C21C]" />
+            <span className="text-white text-[11px] font-medium">Open Chat</span>
           </button>
         ) : (
-          <div className="flex flex-col h-[100vh] md:h-[560px] lg:h-[600px] max-h-[100vh] md:max-h-[90vh]">
-            {/* Header - Responsive padding and sizing */}
-            <div className="bg-gradient-to-r from-[#005E60] to-[#003D3F] px-3 sm:px-4 py-3 sm:py-4 rounded-t-2xl">
+          <div className="flex flex-col h-[520px] max-h-[85vh] w-full">
+            {/* Header - Compact */}
+            <div className="bg-gradient-to-r from-[#005E60] to-[#003D3F] px-3 py-2.5 rounded-t-xl">
               <div className="flex justify-between items-center">
-                <div className="flex items-center gap-2 sm:gap-3">
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/10 rounded-lg sm:rounded-xl flex items-center justify-center">
-                    <Crown size={14} className="sm:w-4 sm:h-4 text-[#F8C21C]" />
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 bg-white/10 rounded-lg flex items-center justify-center">
+                    <Crown size={12} className="text-[#F8C21C]" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-white text-xs sm:text-sm md:text-base flex items-center gap-1 sm:gap-2">
+                    <h3 className="font-bold text-white text-[12px] flex items-center gap-1">
                       Associatte PropTech
-                      <span className="bg-[#F8C21C] text-[#005E60] text-[7px] sm:text-[8px] md:text-[9px] px-1 sm:px-1.5 py-0.5 rounded-full whitespace-nowrap">PREMIUM</span>
+                      <span className="bg-[#F8C21C] text-[#005E60] text-[6px] px-1 py-0.5 rounded-full">PREMIUM</span>
                     </h3>
-                    <div className="flex items-center gap-1.5 sm:gap-2 mt-0.5">
-                      <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></div>
-                      <p className="text-[9px] sm:text-[10px] md:text-xs text-white/80">Online • Priority Support</p>
+                    <div className="flex items-center gap-1 mt-0.5">
+                      <div className="w-1 h-1 bg-green-400 rounded-full animate-pulse"></div>
+                      <p className="text-[8px] text-white/80">Online</p>
                     </div>
                   </div>
                 </div>
-                <div className="flex gap-1">
+                <div className="flex gap-0.5">
                   <button
                     onClick={() => setIsMinimized(true)}
-                    className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
+                    className="p-1 hover:bg-white/10 rounded transition-colors"
                   >
-                    <Minimize2 size={12} className="sm:w-3 sm:h-3 text-white" />
+                    <Minimize2 size={10} className="text-white" />
                   </button>
                   <button
                     onClick={() => setIsOpen(false)}
-                    className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
+                    className="p-1 hover:bg-white/10 rounded transition-colors"
                   >
-                    <X size={12} className="sm:w-3 sm:h-3 text-white" />
+                    <X size={10} className="text-white" />
                   </button>
                 </div>
               </div>
               
-              {/* Trust Badges - Responsive grid */}
-              <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2 sm:mt-3 pt-2 border-t border-white/10">
-                <div className="flex items-center gap-1 sm:gap-1.5">
-                  <Diamond size={8} className="sm:w-2.5 sm:h-2.5 text-[#F8C21C]" />
-                  <span className="text-[8px] sm:text-[9px] md:text-[10px] text-white/80">25+ Years</span>
+              {/* Trust Badges - Compact */}
+              <div className="flex items-center gap-2 mt-1.5 pt-1.5 border-t border-white/10">
+                <div className="flex items-center gap-0.5">
+                  <Diamond size={6} className="text-[#F8C21C]" />
+                  <span className="text-[7px] text-white/80">25+ Years</span>
                 </div>
-                <div className="flex items-center gap-1 sm:gap-1.5">
-                  <Users size={8} className="sm:w-2.5 sm:h-2.5 text-[#F8C21C]" />
-                  <span className="text-[8px] sm:text-[9px] md:text-[10px] text-white/80">10k+ Clients</span>
+                <div className="flex items-center gap-0.5">
+                  <Users size={6} className="text-[#F8C21C]" />
+                  <span className="text-[7px] text-white/80">10k+ Clients</span>
                 </div>
-                <div className="flex items-center gap-1 sm:gap-1.5">
-                  <Star size={8} className="sm:w-2.5 sm:h-2.5 text-[#F8C21C]" />
-                  <span className="text-[8px] sm:text-[9px] md:text-[10px] text-white/80">4.9 Rating</span>
+                <div className="flex items-center gap-0.5">
+                  <Star size={6} className="text-[#F8C21C]" />
+                  <span className="text-[7px] text-white/80">4.9★</span>
                 </div>
               </div>
             </div>
 
-            {/* Messages - Responsive padding */}
-            <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2 sm:space-y-3 bg-gray-50">
+            {/* Messages - Compact */}
+            <div className="flex-1 overflow-y-auto p-2.5 space-y-2 bg-gray-50">
               {messages.map((msg) => (
                 <div
                   key={msg.id}
                   className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}
                 >
                   {!msg.isUser && (
-                    <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gradient-to-br from-[#005E60] to-[#003D3F] flex items-center justify-center mr-1.5 sm:mr-2 flex-shrink-0 mt-1">
-                      <Building2 size={10} className="sm:w-3 sm:h-3 text-[#F8C21C]" />
+                    <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[#005E60] to-[#003D3F] flex items-center justify-center mr-1 flex-shrink-0 mt-0.5">
+                      <Building2 size={8} className="text-[#F8C21C]" />
                     </div>
                   )}
                   <div
-                    className={`max-w-[85%] sm:max-w-[80%] px-3 sm:px-3 py-1.5 sm:py-2 ${
+                    className={`max-w-[85%] px-2.5 py-1.5 ${
                       msg.isUser
                         ? 'bg-[#005E60] text-white rounded-2xl rounded-br-md'
                         : 'bg-white text-gray-700 rounded-2xl rounded-bl-md shadow-sm border border-gray-100'
                     }`}
                   >
-                    <div className="text-xs sm:text-sm leading-relaxed whitespace-pre-wrap break-words">
+                    <div className="text-[11px] leading-relaxed whitespace-pre-wrap break-words">
                       {msg.text}
                     </div>
-                    <div className={`text-[8px] sm:text-[9px] mt-1 ${msg.isUser ? 'text-white/60' : 'text-gray-400'}`}>
+                    <div className={`text-[7px] mt-0.5 ${msg.isUser ? 'text-white/60' : 'text-gray-400'}`}>
                       {formatTime(msg.timestamp)}
                     </div>
                   </div>
@@ -384,14 +381,14 @@ export default function Chatbot() {
               
               {isTyping && (
                 <div className="flex justify-start">
-                  <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gradient-to-br from-[#005E60] to-[#003D3F] flex items-center justify-center mr-1.5 sm:mr-2">
-                    <Building2 size={10} className="sm:w-3 sm:h-3 text-[#F8C21C]" />
+                  <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[#005E60] to-[#003D3F] flex items-center justify-center mr-1">
+                    <Building2 size={8} className="text-[#F8C21C]" />
                   </div>
-                  <div className="bg-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-2xl shadow-sm">
-                    <div className="flex gap-1">
-                      <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 bg-[#005E60] rounded-full animate-bounce" />
-                      <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 bg-[#005E60] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
-                      <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 bg-[#005E60] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
+                  <div className="bg-white px-3 py-1.5 rounded-2xl shadow-sm">
+                    <div className="flex gap-0.5">
+                      <div className="w-1 h-1 bg-[#005E60] rounded-full animate-bounce" />
+                      <div className="w-1 h-1 bg-[#005E60] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
+                      <div className="w-1 h-1 bg-[#005E60] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
                     </div>
                   </div>
                 </div>
@@ -400,35 +397,35 @@ export default function Chatbot() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Lead Form - Responsive */}
+            {/* Lead Form - Compact */}
             {showLeadForm ? (
-              <div className="p-3 sm:p-4 bg-white border-t border-gray-100">
-                <div className="flex items-center justify-between mb-2 sm:mb-3">
-                  <h4 className="font-semibold text-gray-800 text-xs sm:text-sm flex items-center gap-1 sm:gap-2">
-                    <User size={12} className="sm:w-3.5 sm:h-3.5 text-[#005E60]" />
-                    Get Personalised Assistance
+              <div className="p-2.5 bg-white border-t border-gray-100">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="font-semibold text-gray-800 text-[11px] flex items-center gap-1">
+                    <User size={10} className="text-[#005E60]" />
+                    Get Assistance
                   </h4>
                   <button
                     onClick={() => setShowLeadForm(false)}
                     className="text-gray-400 hover:text-gray-600"
                   >
-                    <X size={12} className="sm:w-3.5 sm:h-3.5" />
+                    <X size={10} />
                   </button>
                 </div>
-                <form onSubmit={handleLeadSubmit} className="space-y-2 sm:space-y-3">
+                <form onSubmit={handleLeadSubmit} className="space-y-2">
                   <div>
                     <input
                       type="text"
-                      placeholder="Full Name * (Letters only)"
+                      placeholder="Full Name *"
                       value={leadData.name}
                       onChange={handleNameChange}
-                      className={`w-full px-2.5 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm border rounded-lg sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-[#005E60] ${
+                      className={`w-full px-2 py-1.5 text-[11px] border rounded-lg focus:outline-none focus:ring-1 focus:ring-[#005E60] ${
                         validationErrors.name ? 'border-red-500' : 'border-gray-200'
                       }`}
                     />
                     {validationErrors.name && (
-                      <div className="flex items-center gap-1 mt-1 text-red-500 text-[9px] sm:text-[10px]">
-                        <AlertCircle size={9} className="sm:w-2.5 sm:h-2.5" />
+                      <div className="flex items-center gap-0.5 mt-0.5 text-red-500 text-[8px]">
+                        <AlertCircle size={8} />
                         <span>{validationErrors.name}</span>
                       </div>
                     )}
@@ -437,17 +434,17 @@ export default function Chatbot() {
                   <div>
                     <input
                       type="tel"
-                      placeholder="Mobile Number * (10 digits)"
+                      placeholder="Mobile Number *"
                       value={leadData.mobile}
                       onChange={handleMobileChange}
                       maxLength={10}
-                      className={`w-full px-2.5 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm border rounded-lg sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-[#005E60] ${
+                      className={`w-full px-2 py-1.5 text-[11px] border rounded-lg focus:outline-none focus:ring-1 focus:ring-[#005E60] ${
                         validationErrors.mobile ? 'border-red-500' : 'border-gray-200'
                       }`}
                     />
                     {validationErrors.mobile && (
-                      <div className="flex items-center gap-1 mt-1 text-red-500 text-[9px] sm:text-[10px]">
-                        <AlertCircle size={9} className="sm:w-2.5 sm:h-2.5" />
+                      <div className="flex items-center gap-0.5 mt-0.5 text-red-500 text-[8px]">
+                        <AlertCircle size={8} />
                         <span>{validationErrors.mobile}</span>
                       </div>
                     )}
@@ -455,69 +452,69 @@ export default function Chatbot() {
 
                   <input
                     type="email"
-                    placeholder="Email Address (Optional)"
+                    placeholder="Email (Optional)"
                     value={leadData.email}
                     onChange={(e) => setLeadData({ ...leadData, email: e.target.value })}
-                    className="w-full px-2.5 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm border border-gray-200 rounded-lg sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-[#005E60]"
+                    className="w-full px-2 py-1.5 text-[11px] border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#005E60]"
                   />
                   
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-[#005F5F] text-white py-2 sm:py-3 rounded-lg sm:rounded-xl font-medium text-xs sm:text-sm hover:bg-[#004a4a] transition-all disabled:opacity-50 flex items-center justify-center gap-1 sm:gap-2"
+                    className="w-full bg-[#005F5F] text-white py-1.5 rounded-lg font-medium text-[11px] hover:bg-[#004a4a] transition-all disabled:opacity-50 flex items-center justify-center gap-1"
                   >
                     {isSubmitting ? 'Submitting...' : 'Connect with Expert'}
-                    <ArrowRight size={12} className="sm:w-3.5 sm:h-3.5" />
+                    <ArrowRight size={10} />
                   </button>
-                  <p className="text-[8px] sm:text-[9px] text-gray-400 text-center">
-                    Our expert will contact you within 2 hours
+                  <p className="text-[7px] text-gray-400 text-center">
+                    Expert will contact you within 2 hours
                   </p>
                 </form>
               </div>
             ) : (
               <>
-                {/* Quick Replies - Responsive grid */}
-                <div className="px-3 sm:px-4 py-2 sm:py-3 border-t border-gray-100 bg-white">
-                  <p className="text-[9px] sm:text-[10px] font-medium text-gray-500 mb-1.5 sm:mb-2 flex items-center gap-1">
-                    <Sparkles size={8} className="sm:w-2.5 sm:h-2.5 text-[#F8C21C]" />
+                {/* Quick Replies - Compact Grid */}
+                <div className="px-2.5 py-2 border-t border-gray-100 bg-white">
+                  <p className="text-[8px] font-medium text-gray-500 mb-1.5 flex items-center gap-0.5">
+                    <Sparkles size={7} className="text-[#F8C21C]" />
                     Quick Actions
                   </p>
-                  <div className="grid grid-cols-1 xs:grid-cols-2 gap-1.5 sm:gap-2">
+                  <div className="grid grid-cols-2 gap-1.5">
                     {quickReplies.map((reply, idx) => (
                       <button
                         key={idx}
                         onClick={() => handleQuickReply(reply.text, reply.project)}
-                        className="flex items-center justify-center gap-1 sm:gap-1.5 px-1.5 sm:px-2 py-2 sm:py-2.5 text-[10px] sm:text-[11px] bg-gray-50 hover:bg-gray-100 rounded-lg sm:rounded-xl transition-all border border-gray-200"
+                        className="flex items-center justify-center gap-1 px-1.5 py-1.5 text-[9px] bg-gray-50 hover:bg-gray-100 rounded-lg transition-all border border-gray-200"
                       >
-                        <span className="text-xs sm:text-base">{reply.text.split(' ')[0]}</span>
-                        <span className="text-gray-700 truncate text-[9px] sm:text-[11px]">{reply.text.split(' ').slice(1).join(' ')}</span>
+                        <span className="text-[11px]">{reply.emoji}</span>
+                        <span className="text-gray-700 truncate text-[9px]">{reply.text}</span>
                       </button>
                     ))}
                   </div>
                 </div>
 
-                {/* Input Area - Responsive */}
-                <div className="p-2.5 sm:p-3 border-t border-gray-100 bg-white rounded-b-2xl">
-                  <div className="flex gap-1.5 sm:gap-2">
+                {/* Input Area - Compact */}
+                <div className="p-2 border-t border-gray-100 bg-white rounded-b-xl">
+                  <div className="flex gap-1.5">
                     <input
                       ref={inputRef}
                       type="text"
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && setShowLeadForm(true)}
-                      placeholder="Type your message..."
-                      className="flex-1 bg-gray-50 text-gray-900 rounded-lg sm:rounded-xl px-2.5 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#005E60] border border-gray-200"
+                      placeholder="Type a message..."
+                      className="flex-1 bg-gray-50 text-gray-900 rounded-lg px-2 py-1.5 text-[11px] focus:outline-none focus:ring-1 focus:ring-[#005E60] border border-gray-200"
                     />
                     <button
                       onClick={() => setShowLeadForm(true)}
                       disabled={!input.trim()}
-                      className="bg-[#005E60] text-white p-2 sm:p-2.5 rounded-lg sm:rounded-xl hover:bg-[#003D3F] transition-all disabled:opacity-50"
+                      className="bg-[#005E60] text-white p-1.5 rounded-lg hover:bg-[#003D3F] transition-all disabled:opacity-50"
                     >
-                      <Send size={14} className="sm:w-4 sm:h-4" />
+                      <Send size={12} />
                     </button>
                   </div>
-                  <p className="text-[7px] sm:text-[8px] text-gray-400 text-center mt-1.5 sm:mt-2 flex items-center justify-center gap-1">
-                    <Shield size={7} className="sm:w-2 sm:h-2" />
+                  <p className="text-[6px] text-gray-400 text-center mt-1 flex items-center justify-center gap-0.5">
+                    <Shield size={6} />
                     Secured by Associatte PropTech
                   </p>
                 </div>
