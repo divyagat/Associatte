@@ -1,675 +1,447 @@
 // lib/blog-data.ts
 
+export interface Author {
+  name: string;
+  role: string;
+  avatar: string;
+  bio: string;
+}
+
+export interface FAQ {
+  question: string;
+  answer: string;
+}
+
 export interface BlogPost {
-  id: number;
+  id: string;
   slug: string;
   title: string;
-  category: string;
-  city: 'Pune' | 'Mumbai' | 'KDMC';
-  location?: string;
-  date: string;
-  readTime: string;
-  author: {
-    name: string;
-    role: string;
-    avatar: string;
-    bio: string;
-  };
-  image: string;
   excerpt: string;
   content: string;
+  image: string;
+  image2?: string; // 👈 ADDED: Secondary image property
+  category: string;
+  city: string;
+  location: string;
+  date: string;
+  readTime: string;
   tags: string[];
-  overlayText: string;
+  author: Author;
+  courtesy?: string;
+  faqs?: FAQ[];
   relatedSlugs: string[];
+  recentPostSlugs?: string[];
 }
 
 export const BLOG_POSTS: Record<string, BlogPost> = {
-  // ============================================
-  // PUNE BLOGS
-  // ============================================
-  
-  'ready-to-move-vs-under-construction-pune': {
-    id: 1,
-    slug: 'ready-to-move-vs-under-construction-pune',
-    title: 'Ready-to-Move-in vs Under-Construction Projects in Pune',
-    category: 'Buying Guide',
-    city: 'Pune',
-    location: 'Wakad, Hinjewadi, Baner, Punawale',
-    date: 'Apr 15, 2026',
-    readTime: '8 min read',
-    author: {
-      name: 'Pushkar Dake',
-      role: 'Senior Real Estate Analyst',
-      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
-      bio: 'Pushkar has over 10 years of experience analyzing Pune real estate trends and helping homebuyers make informed decisions.'
-    },
-    image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80',
-    excerpt: 'Confused between ready-to-move and under-construction properties? We break down the pros, cons, and key considerations for Pune homebuyers in 2026.',
-    overlayText: 'READY-TO-MOVE VS UNDER-CONSTRUCTION HOMES IN PUNE',
-    content: `
-      <div class="prose prose-lg max-w-none">
-        <div class="bg-[#F8C21C]/10 border-l-4 border-[#F8C21C] p-6 rounded-r-xl my-6">
-          <p class="text-[#8B0000] font-semibold mb-2">🏆 Expert Insight</p>
-          <p class="text-gray-700">Choosing between ready-to-move and under-construction properties can save you lakhs. Here's what you need to know for 2026.</p>
-        </div>
-
-        <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">🏠 Ready-to-Move-In Properties</h2>
-        
-        <h3 class="text-xl font-semibold text-gray-900 mt-4 mb-2">Advantages ✅</h3>
-        <ul class="list-disc pl-6 mb-4">
-          <li><strong>Immediate possession</strong> – No waiting period, move in within weeks</li>
-          <li><strong>Visible quality</strong> – See the actual apartment before buying</li>
-          <li><strong>No construction risk</strong> – No delays or quality compromises</li>
-          <li><strong>Instant rental income</strong> – Start earning rent from day one</li>
-          <li><strong>Tax benefits</strong> – Claim home loan interest immediately</li>
-          <li><strong>Negotiation power</strong> – Better deals on unsold inventory</li>
-        </ul>
-
-        <h3 class="text-xl font-semibold text-gray-900 mt-4 mb-2">Considerations ⚠️</h3>
-        <ul class="list-disc pl-6 mb-4">
-          <li>Higher upfront cost (10-15% premium)</li>
-          <li>Limited customization options</li>
-          <li>Potentially older designs and technology</li>
-          <li>Lower appreciation compared to new launches</li>
-        </ul>
-
-        <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">🏗️ Under-Construction Projects</h2>
-        
-        <h3 class="text-xl font-semibold text-gray-900 mt-4 mb-2">Advantages ✅</h3>
-        <ul class="list-disc pl-6 mb-4">
-          <li><strong>Lower entry price</strong> – Save 15-25% compared to ready homes</li>
-          <li><strong>Higher appreciation</strong> – Typically see 30-40% growth by possession</li>
-          <li><strong>Modern amenities</strong> – Latest designs and smart home features</li>
-          <li><strong>Flexible payment plans</strong> – Construction-linked plans ease cash flow</li>
-          <li><strong>Customization options</strong> – Modify layouts during construction</li>
-        </ul>
-
-        <h3 class="text-xl font-semibold text-gray-900 mt-4 mb-2">Considerations ⚠️</h3>
-        <ul class="list-disc pl-6 mb-4">
-          <li>Construction delays (common in Pune market)</li>
-          <li>Uncertain final product quality</li>
-          <li>EMI + rent burden during construction</li>
-          <li>Builder reputation risk</li>
-        </ul>
-
-        <div class="bg-gradient-to-r from-[#8B0000] to-[#005E60] text-white p-6 rounded-xl my-8">
-          <h3 class="text-xl font-bold mb-2">🎯 Pune Market Insights 2026</h3>
-          <p>In Pune's dynamic market, under-construction projects in Hinjewadi, Wakad, and Baner have shown 12-15% annual appreciation. Ready-to-move properties offer 4-5% rental yields in prime locations.</p>
-        </div>
-
-        <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">📊 Comparison Table</h2>
-        <div class="overflow-x-auto my-6">
-          <table class="min-w-full bg-white border border-gray-200">
-            <thead class="bg-gray-100">
-              <tr>
-                <th class="px-4 py-2 text-left">Parameter</th>
-                <th class="px-4 py-2 text-left">Ready-to-Move</th>
-                <th class="px-4 py-2 text-left">Under-Construction</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="border-t"><td class="px-4 py-2">Price</td><td class="px-4 py-2">High</td><td class="px-4 py-2">Low (10-25% less)</td></tr>
-              <tr class="border-t"><td class="px-4 py-2">Possession</td><td class="px-4 py-2">Immediate</td><td class="px-4 py-2">2-4 years</td></tr>
-              <tr class="border-t"><td class="px-4 py-2">Appreciation</td><td class="px-4 py-2">5-8% annually</td><td class="px-4 py-2">12-20% annually</td></tr>
-              <tr class="border-t"><td class="px-4 py-2">Rental Yield</td><td class="px-4 py-2">3-5%</td><td class="px-4 py-2">0% (until possession)</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">💡 Expert Recommendation</h2>
-        <p>For first-time homebuyers needing immediate accommodation, ready-to-move properties in Wakad or Baner offer excellent value. For investors, under-construction projects in Hinjewadi Phase 3 or Punawale provide higher ROI potential.</p>
-      </div>
-    `,
-    tags: ['Pune Real Estate', 'Home Buying Guide', 'Ready to Move', 'Under Construction', 'Investment Tips'],
-    relatedSlugs: ['buying-property-wakad-2026', 'families-preferring-hinjewadi', 'investment-opportunities-baner-2026']
-  },
-
-  'buying-property-wakad-2026': {
-    id: 2,
-    slug: 'buying-property-wakad-2026',
-    title: 'Buying Property in Wakad: 2026 Homebuyer Guide',
-    category: 'Location Guide',
-    city: 'Pune',
-    location: 'Wakad, Pune',
-    date: 'Apr 10, 2026',
-    readTime: '6 min read',
-    author: { 
-      name: 'Shruti B', 
-      role: 'Location Expert', 
-      avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face', 
-      bio: 'Shruti specializes in emerging Pune micro-markets and has helped 500+ families find their dream homes.' 
-    },
-    image: 'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?w=1200&q=80',
-    excerpt: 'Wakad has emerged as Pune\'s real estate hotspot. Complete guide to prices, best projects, and future potential.',
-    overlayText: 'COMPLETE BUYING GUIDE FOR WAKAD',
-    content: `
-      <div class="prose prose-lg max-w-none">
-        <div class="bg-green-50 border-l-4 border-[#005E60] p-6 rounded-r-xl my-6">
-          <p class="text-[#005E60] font-semibold mb-2">📈 Market Update 2026</p>
-          <p class="text-gray-700">Wakad has seen 15% price appreciation in the last 12 months, making it one of Pune's fastest-growing micro-markets.</p>
-        </div>
-
-        <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">📍 Why Wakad?</h2>
-        <p>Wakad has transformed from a quiet suburb to a thriving residential hub. Strategic location near Hinjewadi IT Park, excellent connectivity, and growing social infrastructure make it a top choice.</p>
-
-        <h3 class="text-xl font-semibold text-gray-900 mt-4 mb-2">Key Highlights:</h3>
-        <ul class="list-disc pl-6 mb-4">
-          <li>7-10 minutes from Hinjewadi IT Park (Phase 1-3)</li>
-          <li>Direct connectivity to Mumbai-Bangalore Highway</li>
-          <li>Upcoming metro station (Line 3)</li>
-          <li>Premium schools within 2-3 km radius</li>
-          <li>Multiple shopping malls and hospitals nearby</li>
-        </ul>
-
-        <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">💰 Price Trends in Wakad</h2>
-        <div class="overflow-x-auto my-6">
-          <table class="min-w-full bg-white border border-gray-200">
-            <thead class="bg-gray-100">
-              <tr><th class="px-4 py-2">Year</th><th class="px-4 py-2">Avg Price/sq.ft</th><th class="px-4 py-2">Appreciation</th></tr>
-            </thead>
-            <tbody>
-              <tr class="border-t"><td class="px-4 py-2">2024</td><td class="px-4 py-2">₹7,500-8,000</td><td class="px-4 py-2">-</td></tr>
-              <tr class="border-t"><td class="px-4 py-2">2025</td><td class="px-4 py-2">₹8,200-8,800</td><td class="px-4 py-2">9%</td></tr>
-              <tr class="border-t"><td class="px-4 py-2">2026</td><td class="px-4 py-2">₹9,000-9,800</td><td class="px-4 py-2">15%</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">🏢 Top Projects in Wakad</h2>
-        <ul class="list-disc pl-6 mb-4">
-          <li><strong>Godrej Properties</strong> – Luxury 2/3 BHK (₹80L - ₹1.5Cr)</li>
-          <li><strong>Kohinoor Group</strong> – Premium residences with world-class amenities</li>
-          <li><strong>Kolte-Patil</strong> – Ready-to-move options available</li>
-          <li><strong>Marvel Infra</strong> – Budget-friendly options starting ₹55L</li>
-        </ul>
-
-        <div class="bg-gradient-to-r from-[#8B0000] to-[#005E60] text-white p-6 rounded-xl my-8">
-          <h3 class="text-xl font-bold mb-2">🎯 Investment Verdict</h3>
-          <p>With the upcoming metro and continued IT expansion, Wakad offers 12-15% annual appreciation potential. Ideal for both end-users and investors.</p>
-        </div>
-      </div>
-    `,
-    tags: ['Wakad', 'Pune Real Estate', 'Home Buying Guide', 'IT Corridor'],
-    relatedSlugs: ['ready-to-move-vs-under-construction-pune', 'families-preferring-hinjewadi']
-  },
-
-  'families-preferring-hinjewadi': {
-    id: 3,
-    slug: 'families-preferring-hinjewadi',
-    title: 'Why Families Are Preferring Hinjewadi: Livability & More',
-    category: 'Lifestyle',
-    city: 'Pune',
-    location: 'Hinjewadi, Pune',
-    date: 'Apr 5, 2026',
-    readTime: '7 min read',
-    author: { 
-      name: 'Charmi Thakker', 
-      role: 'Family Living Specialist', 
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face', 
-      bio: 'Charmi focuses on family-centric real estate solutions and community living.' 
-    },
-    image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=1200&q=80',
-    excerpt: 'Hinjewadi has evolved from IT hub to a complete family-friendly destination. Discover why families are making the move.',
-    overlayText: 'FAMILY LIVING IN HINJEWADI',
-    content: `
-      <div class="prose prose-lg max-w-none">
-        <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">🏠 The Transformation of Hinjewadi</h2>
-        <p>Once known only as Pune's IT hub, Hinjewadi has transformed into a self-sustained ecosystem perfect for family living. With excellent schools, healthcare, and recreational options, it's now a top choice for families.</p>
-
-        <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">🏫 Top Schools in Hinjewadi</h2>
-        <ul class="list-disc pl-6 mb-4">
-          <li><strong>Meridian School</strong> – CBSE curriculum, 5 acres campus</li>
-          <li><strong>Indus International School</strong> – IB board, world-class facilities</li>
-          <li><strong>Vibgyor High</strong> – ICSE & CBSE, excellent track record</li>
-          <li><strong>Podar International School</strong> – Affordable quality education</li>
-        </ul>
-
-        <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">🏥 Healthcare Facilities</h2>
-        <ul class="list-disc pl-6 mb-4">
-          <li>Columbia Asia Hospital – Multi-specialty</li>
-          <li>Aditya Birla Hospital – 24/7 emergency care</li>
-          <li>Motherhood Hospital – Women & child care</li>
-        </ul>
-
-        <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">🛍️ Shopping & Entertainment</h2>
-        <ul class="list-disc pl-6 mb-4">
-          <li>Xion Mall – Multiplex, dining, shopping</li>
-          <li>Westend Mall – Retail and entertainment</li>
-          <li>Multiple supermarkets and local markets</li>
-        </ul>
-
-        <div class="bg-[#F8C21C]/10 border-l-4 border-[#F8C21C] p-6 rounded-r-xl my-6">
-          <p class="text-[#8B0000] font-semibold mb-2">👨‍👩‍👧‍👦 Family-Friendly Communities</p>
-          <p class="text-gray-700">Projects like Godrej Properties, Tata Housing, and Kohinoor Group offer dedicated kids' play areas, community centers, and safe walking paths.</p>
-        </div>
-      </div>
-    `,
-    tags: ['Hinjewadi', 'Family Living', 'Pune Real Estate', 'Community Living'],
-    relatedSlugs: ['ready-to-move-vs-under-construction-pune', 'buying-property-wakad-2026']
-  },
-
-  'investment-opportunities-baner-2026': {
-    id: 4,
-    slug: 'investment-opportunities-baner-2026',
-    title: 'Investment Opportunities in Baner: 2026 Outlook',
-    category: 'Investment',
-    city: 'Pune',
-    location: 'Baner, Pune',
-    date: 'Apr 1, 2026',
-    readTime: '5 min read',
-    author: {
-      name: 'Rajesh Kumar',
-      role: 'Investment Advisor',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face',
-      bio: 'Rajesh has helped 1000+ investors build wealth through real estate.'
-    },
-    image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&q=80',
-    excerpt: 'Baner offers 15-20% ROI potential. Complete analysis of price trends, rental yields, and future growth drivers.',
-    overlayText: 'BANER INVESTMENT GUIDE 2026',
-    content: `
-      <div class="prose prose-lg max-w-none">
-        <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">📈 Why Invest in Baner?</h2>
-        <p>Baner has emerged as a premium investment destination with consistent appreciation of 12-15% annually. Its strategic location and infrastructure development make it a hot spot.</p>
-        
-        <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">💰 ROI Analysis</h2>
-        <ul class="list-disc pl-6 mb-4">
-          <li>Capital appreciation: 12-15% annually</li>
-          <li>Rental yield: 3.5-4.5% for 2/3 BHK</li>
-          <li>Expected ROI by 2028: 20-25%</li>
-        </ul>
-      </div>
-    `,
-    tags: ['Baner', 'Investment', 'High ROI', 'Pune Real Estate'],
-    relatedSlugs: ['buying-property-wakad-2026', 'ready-to-move-vs-under-construction-pune']
-  },
-
-  // ============================================
-  // MUMBAI BLOGS
-  // ============================================
-
-  'navi-mumbai-real-estate-outlook-2026': {
-    id: 5,
-    slug: 'navi-mumbai-real-estate-outlook-2026',
-    title: 'Navi Mumbai Real Estate Outlook 2026: What Buyers Need to Know',
-    category: 'Market Trends',
-    city: 'Mumbai',
-    location: 'Navi Mumbai',
-    date: 'Apr 12, 2026',
-    readTime: '8 min read',
-    author: {
-      name: 'Pushkar Dake',
-      role: 'Senior Real Estate Analyst',
-      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
-      bio: 'Pushkar tracks Mumbai real estate market with 12+ years experience.'
-    },
-    image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80',
-    excerpt: 'Navi Mumbai is emerging as a real estate hotspot. New airport, metro connectivity, and affordable pricing drive demand.',
-    overlayText: 'NAVI MUMBAI REAL ESTATE OUTLOOK 2026',
-    content: `
-      <div class="prose prose-lg max-w-none">
-        <div class="bg-green-50 border-l-4 border-[#005E60] p-6 rounded-r-xl my-6">
-          <p class="text-[#005E60] font-semibold mb-2">✈️ Game Changer Alert</p>
-          <p class="text-gray-700">Navi Mumbai International Airport (2025 completion) is transforming the real estate landscape. Prices in Panvel have already appreciated 25% in 2 years.</p>
-        </div>
-        
-        <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">🏗️ Infrastructure Driving Growth</h2>
-        <ul class="list-disc pl-6 mb-4">
-          <li>Navi Mumbai International Airport (2025 operational)</li>
-          <li>Atal Setu (India's longest sea bridge)</li>
-          <li>Upcoming Metro Line 1 & 2</li>
-          <li>Mumbai Trans Harbour Link</li>
-        </ul>
-        
-        <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">📍 Best Investment Micro-markets</h2>
-        <ul class="list-disc pl-6 mb-4">
-          <li><strong>Panvel</strong> – Airport impact zone, prices ₹6,000-8,000/sq.ft</li>
-          <li><strong>Kharghar</strong> – Established locality, excellent social infra</li>
-          <li><strong>Ulwe</strong> – Budget-friendly, high growth potential</li>
-          <li><strong>Nerul</strong> – Premium locality, ready possession options</li>
-        </ul>
-      </div>
-    `,
-    tags: ['Navi Mumbai', 'Airport Impact', 'Real Estate 2026', 'Investment'],
-    relatedSlugs: ['affordable-projects-panvel-near-airport', 'premium-projects-kharghar-navi-mumbai']
-  },
-
-  'affordable-projects-panvel-near-airport': {
-    id: 6,
-    slug: 'affordable-projects-panvel-near-airport',
-    title: 'Affordable Projects in Panvel Near New Airport',
+  'mantra-1-residences-burgundy-review': {
+    id: '1',
+    slug: 'mantra-1-residences-burgundy-review',
+    title: 'Mantra 1 Residences By Burgundy: Complete Project Review',
     category: 'Project Review',
-    city: 'Mumbai',
-    location: 'Panvel, Navi Mumbai',
-    date: 'Apr 8, 2026',
+    city: 'Pune',
+    location: 'Pune, Maharashtra',
+    date: 'Jun 05, 2026',
     readTime: '6 min read',
+    courtesy: 'Associatte PropTech',
     author: {
-      name: 'Shruti B',
-      role: 'Affordable Housing Expert',
-      avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face',
-      bio: 'Shruti specializes in budget homes and affordable housing schemes.'
+      name: 'Pushkar Dake',
+      role: 'Senior Real Estate Analyst',
+      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
+      bio: 'Pushkar has over 10 years of experience analyzing Pune real estate trends.'
     },
-    image: 'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?w=1200&q=80',
-    excerpt: 'Best affordable housing projects near Navi Mumbai International Airport. Prices start from ₹40 Lakhs.',
-    overlayText: 'AFFORDABLE PROJECTS IN PANVEL',
+    image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&q=80',
+    image2: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80', // 👈 2nd Image (Modern Interior)
+    excerpt: 'Detailed review of Mantra 1 Residences by Burgundy - pricing, amenities, location advantages, and investment potential.',
     content: `
-      <div class="prose prose-lg max-w-none">
-        <div class="bg-[#F8C21C]/10 border-l-4 border-[#F8C21C] p-6 rounded-r-xl my-6">
-          <p class="text-[#8B0000] font-semibold mb-2">🏡 PMAY Benefits Available</p>
-          <p class="text-gray-700">Many projects in Panvel are eligible for PMAY subsidy up to ₹2.67 Lakhs.</p>
-        </div>
-        
-        <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">💰 Budget Breakdown</h2>
-        <ul class="list-disc pl-6 mb-4">
-          <li>1 BHK: ₹35-45 Lakhs (400-500 sq.ft.)</li>
-          <li>2 BHK: ₹50-65 Lakhs (600-750 sq.ft.)</li>
-          <li>3 BHK: ₹75-90 Lakhs (900-1100 sq.ft.)</li>
-        </ul>
-      </div>
+      <p>In the competitive landscape of Pune's premium real estate, Mantra 1 Residences by Burgundy stands out as a beacon of modern living. This comprehensive review explores every aspect of this prestigious project.</p>
+
+      <h2 id="overview">🏠 Project Overview</h2>
+      <p>Mantra 1 Residences by Burgundy is a premium residential project offering spacious apartments with world-class amenities in a prime Pune location. The project combines contemporary architecture with sustainable living practices.</p>
+
+      <h3 id="features">Key Features:</h3>
+      <ul>
+        <li><strong>Configuration:</strong> 2 & 3 BHK apartments</li>
+        <li><strong>Size:</strong> Starting from 850 sq.ft carpet area</li>
+        <li><strong>Amenities:</strong> Swimming pool, gym, clubhouse, landscaped gardens</li>
+        <li><strong>Possession:</strong> Under construction - expected by 2028</li>
+        <li><strong>RERA:</strong> Registered under MahaRERA</li>
+      </ul>
+
+      <h2 id="pricing">💰 Pricing Details</h2>
+      <p>The project offers competitive pricing for the premium segment, making it an attractive option for both end-users and investors.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Configuration</th>
+            <th>Carpet Area</th>
+            <th>Price Range</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2 BHK</td>
+            <td>850 - 950 sq.ft</td>
+            <td>₹75L - ₹90L</td>
+          </tr>
+          <tr>
+            <td>3 BHK</td>
+            <td>1100 - 1350 sq.ft</td>
+            <td>₹1Cr - ₹1.2Cr</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <blockquote>
+        <p>"Mantra 1 Residences represents the future of premium living in Pune with its thoughtful design and comprehensive amenities."</p>
+        <cite>— Pushkar Dake, Senior Real Estate Analyst</cite>
+      </blockquote>
+
+      <h2 id="location">📍 Location Advantages</h2>
+      <p>Strategically located in Pune, the project offers excellent connectivity to major IT hubs, educational institutions, and healthcare facilities.</p>
+      <ul>
+        <li>10 minutes from Hinjewadi IT Park</li>
+        <li>15 minutes from Pune Railway Station</li>
+        <li>20 minutes from Pune International Airport</li>
+        <li>Near top schools and hospitals</li>
+      </ul>
+
+      <h2 id="amenities">🏊 World-Class Amenities</h2>
+      <p>The project boasts over 40 amenities designed for holistic living:</p>
+      <ul>
+        <li>Olympic-size swimming pool</li>
+        <li>State-of-the-art fitness center</li>
+        <li>Clubhouse with indoor games</li>
+        <li>Landscaped gardens and jogging track</li>
+        <li>Kids play area and senior citizen sit-out</li>
+        <li>24/7 security with CCTV surveillance</li>
+      </ul>
+
+      <h2 id="investment">🎯 Investment Verdict</h2>
+      <p>With Pune's real estate market showing consistent growth, Mantra 1 Residences offers excellent investment potential. The project is expected to appreciate 12-15% by possession, making it a smart choice for long-term investors.</p>
     `,
-    tags: ['Panvel', 'Affordable Housing', 'Airport Impact', 'Budget Homes'],
-    relatedSlugs: ['navi-mumbai-real-estate-outlook-2026', 'premium-projects-kharghar-navi-mumbai']
+    tags: ['Mantra 1 Residences', 'Burgundy', 'Pune', 'Premium Homes'],
+    relatedSlugs: ['mantra-codename-paradise-sus-pune', 'budget-homes-pune-under-75-lakhs'],
+    recentPostSlugs: ['paradise-sai-world-empire-kharghar', 'navi-mumbai-airport-impact-real-estate'],
+    faqs: [
+      {
+        question: 'What is the RERA number of Mantra 1 Residences?',
+        answer: 'The project is registered under MahaRERA. The registration number can be verified on the official MahaRERA website.'
+      },
+      {
+        question: 'What are the BHK configurations available?',
+        answer: 'Mantra 1 Residences offers 2 BHK and 3 BHK apartments with carpet areas starting from 850 sq.ft.'
+      },
+      {
+        question: 'When is the expected possession date?',
+        answer: 'The expected possession date is 2028. The project is currently under construction.'
+      },
+      {
+        question: 'Is the project bank loan approved?',
+        answer: 'Yes, the project is approved by leading banks and financial institutions for home loans.'
+      },
+      {
+        question: 'What amenities are included in the project?',
+        answer: 'The project offers 40+ amenities including swimming pool, gym, clubhouse, landscaped gardens, kids play area, and 24/7 security.'
+      }
+    ]
   },
 
-  'premium-projects-kharghar-navi-mumbai': {
-    id: 7,
-    slug: 'premium-projects-kharghar-navi-mumbai',
-    title: 'Premium Projects in Kharghar: Luxury Living in Navi Mumbai',
+  'paradise-sai-world-empire-kharghar': {
+    id: '2',
+    slug: 'paradise-sai-world-empire-kharghar',
+    title: 'Paradise Sai World Empire Kharghar: Luxury Living Redefined',
     category: 'Project Review',
     city: 'Mumbai',
     location: 'Kharghar, Navi Mumbai',
-    date: 'Apr 3, 2026',
+    date: 'Jun 04, 2026',
     readTime: '7 min read',
+    courtesy: 'Associatte PropTech',
     author: {
       name: 'Rajesh Kumar',
       role: 'Luxury Property Specialist',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face',
       bio: 'Rajesh specializes in premium and luxury real estate.'
     },
-    image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=1200&q=80',
-    excerpt: 'Kharghar offers premium living with Central Park, golf course, and excellent connectivity.',
-    overlayText: 'PREMIUM PROJECTS IN KHARGHAR',
+    image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&q=80',
+    image2: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?w=1200&q=80', // 👈 2nd Image (Luxury Pool/Amenity)
+    excerpt: 'Explore Paradise Sai World Empire in Kharghar - premium 3 BHK residences with world-class amenities and excellent connectivity.',
     content: `
-      <div class="prose prose-lg max-w-none">
-        <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">🌟 Why Kharghar?</h2>
-        <p>Known as the "Green City" of Navi Mumbai, Kharghar offers unparalleled quality of life with its 400-acre Central Park, golf course, and world-class infrastructure.</p>
-      </div>
+      <p>Paradise Sai World Empire in Kharghar represents the pinnacle of luxury living in Navi Mumbai. This township-style development offers an unparalleled lifestyle with 50+ world-class amenities.</p>
+
+      <h2 id="highlights">🌟 Project Highlights</h2>
+      <ul>
+        <li><strong>Location:</strong> Kharghar, Navi Mumbai</li>
+        <li><strong>Configurations:</strong> 3 BHK premium apartments</li>
+        <li><strong>Size:</strong> 1200 - 1500 sq.ft carpet area</li>
+        <li><strong>Amenities:</strong> 50+ world-class amenities</li>
+        <li><strong>Type:</strong> Township development</li>
+      </ul>
+
+      <h2 id="pricing">💰 Pricing</h2>
+      <p>Starting from ₹1.2 Cr for 3 BHK configurations, Paradise Sai World Empire offers premium living at competitive prices in the Kharghar micro-market.</p>
+
+      <h2 id="location-advantages">📍 Location Advantages</h2>
+      <ul>
+        <li>Near Kharghar Central Park</li>
+        <li>Excellent connectivity to Mumbai via highway</li>
+        <li>Premium schools and hospitals nearby</li>
+        <li>Close to proposed Navi Mumbai Airport</li>
+        <li>Walking distance from Kharghar railway station</li>
+      </ul>
+
+      <blockquote>
+        <p>"Paradise Sai World Empire is redefining luxury living in Navi Mumbai with its comprehensive amenities and strategic location."</p>
+        <cite>— Rajesh Kumar, Luxury Property Specialist</cite>
+      </blockquote>
+
+      <h2 id="amenities">🏊 50+ World-Class Amenities</h2>
+      <p>The project offers an extensive range of amenities including:</p>
+      <ul>
+        <li>Multiple swimming pools</li>
+        <li>Clubhouse with banquet hall</li>
+        <li>Sports facilities (tennis, basketball, cricket)</li>
+        <li>Yoga and meditation center</li>
+        <li>Landscaped gardens with walking trails</li>
+        <li>Kids play areas and senior citizen zones</li>
+      </ul>
     `,
-    tags: ['Kharghar', 'Premium Living', 'Navi Mumbai', 'Luxury Homes'],
-    relatedSlugs: ['navi-mumbai-real-estate-outlook-2026']
+    tags: ['Paradise Sai World Empire', 'Kharghar', 'Luxury Homes', 'Navi Mumbai'],
+    relatedSlugs: ['navi-mumbai-airport-impact-real-estate'],
+    recentPostSlugs: ['mantra-1-residences-burgundy-review', 'budget-homes-pune-under-75-lakhs'],
+    faqs: [
+      {
+        question: 'What is the total area of Paradise Sai World Empire?',
+        answer: 'Paradise Sai World Empire is a sprawling township development spread across several acres in Kharghar, Navi Mumbai.'
+      },
+      {
+        question: 'How many amenities does the project offer?',
+        answer: 'The project offers 50+ world-class amenities including swimming pools, clubhouse, sports facilities, and more.'
+      },
+      {
+        question: 'Is the project close to Navi Mumbai Airport?',
+        answer: 'Yes, the project is strategically located and will benefit from the upcoming Navi Mumbai International Airport.'
+      },
+      {
+        question: 'What BHK configurations are available?',
+        answer: 'The project primarily offers premium 3 BHK apartments with carpet areas ranging from 1200 to 1500 sq.ft.'
+      }
+    ]
   },
 
-  'real-estate-near-mumbai-airport-investment': {
-    id: 8,
-    slug: 'real-estate-near-mumbai-airport-investment',
-    title: 'Real Estate Near Mumbai Airport: Investment Potential 2026',
+  'mantra-codename-paradise-sus-pune': {
+    id: '3',
+    slug: 'mantra-codename-paradise-sus-pune',
+    title: 'Mantra Codename Paradise Sus Pune: Smart Investment Opportunity',
     category: 'Investment',
-    city: 'Mumbai',
-    location: 'Mumbai Airport Area',
-    date: 'Mar 28, 2026',
-    readTime: '6 min read',
-    author: {
-      name: 'Pushkar Dake',
-      role: 'Investment Advisor',
-      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
-      bio: 'Expert in airport corridor real estate investments.'
-    },
-    image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&q=80',
-    excerpt: 'Properties near Mumbai Airport offer 15-20% rental yields. Complete guide to best investment areas.',
-    overlayText: 'AIRPORT CORRIDOR INVESTMENT GUIDE',
-    content: `
-      <div class="prose prose-lg max-w-none">
-        <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">✈️ Airport Impact on Real Estate</h2>
-        <p>Areas within 5-10 km of Mumbai International Airport command premium pricing and high rental demand.</p>
-      </div>
-    `,
-    tags: ['Mumbai Airport', 'Investment', 'Rental Yield', 'Commercial Real Estate'],
-    relatedSlugs: ['navi-mumbai-real-estate-outlook-2026']
-  },
-
-  // ============================================
-  // KDMC BLOGS
-  // ============================================
-
-  'real-estate-market-kalyan-dombivli-2026': {
-    id: 9,
-    slug: 'real-estate-market-kalyan-dombivli-2026',
-    title: 'Real Estate Market in Kalyan-Dombivli 2026: Complete Analysis',
-    category: 'Market Trends',
-    city: 'KDMC',
-    location: 'Kalyan, Dombivli',
-    date: 'Apr 14, 2026',
-    readTime: '8 min read',
+    city: 'Pune',
+    location: 'Sus, Pune',
+    date: 'Jun 03, 2026',
+    readTime: '5 min read',
+    courtesy: 'Associatte PropTech',
     author: {
       name: 'Shruti B',
-      role: 'Market Analyst',
-      avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face',
-      bio: 'Shruti tracks Mumbai suburban real estate markets.'
-    },
-    image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80',
-    excerpt: 'Kalyan-Dombivli offers affordable housing with excellent connectivity. Prices starting from ₹40 Lakhs.',
-    overlayText: 'KDMC REAL ESTATE OUTLOOK 2026',
-    content: `
-      <div class="prose prose-lg max-w-none">
-        <div class="bg-green-50 border-l-4 border-[#005E60] p-6 rounded-r-xl my-6">
-          <p class="text-[#005E60] font-semibold mb-2">🚆 Connectivity Boost</p>
-          <p class="text-gray-700">Upcoming metro and extended local train services are making KDMC a preferred destination for Mumbai commuters.</p>
-        </div>
-        
-        <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">📍 Key Micro-Markets</h2>
-        <ul class="list-disc pl-6 mb-4">
-          <li><strong>Kalyan West</strong> – Premium locality, prices ₹7,000-8,500/sq.ft</li>
-          <li><strong>Kalyan East</strong> – Budget-friendly, ₹5,500-7,000/sq.ft</li>
-          <li><strong>Dombivli West</strong> – Established area, good social infra</li>
-          <li><strong>Dombivli East</strong> – Emerging, best for investors</li>
-        </ul>
-        
-        <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">💰 Price Trends</h2>
-        <p>KDMC has seen 8-10% annual appreciation with rental yields of 3.5-4% in prime locations.</p>
-      </div>
-    `,
-    tags: ['Kalyan', 'Dombivli', 'KDMC', 'Affordable Housing', 'Market Analysis'],
-    relatedSlugs: ['best-projects-kalyan-west-under-budget', 'ready-to-move-projects-kalyan']
-  },
-
-  'best-projects-kalyan-west-under-budget': {
-    id: 10,
-    slug: 'best-projects-kalyan-west-under-budget',
-    title: 'Best Projects in Kalyan West Under ₹60 Lakhs',
-    category: 'Project Review',
-    city: 'KDMC',
-    location: 'Kalyan West, KDMC',
-    date: 'Apr 7, 2026',
-    readTime: '5 min read',
-    author: {
-      name: 'Rajesh Kumar',
-      role: 'Budget Home Specialist',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face',
-      bio: 'Expert in affordable and budget real estate.'
-    },
-    image: 'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?w=1200&q=80',
-    excerpt: 'Top budget-friendly projects in Kalyan West with prices under ₹60 Lakhs.',
-    overlayText: 'BUDGET PROJECTS IN KALYAN WEST',
-    content: `
-      <div class="prose prose-lg max-w-none">
-        <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">🏠 Best Value Projects</h2>
-        <ul class="list-disc pl-6 mb-4">
-          <li>Kalpataru Group – 1/2 BHK starting ₹45L</li>
-          <li>Rustomjee Group – Premium yet affordable</li>
-          <li>Local builders – Best deals under ₹50L</li>
-        </ul>
-      </div>
-    `,
-    tags: ['Kalyan West', 'Budget Homes', 'Affordable Projects', 'First Time Buyers'],
-    relatedSlugs: ['real-estate-market-kalyan-dombivli-2026']
-  },
-
-  'investment-potential-dombivli-real-estate': {
-    id: 11,
-    slug: 'investment-potential-dombivli-real-estate',
-    title: 'Investment Potential in Dombivli Real Estate 2026',
-    category: 'Investment',
-    city: 'KDMC',
-    location: 'Dombivli, KDMC',
-    date: 'Apr 2, 2026',
-    readTime: '6 min read',
-    author: {
-      name: 'Pushkar Dake',
       role: 'Investment Advisor',
-      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
-      bio: 'Investment strategist for Mumbai suburban markets.'
-    },
-    image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=1200&q=80',
-    excerpt: 'Dombivli offers high rental yields and appreciation. Why investors are eyeing this market.',
-    overlayText: 'DOMBIVLI INVESTMENT GUIDE',
-    content: `
-      <div class="prose prose-lg max-w-none">
-        <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">📈 Why Dombivli?</h2>
-        <p>Excellent rail connectivity, developing infrastructure, and affordable pricing make Dombivli an investor's paradise.</p>
-      </div>
-    `,
-    tags: ['Dombivli', 'Investment', 'Rental Yield', 'KDMC'],
-    relatedSlugs: ['real-estate-market-kalyan-dombivli-2026']
-  },
-
-  'ready-to-move-projects-kalyan': {
-    id: 12,
-    slug: 'ready-to-move-projects-kalyan',
-    title: 'Ready to Move Projects in Kalyan: Immediate Possession',
-    category: 'Buying Guide',
-    city: 'KDMC',
-    location: 'Kalyan, KDMC',
-    date: 'Mar 30, 2026',
-    readTime: '5 min read',
-    author: {
-      name: 'Charmi Thakker',
-      role: 'Home Buying Guide Expert',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face',
-      bio: 'Charmi helps families find ready possession homes.'
+      avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face',
+      bio: 'Shruti specializes in emerging Pune micro-markets.'
     },
     image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&q=80',
-    excerpt: 'Complete list of ready-to-move projects in Kalyan with possession available immediately.',
-    overlayText: 'READY TO MOVE PROJECTS IN KALYAN',
+    image2: 'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1200&q=80', // 👈 2nd Image (Modern Architecture)
+    excerpt: 'Mantra Codename Paradise in Sus offers excellent investment potential with high appreciation and rental yield.',
     content: `
-      <div class="prose prose-lg max-w-none">
-        <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">🔑 Instant Possession Options</h2>
-        <p>Multiple ready-to-move projects available in Kalyan with prices ranging from ₹50L to ₹1Cr.</p>
-      </div>
+      <p>Sus is rapidly emerging as Pune's next premium residential destination, and Mantra Codename Paradise is at the forefront of this transformation.</p>
+
+      <h2 id="why-sus">📈 Why Invest in Sus?</h2>
+      <p>Sus offers excellent connectivity to major IT hubs like Hinjewadi and the upcoming metro line. The area is witnessing rapid infrastructure development, making it ideal for long-term investment.</p>
+
+      <h2 id="details">🏠 Project Details</h2>
+      <ul>
+        <li><strong>Developer:</strong> Mantra Properties</li>
+        <li><strong>Location:</strong> Sus, Pune</li>
+        <li><strong>Configurations:</strong> 2 & 3 BHK</li>
+        <li><strong>Possession:</strong> 2028</li>
+        <li><strong>RERA:</strong> Registered</li>
+      </ul>
+
+      <h2 id="potential">💰 Investment Potential</h2>
+      <p>Expected 15-20% appreciation by possession with excellent rental yield potential. The area is seeing increased demand from IT professionals working in nearby Hinjewadi.</p>
+
+      <blockquote>
+        <p>"Sus is the next Baner in terms of growth potential. Early investors will reap significant benefits."</p>
+        <cite>— Shruti B, Investment Advisor</cite>
+      </blockquote>
     `,
-    tags: ['Kalyan', 'Ready to Move', 'Immediate Possession', 'KDMC'],
-    relatedSlugs: ['real-estate-market-kalyan-dombivli-2026', 'best-projects-kalyan-west-under-budget']
+    tags: ['Mantra Codename Paradise', 'Sus Pune', 'Investment', 'Pune Real Estate'],
+    relatedSlugs: ['mantra-1-residences-burgundy-review', 'budget-homes-pune-under-75-lakhs'],
+    recentPostSlugs: ['paradise-sai-world-empire-kharghar', 'navi-mumbai-airport-impact-real-estate'],
+    faqs: [
+      {
+        question: 'What is the expected appreciation for Mantra Codename Paradise?',
+        answer: 'The project is expected to appreciate 15-20% by possession in 2028, driven by infrastructure development in Sus.'
+      },
+      {
+        question: 'Is Sus a good location for investment?',
+        answer: 'Yes, Sus is emerging as Pune\'s next premium residential destination with excellent connectivity to IT hubs.'
+      },
+      {
+        question: 'What configurations are available?',
+        answer: 'The project offers 2 BHK and 3 BHK apartments suitable for both end-users and investors.'
+      }
+    ]
   },
 
-  'luxury-villas-badlapur-affordable': {
-    id: 13,
-    slug: 'luxury-villas-badlapur-affordable',
-    title: 'Luxury Villas in Badlapur: Affordable Premium Living',
-    category: 'Project Review',
-    city: 'KDMC',
-    location: 'Badlapur, KDMC',
-    date: 'Mar 25, 2026',
-    readTime: '6 min read',
-    author: {
-      name: 'Rajesh Kumar',
-      role: 'Villa Specialist',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face',
-      bio: 'Specializes in villa and independent house sales.'
-    },
-    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80',
-    excerpt: 'Badlapur offers spacious villas at city apartment prices. Starting from ₹85 Lakhs.',
-    overlayText: 'LUXURY VILLAS IN BADLAPUR',
-    content: `
-      <div class="prose prose-lg max-w-none">
-        <div class="bg-[#F8C21C]/10 border-l-4 border-[#F8C21C] p-6 rounded-r-xl my-6">
-          <p class="text-[#8B0000] font-semibold mb-2">🏡 Villa Living at Apartment Prices</p>
-          <p class="text-gray-700">Badlapur offers 2-3 BHK villas with gardens at prices comparable to 2 BHK apartments in Mumbai.</p>
-        </div>
-      </div>
-    `,
-    tags: ['Badlapur', 'Villas', 'Premium Living', 'Affordable Luxury'],
-    relatedSlugs: ['real-estate-market-kalyan-dombivli-2026']
-  },
-
-  'first-time-home-buyer-guide-kdmc': {
-    id: 14,
-    slug: 'first-time-home-buyer-guide-kdmc',
-    title: 'First Time Home Buyer Guide for Kalyan-Dombivli Region',
+  'budget-homes-pune-under-75-lakhs': {
+    id: '4',
+    slug: 'budget-homes-pune-under-75-lakhs',
+    title: 'Best Budget Homes in Pune Under ₹75 Lakhs (2026)',
     category: 'Buying Guide',
-    city: 'KDMC',
-    location: 'Kalyan-Dombivli',
-    date: 'Mar 20, 2026',
-    readTime: '9 min read',
+    city: 'Pune',
+    location: 'Pune, Maharashtra',
+    date: 'Jun 02, 2026',
+    readTime: '6 min read',
+    courtesy: 'Associatte PropTech',
     author: {
       name: 'Charmi Thakker',
-      role: 'First-Time Buyer Expert',
+      role: 'Budget Home Specialist',
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face',
-      bio: 'Dedicated to helping first-time buyers navigate real estate.'
+      bio: 'Charmi specializes in affordable housing solutions.'
     },
     image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80',
-    excerpt: 'Complete guide for first-time homebuyers in KDMC. From budget planning to legal checks.',
-    overlayText: 'FIRST TIME BUYER GUIDE FOR KDMC',
+    image2: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1200&q=80', // 👈 2nd Image (Cozy Apartment)
+    excerpt: 'Top budget-friendly residential projects in Pune under ₹75 lakhs with excellent amenities and connectivity.',
     content: `
-      <div class="prose prose-lg max-w-none">
-        <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">📝 Step-by-Step Guide</h2>
-        <ol class="list-decimal pl-6 mb-4">
-          <li>Assess your budget (EMI should be 30-40% of monthly income)</li>
-          <li>Check builder reputation and RERA registration</li>
-          <li>Verify all legal documents</li>
-          <li>Compare home loan options</li>
-          <li>Negotiate for best price</li>
-        </ol>
-      </div>
+      <p>Finding quality homes in Pune under ₹75 lakhs is challenging but not impossible. This guide explores the best budget-friendly options across key locations.</p>
+
+      <h2 id="locations">📍 Best Locations for Budget Homes</h2>
+      <ul>
+        <li><strong>Wakad:</strong> Starting ₹65L for 2 BHK</li>
+        <li><strong>Hinjewadi:</strong> Starting ₹60L for 2 BHK</li>
+        <li><strong>Ravet:</strong> Starting ₹55L for 2 BHK</li>
+        <li><strong>Chinchwad:</strong> Starting ₹50L for 2 BHK</li>
+      </ul>
+
+      <h2 id="projects">🏢 Top Projects</h2>
+      <ul>
+        <li>Project 1 - 2 BHK @ ₹68L in Wakad</li>
+        <li>Project 2 - 2 BHK @ ₹72L in Hinjewadi</li>
+        <li>Project 3 - 2 BHK @ ₹65L in Ravet</li>
+      </ul>
+
+      <blockquote>
+        <p>"Budget homes in Pune offer excellent value for money with modern amenities and good connectivity."</p>
+        <cite>— Charmi Thakker, Budget Home Specialist</cite>
+      </blockquote>
+
+      <h2 id="tips">💡 Tips for First-Time Buyers</h2>
+      <ul>
+        <li>Check RERA registration before booking</li>
+        <li>Verify all approvals and NOCs</li>
+        <li>Compare prices across similar projects</li>
+        <li>Consider future infrastructure development</li>
+      </ul>
     `,
-    tags: ['First Time Buyer', 'Buying Guide', 'KDMC', 'Home Loan'],
-    relatedSlugs: ['real-estate-market-kalyan-dombivli-2026', 'ready-to-move-projects-kalyan']
+    tags: ['Budget Homes', 'Pune', 'Affordable Housing', 'Under 75 Lakhs'],
+    relatedSlugs: ['mantra-1-residences-burgundy-review', 'mantra-codename-paradise-sus-pune'],
+    recentPostSlugs: ['paradise-sai-world-empire-kharghar', 'mantra-codename-paradise-sus-pune'],
+    faqs: [
+      {
+        question: 'Can I get a 2 BHK in Pune under ₹75 lakhs?',
+        answer: 'Yes, you can find 2 BHK apartments under ₹75 lakhs in areas like Wakad, Hinjewadi, Ravet, and Chinchwad.'
+      },
+      {
+        question: 'Which is the most affordable area in Pune?',
+        answer: 'Chinchwad and Ravet offer the most affordable options starting from ₹50-55 lakhs for 2 BHK.'
+      },
+      {
+        question: 'Are budget homes a good investment?',
+        answer: 'Yes, budget homes in emerging areas offer good appreciation potential and rental yields.'
+      }
+    ]
   },
 
-  'rental-yield-comparison-kdmc-vs-mumbai': {
-    id: 15,
-    slug: 'rental-yield-comparison-kdmc-vs-mumbai',
-    title: 'Rental Yield Comparison: KDMC vs Mumbai (2026)',
-    category: 'Investment',
-    city: 'KDMC',
-    location: 'KDMC & Mumbai',
-    date: 'Mar 18, 2026',
-    readTime: '7 min read',
+  'navi-mumbai-airport-impact-real-estate': {
+    id: '5',
+    slug: 'navi-mumbai-airport-impact-real-estate',
+    title: 'How Navi Mumbai Airport is Transforming Real Estate (2026)',
+    category: 'Market Trends',
+    city: 'Mumbai',
+    location: 'Navi Mumbai, Maharashtra',
+    date: 'Jun 01, 2026',
+    readTime: '8 min read',
+    courtesy: 'Associatte PropTech',
     author: {
       name: 'Pushkar Dake',
-      role: 'Investment Analyst',
+      role: 'Senior Real Estate Analyst',
       avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
-      bio: 'Comparative market analysis expert.'
+      bio: 'Pushkar tracks Mumbai real estate market with 12+ years experience.'
     },
-    image: 'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?w=1200&q=80',
-    excerpt: 'Where to invest for best rental returns? KDMC vs Mumbai comparison analysis.',
-    overlayText: 'RENTAL YIELD COMPARISON 2026',
+    image: 'https://images.unsplash.com/photo-1542621334-a254cf47733d?w=1200&q=80',
+    image2: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1200&q=80', // 👈 2nd Image (Airport/Aviation)
+    excerpt: 'Complete analysis of how Navi Mumbai International Airport is driving real estate prices and investment opportunities.',
     content: `
-      <div class="prose prose-lg max-w-none">
-        <h2 class="text-2xl font-bold text-gray-900 mt-8 mb-4">📊 Rental Yield Comparison</h2>
-        <ul class="list-disc pl-6 mb-4">
-          <li>KDMC: 3.5-4.5% rental yield</li>
-          <li>Navi Mumbai: 3-4% rental yield</li>
-          <li>Mumbai Suburbs: 2.5-3.5% rental yield</li>
-          <li>South Mumbai: 1.5-2.5% rental yield</li>
-        </ul>
-      </div>
+      <p>The Navi Mumbai International Airport is set to transform the real estate landscape of the region, creating unprecedented opportunities for investors and homebuyers.</p>
+
+      <h2 id="price-impact">📈 Price Impact Analysis</h2>
+      <ul>
+        <li><strong>Panvel:</strong> 25% appreciation in last 2 years</li>
+        <li><strong>Ulwe:</strong> 20% appreciation</li>
+        <li><strong>Kharghar:</strong> 15% appreciation</li>
+      </ul>
+
+      <h2 id="infrastructure">🏗️ Infrastructure Development</h2>
+      <ul>
+        <li>Navi Mumbai International Airport (2025 operational)</li>
+        <li>Metro connectivity to Mumbai</li>
+        <li>Improved road infrastructure</li>
+        <li>Proposed business districts</li>
+      </ul>
+
+      <blockquote>
+        <p>"The airport will be a game-changer for Navi Mumbai's real estate, similar to how the Mumbai Airport transformed Andheri and Vile Parle."</p>
+        <cite>— Pushkar Dake, Senior Real Estate Analyst</cite>
+      </blockquote>
+
+      <h2 id="recommendation">🎯 Investment Recommendation</h2>
+      <p>Invest in Panvel and Ulwe for maximum appreciation potential over the next 3-5 years. These areas will benefit the most from the airport's operational status.</p>
     `,
-    tags: ['Rental Yield', 'Investment', 'KDMC', 'Mumbai Real Estate'],
-    relatedSlugs: ['investment-potential-dombivli-real-estate', 'real-estate-market-kalyan-dombivli-2026']
+    tags: ['Navi Mumbai Airport', 'Real Estate Impact', 'Investment', 'Market Trends'],
+    relatedSlugs: ['paradise-sai-world-empire-kharghar'],
+    recentPostSlugs: ['mantra-1-residences-burgundy-review', 'mantra-codename-paradise-sus-pune'],
+    faqs: [
+      {
+        question: 'When will Navi Mumbai Airport be operational?',
+        answer: 'The Navi Mumbai International Airport is expected to be fully operational by 2025-2026.'
+      },
+      {
+        question: 'Which areas will benefit most from the airport?',
+        answer: 'Panvel, Ulwe, and Kharghar are expected to see the maximum appreciation due to their proximity to the airport.'
+      },
+      {
+        question: 'Is it a good time to invest in Navi Mumbai?',
+        answer: 'Yes, with the airport becoming operational, now is an excellent time to invest in Navi Mumbai real estate.'
+      },
+      {
+        question: 'What appreciation can I expect?',
+        answer: 'Areas near the airport have already seen 15-25% appreciation and are expected to grow further.'
+      }
+    ]
   }
 };
 
 // Helper functions
 export function getAllBlogs(): BlogPost[] {
-  return Object.values(BLOG_POSTS).sort((a, b) => b.id - a.id);
+  return Object.values(BLOG_POSTS).sort((a, b) => parseInt(b.id) - parseInt(a.id));
 }
 
-export function getBlogBySlug(slug: string): BlogPost | undefined {
-  return BLOG_POSTS[slug];
+export function getBlogBySlug(slug: string): BlogPost | null {
+  return BLOG_POSTS[slug] || null;
 }
 
-export function getBlogsByCity(city: 'Pune' | 'Mumbai' | 'KDMC'): BlogPost[] {
+export function getBlogsByCity(city: string): BlogPost[] {
   return Object.values(BLOG_POSTS)
     .filter(blog => blog.city === city)
-    .sort((a, b) => b.id - a.id);
+    .sort((a, b) => parseInt(b.id) - parseInt(a.id));
 }
 
 export function getFeaturedBlogs(limit = 3): BlogPost[] {
@@ -679,14 +451,21 @@ export function getFeaturedBlogs(limit = 3): BlogPost[] {
 export function getRelatedPosts(relatedSlugs: string[], limit = 3): BlogPost[] {
   return relatedSlugs
     .map(slug => BLOG_POSTS[slug])
-    .filter((post): post is BlogPost => post !== undefined)
+    .filter((post): post is BlogPost => post !== null && post !== undefined)
+    .slice(0, limit);
+}
+
+export function getRecentPosts(currentSlug: string, limit = 4): BlogPost[] {
+  return Object.values(BLOG_POSTS)
+    .filter(blog => blog.slug !== currentSlug)
+    .sort((a, b) => parseInt(b.id) - parseInt(a.id))
     .slice(0, limit);
 }
 
 export function getBlogsByCategory(category: string): BlogPost[] {
   return Object.values(BLOG_POSTS)
     .filter(blog => blog.category.toLowerCase() === category.toLowerCase())
-    .sort((a, b) => b.id - a.id);
+    .sort((a, b) => parseInt(b.id) - parseInt(a.id));
 }
 
 export function searchBlogs(query: string): BlogPost[] {
