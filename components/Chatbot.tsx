@@ -6,9 +6,7 @@ import {
   X, 
   Send, 
   Minimize2, 
-  Maximize2,
   Building2,
-  Award,
   Sparkles,
   Home,
   TrendingUp,
@@ -48,6 +46,7 @@ interface ValidationErrors {
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -73,33 +72,64 @@ export default function Chatbot() {
   const [userIP, setUserIP] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const autoOpenTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Handle component mounting to avoid hydration issues
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Get user IP address
   useEffect(() => {
-    fetch('https://api.ipify.org?format=json')
-      .then(res => res.json())
-      .then(data => setUserIP(data.ip))
-      .catch(() => setUserIP('unknown'));
-  }, []);
-
-  // Auto-open chat on page refresh/load
-  useEffect(() => {
-    // Open chat automatically when page loads/refreshes
-    const timer = setTimeout(() => {
-      setIsOpen(true);
-      // Reset minimized state
-      setIsMinimized(false);
-    }, 1000); // 1 second delay for smooth appearance
+    if (!isMounted) return;
     
-    return () => clearTimeout(timer);
-  }, []); // Empty dependency array ensures this runs only on mount/refresh
+    const fetchIP = async () => {
+      try {
+        const response = await fetch('https://api.ipify.org?format=json');
+        const data = await response.json();
+        setUserIP(data.ip);
+      } catch (error) {
+        console.error('Failed to fetch IP:', error);
+        setUserIP('unknown');
+      }
+    };
+    
+    fetchIP();
+  }, [isMounted]);
+
+  // Auto-open chat on page refresh/load - with error handling
+  useEffect(() => {
+    if (!isMounted) return;
+    
+    // Clear any existing timer
+    if (autoOpenTimerRef.current) {
+      clearTimeout(autoOpenTimerRef.current);
+    }
+    
+    // Open chat automatically after a short delay
+    autoOpenTimerRef.current = setTimeout(() => {
+      try {
+        setIsOpen(true);
+        setIsMinimized(false);
+      } catch (error) {
+        console.error('Error opening chat:', error);
+      }
+    }, 1000);
+    
+    // Cleanup timer on unmount
+    return () => {
+      if (autoOpenTimerRef.current) {
+        clearTimeout(autoOpenTimerRef.current);
+      }
+    };
+  }, [isMounted]);
 
   const quickReplies = [
-    { icon: Home, text: "Pune Properties", project: "Pune Properties Inquiry", emoji: "🏠" },
-    { icon: TrendingUp, text: "Mumbai Properties", project: "Mumbai Properties Inquiry", emoji: "📈" },
-    { icon: Shield, text: "RERA Verified", project: "RERA Verification Request", emoji: "✓" },
-    { icon: Calendar, text: "Schedule Visit", project: "Site Visit Scheduling", emoji: "📅" },
-    { icon: Headphones, text: "Expert Advice", project: "Expert Consultation Request", emoji: "🎧" },
+    { text: "Pune Properties", project: "Pune Properties Inquiry", emoji: "🏠" },
+    { text: "Mumbai Properties", project: "Mumbai Properties Inquiry", emoji: "📈" },
+    { text: "RERA Verified", project: "RERA Verification Request", emoji: "✓" },
+    { text: "Schedule Visit", project: "Site Visit Scheduling", emoji: "📅" },
+    { text: "Expert Advice", project: "Expert Consultation Request", emoji: "🎧" },
   ];
 
   const validateName = (name: string): boolean => {
@@ -170,7 +200,9 @@ export default function Chatbot() {
   };
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
   }, [messages]);
 
   const handleQuickReply = (text: string, project: string) => {
@@ -250,7 +282,12 @@ export default function Chatbot() {
     return date.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
   };
 
-  // Closed State - Left side positioning (will only show if user manually closes)
+  // Don't render anything until mounted to avoid hydration errors
+  if (!isMounted) {
+    return null;
+  }
+
+  // Closed State - Left side positioning
   if (!isOpen) {
     return (
       <button
@@ -274,7 +311,7 @@ export default function Chatbot() {
   return (
     <>
       {/* Backdrop */}
-      {isOpen && !isMinimized && (
+      {!isMinimized && (
         <div
           className="fixed inset-0 bg-black/40 z-40 transition-opacity duration-300"
           onClick={() => setIsOpen(false)}
@@ -299,7 +336,7 @@ export default function Chatbot() {
           </button>
         ) : (
           <div className="flex flex-col h-[520px] max-h-[85vh] w-full">
-            {/* Header - Compact */}
+            {/* Header */}
             <div className="bg-gradient-to-r from-[#005E60] to-[#003D3F] px-3 py-2.5 rounded-t-xl">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
@@ -313,7 +350,7 @@ export default function Chatbot() {
                     </h3>
                     <div className="flex items-center gap-1 mt-0.5">
                       <div className="w-1 h-1 bg-green-400 rounded-full animate-pulse"></div>
-                      <p className="text-[8px] text-white/80">Online</p>
+                      <p className="text-[8px] text-white/80">Online • Priority Support</p>
                     </div>
                   </div>
                 </div>
@@ -333,7 +370,7 @@ export default function Chatbot() {
                 </div>
               </div>
               
-              {/* Trust Badges - Compact */}
+              {/* Trust Badges */}
               <div className="flex items-center gap-2 mt-1.5 pt-1.5 border-t border-white/10">
                 <div className="flex items-center gap-0.5">
                   <Diamond size={6} className="text-[#F8C21C]" />
@@ -350,7 +387,7 @@ export default function Chatbot() {
               </div>
             </div>
 
-            {/* Messages - Compact */}
+            {/* Messages */}
             <div className="flex-1 overflow-y-auto p-2.5 space-y-2 bg-gray-50">
               {messages.map((msg) => (
                 <div
@@ -397,13 +434,13 @@ export default function Chatbot() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Lead Form - Compact */}
+            {/* Lead Form */}
             {showLeadForm ? (
               <div className="p-2.5 bg-white border-t border-gray-100">
                 <div className="flex items-center justify-between mb-2">
                   <h4 className="font-semibold text-gray-800 text-[11px] flex items-center gap-1">
                     <User size={10} className="text-[#005E60]" />
-                    Get Assistance
+                    Get Personalised Assistance
                   </h4>
                   <button
                     onClick={() => setShowLeadForm(false)}
@@ -416,7 +453,7 @@ export default function Chatbot() {
                   <div>
                     <input
                       type="text"
-                      placeholder="Full Name *"
+                      placeholder="Full Name * (Letters only)"
                       value={leadData.name}
                       onChange={handleNameChange}
                       className={`w-full px-2 py-1.5 text-[11px] border rounded-lg focus:outline-none focus:ring-1 focus:ring-[#005E60] ${
@@ -434,7 +471,7 @@ export default function Chatbot() {
                   <div>
                     <input
                       type="tel"
-                      placeholder="Mobile Number *"
+                      placeholder="Mobile Number * (10 digits)"
                       value={leadData.mobile}
                       onChange={handleMobileChange}
                       maxLength={10}
@@ -452,7 +489,7 @@ export default function Chatbot() {
 
                   <input
                     type="email"
-                    placeholder="Email (Optional)"
+                    placeholder="Email Address (Optional)"
                     value={leadData.email}
                     onChange={(e) => setLeadData({ ...leadData, email: e.target.value })}
                     className="w-full px-2 py-1.5 text-[11px] border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#005E60]"
@@ -467,13 +504,13 @@ export default function Chatbot() {
                     <ArrowRight size={10} />
                   </button>
                   <p className="text-[7px] text-gray-400 text-center">
-                    Expert will contact you within 2 hours
+                    Our expert will contact you within 2 hours
                   </p>
                 </form>
               </div>
             ) : (
               <>
-                {/* Quick Replies - Compact Grid */}
+                {/* Quick Replies */}
                 <div className="px-2.5 py-2 border-t border-gray-100 bg-white">
                   <p className="text-[8px] font-medium text-gray-500 mb-1.5 flex items-center gap-0.5">
                     <Sparkles size={7} className="text-[#F8C21C]" />
@@ -493,7 +530,7 @@ export default function Chatbot() {
                   </div>
                 </div>
 
-                {/* Input Area - Compact */}
+                {/* Input Area */}
                 <div className="p-2 border-t border-gray-100 bg-white rounded-b-xl">
                   <div className="flex gap-1.5">
                     <input
@@ -502,7 +539,7 @@ export default function Chatbot() {
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && setShowLeadForm(true)}
-                      placeholder="Type a message..."
+                      placeholder="Type your message..."
                       className="flex-1 bg-gray-50 text-gray-900 rounded-lg px-2 py-1.5 text-[11px] focus:outline-none focus:ring-1 focus:ring-[#005E60] border border-gray-200"
                     />
                     <button
