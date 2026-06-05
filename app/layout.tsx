@@ -15,22 +15,22 @@ const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"]
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://propfinder.in"),
   title: {
-    default: "PropFinder by Associatte PropTech | Find Your Dream Property in Mumbai, Pune & Kharghar",
+    default: "Associatte PropTech | Find Your Dream Property in Mumbai, Pune & Kharghar",
     template: "%s | PropFinder"
   },
-  description: "PropFinder by Associatte PropTech Pvt Ltd: Find verified 2, 3, 4 BHK properties in Mumbai, Pune, Kharghar. Browse new launches & ready-to-move projects starting ₹75L. Trusted real estate guidance.",
+  description: "Associatte PropTech Pvt Ltd: Find verified 2, 3, 4 BHK properties in Mumbai, Pune, Kharghar. Browse new launches & ready-to-move projects starting ₹75L. Trusted real estate guidance.",
   keywords: [
     "PropFinder", "Associatte PropTech", "real estate India", "properties in Mumbai",
     "flats in Pune", "3 BHK Kharghar", "under construction projects", "ready to move homes",
     "property investment", "new launch projects", "Mantra 1 Residences", "Paradise Sai World Empire"
   ],
-  authors: [{ name: "Associatte PropTech Pvt Ltd", url: "https://propfinder.in" }],
+  authors: [{ name: "Associatte PropTech Pvt Ltd", url: "https://www.associatte.com/" }],
   creator: "Associatte PropTech Pvt Ltd",
   publisher: "Associatte PropTech Pvt Ltd",
   openGraph: {
     type: "website",
     locale: "en_IN",
-    url: "https://propfinder.in",
+    url: "https://www.associatte.com/",
     siteName: "PropFinder",
     title: "PropFinder by Associatte PropTech | Verified Real Estate Projects",
     description: "Discover 500+ verified properties in Mumbai, Pune & Kharghar. 2, 3, 4 BHK homes with transparent pricing & expert guidance.",
@@ -71,10 +71,10 @@ const organizationSchema = {
   "@type": "RealEstateAgent",
   "name": "Associatte PropTech Pvt Ltd",
   "alternateName": "PropFinder",
-  "url": "https://propfinder.in",
-  "logo": "https://propfinder.in/logo.png",
-  "image": "https://propfinder.in/og-image.jpg",
-  "description": "PropFinder by Associatte PropTech Pvt Ltd: Your trusted partner for verified real estate projects in Mumbai, Pune & Kharghar. Find 2, 3, 4 BHK homes with transparent pricing.",
+  "url": "https://www.associatte.com/",
+  "logo": "https://www.associatte.com/logo.png",
+  "image": "https://www.associatte.com/og-image.jpg",
+  "description": "Associatte PropTech Pvt Ltd: Your trusted partner for verified real estate projects in Mumbai, Pune & Kharghar. Find 2, 3, 4 BHK homes with transparent pricing.",
   "address": {
     "@type": "PostalAddress",
     "addressCountry": "IN",
@@ -88,10 +88,10 @@ const organizationSchema = {
     "availableLanguage": ["English", "Hindi", "Marathi"]
   },
   "sameAs": [
-    "https://facebook.com/associatteproptech",
-    "https://twitter.com/associatteproptech",
-    "https://instagram.com/associatteproptech",
-    "https://linkedin.com/company/associatte-proptech"
+    "https://www.facebook.com/AssociatteIndia/",
+    "https://x.com/Associatte",
+    "https://www.instagram.com/vikramm.associatte?igsh=MXM5aXhmNmZsYThicg==",
+    "https://www.linkedin.com/company/associatte-proptech"
   ],
   "priceRange": "₹75L - ₹1Cr+"
 };
