@@ -3,12 +3,10 @@
 import { ChevronLeft, ChevronRight, MapPin, Bed, Square, Tag, Filter } from 'lucide-react';
 import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import Link from 'next/link';
-import Image from 'next/image'; // ✅ Added Next.js Image import
+import Image from 'next/image';
 
-// ✅ Import SearchFilters type from Hero
 import type { SearchFilters } from '../Home/Hero';
 
-// ✅ Project interface
 interface Project {
   id: number;
   name: string;
@@ -17,14 +15,12 @@ interface Project {
   sqft: string;
   price: string;
   image: string;
-  // ✅ Extra fields for filtering
   city?: 'pune' | 'mumbai' | 'kdmc';
   priceNumeric?: number;
   builder?: string;
   propertyType?: string;
 }
 
-// ✅ Pune projects
 const PUNE_PROJECTS: Project[] = [
   {
     id: 1,
@@ -93,7 +89,6 @@ const PUNE_PROJECTS: Project[] = [
   },
 ];
 
-// ✅ Mumbai projects
 const MUMBAI_PROJECTS: Project[] = [
   {
     id: 101,
@@ -162,7 +157,6 @@ const MUMBAI_PROJECTS: Project[] = [
   },
 ];
 
-// ✅ KDMC projects
 const KDMC_PROJECTS: Project[] = [
   {
     id: 201,
@@ -231,21 +225,17 @@ const KDMC_PROJECTS: Project[] = [
   },
 ];
 
-// ✅ Slug mapping
 const PROJECT_SLUG_MAP: Record<string, string> = {
-  // Pune
   'Shapoorji Everra at Tree Cloud': 'shapoorji-tree-cloud',
   'Flamingo Park At Riverview City': 'magarpatta-city-rvc-flamingo',
   'Tribeca Everett': 'tribeca-lulla-nagar',
   'Tribeca Trump world Center ': 'tribeca-trump-tower',
   '57Avenue Panchshil ': 'panchshil-57avenue',
-  // Mumbai
   'Lodha Belmondo': 'lodha-belmondo-kharghar',
   'Runwal Gardens': 'runwal-gardens-dombivli',
   'Shapoorji Pallonji Joyville': 'joyville-virar',
   'Lodha Fiore': 'lodha-fiore-thane',
   'Birla Aerya': 'birla-aerya-andheri',
-  // KDMC
   'Paradise Sai World City': 'paradise-sai-world-city-kalyan',
   'Today Global Anantam': 'today-global-anantam-dombivli',
   'Runwal Bliss': 'runwal-bliss-badlapur',
@@ -253,13 +243,11 @@ const PROJECT_SLUG_MAP: Record<string, string> = {
   'Shapoorji Pallonji Joyville Hadapsar': 'joyville-ulhasnagar',
 };
 
-// ✅ Props interface
 interface NewlyLaunchedProjectsProps {
   selectedCity: 'pune' | 'mumbai' | 'kdmc';
   filters?: SearchFilters;
 }
 
-// ✅ Fallback image path (ensure this file exists in /public/images/)
 const FALLBACK_IMAGE = '/images/placeholder-property.webp';
 
 export default function NewlyLaunchedProjects({ 
@@ -270,7 +258,6 @@ export default function NewlyLaunchedProjects({
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
 
-  // ✅ Filter logic
   const filteredProjects = useMemo(() => {
     let projects: Project[] = [];
     if (selectedCity === 'pune') {
@@ -322,7 +309,6 @@ export default function NewlyLaunchedProjects({
     return projects;
   }, [selectedCity, filters]);
 
-  // ✅ Scroll button visibility
   const checkScrollButtons = useCallback(() => {
     if (scrollContainerRef.current) {
       const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
@@ -331,7 +317,6 @@ export default function NewlyLaunchedProjects({
     }
   }, []);
 
-  // ✅ Setup scroll listeners
   useEffect(() => {
     checkScrollButtons();
     const container = scrollContainerRef.current;
@@ -345,7 +330,6 @@ export default function NewlyLaunchedProjects({
     }
   }, [checkScrollButtons]);
 
-  // ✅ Re-check when filtered projects change
   useEffect(() => {
     checkScrollButtons();
   }, [filteredProjects, checkScrollButtons]);
@@ -362,7 +346,6 @@ export default function NewlyLaunchedProjects({
     }
   };
 
-  // ✅ Handle image error with fallback
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     const img = e.currentTarget;
     if (img.src !== FALLBACK_IMAGE) {
@@ -371,23 +354,23 @@ export default function NewlyLaunchedProjects({
   };
 
   return (
-    <section className="py-10 md:py-14 bg-gray-50">
+    <section className="py-10 md:py-14 bg-[#f7f7f7]">
       <div className="max-w-7xl mx-auto px-6">
         
         {/* Header */}
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <h2 className="section-title text-gray-900 mb-2">
+            <h2 className="section-title text-[#1f2937] mb-2">
               Newly Launched Projects
             </h2>
-            <p className="text-gray-600">
-              Just now launched in the <span className="font-semibold text-gray-900 capitalize">{selectedCity}</span>
+            <p className="section-subtitle">
+              Just now launched in the <span className="font-semibold text-[#1f2937] capitalize">{selectedCity}</span>
             </p>
           </div>
           
           {Object.keys(filters).length > 0 && (
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <Filter size={16} className="text-[#D97941]" />
+            <div className="flex items-center gap-2 text-sm text-[#6b7280]">
+              <Filter size={16} className="text-[#005E60]" />
               <span>{Object.keys(filters).length} filter{Object.keys(filters).length > 1 ? 's' : ''} applied</span>
             </div>
           )}
@@ -396,7 +379,7 @@ export default function NewlyLaunchedProjects({
         {/* No results message */}
         {filteredProjects.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-xl border border-gray-100">
-            <p className="text-gray-500 text-lg">No projects match your filters in {selectedCity}</p>
+            <p className="text-[#6b7280] text-lg">No projects match your filters in {selectedCity}</p>
             <p className="text-gray-400 text-sm mt-2">Try adjusting your filters or explore other categories</p>
           </div>
         ) : (
@@ -410,7 +393,7 @@ export default function NewlyLaunchedProjects({
                 className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-8 z-20 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 hover:scale-110 transition-all duration-300 border border-gray-200"
                 aria-label="Previous projects"
               >
-                <ChevronLeft size={20} className="text-gray-700" />
+                <ChevronLeft size={20} className="text-[#1f2937]" />
               </button>
             )}
 
@@ -431,25 +414,25 @@ export default function NewlyLaunchedProjects({
                     onClick={(e) => {
                       if (slug === '#') {
                         e.preventDefault();
-                        console.warn(`No slug mapping found for: ${project.name}`);
+                        console.warn(`No slug mapping found: ${project.name}`);
                       }
                     }}
                   >
                     <article
                       className="group flex-shrink-0 w-[420px] bg-white rounded-xl p-4 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 cursor-pointer relative"
                     >
-                      {/* NEW LAUNCH Badge */}
+                      {/* NEW LAUNCH Badge - Brand Gold */}
                       <div className="absolute top-4 left-4 z-10">
-                        <span className="inline-block px-3 py-1 bg-[#FFE699] text-gray-800 text-[10px] font-bold uppercase tracking-wider rounded-lg shadow-sm">
+                        <span className="inline-block px-3 py-1 bg-[#F8C21C] text-[#1f2937] text-[10px] font-bold uppercase tracking-wider rounded-lg shadow-sm">
                           NEW LAUNCH
                         </span>
                       </div>
 
                       {/* Content */}
                       <div className="flex gap-3 mt-6">
-                        {/* ✅ FIXED: Circular Image with Next.js Image */}
+                        {/* Circular Image */}
                         <div className="flex-shrink-0">
-                          <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-gray-200 group-hover:border-[#D97941] transition-colors duration-300 shadow-md relative">
+                          <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-gray-200 group-hover:border-[#005E60] transition-colors duration-300 shadow-md relative">
                             <Image
                               src={project.image}
                               alt={project.name}
@@ -464,28 +447,28 @@ export default function NewlyLaunchedProjects({
 
                         {/* Details */}
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-lg font-bold text-[#D97941] mb-1 group-hover:text-[#b86435] transition-colors truncate">
+                          <h3 className="text-lg font-bold text-[#005E60] mb-1 group-hover:text-[#004a4b] transition-colors truncate">
                             {project.name}
                           </h3>
 
-                          <div className="flex items-center gap-1 text-xs text-gray-600 mb-1.5">
-                            <MapPin size={12} className="text-gray-400 flex-shrink-0" />
+                          <div className="flex items-center gap-1 text-xs text-[#6b7280] mb-1.5">
+                            <MapPin size={12} className="text-[#8B0000] flex-shrink-0" />
                             <span className="truncate">{project.location}</span>
                           </div>
 
-                          <div className="flex items-center gap-2 text-xs text-gray-600 mb-2">
+                          <div className="flex items-center gap-2 text-xs text-[#6b7280] mb-2">
                             <div className="flex items-center gap-1">
-                              <Bed size={12} className="text-gray-400 flex-shrink-0" />
+                              <Bed size={12} className="text-[#8B0000] flex-shrink-0" />
                               <span>{project.bhk}</span>
                             </div>
                             <span className="text-gray-300">|</span>
                             <div className="flex items-center gap-1">
-                              <Square size={12} className="text-gray-400 flex-shrink-0" />
+                              <Square size={12} className="text-[#8B0000] flex-shrink-0" />
                               <span className="truncate">{project.sqft}</span>
                             </div>
                           </div>
 
-                          <div className="inline-block px-3 py-1 bg-[#FFE8D6] text-[#D97941] text-xs font-bold rounded-full">
+                          <div className="inline-block px-3 py-1 bg-[#ECF1F8] text-[#005E60] text-xs font-bold rounded-full">
                             {project.price}
                           </div>
                         </div>
@@ -496,9 +479,9 @@ export default function NewlyLaunchedProjects({
 
                       {/* Bottom Text */}
                       <div className="flex items-center gap-1.5 text-xs">
-                        <Tag size={12} className="text-[#D97941] flex-shrink-0" />
-                        <span className="text-gray-700">
-                          Get preferred options <span className="font-bold text-gray-900">@ZERO Brokerage</span>
+                        <Tag size={12} className="text-[#8B0000] flex-shrink-0" />
+                        <span className="text-[#1f2937]">
+                          Get preferred options <span className="font-bold text-[#8B0000]">@ZERO Brokerage</span>
                         </span>
                       </div>
                     </article>
@@ -514,7 +497,7 @@ export default function NewlyLaunchedProjects({
                 className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-8 z-20 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 hover:scale-110 transition-all duration-300 border border-gray-200"
                 aria-label="Next projects"
               >
-                <ChevronRight size={20} className="text-gray-700" />
+                <ChevronRight size={20} className="text-[#1f2937]" />
               </button>
             )}
           </div>
