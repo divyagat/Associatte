@@ -1,9 +1,9 @@
+// @/components/Home/AnimatedBackground.tsx
 'use client';
 
 import { memo } from 'react';
 import { RefObject } from 'react';
 
-// ✅ PROPER PROPS INTERFACE
 export interface AnimatedBackgroundProps {
   mouseRef: RefObject<{ x: number; y: number }>;
   animate?: boolean;
@@ -34,8 +34,9 @@ export const AnimatedBackground = memo(({
 
       {animate && (
         <>
-          <div className={`absolute top-[-10%] right-[-5%] w-[600px] h-[600px] rounded-full ${blur}`} style={{ background: `radial-gradient(circle, ${PRIMARY}${orbOpacity} 0%, transparent 75%)`, animation: 'float-slow 22s ease-in-out infinite' }} />
-          <div className={`absolute bottom-[-8%] left-[-10%] w-[450px] h-[450px] rounded-full ${blur}`} style={{ background: `radial-gradient(circle, ${ACCENT}${orbOpacity} 0%, transparent 75%)`, animation: 'float-slower 28s ease-in-out infinite reverse' }} />
+          {/* 👇 Scaled down for mobile to prevent screen overwhelm */}
+          <div className={`absolute top-[-10%] right-[-5%] w-[300px] h-[300px] md:w-[600px] md:h-[600px] rounded-full ${blur}`} style={{ background: `radial-gradient(circle, ${PRIMARY}${orbOpacity} 0%, transparent 75%)`, animation: 'float-slow 22s ease-in-out infinite' }} />
+          <div className={`absolute bottom-[-8%] left-[-10%] w-[250px] h-[250px] md:w-[450px] md:h-[450px] rounded-full ${blur}`} style={{ background: `radial-gradient(circle, ${ACCENT}${orbOpacity} 0%, transparent 75%)`, animation: 'float-slower 28s ease-in-out infinite reverse' }} />
         </>
       )}
 

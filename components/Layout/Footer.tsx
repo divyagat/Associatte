@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Building2, Phone, Mail, MapPin, Clock, ExternalLink, ChevronRight, Shield, ChevronDown } from "lucide-react";
+import { Phone, Mail, MapPin, Clock, ChevronRight, Shield, ChevronDown } from "lucide-react";
 import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from "react-icons/fa";
 import { useState } from "react";
 
@@ -51,119 +51,8 @@ export default function Footer() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
         
-        {/* Desktop Grid (Hidden on Mobile) */}
-        <div className="hidden lg:grid lg:grid-cols-4 gap-12">
-          {/* Column 1 - Brand */}
-          <div className="space-y-5">
-            <Link href="/" className="inline-block">
-              <div className="w-20 h-20 bg-white/5 rounded-xl p-2 flex items-center justify-center hover:bg-white/10 transition-all">
-                <Image
-                  src="/logos/associattewhitelogo.webp"
-                  alt="Associatte PropTech"
-                  width={80}
-                  height={80}
-                  className="object-contain"
-                  priority
-                />
-              </div>
-            </Link>
-            
-            <p className="text-gray-400 text-sm leading-relaxed">
-              Associatte PropTech Pvt Ltd is one of the leading Real Estate and Property Management Company in Pune established by Mr. Vikram Malik, who has an experience of more than 25 years in the Industry.
-            </p>
-            
-            <div className="flex items-center gap-2 bg-white/5 px-3 py-2 rounded-lg w-fit">
-              <Shield size={14} className="text-[#F8C21C]" />
-              <span className="text-xs text-gray-400">RERA:</span>
-              <span className="text-xs text-[#F8C21C] font-mono">A52100029540</span>
-            </div>
-            
-            <div className="flex gap-2">
-              {socialIcons.map((item, i) => {
-                const Icon = item.icon;
-                return (
-                  <a
-                    key={i}
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-9 h-9 bg-white/5 hover:bg-[#F8C21C] rounded-lg flex items-center justify-center transition-all hover:text-gray-900 text-gray-400 hover:scale-105"
-                  >
-                    <Icon size={15} />
-                  </a>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Column 2 - Quick Links */}
-          <div>
-            <h3 className="text-white font-semibold mb-5 text-base">Quick Links</h3>
-            <ul className="space-y-3">
-              {quickLinks.map((link, idx) => (
-                <li key={idx}>
-                  <Link 
-                    href={link.href}
-                    className="text-gray-400 hover:text-[#F8C21C] transition-colors text-sm flex items-center gap-2 group"
-                  >
-                    <ChevronRight size={12} className="text-[#F8C21C] opacity-0 group-hover:opacity-100 transition-all" />
-                    <span className="group-hover:translate-x-1 transition-transform">{link.name}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Column 3 - Locations */}
-          <div>
-            <h3 className="text-white font-semibold mb-5 text-base">Top Locations</h3>
-            <ul className="space-y-3">
-              {activeLocations.map((loc) => (
-                <li key={loc.slug}>
-                  <Link 
-                    href={`/locations/${loc.slug}`}
-                    className="text-gray-400 hover:text-[#F8C21C] transition-colors text-sm flex items-center gap-2 group"
-                  >
-                    <MapPin size={12} className="text-[#F8C21C] opacity-0 group-hover:opacity-100 transition-all" />
-                    <span className="group-hover:translate-x-1 transition-transform capitalize">Properties in {loc.name}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Column 4 - Contact */}
-          <div>
-            <h3 className="text-white font-semibold mb-5 text-base">Get in Touch</h3>
-            <ul className="space-y-4">
-              <li className="flex gap-3">
-                <MapPin size={16} className="text-[#F8C21C] mt-0.5 flex-shrink-0" />
-                <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-[#F8C21C] transition-colors text-sm leading-relaxed">
-                  302 & 303, Naren Pearl, Magarpatta Road, Hadapsar, Pune - 411028
-                </a>
-              </li>
-              <li className="flex gap-3">
-                <Phone size={16} className="text-[#F8C21C] flex-shrink-0" />
-                <a href="tel:+918881188181" className="text-gray-400 hover:text-[#F8C21C] transition-colors text-sm">
-                  +91 8881188181
-                </a>
-              </li>
-              <li className="flex gap-3">
-                <Mail size={16} className="text-[#F8C21C] flex-shrink-0" />
-                <a href="mailto:info@associatte.com" className="text-gray-400 hover:text-[#F8C21C] transition-colors text-sm break-all">
-                  info@associatte.com
-                </a>
-              </li>
-              <li className="flex gap-3">
-                <Clock size={16} className="text-[#F8C21C] flex-shrink-0" />
-                <span className="text-gray-400 text-sm">Tue-Sun: 10AM - 7PM</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        {/* Mobile Accordion (Visible only on mobile) */}
-        <div className="lg:hidden space-y-4">
+        {/* Mobile Layout (Visible only on mobile) */}
+        <div className="md:hidden space-y-4">
           {/* Brand Section - Always visible */}
           <div className="text-center pb-6 border-b border-gray-800">
             <Link href="/" className="inline-block mb-4">
@@ -304,10 +193,163 @@ export default function Footer() {
               </ul>
             )}
           </div>
+
+          {/* Facebook Posts - Mobile (Always Visible & Fully Responsive) */}
+          <div className="border-b border-gray-800 pb-6">
+            <h3 className="text-white font-semibold mb-4 flex items-center gap-2 pt-4">
+              <FaFacebookF className="text-[#1877F2]" size={18} />
+              Follow Us on Facebook
+            </h3>
+            <div className="bg-white rounded-xl overflow-hidden shadow-lg w-full">
+              <iframe
+                src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2FAssociatteIndia%2F&tabs=timeline&width=400&height=350&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=false"
+                width="100%"
+                height="350"
+                style={{ border: "none", overflow: "hidden" }}
+                scrolling="no"
+                frameBorder="0"
+                allowFullScreen={true}
+                allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                title="Facebook Page"
+              ></iframe>
+            </div>
+          </div>
+        </div>
+
+        {/* Tablet & Desktop Grid Layout */}
+        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+          {/* Column 1 - Brand */}
+          <div className="space-y-5">
+            <Link href="/" className="inline-block">
+              <div className="w-20 h-20 bg-white/5 rounded-xl p-2 flex items-center justify-center hover:bg-white/10 transition-all">
+                <Image
+                  src="/logos/associattewhitelogo.webp"
+                  alt="Associatte PropTech"
+                  width={80}
+                  height={80}
+                  className="object-contain"
+                  priority
+                />
+              </div>
+            </Link>
+            
+            <p className="text-gray-400 text-sm leading-relaxed">
+              Associatte PropTech Pvt Ltd is one of the leading Real Estate and Property Management Company in Pune established by Mr. Vikram Malik, who has an experience of more than 25 years in the Industry.
+            </p>
+            
+            <div className="flex items-center gap-2 bg-white/5 px-3 py-2 rounded-lg w-fit">
+              <Shield size={14} className="text-[#F8C21C]" />
+              <span className="text-xs text-gray-400">RERA:</span>
+              <span className="text-xs text-[#F8C21C] font-mono">A52100029540</span>
+            </div>
+            
+            <div className="flex gap-2">
+              {socialIcons.map((item, i) => {
+                const Icon = item.icon;
+                return (
+                  <a
+                    key={i}
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-9 h-9 bg-white/5 hover:bg-[#F8C21C] rounded-lg flex items-center justify-center transition-all hover:text-gray-900 text-gray-400 hover:scale-105"
+                  >
+                    <Icon size={15} />
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Column 2 - Quick Links & Locations */}
+          <div className="space-y-8">
+            <div>
+              <h3 className="text-white font-semibold mb-4 text-base">Quick Links</h3>
+              <ul className="space-y-3">
+                {quickLinks.map((link, idx) => (
+                  <li key={idx}>
+                    <Link 
+                      href={link.href}
+                      className="text-gray-400 hover:text-[#F8C21C] transition-colors text-sm flex items-center gap-2 group"
+                    >
+                      <ChevronRight size={12} className="text-[#F8C21C] opacity-0 group-hover:opacity-100 transition-all" />
+                      <span className="group-hover:translate-x-1 transition-transform">{link.name}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-white font-semibold mb-4 text-base">Top Locations</h3>
+              <ul className="space-y-3">
+                {activeLocations.map((loc) => (
+                  <li key={loc.slug}>
+                    <Link 
+                      href={`/locations/${loc.slug}`}
+                      className="text-gray-400 hover:text-[#F8C21C] transition-colors text-sm flex items-center gap-2 group"
+                    >
+                      <MapPin size={12} className="text-[#F8C21C] opacity-0 group-hover:opacity-100 transition-all" />
+                      <span className="group-hover:translate-x-1 transition-transform capitalize">Properties in {loc.name}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Column 3 - Contact */}
+          <div>
+            <h3 className="text-white font-semibold mb-5 text-base">Get in Touch</h3>
+            <ul className="space-y-4">
+              <li className="flex gap-3">
+                <MapPin size={16} className="text-[#F8C21C] mt-0.5 flex-shrink-0" />
+                <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-[#F8C21C] transition-colors text-sm leading-relaxed">
+                  302 & 303, Naren Pearl, Magarpatta Road, Hadapsar, Pune - 411028
+                </a>
+              </li>
+              <li className="flex gap-3">
+                <Phone size={16} className="text-[#F8C21C] flex-shrink-0" />
+                <a href="tel:+918881188181" className="text-gray-400 hover:text-[#F8C21C] transition-colors text-sm">
+                  +91 8881188181
+                </a>
+              </li>
+              <li className="flex gap-3">
+                <Mail size={16} className="text-[#F8C21C] flex-shrink-0" />
+                <a href="mailto:info@associatte.com" className="text-gray-400 hover:text-[#F8C21C] transition-colors text-sm break-all">
+                  info@associatte.com
+                </a>
+              </li>
+              <li className="flex gap-3">
+                <Clock size={16} className="text-[#F8C21C] flex-shrink-0" />
+                <span className="text-gray-400 text-sm">Tue-Sun: 10AM - 7PM</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 4 - Facebook Posts (Responsive) */}
+          <div>
+            <h3 className="text-white font-semibold mb-4 text-base flex items-center gap-2">
+              <FaFacebookF className="text-[#1877F2]" size={16} />
+              Follow Us
+            </h3>
+            <div className="bg-white rounded-lg overflow-hidden shadow-lg w-full">
+              <iframe
+                src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2FAssociatteIndia%2F&tabs=timeline&width=300&height=350&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=false"
+                width="100%"
+                height="350"
+                style={{ border: "none", overflow: "hidden" }}
+                scrolling="no"
+                frameBorder="0"
+                allowFullScreen={true}
+                allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                title="Facebook Page"
+              ></iframe>
+            </div>
+          </div>
         </div>
 
         {/* Desktop Legal Links */}
-        <div className="hidden lg:flex flex-wrap justify-center gap-x-6 gap-y-3 mt-12 pt-8 border-t border-gray-800">
+        <div className="hidden md:flex flex-wrap justify-center gap-x-6 gap-y-3 mt-12 pt-8 border-t border-gray-800">
           {legalLinks.map((link, idx) => (
             <Link key={idx} href={link.href} className="text-xs text-gray-500 hover:text-[#F8C21C] transition-colors">
               {link.name}
@@ -315,7 +357,7 @@ export default function Footer() {
           ))}
         </div>
 
-        {/* Disclaimer Section - Same for both */}
+        {/* Disclaimer Section */}
         <div className="mt-8 pt-6 border-t border-gray-800">
           <div className="bg-white/5 rounded-xl p-5 space-y-4">
             <div>

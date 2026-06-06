@@ -28,7 +28,7 @@ interface SearchBarProps {
   showSuggestions: boolean;
   filteredSuggestions: readonly string[];
   categories: readonly Category[];
-  cities: readonly City[]; // ✅ REQUIRED - NO ? NO DEFAULT
+  cities: readonly City[];
   isSearching: boolean;
   onTabChange: (tab: string) => void;
   onCityChange: (city: string) => void;
@@ -48,7 +48,7 @@ export const SearchBar = memo(({
   showSuggestions,
   filteredSuggestions,
   categories,
-  cities, // ✅ NO DEFAULT VALUE - must come from Hero
+  cities,
   isSearching,
   onTabChange,
   onCityChange,
@@ -86,7 +86,7 @@ export const SearchBar = memo(({
               <button
                 key={category.id}
                 onClick={() => onTabChange(category.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+                className={`flex-shrink-0 flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
                   isActive
                     ? 'bg-[#005E60] text-white shadow-md'
                     : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
@@ -104,7 +104,7 @@ export const SearchBar = memo(({
       <div className="flex flex-col sm:flex-row gap-3">
         
         {/* 📍 City Selector */}
-        <div className="relative w-full sm:w-40">
+        <div className="relative w-full sm:w-40 flex-shrink-0">
           <button
             onClick={() => onCityDropdownToggle(!isCityDropdownOpen)}
             className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border text-sm font-medium transition-colors ${
@@ -195,11 +195,11 @@ export const SearchBar = memo(({
           </AnimatePresence>
         </div>
 
-        {/* ⚡ Action Buttons */}
+        {/* ⚡ Action Buttons - Search expands on mobile */}
         <div className="flex gap-2">
           <button
             onClick={onFilterToggle}
-            className="px-4 py-3 rounded-xl font-semibold text-sm border border-[#8B0000]/30 text-[#8B0000] bg-[#8B0000]/5 hover:bg-[#8B0000]/10 transition-colors flex items-center gap-2"
+            className="flex-shrink-0 px-4 py-3 rounded-xl font-semibold text-sm border border-[#8B0000]/30 text-[#8B0000] bg-[#8B0000]/5 hover:bg-[#8B0000]/10 transition-colors flex items-center justify-center gap-2"
             aria-label="Open filters"
           >
             <SlidersHorizontal className="w-4 h-4" />
@@ -209,7 +209,7 @@ export const SearchBar = memo(({
           <button
             onClick={onSearch}
             disabled={isSearching}
-            className="px-6 py-3 rounded-xl font-semibold text-sm text-white bg-[#005E60] hover:bg-[#004a4d] disabled:bg-[#005E60]/50 disabled:cursor-not-allowed transition-colors shadow-md flex items-center gap-2"
+            className="flex-1 sm:flex-none px-6 py-3 rounded-xl font-semibold text-sm text-white bg-[#005E60] hover:bg-[#004a4d] disabled:bg-[#005E60]/50 disabled:cursor-not-allowed transition-colors shadow-md flex items-center justify-center gap-2"
             aria-label="Search properties"
           >
             {isSearching ? (
