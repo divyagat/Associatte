@@ -1,7 +1,7 @@
+// @/components/Home/Hero/StickySearchBar.tsx
 'use client';
 
 import { memo } from 'react';
-import { motion } from 'framer-motion';
 import { Search, MapPin, Loader2 } from 'lucide-react';
 
 // 🎨 Associatte Brand Colors
@@ -46,11 +46,7 @@ export const StickySearchBar = memo(({
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: -15 }}
-      animate={{ opacity: 1, y: 0 }}
-      // ✅ Removed 'exit' to avoid AnimatePresence requirement
-      transition={{ duration: 0.2 }}
+    <div 
       className="fixed top-0 left-0 right-0 z-[9999] bg-white/98 backdrop-blur-2xl shadow-lg border-b"
       style={{ borderColor: `${BRAND_GREEN}20` }}
     >
@@ -63,10 +59,9 @@ export const StickySearchBar = memo(({
               const Icon = cat.icon;
               const isActive = activeTab === cat.id;
               return (
-                <motion.button
+                <button
                   key={cat.id}
                   onClick={() => onTabChange(cat.id)}
-                  whileTap={{ scale: 0.96 }}
                   className={`px-3 py-1.5 rounded-lg text-[10px] font-semibold transition-all whitespace-nowrap border ${
                     isActive ? 'text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'
                   }`}
@@ -77,7 +72,7 @@ export const StickySearchBar = memo(({
                 >
                   <Icon className={`w-3 h-3 inline mr-1 ${isActive ? 'text-white' : 'text-[#005E60]'}`} />
                   {cat.label}
-                </motion.button>
+                </button>
               );
             })}
           </div>
@@ -115,9 +110,8 @@ export const StickySearchBar = memo(({
             </div>
             
             {/* Search Button */}
-            <motion.button 
+            <button 
               onClick={onSearch} 
-              whileTap={{ scale: 0.96 }} 
               disabled={isSearching}
               className="text-white px-4 py-2 rounded-lg text-xs font-semibold transition-all shadow-sm flex items-center gap-1 disabled:opacity-70"
               style={{
@@ -139,7 +133,7 @@ export const StickySearchBar = memo(({
                   Search
                 </>
               )}
-            </motion.button>
+            </button>
           </div>
         </div>
       </div>
@@ -148,7 +142,7 @@ export const StickySearchBar = memo(({
       <div className="absolute bottom-0 left-0 right-0 h-px opacity-60"
         style={{ background: `linear-gradient(90deg, transparent, ${BRAND_YELLOW}, transparent)` }} 
       />
-    </motion.div>
+    </div>
   );
 });
 

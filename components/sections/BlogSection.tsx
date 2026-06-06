@@ -40,19 +40,18 @@ export default function BlogSection({ city }: BlogSectionProps) {
   }
 
   return (
-    <section className="py-10 md:py-14 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-6">
+    <section className="py-10 md:py-14 bg-background">
+      <div className="container-site">
         <div className="flex items-center gap-8 mb-8">
-          <h2 className="section-title text-[#D97941]">Recent Articles in {city}</h2>
-          <div className="h-6 w-px bg-gray-300" />
-          <span className="text-lg text-gray-700 font-medium">Knowledge centre</span>
+          <h2 className="section-title text-blog-primary">Recent Articles in {city}</h2>
+          <div className="h-6 w-px bg-[var(--color-text-light)]/30" />
+          <span className="text-lg text-blog-text font-medium">Knowledge centre</span>
         </div>
 
         <div className="relative">
           <div 
             id="blog-carousel" 
             className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-4" 
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {blogPosts.map((post) => (
               <Link href={`/blog/${post.slug}`} key={post.id}>
@@ -85,10 +84,10 @@ export default function BlogSection({ city }: BlogSectionProps) {
                     </div>
                   </div>
                   <div className="p-4">
-                    <h3 className="text-base font-bold text-gray-900 leading-snug mb-2 group-hover:text-[#D97941] transition-colors line-clamp-2">
+                    <h3 className="text-base font-bold text-foreground leading-snug mb-2 group-hover:text-blog-primary transition-colors line-clamp-2">
                       {post.title}
                     </h3>
-                    <p className="text-xs text-gray-500">Last updated on {post.date}</p>
+                    <p className="text-xs text-[var(--color-text-light)]">Last updated on {post.date}</p>
                   </div>
                 </article>
               </Link>
@@ -99,24 +98,24 @@ export default function BlogSection({ city }: BlogSectionProps) {
             <>
               <button 
                 onClick={scrollLeft} 
-                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors z-10 group" 
+                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-blog-accent transition-colors z-10 group" 
                 aria-label="Scroll left"
               >
-                <ChevronRight size={20} className="text-gray-700 rotate-180 group-hover:text-[#D97941] transition-colors" />
+                <ChevronRight size={20} className="text-foreground rotate-180 group-hover:text-blog-primary transition-colors" />
               </button>
               <button 
                 onClick={scrollRight} 
-                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors z-10 group" 
+                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-blog-accent transition-colors z-10 group" 
                 aria-label="Scroll right"
               >
-                <ChevronRight size={20} className="text-gray-700 group-hover:text-[#D97941] transition-colors" />
+                <ChevronRight size={20} className="text-foreground group-hover:text-blog-primary transition-colors" />
               </button>
             </>
           )}
         </div>
 
         <div className="text-center mt-8">
-          <Link href="/blog" className="inline-flex items-center gap-2 text-[#D97941] font-semibold hover:text-[#b86435] transition-colors group">
+          <Link href="/blog" className="inline-flex items-center gap-2 text-blog-primary font-semibold hover:text-blog-primary/80 transition-colors group">
             View All Articles <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
