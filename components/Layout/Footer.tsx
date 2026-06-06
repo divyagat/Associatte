@@ -50,7 +50,7 @@ export default function Footer() {
       <div className="h-1 bg-gradient-to-r from-[#F8C21C] via-[#005E60] to-[#F8C21C]" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-        
+
         {/* Mobile Layout (Visible only on mobile) */}
         <div className="md:hidden space-y-4">
           {/* Brand Section - Always visible */}
@@ -94,7 +94,7 @@ export default function Footer() {
 
           {/* Quick Links Accordion */}
           <div className="border-b border-gray-800">
-            <button 
+            <button
               onClick={() => toggleSection('quick')}
               className="w-full flex justify-between items-center py-4 text-white font-semibold"
             >
@@ -117,7 +117,7 @@ export default function Footer() {
 
           {/* Locations Accordion */}
           <div className="border-b border-gray-800">
-            <button 
+            <button
               onClick={() => toggleSection('locations')}
               className="w-full flex justify-between items-center py-4 text-white font-semibold"
             >
@@ -140,7 +140,7 @@ export default function Footer() {
 
           {/* Contact Accordion */}
           <div className="border-b border-gray-800">
-            <button 
+            <button
               onClick={() => toggleSection('contact')}
               className="w-full flex justify-between items-center py-4 text-white font-semibold"
             >
@@ -173,7 +173,7 @@ export default function Footer() {
 
           {/* Legal Accordion */}
           <div className="border-b border-gray-800">
-            <button 
+            <button
               onClick={() => toggleSection('legal')}
               className="w-full flex justify-between items-center py-4 text-white font-semibold"
             >
@@ -232,17 +232,17 @@ export default function Footer() {
                 />
               </div>
             </Link>
-            
+
             <p className="text-gray-400 text-sm leading-relaxed">
               Associatte PropTech Pvt Ltd is one of the leading Real Estate and Property Management Company in Pune established by Mr. Vikram Malik, who has an experience of more than 25 years in the Industry.
             </p>
-            
+
             <div className="flex items-center gap-2 bg-white/5 px-3 py-2 rounded-lg w-fit">
               <Shield size={14} className="text-[#F8C21C]" />
               <span className="text-xs text-gray-400">RERA:</span>
               <span className="text-xs text-[#F8C21C] font-mono">A52100029540</span>
             </div>
-            
+
             <div className="flex gap-2">
               {socialIcons.map((item, i) => {
                 const Icon = item.icon;
@@ -268,7 +268,7 @@ export default function Footer() {
               <ul className="space-y-3">
                 {quickLinks.map((link, idx) => (
                   <li key={idx}>
-                    <Link 
+                    <Link
                       href={link.href}
                       className="text-gray-400 hover:text-[#F8C21C] transition-colors text-sm flex items-center gap-2 group"
                     >
@@ -284,7 +284,7 @@ export default function Footer() {
               <ul className="space-y-3">
                 {activeLocations.map((loc) => (
                   <li key={loc.slug}>
-                    <Link 
+                    <Link
                       href={`/locations/${loc.slug}`}
                       className="text-gray-400 hover:text-[#F8C21C] transition-colors text-sm flex items-center gap-2 group"
                     >
@@ -379,7 +379,7 @@ export default function Footer() {
         <div className="mt-8 pt-6 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center gap-3 text-xs text-gray-500">
           <p>© {currentYear} Associatte PropTech Pvt Ltd. All rights reserved.</p>
           <p>
-            Developed and powered by 
+            Developed and powered by
             <span className="text-[#F8C21C] font-medium ml-1">Associatte PropTech</span>
           </p>
         </div>

@@ -54,9 +54,9 @@ const FAQItem = ({ question, answer }: { question: string; answer: string }) => 
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between p-4 sm:p-5 text-left bg-white hover:bg-gray-50 transition-colors"
       >
-        <span className="font-semibold text-gray-900 pr-4 text-sm sm:text-base">{question}</span>
+        <span className="font-semibold text-[var(--color-text)] pr-4 text-sm sm:text-base">{question}</span>
         {isOpen ? (
-          <ChevronUp size={20} className="text-[#8B0000] flex-shrink-0" />
+          <ChevronUp size={20} className="text-[var(--color-secondary)] flex-shrink-0" />
         ) : (
           <ChevronDown size={20} className="text-gray-400 flex-shrink-0" />
         )}
@@ -153,6 +153,30 @@ export default function BlogDetailPage() {
     setShowShare(false);
   };
 
+  // ✅ SHARE FUNCTIONS
+  const shareToFacebook = () => {
+    const url = encodeURIComponent(window.location.href);
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'width=600,height=400');
+  };
+
+  const shareToTwitter = () => {
+    const url = encodeURIComponent(window.location.href);
+    const text = encodeURIComponent(post?.title || 'Check out this article');
+    window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank', 'width=600,height=400');
+  };
+
+  const shareToLinkedIn = () => {
+    const url = encodeURIComponent(window.location.href);
+    const title = encodeURIComponent(post?.title || 'Check out this article');
+    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}&title=${title}`, '_blank', 'width=600,height=400');
+  };
+
+  const shareToWhatsApp = () => {
+    const url = encodeURIComponent(window.location.href);
+    const text = encodeURIComponent(`${post?.title || 'Check out this article'}\n\n`);
+    window.open(`https://wa.me/?text=${text}${url}`, '_blank');
+  };
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -170,12 +194,12 @@ export default function BlogDetailPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
         <div className="text-center px-4">
-          <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-[#8B0000] to-[#F8C21C] rounded-full flex items-center justify-center shadow-2xl">
+          <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-[var(--color-secondary)] to-[var(--color-gold)] rounded-full flex items-center justify-center shadow-2xl">
             <Building2 size={48} className="text-white" />
           </div>
-          <h1 className="text-5xl font-bold text-gray-900 mb-4 tracking-tight">404</h1>
-          <p className="text-gray-600 text-lg mb-8">Article not found</p>
-          <Link href="/blog" className="inline-flex items-center gap-2 bg-gradient-to-r from-[#8B0000] to-[#6d0000] text-white px-8 py-3.5 rounded-full font-semibold hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5">
+          <h1 className="text-5xl font-bold text-[var(--color-text)] mb-4 tracking-tight">404</h1>
+          <p className="text-[var(--color-text-light)] text-lg mb-8">Article not found</p>
+          <Link href="/blog" className="btn-primary inline-flex items-center gap-2">
             <ArrowLeft size={20} /> Back to Articles
           </Link>
         </div>
@@ -184,11 +208,11 @@ export default function BlogDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFAF8]">
+    <div className="min-h-screen bg-[var(--bgColor)]">
       {/* Reading Progress Bar */}
       <div className="fixed top-0 left-0 w-full h-[3px] bg-gray-200/50 z-[60] backdrop-blur-sm">
         <div 
-          className="h-full bg-gradient-to-r from-[#8B0000] via-[#C41E3A] to-[#F8C21C] transition-all duration-150 ease-out shadow-[0_0_10px_rgba(248,194,28,0.5)]"
+          className="h-full bg-gradient-to-r from-[var(--color-secondary)] via-[#C41E3A] to-[var(--color-gold)] transition-all duration-150 ease-out shadow-[0_0_10px_rgba(248,194,28,0.5)]"
           style={{ width: `${readingProgress}%` }}
         />
       </div>
@@ -216,7 +240,7 @@ export default function BlogDetailPage() {
           <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 md:p-10 lg:p-12">
             <div className="max-w-4xl mx-auto md:mx-0 space-y-3 sm:space-y-4 animate-fade-in-up">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 bg-[#F8C21C] text-[#8B0000] px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider shadow-lg">
+                <span className="inline-flex items-center gap-1.5 bg-[var(--color-gold)] text-[var(--color-secondary)] px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider shadow-lg">
                   <Sparkles size={12} />
                   {post.category}
                 </span>
@@ -259,7 +283,7 @@ export default function BlogDetailPage() {
                   <img 
                     src={post.author.avatar} 
                     alt={post.author.name}
-                    className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border-2 border-[#F8C21C] object-cover"
+                    className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border-2 border-[var(--color-gold)] object-cover"
                   />
                   <div className="text-left">
                     <p className="font-semibold text-white text-xs sm:text-sm leading-tight">{post.author.name}</p>
@@ -273,7 +297,7 @@ export default function BlogDetailPage() {
       </section>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 md:px-6 pb-24 md:pb-16 max-w-7xl">
+      <div className="container-site pb-24 md:pb-16">
         <div className="grid lg:grid-cols-12 gap-8 lg:gap-12">
           
           {/* Left Sidebar */}
@@ -282,10 +306,10 @@ export default function BlogDetailPage() {
               {headings.length > 0 && (
                 <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100/80">
                   <div className="flex items-center gap-2 mb-5 pb-4 border-b border-gray-100">
-                    <div className="w-8 h-8 bg-gradient-to-br from-[#8B0000] to-[#6d0000] rounded-lg flex items-center justify-center">
+                    <div className="w-8 h-8 bg-gradient-to-br from-[var(--color-secondary)] to-[#6d0000] rounded-lg flex items-center justify-center">
                       <List size={14} className="text-white" />
                     </div>
-                    <h3 className="font-bold text-gray-900 text-sm uppercase tracking-wider">Table of Contents</h3>
+                    <h3 className="font-bold text-[var(--color-text)] text-sm uppercase tracking-wider">Table of Contents</h3>
                   </div>
                   <nav className="space-y-1">
                     {headings.map((heading) => (
@@ -296,8 +320,8 @@ export default function BlogDetailPage() {
                           heading.level === 3 ? 'pl-6 text-xs' : ''
                         } ${
                           activeSection === heading.id
-                            ? 'bg-gradient-to-r from-[#8B0000]/10 to-transparent text-[#8B0000] font-semibold border-l-2 border-[#8B0000]'
-                            : 'text-gray-600 hover:text-[#8B0000] hover:bg-gray-50'
+                            ? 'bg-gradient-to-r from-[var(--color-secondary)]/10 to-transparent text-[var(--color-secondary)] font-semibold border-l-2 border-[var(--color-secondary)]'
+                            : 'text-[var(--color-text-light)] hover:text-[var(--color-secondary)] hover:bg-gray-50'
                         }`}
                       >
                         {heading.text}
@@ -309,27 +333,39 @@ export default function BlogDetailPage() {
 
               {/* Share Section */}
               <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100/80">
-                <h3 className="font-bold text-gray-900 text-sm uppercase tracking-wider mb-4 flex items-center gap-2">
+                <h3 className="font-bold text-[var(--color-text)] text-sm uppercase tracking-wider mb-4 flex items-center gap-2">
                   <Share2 size={14} />
                   Share
                 </h3>
                 <div className="grid grid-cols-2 gap-2">
-                  <button className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-[#1877F2]/10 text-[#1877F2] hover:bg-[#1877F2] hover:text-white transition-all duration-300 text-xs font-medium">
+                  <button 
+                    onClick={shareToFacebook}
+                    className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-[#1877F2]/10 text-[#1877F2] hover:bg-[#1877F2] hover:text-white transition-all duration-300 text-xs font-medium cursor-pointer"
+                  >
                     <FacebookIcon /> Facebook
                   </button>
-                  <button className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-black/5 text-black hover:bg-black hover:text-white transition-all duration-300 text-xs font-medium">
+                  <button 
+                    onClick={shareToTwitter}
+                    className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-black/5 text-black hover:bg-black hover:text-white transition-all duration-300 text-xs font-medium cursor-pointer"
+                  >
                     <TwitterIcon /> Twitter
                   </button>
-                  <button className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-[#0077b5]/10 text-[#0077b5] hover:bg-[#0077b5] hover:text-white transition-all duration-300 text-xs font-medium">
+                  <button 
+                    onClick={shareToLinkedIn}
+                    className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-[#0077b5]/10 text-[#0077b5] hover:bg-[#0077b5] hover:text-white transition-all duration-300 text-xs font-medium cursor-pointer"
+                  >
                     <LinkedInIcon /> LinkedIn
                   </button>
-                  <button className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white transition-all duration-300 text-xs font-medium">
+                  <button 
+                    onClick={shareToWhatsApp}
+                    className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white transition-all duration-300 text-xs font-medium cursor-pointer"
+                  >
                     <WhatsAppIcon /> WhatsApp
                   </button>
                 </div>
                 <button 
                   onClick={handleCopyLink}
-                  className="mt-3 w-full flex items-center justify-center gap-2 p-2.5 rounded-xl bg-gray-50 hover:bg-gray-100 transition-all text-xs font-medium text-gray-700"
+                  className="mt-3 w-full flex items-center justify-center gap-2 p-2.5 rounded-xl bg-gray-50 hover:bg-gray-100 transition-all text-xs font-medium text-gray-700 cursor-pointer"
                 >
                   <LinkIcon />
                   {copied ? 'Copied!' : 'Copy Link'}
@@ -339,7 +375,7 @@ export default function BlogDetailPage() {
               {/* Recent Posts */}
               {recentPosts.length > 0 && (
                 <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100/80">
-                  <h3 className="font-bold text-gray-900 text-sm uppercase tracking-wider mb-4">Recent Posts</h3>
+                  <h3 className="font-bold text-[var(--color-text)] text-sm uppercase tracking-wider mb-4">Recent Posts</h3>
                   <div className="space-y-4">
                     {recentPosts.map((recentPost) => (
                       <Link 
@@ -353,10 +389,10 @@ export default function BlogDetailPage() {
                           className="w-16 h-16 rounded-lg object-cover flex-shrink-0 group-hover:scale-105 transition-transform"
                         />
                         <div className="flex-1 min-w-0">
-                          <h4 className="text-sm font-semibold text-gray-900 group-hover:text-[#8B0000] transition-colors line-clamp-2">
+                          <h4 className="text-sm font-semibold text-[var(--color-text)] group-hover:text-[var(--color-secondary)] transition-colors line-clamp-2">
                             {recentPost.title}
                           </h4>
-                          <p className="text-xs text-gray-500 mt-1">{recentPost.date}</p>
+                          <p className="text-xs text-[var(--color-text-light)] mt-1">{recentPost.date}</p>
                         </div>
                       </Link>
                     ))}
@@ -377,7 +413,7 @@ export default function BlogDetailPage() {
                   </button>
                 </div>
                 
-                <div className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs text-gray-500">
+                <div className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs text-[var(--color-text-light)]">
                   <div className="flex items-center gap-1 sm:gap-1.5 bg-gray-50 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full">
                     <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-green-500 animate-pulse" />
                     <span>Reading • {Math.round(readingProgress)}%</span>
@@ -386,7 +422,7 @@ export default function BlogDetailPage() {
               </div>
 
               <div className="p-4 sm:p-6 md:p-10 lg:p-12">
-                {/* ✅ SECONDARY IMAGE (Image 2) */}
+                {/* SECONDARY IMAGE (Image 2) */}
                 {post.image2 && (
                   <div className="mb-8 rounded-2xl overflow-hidden shadow-lg border border-gray-100">
                     <img 
@@ -398,34 +434,22 @@ export default function BlogDetailPage() {
                 )}
 
                 <div 
-                  className="prose prose-lg max-w-none
-                    prose-headings:text-gray-900 prose-headings:font-bold prose-headings:tracking-tight
-                    prose-h1:text-3xl sm:text-4xl prose-h2:text-2xl sm:text-3xl prose-h3:text-xl sm:text-2xl
-                    prose-h2:mt-10 sm:mt-12 prose-h2:mb-4 sm:mb-6 prose-h2:pb-4 prose-h2:border-b prose-h2:border-gray-100
-                    prose-p:text-gray-700 prose-p:leading-[1.85] prose-p:text-[15px] sm:prose-p:text-[17px] prose-p:mb-4 sm:prose-p:mb-6
-                    prose-a:text-[#8B0000] prose-a:no-underline prose-a:font-medium hover:prose-a:underline prose-a:border-b prose-a:border-[#8B0000]/30 hover:prose-a:border-[#8B0000]
-                    prose-strong:text-[#005E60] prose-strong:font-semibold
-                    prose-li:text-gray-700 prose-li:leading-relaxed prose-li:my-2
-                    prose-li:marker:text-[#8B0000] prose-li:marker:font-bold
-                    prose-img:rounded-2xl prose-img:shadow-lg prose-img:border prose-img:border-gray-100 prose-img:my-8
-                    prose-table:w-full prose-table:border-collapse
-                    prose-th:bg-gray-100 prose-th:p-3 prose-th:text-left prose-th:font-semibold prose-th:text-gray-900
-                    prose-td:p-3 prose-td:border-t prose-td:border-gray-200"
+                  className="prose prose-lg max-w-none"
                   dangerouslySetInnerHTML={{ __html: post.content }}
                 />
 
                 {/* Tags */}
                 <div className="mt-10 sm:mt-12 pt-6 sm:pt-8 border-t border-gray-100">
                   <div className="flex items-center gap-3 mb-4">
-                    <Tag size={16} className="text-[#8B0000]" />
-                    <h4 className="font-bold text-gray-900 text-sm uppercase tracking-wider">Topics</h4>
+                    <Tag size={16} className="text-[var(--color-secondary)]" />
+                    <h4 className="font-bold text-[var(--color-text)] text-sm uppercase tracking-wider">Topics</h4>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {post.tags.map((tag) => (
                       <Link 
                         key={tag} 
                         href={`/blog?tag=${tag}`}
-                        className="group bg-gray-50 hover:bg-gradient-to-r hover:from-[#8B0000] hover:to-[#6d0000] text-gray-700 hover:text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm transition-all duration-300 font-medium border border-gray-200 hover:border-transparent hover:shadow-lg hover:shadow-red-900/20 hover:-translate-y-0.5"
+                        className="group bg-gray-50 hover:bg-gradient-to-r hover:from-[var(--color-secondary)] hover:to-[#6d0000] text-[var(--color-text)] hover:text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm transition-all duration-300 font-medium border border-gray-200 hover:border-transparent hover:shadow-lg hover:shadow-red-900/20 hover:-translate-y-0.5"
                       >
                         #{tag}
                       </Link>
@@ -439,19 +463,19 @@ export default function BlogDetailPage() {
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div className="flex items-center gap-4 sm:gap-6">
                     <div className="text-center">
-                      <div className="text-xl sm:text-2xl font-bold text-gray-900">24</div>
-                      <div className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wider">Comments</div>
+                      <div className="text-xl sm:text-2xl font-bold text-[var(--color-text)]">24</div>
+                      <div className="text-[10px] sm:text-xs text-[var(--color-text-light)] uppercase tracking-wider">Comments</div>
                     </div>
                     <div className="w-px h-10 bg-gray-200" />
                     <div className="text-center">
-                      <div className="text-xl sm:text-2xl font-bold text-gray-900">2.8K</div>
-                      <div className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wider">Views</div>
+                      <div className="text-xl sm:text-2xl font-bold text-[var(--color-text)]">2.8K</div>
+                      <div className="text-[10px] sm:text-xs text-[var(--color-text-light)] uppercase tracking-wider">Views</div>
                     </div>
                   </div>
                   
                   <button 
                     onClick={() => setIsPopupOpen(true)}
-                    className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-[#8B0000] to-[#6d0000] text-white px-6 py-3 rounded-full font-semibold hover:shadow-xl hover:shadow-red-900/30 transition-all duration-300 hover:-translate-y-0.5 text-sm sm:text-base"
+                    className="btn-primary w-full sm:w-auto"
                   >
                     <Sparkles size={16} />
                     <span>Get Expert Advice</span>
@@ -461,8 +485,8 @@ export default function BlogDetailPage() {
             </div>
 
             {/* Author Bio */}
-            <div className="mt-8 relative overflow-hidden bg-gradient-to-br from-white via-white to-[#F8C21C]/5 rounded-3xl p-6 md:p-8 border border-gray-100 shadow-sm">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[#8B0000]/5 to-transparent rounded-full blur-3xl" />
+            <div className="mt-8 relative overflow-hidden bg-gradient-to-br from-white via-white to-[var(--color-gold)]/5 rounded-3xl p-6 md:p-8 border border-gray-100 shadow-sm">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[var(--color-secondary)]/5 to-transparent rounded-full blur-3xl" />
               <div className="relative flex flex-col md:flex-row items-start gap-4 sm:gap-6">
                 <div className="relative shrink-0">
                   <img 
@@ -470,28 +494,28 @@ export default function BlogDetailPage() {
                     alt={post.author.name}
                     className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover shadow-lg ring-4 ring-white"
                   />
-                  <div className="absolute -bottom-2 -right-2 w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-[#F8C21C] to-[#e6b018] rounded-lg flex items-center justify-center shadow-lg">
-                    <Award size={12} className="sm:w-[14px] sm:h-[14px] text-[#8B0000]" />
+                  <div className="absolute -bottom-2 -right-2 w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-[var(--color-gold)] to-[#e6b018] rounded-lg flex items-center justify-center shadow-lg">
+                    <Award size={12} className="sm:w-[14px] sm:h-[14px] text-[var(--color-secondary)]" />
                   </div>
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-[10px] sm:text-xs font-bold text-[#8B0000] uppercase tracking-wider">Written by</span>
+                    <span className="text-[10px] sm:text-xs font-bold text-[var(--color-secondary)] uppercase tracking-wider">Written by</span>
                     <div className="flex items-center gap-0.5">
-                      {[1,2,3,4,5].map((i) => <Star key={i} size={10} className="text-[#F8C21C] fill-[#F8C21C]" />)}
+                      {[1,2,3,4,5].map((i) => <Star key={i} size={10} className="text-[var(--color-gold)] fill-[var(--color-gold)]" />)}
                     </div>
                   </div>
-                  <h4 className="font-bold text-xl sm:text-2xl text-gray-900 mb-1">{post.author.name}</h4>
-                  <p className="text-[#005E60] font-medium text-xs sm:text-sm mb-3">{post.author.role}</p>
-                  <p className="text-gray-600 mb-4 leading-relaxed text-sm sm:text-base">{post.author.bio}</p>
+                  <h4 className="font-bold text-xl sm:text-2xl text-[var(--color-text)] mb-1">{post.author.name}</h4>
+                  <p className="text-[var(--color-primary)] font-medium text-xs sm:text-sm mb-3">{post.author.role}</p>
+                  <p className="text-[var(--color-text-light)] mb-4 leading-relaxed text-sm sm:text-base">{post.author.bio}</p>
                   <div className="flex flex-wrap gap-3">
                     <button 
                       onClick={() => setIsPopupOpen(true)}
-                      className="inline-flex items-center gap-2 bg-[#005E60] text-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold hover:bg-[#004a4d] transition-all duration-300 hover:shadow-lg"
+                      className="inline-flex items-center gap-2 bg-[var(--color-primary)] text-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold hover:bg-[var(--color-primary-dark)] transition-all duration-300 hover:shadow-lg"
                     >
                       <Sparkles size={14} /> Connect Now
                     </button>
-                    <Link href="/blog" className="inline-flex items-center gap-2 bg-white text-gray-700 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-300">
+                    <Link href="/blog" className="btn-outline inline-flex items-center gap-2">
                       View all articles <ArrowLeft size={14} className="rotate-180" />
                     </Link>
                   </div>
@@ -503,10 +527,10 @@ export default function BlogDetailPage() {
             {post.faqs && post.faqs.length > 0 && (
               <div className="mt-8 bg-white rounded-3xl shadow-sm border border-gray-100/80 p-4 sm:p-6 md:p-10">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-br from-[#8B0000] to-[#6d0000] rounded-xl flex items-center justify-center">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-br from-[var(--color-secondary)] to-[#6d0000] rounded-xl flex items-center justify-center">
                     <MessageCircle size={16} className="sm:w-[18px] sm:h-[18px] text-white" />
                   </div>
-                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900">FAQs</h2>
+                  <h2 className="text-xl sm:text-2xl font-bold text-[var(--color-text)]">FAQs</h2>
                 </div>
                 <div>
                   {post.faqs.map((faq, index) => (
@@ -518,9 +542,9 @@ export default function BlogDetailPage() {
 
             {/* Read Next Section */}
             {relatedPosts.length > 0 && (
-              <div className="mt-8 bg-gradient-to-br from-[#005E60] via-[#004a4d] to-[#003838] rounded-3xl p-4 sm:p-6 md:p-10 shadow-2xl">
+              <div className="mt-8 bg-gradient-to-br from-[var(--color-primary)] via-[var(--color-primary-dark)] to-[#003838] rounded-3xl p-4 sm:p-6 md:p-10 shadow-2xl">
                 <div className="flex items-center gap-3 mb-6">
-                  <ArrowLeft size={18} className="sm:w-5 sm:h-5 text-[#F8C21C] rotate-180" />
+                  <ArrowLeft size={18} className="sm:w-5 sm:h-5 text-[var(--color-gold)] rotate-180" />
                   <h2 className="text-xl sm:text-2xl font-bold text-white">Read Next</h2>
                 </div>
                 <div className="grid md:grid-cols-2 gap-4">
@@ -537,7 +561,7 @@ export default function BlogDetailPage() {
                           className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl object-cover flex-shrink-0"
                         />
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-white group-hover:text-[#F8C21C] transition-colors line-clamp-2 text-xs sm:text-sm">
+                          <h3 className="font-semibold text-white group-hover:text-[var(--color-gold)] transition-colors line-clamp-2 text-xs sm:text-sm">
                             {relatedPost.title}
                           </h3>
                           <p className="text-white/60 text-[10px] sm:text-xs mt-2">{relatedPost.date}</p>
@@ -554,7 +578,7 @@ export default function BlogDetailPage() {
           <aside className="lg:col-span-3 order-3">
             <div className="lg:sticky lg:top-28 space-y-6">
               <div className="relative overflow-hidden bg-white rounded-2xl shadow-sm border border-gray-100/80">
-                <div className="h-24 bg-gradient-to-br from-[#8B0000] via-[#6d0000] to-[#005E60] relative"></div>
+                <div className="h-24 bg-gradient-to-br from-[var(--color-secondary)] via-[#6d0000] to-[var(--color-primary)] relative"></div>
                 <div className="px-4 sm:px-6 pb-6 -mt-12 relative">
                   <img 
                     src={post.author.avatar} 
@@ -562,28 +586,28 @@ export default function BlogDetailPage() {
                     className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl mx-auto mb-4 object-cover border-4 border-white shadow-xl"
                   />
                   <div className="text-center">
-                    <h3 className="font-bold text-base sm:text-lg text-gray-900 mb-1">{post.author.name}</h3>
-                    <p className="text-[10px] sm:text-xs text-[#005E60] font-semibold mb-3">{post.author.role}</p>
-                    <p className="text-[11px] sm:text-xs text-gray-600 mb-4 leading-relaxed">{post.author.bio}</p>
+                    <h3 className="font-bold text-base sm:text-lg text-[var(--color-text)] mb-1">{post.author.name}</h3>
+                    <p className="text-[10px] sm:text-xs text-[var(--color-primary)] font-semibold mb-3">{post.author.role}</p>
+                    <p className="text-[11px] sm:text-xs text-[var(--color-text-light)] mb-4 leading-relaxed">{post.author.bio}</p>
                     
                     <div className="grid grid-cols-3 gap-2 mb-4 py-3 border-y border-gray-100">
                       <div>
-                        <div className="text-base sm:text-lg font-bold text-gray-900">12+</div>
-                        <div className="text-[9px] sm:text-[10px] text-gray-500 uppercase tracking-wider">Years</div>
+                        <div className="text-base sm:text-lg font-bold text-[var(--color-text)]">12+</div>
+                        <div className="text-[9px] sm:text-[10px] text-[var(--color-text-light)] uppercase tracking-wider">Years</div>
                       </div>
                       <div>
-                        <div className="text-base sm:text-lg font-bold text-gray-900">500+</div>
-                        <div className="text-[9px] sm:text-[10px] text-gray-500 uppercase tracking-wider">Clients</div>
+                        <div className="text-base sm:text-lg font-bold text-[var(--color-text)]">500+</div>
+                        <div className="text-[9px] sm:text-[10px] text-[var(--color-text-light)] uppercase tracking-wider">Clients</div>
                       </div>
                       <div>
-                        <div className="text-base sm:text-lg font-bold text-gray-900">4.9</div>
-                        <div className="text-[9px] sm:text-[10px] text-gray-500 uppercase tracking-wider">Rating</div>
+                        <div className="text-base sm:text-lg font-bold text-[var(--color-text)]">4.9</div>
+                        <div className="text-[9px] sm:text-[10px] text-[var(--color-text-light)] uppercase tracking-wider">Rating</div>
                       </div>
                     </div>
                     
                     <button 
                       onClick={() => setIsPopupOpen(true)}
-                      className="w-full bg-gradient-to-r from-[#8B0000] to-[#6d0000] text-white py-2.5 sm:py-3 rounded-xl font-semibold hover:shadow-lg hover:shadow-red-900/30 transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center gap-2 text-xs sm:text-sm"
+                      className="btn-primary w-full"
                     >
                       <Sparkles size={14} /> Connect Now
                     </button>
@@ -591,25 +615,25 @@ export default function BlogDetailPage() {
                 </div>
               </div>
 
-              <div className="relative overflow-hidden bg-gradient-to-br from-[#8B0000] via-[#6d0000] to-[#4a0000] rounded-2xl shadow-xl">
-                <div className="absolute top-0 right-0 w-40 h-40 bg-[#F8C21C]/20 rounded-full blur-3xl" />
-                <div className="absolute bottom-0 left-0 w-32 h-32 bg-[#F8C21C]/10 rounded-full blur-2xl" />
+              <div className="relative overflow-hidden bg-gradient-to-br from-[var(--color-secondary)] via-[#6d0000] to-[#4a0000] rounded-2xl shadow-xl">
+                <div className="absolute top-0 right-0 w-40 h-40 bg-[var(--color-gold)]/20 rounded-full blur-3xl" />
+                <div className="absolute bottom-0 left-0 w-32 h-32 bg-[var(--color-gold)]/10 rounded-full blur-2xl" />
                 
                 <div className="relative p-4 sm:p-6 text-white">
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 bg-[#F8C21C] rounded-2xl flex items-center justify-center mb-4 shadow-lg rotate-3">
-                    <PhoneCall size={20} className="sm:w-6 sm:h-6 text-[#8B0000]" />
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 bg-[var(--color-gold)] rounded-2xl flex items-center justify-center mb-4 shadow-lg rotate-3">
+                    <PhoneCall size={20} className="sm:w-6 sm:h-6 text-[var(--color-secondary)]" />
                   </div>
                   <h4 className="font-bold text-lg sm:text-xl mb-2">Free Consultation</h4>
                   <p className="text-white/80 text-xs sm:text-sm mb-5 leading-relaxed">Speak with our expert consultants for personalized property guidance.</p>
                   <button 
                     onClick={() => setIsPopupOpen(true)}
-                    className="w-full bg-[#F8C21C] text-[#8B0000] py-3 sm:py-3.5 rounded-xl font-bold hover:bg-[#e6b018] transition-all duration-300 hover:shadow-xl hover:shadow-yellow-500/30 hover:-translate-y-0.5 flex items-center justify-center gap-2 text-xs sm:text-sm"
+                    className="w-full bg-[var(--color-gold)] text-[var(--color-secondary)] py-3 sm:py-3.5 rounded-xl font-bold hover:bg-[#e6b018] transition-all duration-300 hover:shadow-xl hover:shadow-yellow-500/30 hover:-translate-y-0.5 flex items-center justify-center gap-2 text-xs sm:text-sm"
                   >
                     Request Callback
                     <ArrowLeft size={14} className="rotate-180" />
                   </button>
                   <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-center gap-2 text-[10px] sm:text-xs text-white/70">
-                    <CheckCircle size={12} className="text-[#F8C21C]" />
+                    <CheckCircle size={12} className="text-[var(--color-gold)]" />
                     <span>100% Free • No Obligation</span>
                   </div>
                 </div>
@@ -617,19 +641,19 @@ export default function BlogDetailPage() {
 
               <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl p-4 sm:p-6 border border-gray-100/80 shadow-sm">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-br from-[#005E60] to-[#004a4d] rounded-xl flex items-center justify-center shadow-md">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-dark)] rounded-xl flex items-center justify-center shadow-md">
                     <Shield size={16} className="sm:w-[18px] sm:h-[18px] text-white" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-900 text-xs sm:text-sm">Trusted Platform</h4>
-                    <p className="text-[10px] sm:text-xs text-gray-500">Verified by 10,000+ buyers</p>
+                    <h4 className="font-bold text-[var(--color-text)] text-xs sm:text-sm">Trusted Platform</h4>
+                    <p className="text-[10px] sm:text-xs text-[var(--color-text-light)]">Verified by 10,000+ buyers</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-1 mb-2">
-                  {[1,2,3,4,5].map((i) => <Star key={i} size={14} className="sm:w-4 sm:h-4 text-[#F8C21C] fill-[#F8C21C]" />)}
-                  <span className="text-xs sm:text-sm font-bold text-gray-900 ml-1">4.9/5</span>
+                  {[1,2,3,4,5].map((i) => <Star key={i} size={14} className="sm:w-4 sm:h-4 text-[var(--color-gold)] fill-[var(--color-gold)]" />)}
+                  <span className="text-xs sm:text-sm font-bold text-[var(--color-text)] ml-1">4.9/5</span>
                 </div>
-                <p className="text-[10px] sm:text-xs text-gray-600 leading-relaxed">Rated excellent by property buyers across India</p>
+                <p className="text-[10px] sm:text-xs text-[var(--color-text-light)] leading-relaxed">Rated excellent by property buyers across India</p>
               </div>
             </div>
           </aside>
@@ -639,7 +663,7 @@ export default function BlogDetailPage() {
       {/* Scroll to Top */}
       <button
         onClick={scrollToTop}
-        className={`fixed bottom-20 md:bottom-6 right-4 md:right-6 bg-gradient-to-br from-[#8B0000] to-[#6d0000] text-white w-11 h-11 md:w-12 md:h-12 rounded-full shadow-2xl hover:shadow-red-900/50 transition-all duration-500 z-50 flex items-center justify-center group ${
+        className={`fixed bottom-20 md:bottom-6 right-4 md:right-6 bg-gradient-to-br from-[var(--color-secondary)] to-[#6d0000] text-white w-11 h-11 md:w-12 md:h-12 rounded-full shadow-2xl hover:shadow-red-900/50 transition-all duration-500 z-50 flex items-center justify-center group ${
           showScrollTop ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'
         }`}
       >
@@ -657,7 +681,7 @@ export default function BlogDetailPage() {
           </button>
           <button 
             onClick={() => setIsPopupOpen(true)}
-            className="flex-1 bg-gradient-to-r from-[#8B0000] to-[#6d0000] text-white rounded-xl font-semibold flex items-center justify-center gap-2 text-sm"
+            className="btn-primary flex-1"
           >
             <PhoneCall size={16} />
             Get Expert Advice
@@ -688,7 +712,7 @@ export default function BlogDetailPage() {
         .prose blockquote {
           position: relative;
           background: linear-gradient(135deg, rgba(139, 0, 0, 0.04), rgba(248, 194, 28, 0.04));
-          border-left: 4px solid #8B0000;
+          border-left: 4px solid var(--color-secondary);
           border-radius: 1rem;
           padding: 2rem 2rem 2rem 3rem;
           margin: 2.5rem 0;
@@ -699,7 +723,7 @@ export default function BlogDetailPage() {
         }
 
         .prose blockquote::before {
-          content: '“';
+          content: '"';
           position: absolute;
           top: -15px;
           left: 20px;
@@ -713,7 +737,7 @@ export default function BlogDetailPage() {
         .prose blockquote p {
           font-size: 1.125rem !important;
           line-height: 1.75 !important;
-          color: #1f2937 !important;
+          color: var(--color-text) !important;
           font-weight: 500 !important;
           margin: 0 !important;
           font-style: normal !important;
@@ -724,7 +748,7 @@ export default function BlogDetailPage() {
           margin-top: 1.25rem !important;
           font-size: 0.8rem !important;
           font-weight: 700 !important;
-          color: #8B0000 !important;
+          color: var(--color-secondary) !important;
           font-style: normal !important;
           text-transform: uppercase;
           letter-spacing: 0.05em;
