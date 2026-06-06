@@ -22,16 +22,16 @@ const COLORS = {
 // 🔁 Helper: Transform JSON project to match your propertyData structure
 function transformProject(project) {
   if (!project) return null;
-  
+
   // Get unique BHK types for display
   const bhkTypes = project.priceDetails?.configurations?.map(c => c.type) || [];
   const uniqueBhk = [...new Set(bhkTypes)].filter(Boolean).join(', ');
-  
+
   // Get builder logo and slug
   const developerName = project.developer?.name || '';
   const developerLogo = getBuilderLogo(developerName);
   const developerSlug = getBuilderSlug(developerName);
-  
+
   return {
     title: project.name,
     slug: project.slug,
@@ -43,11 +43,11 @@ function transformProject(project) {
     developerSlug: developerSlug,
     image: project.image,
     bhk: uniqueBhk,
-    
+
     gallery: project.gallery || [],
     masterPlan: project.masterPlan || null,
     locationMap: project.locationMap || null,
-    
+
     location: {
       area: project.fullLocation?.area || project.location,
       city: project.fullLocation?.city || (project.location === 'pune' ? 'Pune' : project.location === 'mumbai' ? 'Navi Mumbai' : 'Kalyan')
@@ -58,13 +58,13 @@ function transformProject(project) {
       area: config.area,
       price: config.price
     })) || [],
-    
+
     floorPlans: project.floorPlans?.map(plan => ({
       type: plan.type,
       area: plan.area,
       image: plan.image
     })) || [],
-    
+
     about: project.about,
     amenities: (project.amenities || []).map(name => {
       const iconMap = {
@@ -261,14 +261,14 @@ function EmiCalculatorPopup({ onClose }) {
 }
 
 export default function PropertyPage() {
-   const [propertyData, setPropertyData] = useState(null);
+  const [propertyData, setPropertyData] = useState(null);
   const [similarProjects, setSimilarProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showPopup, setShowPopup] = useState(false);  // ← ADD THIS
   const [showEmiPopup, setShowEmiPopup] = useState(false);
   const [galleryModalOpen, setGalleryModalOpen] = useState(false);
   const [galleryStartIndex, setGalleryStartIndex] = useState(0);
-  
+
   const router = useRouter();
   const params = useParams();
   const slug = params?.slug;
@@ -280,22 +280,22 @@ export default function PropertyPage() {
     }
 
     const project = properties.find((p) => p.slug === slug);
-    
+
     if (project) {
       const transformed = transformProject(project);
       setPropertyData(transformed);
-      
+
       // 🔁 Find similar projects (same city, different project)
-      const cityName = project.fullLocation?.city?.toLowerCase() || 
-                      (project.location === 'pune' ? 'pune' : 
-                       project.location === 'mumbai' ? 'navi mumbai' : 'kalyan');
-      
+      const cityName = project.fullLocation?.city?.toLowerCase() ||
+        (project.location === 'pune' ? 'pune' :
+          project.location === 'mumbai' ? 'navi mumbai' : 'kalyan');
+
       const similar = properties
         .filter(p => p.slug !== slug) // Exclude current project
         .filter(p => {
-          const pCity = p.fullLocation?.city?.toLowerCase() || 
-                       (p.location === 'pune' ? 'pune' : 
-                        p.location === 'mumbai' ? 'navi mumbai' : 'kalyan');
+          const pCity = p.fullLocation?.city?.toLowerCase() ||
+            (p.location === 'pune' ? 'pune' :
+              p.location === 'mumbai' ? 'navi mumbai' : 'kalyan');
           return pCity === cityName;
         })
         .slice(0, 3)
@@ -308,21 +308,21 @@ export default function PropertyPage() {
           price: p.priceDetails?.range?.split(' - ')[0] || p.price,
           image: p.image
         }));
-      
+
       setSimilarProjects(similar);
     } else {
       console.error('❌ Project not found for slug:', slug);
     }
-    
+
     setLoading(false);
   }, [slug]);
 
   const getIcon = (iconName) => {
-    const iconMap = { 
-      playground: <Icons.Playground />, 
-      jogging: <Icons.Jogging />, 
-      yoga: <Icons.Yoga />, 
-      pool: <Icons.Pool /> 
+    const iconMap = {
+      playground: <Icons.Playground />,
+      jogging: <Icons.Jogging />,
+      yoga: <Icons.Yoga />,
+      pool: <Icons.Pool />
     };
     return iconMap[iconName] || <Icons.Playground />;
   };
@@ -411,7 +411,7 @@ export default function PropertyPage() {
       </Head>
 
       <div className="min-h-screen bg-gray-50">
-        
+
         {/* Header Section */}
         <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
           <div className="max-w-7xl mx-auto px-4 py-3">
@@ -424,7 +424,7 @@ export default function PropertyPage() {
               <Icons.ChevronRight />
               <span className="text-gray-900 font-medium truncate" aria-current="page">{propertyData.title}</span>
             </nav>
-            
+
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
               <div>
                 <div className="flex items-center gap-3">
@@ -436,7 +436,7 @@ export default function PropertyPage() {
                 {/* Developer name with link to projects page */}
                 <p className="text-gray-600 mt-1">
                   By{' '}
-                  <Link 
+                  <Link
                     href={`/projects?builder=${encodeURIComponent(propertyData.developer)}`}
                     className="font-semibold text-[#005E60] hover:underline transition-colors"
                   >
@@ -456,7 +456,7 @@ export default function PropertyPage() {
         <section className="bg-white border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 py-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              
+
               {/* Main Image */}
               <div className="lg:col-span-2 cursor-pointer" onClick={() => openGallery(0)}>
                 <div className="relative aspect-video bg-gradient-to-br from-[#005E60] to-[#003d40] rounded-2xl overflow-hidden group">
@@ -507,7 +507,7 @@ export default function PropertyPage() {
         <main className="max-w-7xl mx-auto px-4 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-6">
-              
+
               <section id="configurations" className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden scroll-mt-24">
                 <div className="p-6 border-b border-gray-100">
                   <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2"><span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>Available Configurations</h2>
@@ -552,7 +552,7 @@ export default function PropertyPage() {
                       </div>
                     ))}
                   </div>
-                  
+
                   {propertyData.masterPlan && (
                     <div className="mt-6">
                       <h3 className="text-lg font-semibold text-gray-900 mb-3">Master Plan</h3>
@@ -615,9 +615,9 @@ export default function PropertyPage() {
                   {/* Builder Logo */}
                   <div className="w-24 h-24 bg-white rounded-2xl border border-gray-200 flex items-center justify-center shadow-sm p-2 flex-shrink-0">
                     {propertyData.developerLogo ? (
-                      <img 
-                        src={propertyData.developerLogo} 
-                        alt={propertyData.developer} 
+                      <img
+                        src={propertyData.developerLogo}
+                        alt={propertyData.developer}
                         className="max-w-full max-h-full object-contain"
                         onError={(e) => {
                           e.target.style.display = 'none';
@@ -643,7 +643,7 @@ export default function PropertyPage() {
                     </div>
                     <p className="text-gray-700 leading-relaxed mb-4">{propertyData.developerInfo.description || `${propertyData.developerInfo.name} is a trusted name in real estate with decades of experience delivering quality homes.`}</p>
                     {/* Link to projects page filtered by builder */}
-                    <Link 
+                    <Link
                       href={`/projects?builder=${encodeURIComponent(propertyData.developer)}`}
                       className="inline-flex items-center gap-1 text-[#005E60] font-semibold text-sm hover:gap-2 transition-all duration-300"
                     >
@@ -802,20 +802,20 @@ export default function PropertyPage() {
         <GalleryModal images={propertyData.gallery} initialIndex={galleryStartIndex} onClose={() => setGalleryModalOpen(false)} />
       )}
 
- <EnquiryPopup
-  isOpen={showPopup}
-  onClose={() => setShowPopup(false)}
-  projectName={propertyData?.title || "Properties"}
-  projectTagline={`Get detailed information about ${propertyData?.title}`}
-  formName={`Property Enquiry - ${propertyData?.title}`} // This will appear in remark field
-  trackingData={{
-    source: 'property_page',
-    campaign: 'property_enquiry',
-    medium: 'organic',
-    city: propertyData?.location?.city
-  }}
-  showLegalLinks={true}
-/>
+      <EnquiryPopup
+        isOpen={showPopup}
+        onClose={() => setShowPopup(false)}
+        projectName={propertyData?.title || "Properties"}
+        projectTagline={`Get detailed information about ${propertyData?.title}`}
+        formName={`Property Enquiry - ${propertyData?.title}`} // This will appear in remark field
+        trackingData={{
+          source: 'property_page',
+          campaign: 'property_enquiry',
+          medium: 'organic',
+          city: propertyData?.location?.city
+        }}
+        showLegalLinks={true}
+      />
 
       {showEmiPopup && <EmiCalculatorPopup onClose={() => setShowEmiPopup(false)} />}
     </>
