@@ -40,7 +40,7 @@ export const FilterPanel = memo(({
         </div>
         
         <div className="p-4 space-y-6">
-          {/* BHK Filter - Grid on mobile, Flex on desktop */}
+          {/* BHK Filter */}
           <div>
             <h4 className="font-medium text-gray-900 mb-3">BHK</h4>
             <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap">
@@ -99,7 +99,7 @@ export const FilterPanel = memo(({
           </div>
         </div>
 
-        {/* Action Buttons - Stacked on mobile for easy thumb tapping */}
+        {/* Action Buttons */}
         <div className="p-4 border-t border-gray-100 flex flex-col sm:flex-row gap-3 sticky bottom-0 bg-white">
           <button
             onClick={onClear}

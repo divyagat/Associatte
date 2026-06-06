@@ -171,7 +171,7 @@ export default function BlogDetailPage() {
     window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}&title=${title}`, '_blank', 'width=600,height=400');
   };
 
-  const shareToWhatsApp = () => {
+  const shareToWhatsApp = () => {   
     const url = encodeURIComponent(window.location.href);
     const text = encodeURIComponent(`${post?.title || 'Check out this article'}\n\n`);
     window.open(`https://wa.me/?text=${text}${url}`, '_blank');

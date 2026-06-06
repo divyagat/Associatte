@@ -31,119 +31,135 @@ export interface BlogPost {
   faqs?: FAQ[];
   relatedSlugs: string[];
   recentPostSlugs?: string[];
+  overlayText?: string; // 👈 ADDED: Overlay text for blog cards
 }
 
 export const BLOG_POSTS: Record<string, BlogPost> = {
-  'mantra-1-residences-burgundy-review': {
+ 'factors-drive-property-appreciation': {
     id: '1',
-    slug: 'mantra-1-residences-burgundy-review',
-    title: 'Mantra 1 Residences By Burgundy: Complete Project Review',
-    category: 'Project Review',
+    slug: 'factors-drive-property-appreciation',
+    title: 'Factors That Drive Property Appreciation: A Complete Guide',
+    category: 'Investment Guide',
     city: 'Pune',
-    location: 'Pune, Maharashtra',
-    date: 'Jun 05, 2026',
-    readTime: '6 min read',
+    location: 'India',
+    date: 'Jun 06, 2026',
+    readTime: '7 min read',
     courtesy: 'Associatte PropTech',
+    overlayText: 'Investment Insights', // 👈 ADDED
     author: {
       name: 'Pushkar Dake',
       role: 'Senior Real Estate Analyst',
       avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
-      bio: 'Pushkar has over 10 years of experience analyzing Pune real estate trends.'
+      bio: 'Pushkar has over 10 years of experience analyzing real estate trends and investment opportunities across India.'
     },
-    image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&q=80',
-    image2: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80', // 👈 2nd Image (Modern Interior)
-    excerpt: 'Detailed review of Mantra 1 Residences by Burgundy - pricing, amenities, location advantages, and investment potential.',
+    image: 'https://res.cloudinary.com/drdeqd8to/image/upload/f_auto,q_auto/Screenshot_2026-06-06_152737_brroni',
+    image2: 'https://res.cloudinary.com/drdeqd8to/image/upload/f_auto,q_auto/Screenshot_2026-06-06_152737_brroni',
+    excerpt: 'Property appreciation is one of the most important aspects of real estate investment. Discover the key factors that influence property values and maximize your long-term returns.',
     content: `
-      <p>In the competitive landscape of Pune's premium real estate, Mantra 1 Residences by Burgundy stands out as a beacon of modern living. This comprehensive review explores every aspect of this prestigious project.</p>
+      <p>Property appreciation is one of the most important aspects of real estate investment. Understanding what influences property values can help buyers and investors make smarter decisions and maximize long-term returns.</p>
 
-      <h2 id="overview">🏠 Project Overview</h2>
-      <p>Mantra 1 Residences by Burgundy is a premium residential project offering spacious apartments with world-class amenities in a prime Pune location. The project combines contemporary architecture with sustainable living practices.</p>
+      <h2 id="strategic-location">1. Strategic Location</h2>
+      <p>Location remains the most significant factor affecting property appreciation. Properties in prime and emerging locations often experience stronger demand and higher value growth over time.</p>
 
-      <h3 id="features">Key Features:</h3>
+      <h3 id="location-considerations">Key Considerations:</h3>
       <ul>
-        <li><strong>Configuration:</strong> 2 & 3 BHK apartments</li>
-        <li><strong>Size:</strong> Starting from 850 sq.ft carpet area</li>
-        <li><strong>Amenities:</strong> Swimming pool, gym, clubhouse, landscaped gardens</li>
-        <li><strong>Possession:</strong> Under construction - expected by 2028</li>
-        <li><strong>RERA:</strong> Registered under MahaRERA</li>
+        <li>Proximity to business districts and employment hubs</li>
+        <li>Access to schools, colleges, and healthcare facilities</li>
+        <li>Availability of shopping centers, restaurants, and recreational spaces</li>
+        <li>Safe and well-developed neighborhoods</li>
       </ul>
 
-      <h2 id="pricing">💰 Pricing Details</h2>
-      <p>The project offers competitive pricing for the premium segment, making it an attractive option for both end-users and investors.</p>
+      <h2 id="infrastructure-development">2. Infrastructure Development</h2>
+      <p>Infrastructure projects can significantly boost the value of surrounding properties. Improved connectivity makes areas more accessible and attractive to both residents and businesses, driving appreciation.</p>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Configuration</th>
-            <th>Carpet Area</th>
-            <th>Price Range</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>2 BHK</td>
-            <td>850 - 950 sq.ft</td>
-            <td>₹75L - ₹90L</td>
-          </tr>
-          <tr>
-            <td>3 BHK</td>
-            <td>1100 - 1350 sq.ft</td>
-            <td>₹1Cr - ₹1.2Cr</td>
-          </tr>
-        </tbody>
-      </table>
+      <h3 id="infrastructure-examples">Examples Include:</h3>
+      <ul>
+        <li>Metro rail connectivity</li>
+        <li>New highways and expressways</li>
+        <li>Flyovers and road expansions</li>
+        <li>Smart city initiatives</li>
+      </ul>
 
       <blockquote>
-        <p>"Mantra 1 Residences represents the future of premium living in Pune with its thoughtful design and comprehensive amenities."</p>
+        <p>"The best time to invest in real estate is before infrastructure development transforms a location. Early investors capture the maximum appreciation."</p>
         <cite>— Pushkar Dake, Senior Real Estate Analyst</cite>
       </blockquote>
 
-      <h2 id="location">📍 Location Advantages</h2>
-      <p>Strategically located in Pune, the project offers excellent connectivity to major IT hubs, educational institutions, and healthcare facilities.</p>
+      <h2 id="economic-growth">3. Economic Growth and Employment Opportunities</h2>
+      <p>A thriving local economy creates demand for housing and commercial spaces. Regions experiencing economic growth often witness steady property value appreciation.</p>
+
+      <h3 id="growth-drivers">Growth Drivers:</h3>
       <ul>
-        <li>10 minutes from Hinjewadi IT Park</li>
-        <li>15 minutes from Pune Railway Station</li>
-        <li>20 minutes from Pune International Airport</li>
-        <li>Near top schools and hospitals</li>
+        <li>Expansion of IT parks and business centers</li>
+        <li>New industrial developments</li>
+        <li>Increasing job opportunities</li>
+        <li>Rising population due to migration</li>
       </ul>
 
-      <h2 id="amenities">🏊 World-Class Amenities</h2>
-      <p>The project boasts over 40 amenities designed for holistic living:</p>
+      <h2 id="demand-supply">4. Demand and Supply Dynamics</h2>
+      <p>Real estate values are heavily influenced by market demand and available inventory. When demand exceeds supply, property prices generally rise, benefiting property owners.</p>
+
+      <h3 id="demand-factors">Factors Affecting Demand:</h3>
       <ul>
-        <li>Olympic-size swimming pool</li>
-        <li>State-of-the-art fitness center</li>
-        <li>Clubhouse with indoor games</li>
-        <li>Landscaped gardens and jogging track</li>
-        <li>Kids play area and senior citizen sit-out</li>
-        <li>24/7 security with CCTV surveillance</li>
+        <li>Population growth</li>
+        <li>Urbanization</li>
+        <li>Changing lifestyle preferences</li>
+        <li>Investor interest</li>
       </ul>
 
-      <h2 id="investment">🎯 Investment Verdict</h2>
-      <p>With Pune's real estate market showing consistent growth, Mantra 1 Residences offers excellent investment potential. The project is expected to appreciate 12-15% by possession, making it a smart choice for long-term investors.</p>
+      <h2 id="construction-quality">5. Quality of Construction and Amenities</h2>
+      <p>Well-designed properties with modern features tend to appreciate faster. Buyers are increasingly willing to pay more for properties that offer convenience and a better quality of life.</p>
+
+      <h3 id="value-adding-features">Value-Adding Features:</h3>
+      <ul>
+        <li>Premium construction quality</li>
+        <li>Security systems</li>
+        <li>Clubhouses and fitness centers</li>
+        <li>Green spaces and sustainable infrastructure</li>
+        <li>Smart home technologies</li>
+      </ul>
+
+      <h2 id="future-development">6. Future Development Potential</h2>
+      <p>Areas with planned developments often present excellent appreciation opportunities. Investing early in growth corridors can lead to substantial gains in the future.</p>
+
+      <h3 id="what-to-look-for">Look For:</h3>
+      <ul>
+        <li>Upcoming commercial projects</li>
+        <li>Proposed transportation networks</li>
+        <li>Government-backed development plans</li>
+        <li>Emerging residential corridors</li>
+      </ul>
+
+      <h2 id="conclusion">Conclusion</h2>
+      <p>Property appreciation is driven by a combination of location, infrastructure, economic growth, demand, quality, and future development potential. By carefully evaluating these factors before making an investment, buyers can position themselves for long-term value creation and stronger returns. A well-chosen property is not just a place to live—it is an asset that can grow significantly in value over time.</p>
     `,
-    tags: ['Mantra 1 Residences', 'Burgundy', 'Pune', 'Premium Homes'],
+    tags: ['Property Appreciation', 'Real Estate Investment', 'Property Value', 'Investment Guide', 'Location'],
     relatedSlugs: ['mantra-codename-paradise-sus-pune', 'budget-homes-pune-under-75-lakhs'],
     recentPostSlugs: ['paradise-sai-world-empire-kharghar', 'navi-mumbai-airport-impact-real-estate'],
     faqs: [
       {
-        question: 'What is the RERA number of Mantra 1 Residences?',
-        answer: 'The project is registered under MahaRERA. The registration number can be verified on the official MahaRERA website.'
+        question: 'What is the most important factor for property appreciation?',
+        answer: 'Location is the most significant factor affecting property appreciation. Properties in prime locations with good connectivity, proximity to business hubs, schools, and healthcare facilities tend to appreciate the fastest.'
       },
       {
-        question: 'What are the BHK configurations available?',
-        answer: 'Mantra 1 Residences offers 2 BHK and 3 BHK apartments with carpet areas starting from 850 sq.ft.'
+        question: 'How does infrastructure development affect property values?',
+        answer: 'Infrastructure projects like metro rail, new highways, flyovers, and smart city initiatives significantly boost property values by improving connectivity and making areas more attractive to residents and businesses.'
       },
       {
-        question: 'When is the expected possession date?',
-        answer: 'The expected possession date is 2028. The project is currently under construction.'
+        question: 'When is the best time to invest for maximum appreciation?',
+        answer: 'The best time to invest is before major infrastructure development transforms a location. Early investors in growth corridors with planned developments can capture the maximum appreciation over time.'
       },
       {
-        question: 'Is the project bank loan approved?',
-        answer: 'Yes, the project is approved by leading banks and financial institutions for home loans.'
+        question: 'Do amenities really impact property appreciation?',
+        answer: 'Yes, properties with modern amenities like clubhouses, fitness centers, security systems, green spaces, and smart home technologies tend to appreciate faster as buyers are willing to pay more for better quality of life.'
       },
       {
-        question: 'What amenities are included in the project?',
-        answer: 'The project offers 40+ amenities including swimming pool, gym, clubhouse, landscaped gardens, kids play area, and 24/7 security.'
+        question: 'How does demand and supply affect property prices?',
+        answer: 'When demand for properties exceeds the available supply in a market, prices generally rise. Factors like population growth, urbanization, and investor interest drive demand, leading to higher appreciation rates.'
+      },
+      {
+        question: 'What should I look for in a location for long-term appreciation?',
+        answer: 'Look for upcoming commercial projects, proposed transportation networks, government-backed development plans, and emerging residential corridors. These indicators suggest strong future growth potential.'
       }
     ]
   },
@@ -158,6 +174,7 @@ export const BLOG_POSTS: Record<string, BlogPost> = {
     date: 'Jun 04, 2026',
     readTime: '7 min read',
     courtesy: 'Associatte PropTech',
+    overlayText: 'Luxury Living', // 👈 ADDED
     author: {
       name: 'Rajesh Kumar',
       role: 'Luxury Property Specialist',
@@ -240,6 +257,7 @@ export const BLOG_POSTS: Record<string, BlogPost> = {
     date: 'Jun 03, 2026',
     readTime: '5 min read',
     courtesy: 'Associatte PropTech',
+    overlayText: 'Smart Investment', // 👈 ADDED
     author: {
       name: 'Shruti B',
       role: 'Investment Advisor',
@@ -301,6 +319,7 @@ export const BLOG_POSTS: Record<string, BlogPost> = {
     date: 'Jun 02, 2026',
     readTime: '6 min read',
     courtesy: 'Associatte PropTech',
+    overlayText: 'Budget Homes', // 👈 ADDED
     author: {
       name: 'Charmi Thakker',
       role: 'Budget Home Specialist',
@@ -370,6 +389,7 @@ export const BLOG_POSTS: Record<string, BlogPost> = {
     date: 'Jun 01, 2026',
     readTime: '8 min read',
     courtesy: 'Associatte PropTech',
+    overlayText: 'Market Trends', // 👈 ADDED
     author: {
       name: 'Pushkar Dake',
       role: 'Senior Real Estate Analyst',

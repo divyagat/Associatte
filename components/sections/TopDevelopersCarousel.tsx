@@ -254,18 +254,9 @@ export default function TopDevelopersCarousel({ city }: TopDevelopersCarouselPro
             <span className="text-sm font-semibold" style={{ color: theme.primary }}>INDIA'S TOP BUILDERS</span>
           </div>
           
-          <h2 className="section-title mb-4">
-            <span className="text-gray-900">Trusted Developers in</span>
-            <br />
-            <span className="relative inline-block mt-2">
-              <span className="relative z-10" style={{ color: theme.primary }}>
-                {city}
-              </span>
-              <svg className="absolute -bottom-2 left-0 w-full" height="12" viewBox="0 0 200 8" preserveAspectRatio="none">
-                <path d="M0 4 Q 50 0, 100 4 T 200 4" stroke={theme.primary} strokeWidth="3" fill="none" opacity="0.3" />
-              </svg>
-            </span>
-          </h2>
+      <h2 className="section-title mb-4">
+  Trusted Developers
+</h2>
           
           <p className="text-gray-500 text-base md:text-lg max-w-2xl mx-auto">
             Partnering with India's most trusted and reputed real estate developers
