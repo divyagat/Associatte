@@ -56,18 +56,6 @@ export default function Header() {
   const navLinks = [
     { name: 'Home', href: '/' },
     { name: 'Projects', href: '/projects' },
-    // { 
-    //   name: 'Properties', 
-    //   href: '/properties',
-    //   dropdown: [
-    //     { label: 'Residential', href: '/properties?type=residential', icon: Home, color: COLORS.green },
-    //     { label: 'Commercial', href: '/properties?type=commercial', icon: Building, color: COLORS.red },
-    //     { label: 'Pre-Launch', href: '/properties?type=pre-launch', icon: Construction, color: COLORS.yellow },
-    //     { label: 'Ready', href: '/properties?type=ready', icon: KeyRound, color: COLORS.green },
-    //     { label: 'Rent', href: '/properties?type=rent', icon: Tag, color: COLORS.red },
-    //     { label: 'Plots', href: '/properties?type=plots', icon: MapPin, color: COLORS.yellow },
-    //   ]
-    // },
     { name: 'About Us', href: '/about-us' },
     { 
       name: 'Services', 
@@ -166,16 +154,30 @@ export default function Header() {
                       onMouseEnter={() => handleDesktopDropdownEnter(link.name)}
                       onMouseLeave={handleDesktopDropdownLeave}
                     >
-                      <button
-                        className={`flex items-center gap-1 px-3 py-2 font-medium transition-colors rounded-lg cursor-pointer ${
-                          isActive
-                            ? 'text-[#F8C21C] bg-[#F8C21C]/10'
-                            : 'text-gray-700 hover:text-[#005E60] hover:bg-gray-50'
-                        }`}
-                      >
-                        {link.name}
-                        <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
-                      </button>
+                      {/* Grouped Link and Toggle Button */}
+                      <div className="flex items-center rounded-lg transition-colors hover:bg-gray-50">
+                        <Link
+                          href={link.href}
+                          className={`flex items-center gap-1 px-3 py-2 font-medium transition-colors rounded-l-lg ${
+                            isActive
+                              ? 'text-[#F8C21C] bg-[#F8C21C]/10'
+                              : 'text-gray-700 hover:text-[#005E60]'
+                          }`}
+                        >
+                          {link.name}
+                        </Link>
+                        <button
+                          onClick={() => setDesktopDropdown(isDropdownOpen ? null : link.name)}
+                          className={`p-2 rounded-r-lg transition-colors ${
+                            isActive
+                              ? 'text-[#F8C21C] bg-[#F8C21C]/10'
+                              : 'text-gray-700 hover:text-[#005E60]'
+                          }`}
+                          aria-label={`Toggle ${link.name} menu`}
+                        >
+                          <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                        </button>
+                      </div>
                       
                       {isDropdownOpen && (
                         <div 
@@ -276,17 +278,27 @@ export default function Header() {
                   <div key={link.name} className="border-b border-gray-100 last:border-0">
                     {hasDropdown ? (
                       <>
-                        <button 
-                          onClick={() => toggleMobileDropdown(link.name)}
-                          className={`w-full flex items-center justify-between px-4 py-4 rounded-lg text-left transition-colors ${
-                            isActive 
-                              ? 'text-[#F8C21C] font-medium bg-[#F8C21C]/10' 
-                              : 'text-gray-700 hover:text-[#005E60] hover:bg-gray-50'
-                          }`}
-                        >
-                          <span className="text-base font-medium">{link.name}</span>
-                          <ChevronDown className={`w-5 h-5 transition-all duration-300 ${isMobileDropdownOpen ? 'rotate-180' : ''}`} />
-                        </button>
+                        {/* Separated Link and Toggle Button for Mobile */}
+                        <div className="flex items-center justify-between w-full">
+                          <Link
+                            href={link.href}
+                            onClick={closeMobileMenu}
+                            className={`flex-1 px-4 py-4 rounded-lg text-left transition-colors text-base font-medium ${
+                              isActive 
+                                ? 'text-[#F8C21C] bg-[#F8C21C]/10' 
+                                : 'text-gray-700 hover:text-[#005E60] hover:bg-gray-50'
+                            }`}
+                          >
+                            {link.name}
+                          </Link>
+                          <button 
+                            onClick={() => toggleMobileDropdown(link.name)}
+                            className="p-4 text-gray-500 hover:text-[#005E60] transition-colors"
+                            aria-label={`Toggle ${link.name} submenu`}
+                          >
+                            <ChevronDown className={`w-5 h-5 transition-all duration-300 ${isMobileDropdownOpen ? 'rotate-180' : ''}`} />
+                          </button>
+                        </div>
                         
                         {isMobileDropdownOpen && (
                           <div className="ml-4 mb-2 pl-4 border-l-2 border-[#F8C21C]/30 space-y-1 animate-in slide-in-from-left-2 duration-200">

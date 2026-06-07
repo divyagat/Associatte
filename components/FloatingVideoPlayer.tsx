@@ -17,7 +17,7 @@ export default function FloatingVideoPlayer({
 }: FloatingVideoPlayerProps) {
   const [isVisible, setIsVisible] = useState(true);
 
-  // Explicitly increased gaps for mobile (bottom-8/right-8 = 32px) 
+  // ✅ Increased gaps for mobile (bottom-8/right-8 = 32px) 
   // and scaled up progressively for larger screens
   const positionClasses =
     position === 'bottom-right'
