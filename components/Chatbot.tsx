@@ -6,20 +6,16 @@ import {
   X, 
   Send, 
   Minimize2, 
-  Building2,
-  Sparkles,
-  Home,
-  TrendingUp,
   Shield,
-  Users,
-  Star,
   User,
-  Calendar,
   ArrowRight,
-  Diamond,
-  Crown,
   Headphones,
-  AlertCircle
+  AlertCircle,
+  Clock,
+  CheckCircle,
+  Phone,
+  Mail,
+  Zap
 } from "lucide-react";
 
 interface Message {
@@ -27,7 +23,6 @@ interface Message {
   text: string;
   isUser: boolean;
   timestamp: Date;
-  type?: 'text' | 'lead';
 }
 
 interface LeadData {
@@ -38,28 +33,22 @@ interface LeadData {
   remark: string;
 }
 
-interface ValidationErrors {
-  name?: string;
-  mobile?: string;
-}
-
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [hasAutoOpened, setHasAutoOpened] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: "✨ Welcome to Associatte PropTech ✨\n\nIndia's Most Trusted Real Estate Partner\n\nHello! I'm your personal property concierge. How may I assist you today?",
+      text: "Hello! I'm your live assistance. I reply within a minute. How can I help you today?",
       isUser: false,
       timestamp: new Date(),
-      type: 'text'
     }
   ]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [showLeadForm, setShowLeadForm] = useState(false);
-  const [selectedProject, setSelectedProject] = useState("");
   const [leadData, setLeadData] = useState<LeadData>({
     name: '',
     mobile: '',
@@ -67,37 +56,39 @@ export default function Chatbot() {
     project: '',
     remark: ''
   });
-  const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
+  const [errors, setErrors] = useState<{ name?: string; mobile?: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userIP, setUserIP] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const autoOpenTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const userInteractedRef = useRef(false);
 
-  // Handle component mounting to avoid hydration issues
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  // Get user IP address
+  // Track user interaction
   useEffect(() => {
-    if (!isMounted) return;
-    
-    const fetchIP = async () => {
-      try {
-        const response = await fetch('https://api.ipify.org?format=json');
-        const data = await response.json();
-        setUserIP(data.ip);
-      } catch (error) {
-        console.error('Failed to fetch IP:', error);
-        setUserIP('unknown');
-      }
+    const handleUserInteraction = () => {
+      userInteractedRef.current = true;
+      document.removeEventListener('click', handleUserInteraction);
+      document.removeEventListener('scroll', handleUserInteraction);
+      document.removeEventListener('keydown', handleUserInteraction);
     };
     
-    fetchIP();
-  }, [isMounted]);
+    document.addEventListener('click', handleUserInteraction);
+    document.addEventListener('scroll', handleUserInteraction);
+    document.addEventListener('keydown', handleUserInteraction);
+    
+    return () => {
+      document.removeEventListener('click', handleUserInteraction);
+      document.removeEventListener('scroll', handleUserInteraction);
+      document.removeEventListener('keydown', handleUserInteraction);
+    };
+  }, []);
 
-  // Auto-open chat on page refresh/load - with error handling
+  // Auto-popup logic
   useEffect(() => {
     if (!isMounted) return;
     
@@ -106,175 +97,147 @@ export default function Chatbot() {
       clearTimeout(autoOpenTimerRef.current);
     }
     
-    // Open chat automatically after a short delay
-    autoOpenTimerRef.current = setTimeout(() => {
-      try {
-        setIsOpen(true);
-        setIsMinimized(false);
-      } catch (error) {
-        console.error('Error opening chat:', error);
-      }
-    }, 1000);
+    // Check if user has interacted or if chatbot was closed before
+    const hasClosedBefore = sessionStorage.getItem('chatbot_closed') === 'true';
+    const hasSubmittedLead = sessionStorage.getItem('chatbot_lead_submitted') === 'true';
     
-    // Cleanup timer on unmount
+    // Only auto-popup if:
+    // 1. Not already open
+    // 2. User hasn't manually closed it in this session
+    // 3. User hasn't submitted a lead in this session
+    // 4. Hasn't auto-opened before
+    if (!isOpen && !hasClosedBefore && !hasSubmittedLead && !hasAutoOpened) {
+      autoOpenTimerRef.current = setTimeout(() => {
+        // Only auto-open if user hasn't interacted with the page yet
+        if (!userInteractedRef.current) {
+          setIsOpen(true);
+          setIsMinimized(false);
+          setHasAutoOpened(true);
+        }
+      }, 4000); // Opens after 4 seconds
+    }
+    
     return () => {
       if (autoOpenTimerRef.current) {
         clearTimeout(autoOpenTimerRef.current);
       }
     };
-  }, [isMounted]);
+  }, [isMounted, isOpen, hasAutoOpened]);
 
-  const quickReplies = [
-    { text: "Pune Properties", project: "Pune Properties Inquiry", emoji: "🏠" },
-    { text: "Mumbai Properties", project: "Mumbai Properties Inquiry", emoji: "📈" },
-    { text: "RERA Verified", project: "RERA Verification Request", emoji: "✓" },
-    { text: "Schedule Visit", project: "Site Visit Scheduling", emoji: "📅" },
-    { text: "Expert Advice", project: "Expert Consultation Request", emoji: "🎧" },
-  ];
-
-  const validateName = (name: string): boolean => {
-    const nameRegex = /^[A-Za-z\s]+$/;
-    return nameRegex.test(name);
-  };
-
-  const validateMobile = (mobile: string): boolean => {
-    const mobileRegex = /^\d{10}$/;
-    return mobileRegex.test(mobile);
-  };
-
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (value === '' || /^[A-Za-z\s]*$/.test(value)) {
-      setLeadData({ ...leadData, name: value });
-      if (validationErrors.name) {
-        setValidationErrors({ ...validationErrors, name: undefined });
-      }
+  // Session storage for user actions
+  useEffect(() => {
+    if (!isOpen && !isMinimized && hasAutoOpened) {
+      // User closed the chat
+      sessionStorage.setItem('chatbot_closed', 'true');
     }
-  };
-
-  const handleMobileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (value === '' || /^\d*$/.test(value)) {
-      if (value.length <= 10) {
-        setLeadData({ ...leadData, mobile: value });
-        if (validationErrors.mobile) {
-          setValidationErrors({ ...validationErrors, mobile: undefined });
-        }
-      }
-    }
-  };
-
-  const sendToCRM = async (lead: LeadData) => {
-    try {
-      const crmData = {
-        name: lead.name,
-        mobile: lead.mobile,
-        email: lead.email || "",
-        project: lead.project,
-        remark: `${lead.remark} | IP: ${userIP} | Country Code: +91`
-      };
-
-      console.log("Sending to CRM via API route:", crmData);
-
-      const response = await fetch('/api/crm', {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(crmData)
-      });
-
-      const result = await response.json();
-      console.log("Response from API route:", result);
-
-      if (response.ok && result.success) {
-        return true;
-      } else {
-        console.error('CRM Error:', result);
-        return false;
-      }
-    } catch (error) {
-      console.error('Failed to send to CRM:', error);
-      return false;
-    }
-  };
+  }, [isOpen, isMinimized, hasAutoOpened]);
 
   useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    if (!isMounted) return;
+    fetch('https://api.ipify.org?format=json')
+      .then(res => res.json())
+      .then(data => setUserIP(data.ip))
+      .catch(() => setUserIP('unknown'));
+  }, [isMounted]);
+
+  useEffect(() => {
+    if (isOpen && !showLeadForm) {
+      setTimeout(() => inputRef.current?.focus(), 100);
     }
+  }, [isOpen, showLeadForm]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  const quickReplies = [
+    { text: "🏠 Pune Properties", project: "Pune Properties" },
+    { text: "🌆 Mumbai Properties", project: "Mumbai Properties" },
+    { text: "📅 Schedule Visit", project: "Schedule Visit" },
+    { text: "🎯 Expert Advice", project: "Expert Advice" }
+  ];
+
   const handleQuickReply = (text: string, project: string) => {
-    setSelectedProject(project);
+    setLeadData(prev => ({ ...prev, project, remark: text }));
     setShowLeadForm(true);
-    setLeadData(prev => ({ 
-      ...prev, 
-      project: project,
-      remark: text
-    }));
-    setValidationErrors({});
   };
 
-  const handleLeadSubmit = async (e: React.FormEvent) => {
+  const validateName = (name: string) => /^[A-Za-z\s]+$/.test(name);
+  const validateMobile = (mobile: string) => /^\d{10}$/.test(mobile);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!leadData.name.trim()) {
-      setValidationErrors({ name: "Name is required" });
+      setErrors({ name: "Name required" });
       return;
     }
-    
     if (!validateName(leadData.name)) {
-      setValidationErrors({ name: "Only letters & spaces" });
+      setErrors({ name: "Only letters allowed" });
       return;
     }
-    
     if (!leadData.mobile) {
-      setValidationErrors({ mobile: "Mobile is required" });
+      setErrors({ mobile: "Mobile required" });
       return;
     }
-    
     if (!validateMobile(leadData.mobile)) {
-      setValidationErrors({ mobile: "Enter 10 digits" });
+      setErrors({ mobile: "10 digits required" });
       return;
     }
 
     setIsSubmitting(true);
+    setIsTyping(true);
 
-    const loadingMsg: Message = {
-      id: Date.now().toString(),
-      text: "Submitting your request...",
-      isUser: false,
-      timestamp: new Date(),
-      type: 'text'
+    const loadingMsg = { 
+      id: Date.now().toString(), 
+      text: "Connecting you...", 
+      isUser: false, 
+      timestamp: new Date() 
     };
     setMessages(prev => [...prev, loadingMsg]);
 
-    const success = await sendToCRM(leadData);
-
-    setMessages(prev => prev.filter(m => m.id !== loadingMsg.id));
-
-    if (success) {
+    try {
+      await fetch('/api/crm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: leadData.name,
+          mobile: leadData.mobile,
+          email: leadData.email || "",
+          project: leadData.project,
+          remark: `${leadData.remark} | IP: ${userIP}`
+        })
+      });
+      
+      // Mark lead as submitted in session
+      sessionStorage.setItem('chatbot_lead_submitted', 'true');
+      
+      setMessages(prev => prev.filter(m => m.id !== loadingMsg.id));
       setMessages(prev => [...prev, {
         id: Date.now().toString(),
-        text: "✨ Thank you! Our expert will contact you within 2 hours. Your dream home awaits! 🏠",
+        text: "✓ Thank you! An expert will call you within 2 hours.",
         isUser: false,
         timestamp: new Date(),
-        type: 'text'
       }]);
       setShowLeadForm(false);
       setLeadData({ name: '', mobile: '', email: '', project: '', remark: '' });
-      setSelectedProject("");
-      setValidationErrors({});
-    } else {
+      setErrors({});
+      
+      // Auto minimize after lead submission
+      setTimeout(() => {
+        setIsMinimized(true);
+      }, 3000);
+    } catch {
+      setMessages(prev => prev.filter(m => m.id !== loadingMsg.id));
       setMessages(prev => [...prev, {
         id: Date.now().toString(),
-        text: "⚠️ Unable to submit. Please call +91 8881188181.",
+        text: "⚠️ Please call +91 8881188181 for assistance.",
         isUser: false,
         timestamp: new Date(),
-        type: 'text'
       }]);
     }
+    
+    setIsTyping(false);
     setIsSubmitting(false);
   };
 
@@ -282,257 +245,250 @@ export default function Chatbot() {
     return date.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
   };
 
-  // Don't render anything until mounted to avoid hydration errors
-  if (!isMounted) {
-    return null;
-  }
+  const handleManualOpen = () => {
+    setIsOpen(true);
+    setIsMinimized(false);
+    // Clear the closed flag when manually opening
+    sessionStorage.removeItem('chatbot_closed');
+  };
 
-  // Closed State - Left side positioning
+  const handleClose = () => {
+    setIsOpen(false);
+    sessionStorage.setItem('chatbot_closed', 'true');
+  };
+
+  if (!isMounted) return null;
+
+  // Closed state - LEFT side positioning
   if (!isOpen) {
     return (
       <button
-        onClick={() => setIsOpen(true)}
-        className="fixed left-3 bottom-4 z-50 group"
-        aria-label="Open Chat"
+        onClick={handleManualOpen}
+        className="fixed left-4 bottom-4 z-50 group cursor-pointer"
+        aria-label="Open Live Assistance"
       >
         <div className="relative">
-          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#005E60] to-[#F8C21C] animate-ping opacity-75"></div>
-          <div className="relative bg-gradient-to-r from-[#005E60] to-[#003D3F] px-3 py-2 rounded-full shadow-2xl flex items-center gap-1.5">
-            <MessageCircle size={14} className="text-[#F8C21C]" />
-            <span className="text-white text-[11px] font-medium">Chat</span>
-            <div className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-green-500 rounded-full border border-white"></div>
+          <div className="absolute inset-0 rounded-full bg-[var(--color-primary)] animate-ping opacity-40"></div>
+          <div className="relative bg-[var(--color-primary)] px-4 py-2.5 rounded-full shadow-lg flex items-center gap-2 hover:bg-[var(--color-primary-dark)] transition-all hover:scale-105">
+            <Headphones size={16} className="text-[var(--color-gold)]" />
+            <span className="text-white text-sm font-medium">Live Assistance</span>
+            <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white"></div>
           </div>
         </div>
       </button>
     );
   }
 
-  // Open State - Left side positioning
+  // Open state - LEFT side positioning
   return (
     <>
-      {/* Backdrop */}
       {!isMinimized && (
-        <div
-          className="fixed inset-0 bg-black/40 z-40 transition-opacity duration-300"
-          onClick={() => setIsOpen(false)}
+        <div 
+          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 animate-fade-in" 
+          onClick={handleClose} 
         />
       )}
 
-      {/* Chat Window - Left side positioning */}
-      <div
-        className={`fixed z-50 bg-white shadow-2xl transition-all duration-300 ${
-          isMinimized 
-            ? 'left-3 bottom-4 w-auto rounded-full'
-            : 'left-2 bottom-2 right-2 sm:left-4 sm:right-auto sm:bottom-4 sm:w-[360px] rounded-xl'
-        }`}
-      >
+      <div className={`fixed z-50 bg-white shadow-xl transition-all duration-300 ${
+        isMinimized ? 'left-4 bottom-4 rounded-full' : 'left-4 bottom-4 w-[380px] rounded-lg shadow-2xl'
+      }`}>
         {isMinimized ? (
           <button
-            onClick={() => setIsMinimized(false)}
-            className="bg-gradient-to-r from-[#005E60] to-[#003D3F] px-3 py-2 rounded-full flex items-center gap-1.5 shadow-xl"
+            onClick={() => {
+              setIsMinimized(false);
+              sessionStorage.removeItem('chatbot_closed');
+            }}
+            className="bg-[var(--color-primary)] px-4 py-2.5 rounded-full flex items-center gap-2 shadow-lg hover:bg-[var(--color-primary-dark)] transition-colors"
           >
-            <MessageCircle size={12} className="text-[#F8C21C]" />
-            <span className="text-white text-[11px] font-medium">Open Chat</span>
+            <MessageCircle size={14} className="text-[var(--color-gold)]" />
+            <span className="text-white text-sm">Live Assistance</span>
+            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
           </button>
         ) : (
-          <div className="flex flex-col h-[520px] max-h-[85vh] w-full">
+          <div className="flex flex-col h-[520px] w-full">
             {/* Header */}
-            <div className="bg-gradient-to-r from-[#005E60] to-[#003D3F] px-3 py-2.5 rounded-t-xl">
+            <div className="bg-[var(--color-primary)] px-4 py-3 rounded-t-lg">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 bg-white/10 rounded-lg flex items-center justify-center">
-                    <Crown size={12} className="text-[#F8C21C]" />
+                  <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
+                    <Headphones size={14} className="text-[var(--color-gold)]" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-white text-[12px] flex items-center gap-1">
-                      Associatte PropTech
-                      <span className="bg-[#F8C21C] text-[#005E60] text-[6px] px-1 py-0.5 rounded-full">PREMIUM</span>
-                    </h3>
-                    <div className="flex items-center gap-1 mt-0.5">
-                      <div className="w-1 h-1 bg-green-400 rounded-full animate-pulse"></div>
-                      <p className="text-[8px] text-white/80">Online • Priority Support</p>
+                    <h3 className="font-semibold text-white text-sm">Live Assistance</h3>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <div className="flex items-center gap-1">
+                        <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></div>
+                        <span className="text-[10px] text-white/80">Online</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Zap size={8} className="text-[var(--color-gold)]" />
+                        <span className="text-[10px] text-white/80">Reply within 1 min</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div className="flex gap-0.5">
-                  <button
-                    onClick={() => setIsMinimized(true)}
-                    className="p-1 hover:bg-white/10 rounded transition-colors"
+                <div className="flex gap-1">
+                  <button 
+                    onClick={() => setIsMinimized(true)} 
+                    className="p-1.5 hover:bg-white/10 rounded transition-colors"
+                    aria-label="Minimize"
                   >
-                    <Minimize2 size={10} className="text-white" />
+                    <Minimize2 size={12} className="text-white" />
                   </button>
-                  <button
-                    onClick={() => setIsOpen(false)}
-                    className="p-1 hover:bg-white/10 rounded transition-colors"
+                  <button 
+                    onClick={handleClose} 
+                    className="p-1.5 hover:bg-white/10 rounded transition-colors"
+                    aria-label="Close"
                   >
-                    <X size={10} className="text-white" />
+                    <X size={12} className="text-white" />
                   </button>
-                </div>
-              </div>
-              
-              {/* Trust Badges */}
-              <div className="flex items-center gap-2 mt-1.5 pt-1.5 border-t border-white/10">
-                <div className="flex items-center gap-0.5">
-                  <Diamond size={6} className="text-[#F8C21C]" />
-                  <span className="text-[7px] text-white/80">25+ Years</span>
-                </div>
-                <div className="flex items-center gap-0.5">
-                  <Users size={6} className="text-[#F8C21C]" />
-                  <span className="text-[7px] text-white/80">10k+ Clients</span>
-                </div>
-                <div className="flex items-center gap-0.5">
-                  <Star size={6} className="text-[#F8C21C]" />
-                  <span className="text-[7px] text-white/80">4.9★</span>
                 </div>
               </div>
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-2.5 space-y-2 bg-gray-50">
+            <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50">
               {messages.map((msg) => (
                 <div
                   key={msg.id}
-                  className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}
+                  className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'} animate-fade-in`}
                 >
                   {!msg.isUser && (
-                    <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[#005E60] to-[#003D3F] flex items-center justify-center mr-1 flex-shrink-0 mt-0.5">
-                      <Building2 size={8} className="text-[#F8C21C]" />
+                    <div className="w-6 h-6 rounded-full bg-[var(--color-primary)] flex items-center justify-center mr-2 flex-shrink-0 mt-0.5">
+                      <Headphones size={10} className="text-[var(--color-gold)]" />
                     </div>
                   )}
-                  <div
-                    className={`max-w-[85%] px-2.5 py-1.5 ${
-                      msg.isUser
-                        ? 'bg-[#005E60] text-white rounded-2xl rounded-br-md'
-                        : 'bg-white text-gray-700 rounded-2xl rounded-bl-md shadow-sm border border-gray-100'
-                    }`}
-                  >
-                    <div className="text-[11px] leading-relaxed whitespace-pre-wrap break-words">
-                      {msg.text}
-                    </div>
-                    <div className={`text-[7px] mt-0.5 ${msg.isUser ? 'text-white/60' : 'text-gray-400'}`}>
+                  <div className={`max-w-[80%] px-3 py-2 ${
+                    msg.isUser
+                      ? 'bg-[var(--color-primary)] text-white rounded-lg rounded-br-sm'
+                      : 'bg-white text-gray-700 rounded-lg rounded-bl-sm shadow-sm border border-gray-100'
+                  }`}>
+                    <div className="text-sm leading-relaxed">{msg.text}</div>
+                    <div className={`text-[10px] mt-1 ${msg.isUser ? 'text-white/50' : 'text-gray-400'}`}>
                       {formatTime(msg.timestamp)}
                     </div>
                   </div>
                 </div>
               ))}
-              
               {isTyping && (
-                <div className="flex justify-start">
-                  <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[#005E60] to-[#003D3F] flex items-center justify-center mr-1">
-                    <Building2 size={8} className="text-[#F8C21C]" />
+                <div className="flex justify-start animate-fade-in">
+                  <div className="w-6 h-6 rounded-full bg-[var(--color-primary)] flex items-center justify-center mr-2">
+                    <Headphones size={10} className="text-[var(--color-gold)]" />
                   </div>
-                  <div className="bg-white px-3 py-1.5 rounded-2xl shadow-sm">
-                    <div className="flex gap-0.5">
-                      <div className="w-1 h-1 bg-[#005E60] rounded-full animate-bounce" />
-                      <div className="w-1 h-1 bg-[#005E60] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
-                      <div className="w-1 h-1 bg-[#005E60] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
+                  <div className="bg-white px-4 py-2 rounded-lg shadow-sm">
+                    <div className="flex gap-1">
+                      <div className="w-1.5 h-1.5 bg-[var(--color-primary)] rounded-full animate-bounce" />
+                      <div className="w-1.5 h-1.5 bg-[var(--color-primary)] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
+                      <div className="w-1.5 h-1.5 bg-[var(--color-primary)] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
                     </div>
                   </div>
                 </div>
               )}
-              
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Lead Form */}
+            {/* Lead Form or Quick Replies */}
             {showLeadForm ? (
-              <div className="p-2.5 bg-white border-t border-gray-100">
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="font-semibold text-gray-800 text-[11px] flex items-center gap-1">
-                    <User size={10} className="text-[#005E60]" />
-                    Get Personalised Assistance
+              <div className="p-4 bg-white border-t border-gray-100 animate-fade-in">
+                <div className="flex justify-between items-center mb-3">
+                  <h4 className="font-medium text-gray-800 text-sm flex items-center gap-2">
+                    <User size={14} className="text-[var(--color-primary)]" />
+                    Share your details
                   </h4>
-                  <button
-                    onClick={() => setShowLeadForm(false)}
-                    className="text-gray-400 hover:text-gray-600"
+                  <button 
+                    onClick={() => setShowLeadForm(false)} 
+                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                    aria-label="Close form"
                   >
-                    <X size={10} />
+                    <X size={14} />
                   </button>
                 </div>
-                <form onSubmit={handleLeadSubmit} className="space-y-2">
+                <form onSubmit={handleSubmit} className="space-y-3">
                   <div>
                     <input
                       type="text"
-                      placeholder="Full Name * (Letters only)"
+                      placeholder="Full name *"
                       value={leadData.name}
-                      onChange={handleNameChange}
-                      className={`w-full px-2 py-1.5 text-[11px] border rounded-lg focus:outline-none focus:ring-1 focus:ring-[#005E60] ${
-                        validationErrors.name ? 'border-red-500' : 'border-gray-200'
+                      onChange={(e) => {
+                        setLeadData({ ...leadData, name: e.target.value });
+                        if (errors.name) setErrors({});
+                      }}
+                      className={`w-full px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all ${
+                        errors.name ? 'border-red-500 bg-red-50' : 'border-gray-200'
                       }`}
                     />
-                    {validationErrors.name && (
-                      <div className="flex items-center gap-0.5 mt-0.5 text-red-500 text-[8px]">
-                        <AlertCircle size={8} />
-                        <span>{validationErrors.name}</span>
-                      </div>
+                    {errors.name && (
+                      <p className="text-red-500 text-[10px] mt-1 flex items-center gap-1">
+                        <AlertCircle size={10} /> {errors.name}
+                      </p>
                     )}
                   </div>
-
                   <div>
                     <input
                       type="tel"
-                      placeholder="Mobile Number * (10 digits)"
+                      placeholder="Mobile number * (10 digits)"
                       value={leadData.mobile}
-                      onChange={handleMobileChange}
-                      maxLength={10}
-                      className={`w-full px-2 py-1.5 text-[11px] border rounded-lg focus:outline-none focus:ring-1 focus:ring-[#005E60] ${
-                        validationErrors.mobile ? 'border-red-500' : 'border-gray-200'
+                      onChange={(e) => {
+                        if (e.target.value.length <= 10 && /^\d*$/.test(e.target.value)) {
+                          setLeadData({ ...leadData, mobile: e.target.value });
+                          if (errors.mobile) setErrors({});
+                        }
+                      }}
+                      className={`w-full px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all ${
+                        errors.mobile ? 'border-red-500 bg-red-50' : 'border-gray-200'
                       }`}
                     />
-                    {validationErrors.mobile && (
-                      <div className="flex items-center gap-0.5 mt-0.5 text-red-500 text-[8px]">
-                        <AlertCircle size={8} />
-                        <span>{validationErrors.mobile}</span>
-                      </div>
+                    {errors.mobile && (
+                      <p className="text-red-500 text-[10px] mt-1 flex items-center gap-1">
+                        <AlertCircle size={10} /> {errors.mobile}
+                      </p>
                     )}
                   </div>
-
                   <input
                     type="email"
-                    placeholder="Email Address (Optional)"
+                    placeholder="Email (optional)"
                     value={leadData.email}
                     onChange={(e) => setLeadData({ ...leadData, email: e.target.value })}
-                    className="w-full px-2 py-1.5 text-[11px] border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#005E60]"
+                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all"
                   />
-                  
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-[#005F5F] text-white py-1.5 rounded-lg font-medium text-[11px] hover:bg-[#004a4a] transition-all disabled:opacity-50 flex items-center justify-center gap-1"
+                    className="w-full bg-[var(--color-primary)] text-white py-2 rounded-lg font-medium text-sm hover:bg-[var(--color-primary-dark)] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                   >
-                    {isSubmitting ? 'Submitting...' : 'Connect with Expert'}
-                    <ArrowRight size={10} />
+                    {isSubmitting ? 'Connecting...' : 'Connect with expert'}
+                    <ArrowRight size={14} />
                   </button>
-                  <p className="text-[7px] text-gray-400 text-center">
-                    Our expert will contact you within 2 hours
+                  <p className="text-[10px] text-gray-400 text-center flex items-center justify-center gap-1">
+                    <CheckCircle size={10} className="text-[var(--color-primary)]" />
+                    Expert will call within 2 hours
                   </p>
                 </form>
               </div>
             ) : (
               <>
                 {/* Quick Replies */}
-                <div className="px-2.5 py-2 border-t border-gray-100 bg-white">
-                  <p className="text-[8px] font-medium text-gray-500 mb-1.5 flex items-center gap-0.5">
-                    <Sparkles size={7} className="text-[#F8C21C]" />
-                    Quick Actions
+                <div className="px-4 py-3 bg-white border-t border-gray-100">
+                  <p className="text-[10px] font-medium text-gray-500 mb-2 flex items-center gap-1">
+                    <Zap size={10} className="text-[var(--color-gold)]" />
+                    Quick replies
                   </p>
-                  <div className="grid grid-cols-2 gap-1.5">
+                  <div className="flex flex-wrap gap-2">
                     {quickReplies.map((reply, idx) => (
                       <button
                         key={idx}
                         onClick={() => handleQuickReply(reply.text, reply.project)}
-                        className="flex items-center justify-center gap-1 px-1.5 py-1.5 text-[9px] bg-gray-50 hover:bg-gray-100 rounded-lg transition-all border border-gray-200"
+                        className="px-3 py-1.5 text-xs bg-gray-100 hover:bg-gray-200 rounded-full transition-all hover:scale-105"
                       >
-                        <span className="text-[11px]">{reply.emoji}</span>
-                        <span className="text-gray-700 truncate text-[9px]">{reply.text}</span>
+                        {reply.text}
                       </button>
                     ))}
                   </div>
                 </div>
 
-                {/* Input Area */}
-                <div className="p-2 border-t border-gray-100 bg-white rounded-b-xl">
-                  <div className="flex gap-1.5">
+                {/* Input */}
+                <div className="p-4 bg-white border-t border-gray-100 rounded-b-lg">
+                  <div className="flex gap-2">
                     <input
                       ref={inputRef}
                       type="text"
@@ -540,20 +496,32 @@ export default function Chatbot() {
                       onChange={(e) => setInput(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && setShowLeadForm(true)}
                       placeholder="Type your message..."
-                      className="flex-1 bg-gray-50 text-gray-900 rounded-lg px-2 py-1.5 text-[11px] focus:outline-none focus:ring-1 focus:ring-[#005E60] border border-gray-200"
+                      className="flex-1 bg-gray-50 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] border border-gray-200 transition-all"
                     />
                     <button
                       onClick={() => setShowLeadForm(true)}
-                      disabled={!input.trim()}
-                      className="bg-[#005E60] text-white p-1.5 rounded-lg hover:bg-[#003D3F] transition-all disabled:opacity-50"
+                      className="bg-[var(--color-primary)] text-white px-3 py-2 rounded-lg hover:bg-[var(--color-primary-dark)] transition-all"
+                      aria-label="Send message"
                     >
-                      <Send size={12} />
+                      <Send size={14} />
                     </button>
                   </div>
-                  <p className="text-[6px] text-gray-400 text-center mt-1 flex items-center justify-center gap-0.5">
-                    <Shield size={6} />
-                    Secured by Associatte PropTech
-                  </p>
+                  <div className="flex items-center justify-center gap-3 mt-3">
+                    <div className="flex items-center gap-1">
+                      <Phone size={8} className="text-gray-400" />
+                      <span className="text-[9px] text-gray-400">+91 8881188181</span>
+                    </div>
+                    <div className="w-px h-3 bg-gray-200"></div>
+                    <div className="flex items-center gap-1">
+                      <Shield size={8} className="text-gray-400" />
+                      <span className="text-[9px] text-gray-400">Secure</span>
+                    </div>
+                    <div className="w-px h-3 bg-gray-200"></div>
+                    <div className="flex items-center gap-1">
+                      <Clock size={8} className="text-gray-400" />
+                      <span className="text-[9px] text-gray-400">Quick response</span>
+                    </div>
+                  </div>
                 </div>
               </>
             )}

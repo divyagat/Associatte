@@ -33,7 +33,7 @@ export default function CategorySection({ city, featuredLocalities }: CategorySe
   };
 
   return (
-    <section className="py-10 md:py-14 bg-white">
+    <section className="pt-6 md:pt-8 pb-10 md:pb-14 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10">
           <h2 className="section-title text-gray-900">

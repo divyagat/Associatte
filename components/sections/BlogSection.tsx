@@ -22,16 +22,18 @@ export default function BlogSection({ city }: BlogSectionProps) {
   const scrollLeft = () => {
     const container = document.getElementById('blog-carousel');
     if (container) {
-      container.scrollBy({ left: -340, behavior: 'smooth' });
-      setScrollPosition(scrollPosition - 340);
+      // 320px (card width) + 24px (gap-6) = 344px
+      container.scrollBy({ left: -344, behavior: 'smooth' }); 
+      setScrollPosition(scrollPosition - 344);
     }
   };
 
   const scrollRight = () => {
     const container = document.getElementById('blog-carousel');
     if (container) {
-      container.scrollBy({ left: 340, behavior: 'smooth' });
-      setScrollPosition(scrollPosition + 340);
+      // 320px (card width) + 24px (gap-6) = 344px
+      container.scrollBy({ left: 344, behavior: 'smooth' }); 
+      setScrollPosition(scrollPosition + 344);
     }
   };
 
@@ -40,7 +42,7 @@ export default function BlogSection({ city }: BlogSectionProps) {
   }
 
   return (
-    <section className="py-10 md:py-14 bg-background">
+    <section className="pt-6 md:pt-14 pb-0 bg-background mb-10">
       <div className="container-site">
         <div className="flex items-center gap-8 mb-8">
           <h2 className="section-title text-blog-primary">Recent Articles in {city}</h2>

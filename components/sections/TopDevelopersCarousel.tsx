@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Building2 } from 'lucide-react';
 import { useMemo } from 'react';
 import Image from 'next/image';
 import properties from '../../data/properties.json';
@@ -80,24 +80,17 @@ export default function TopDevelopersCarousel({ city }: TopDevelopersCarouselPro
       >
         {/* Logo Container */}
         <div className="h-16 md:h-20 w-full flex items-center justify-center mb-4 bg-[var(--color-accent)]/40 rounded-xl p-2 transition-colors group-hover:bg-[var(--color-accent)]/60">
-          {(dev.logoType === 'text' || dev.slug === 'lodha') ? (
-            <div className="text-center">
-              <span
-                className="font-heading font-black text-[var(--color-foreground)] tracking-tight leading-none block"
-                style={{ fontSize: 'clamp(18px, 4vw, 24px)' }}
-              >
-                {dev.name.split(' ')[0]}
-              </span>
-              {dev.name.includes('Group') && (
-                <span className="text-[var(--color-text-light)] text-[9px] font-medium mt-1 block tracking-widest">
-                  GROUP
-                </span>
-              )}
-            </div>
+          {dev.slug === 'lodha' ? (
+            <span
+              className="font-heading font-black text-[var(--color-foreground)] tracking-tight leading-none"
+              style={{ fontSize: 'clamp(18px, 4vw, 24px)' }}
+            >
+              Lodha
+            </span>
           ) : dev.logoSrc ? (
             <Image
               src={dev.logoSrc}
-              alt={dev.name}
+              alt="Developer Logo"
               width={120}
               height={60}
               className="object-contain max-h-full w-auto transition-transform duration-300 group-hover:scale-105"
@@ -110,33 +103,26 @@ export default function TopDevelopersCarousel({ city }: TopDevelopersCarouselPro
                 if (parent) {
                   const fallback = document.createElement('div');
                   fallback.className = 'w-12 h-12 rounded-full bg-[var(--color-primary)] flex items-center justify-center';
-                  fallback.innerHTML = `<span class="text-white text-lg font-bold">${dev.name.charAt(0).toUpperCase()}</span>`;
+                  fallback.innerHTML = `<svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>`;
                   parent.appendChild(fallback);
                 }
               }}
             />
           ) : (
             <div className="w-12 h-12 rounded-full bg-[var(--color-primary)] flex items-center justify-center">
-              <span className="text-white text-lg font-bold">
-                {dev.name.charAt(0).toUpperCase()}
-              </span>
+              <Building2 className="w-6 h-6 text-white" />
             </div>
           )}
         </div>
-        
-        {/* Developer Name */}
-        <h3 className="font-heading text-sm md:text-base font-semibold text-[var(--color-foreground)] text-center line-clamp-1 group-hover:text-[var(--color-primary)] transition-colors">
-          {dev.name}
-        </h3>
       </a>
     </div>
   );
 
   return (
-    <section className="py-12 md:py-20 bg-[var(--bgColor)] overflow-hidden">
+    <section className="pt-0 md:pt-10 pb-12 md:pb-20 bg-[var(--bgColor)] overflow-hidden">
       <div className="container-site">
         {/* Header Section */}
-        <div className="text-center mb-10 md:mb-14">
+        <div className="text-center mb-8 md:mb-10">
           <h2 className="section-title text-[var(--color-primary)] mb-3">
             Trusted Developers
              {/* in {city} */}
@@ -161,7 +147,7 @@ export default function TopDevelopersCarousel({ city }: TopDevelopersCarouselPro
       </div>
 
       {/* View All Button */}
-      <div className="container-site text-center mt-10 md:mt-12">
+      <div className="container-site text-center mt-6 md:mt-8">
         <a href="/builders" className="btn-primary group">
           <span>View All Developers</span>
           <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />

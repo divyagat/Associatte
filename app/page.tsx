@@ -19,6 +19,7 @@ import InvestmentCtaSection from '@/components/sections/InvestmentCtaSection';
 import CtaFormSection from '@/components/sections/CtaFormSection';
 import BlogSection from '@/components/sections/BlogSection';
 import EnquiryPopup from '@/components/common/EnquiryPopup';
+import FloatingVideoPlayer from '../components/FloatingVideoPlayer';
 
 // 🗺️ Location Configuration
 const LOCATION_CONFIG = {
@@ -67,7 +68,7 @@ interface HomePageSEOProps {
 const HomePageSEO: React.FC<HomePageSEOProps> = ({ city }) => {
   const config = LOCATION_CONFIG[city];
   const canonicalUrl = `https://propfinder.in?city=${city}`;
-  
+
   return (
     <Head>
       <title>{config.metaTitle}</title>
@@ -101,11 +102,11 @@ const HomePageSEO: React.FC<HomePageSEOProps> = ({ city }) => {
 // 🏠 Main HomePage Component
 export default function HomePage() {
   const searchParams = useSearchParams();
-  
+
   const cityParam = (searchParams?.get('city') || 'pune') as CitySlug;
   const city: CitySlug = (Object.keys(LOCATION_CONFIG) as CitySlug[]).includes(cityParam) ? cityParam : 'pune';
   const config = LOCATION_CONFIG[city];
-  
+
   const [heroFilters, setHeroFilters] = useState<{ city: string; filters: SearchFilters }>({
     city: config.slug,
     filters: {}
@@ -172,75 +173,75 @@ export default function HomePage() {
   return (
     <>
       <HomePageSEO city={city} />
-      
+
       <main className="min-h-screen bg-slate-50">
-        
-        <Hero 
+
+        <Hero
           initialCity={config.name}
           onFilterChange={handleFilterChange}
           onSearch={handleSearch}
         />
-        
+
         <section aria-labelledby="newly-launched-heading">
-          <NewlyLaunchedProjects 
+          <NewlyLaunchedProjects
             selectedCity={newlyLaunchedProps.selectedCity}
             filters={newlyLaunchedProps.filters}
           />
         </section>
-        
+
         <section aria-labelledby="top-selling-heading">
-          <TopSellingProjects 
-            city={config.name} 
+          <TopSellingProjects
+            city={config.name}
             filters={heroFilters.filters}
             limit={8}
           />
         </section>
-        
+
         <section aria-labelledby="developers-heading">
           <TopDevelopersCarousel city={config.name} />
         </section>
-        
+
         {/* ✅ Trust Section - Button opens popup */}
         <section aria-labelledby="trust-heading">
-          <TrustFeaturesSection 
-            city={config.name} 
-            onConsultationClick={() => setIsPopupOpen(true)} 
+          <TrustFeaturesSection
+            city={config.name}
+            onConsultationClick={() => setIsPopupOpen(true)}
           />
         </section>
-        
+
         <section aria-labelledby="types-heading">
           <PropertyTypesSection city={config.name} />
         </section>
-        
+
         <section aria-labelledby="categories-heading">
-          <CategorySection 
+          <CategorySection
             city={config.name}
             featuredLocalities={config.featuredLocalities}
           />
         </section>
-        
+
         <section aria-labelledby="services-heading">
           <ServicesSection city={config.name} />
         </section>
-        
+
         <section aria-labelledby="featured-heading">
           <FeaturedProjectsSection city={config.name} />
         </section>
-        
-        <section aria-labelledby="testimonials-heading">
+
+        {/* <section aria-labelledby="testimonials-heading">
           <TestimonialsAchievementsSection city={config.name} />
-        </section>
-        
+        </section> */}
+
         {/* ✅ Investment CTA Section - Button opens popup */}
         <section aria-labelledby="investment-heading">
-          <InvestmentCtaSection 
-            city={config.name} 
-            onConsultationClick={() => setIsPopupOpen(true)} 
+          <InvestmentCtaSection
+            city={config.name}
+            onConsultationClick={() => setIsPopupOpen(true)}
           />
         </section>
-        
+
         <section aria-labelledby="contact-heading">
-          <CtaFormSection 
+          <CtaFormSection
             city={config.name}
             title={`Get Personalized Property Recommendations in ${config.name}`}
             subtitle={`Tell us your requirements and our ${config.name} experts will find the perfect match. Free consultation, no obligation.`}
@@ -248,26 +249,38 @@ export default function HomePage() {
             formId={`cta-form-${city}`}
           />
         </section>
-        
+
         <section aria-labelledby="blog-heading">
           <BlogSection city={config.name} />
         </section>
 
+
+
+  <FloatingVideoPlayer
+        videoId="U03yryIhSE0"
+        title="Mantra 1 Residences Tour"
+        position="bottom-right"
+      />
+
+
+
+
+
         {/* ✅ Enquiry Popup - Fixed: Removed 'city' from trackingData */}
-    <EnquiryPopup
-  isOpen={isPopupOpen}
-  onClose={() => setIsPopupOpen(false)}
-  projectName={`Properties in ${config.name}`}
-  projectTagline="Get exclusive details & pricing"
-  onSubmit={handleEnquirySubmit}
-  trackingData={{
-    source: 'homepage',
-    campaign: 'free_consultation',
-    medium: 'website'
-    // ✅ REMOVE the 'city' line from here
-  }}
-/>
-        
+        <EnquiryPopup
+          isOpen={isPopupOpen}
+          onClose={() => setIsPopupOpen(false)}
+          projectName={`Properties in ${config.name}`}
+          projectTagline="Get exclusive details & pricing"
+          onSubmit={handleEnquirySubmit}
+          trackingData={{
+            source: 'homepage',
+            campaign: 'free_consultation',
+            medium: 'website'
+            // ✅ REMOVE the 'city' line from here
+          }}
+        />
+
       </main>
     </>
   );
