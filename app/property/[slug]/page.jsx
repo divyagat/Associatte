@@ -102,12 +102,117 @@ function transformProject(project) {
       slug: developerSlug
     },
     reraNumber: project.reraNumber,
-    // Store original project for similar projects filtering
     _originalProject: project
   };
 }
 
-// Icons
+// ==================== 🚀 SEO SCHEMA GENERATORS ====================
+
+// Generate Property JSON-LD Schema for Rich Snippets
+function generatePropertySchema(propertyData, canonicalUrl) {
+  if (!propertyData) return null;
+  
+  // Extract numeric values from strings
+  const priceMatch = propertyData.priceRange?.match(/(\d+(?:\.\d+)?)/);
+  const priceValue = priceMatch ? priceMatch[1] : null;
+  
+  const areaMatch = propertyData.configurations?.[0]?.area?.match(/(\d+)/);
+  const areaValue = areaMatch ? areaMatch[1] : null;
+  
+  const bedroomMatch = propertyData.configurations?.[0]?.type?.match(/(\d+)/);
+  const bedroomCount = bedroomMatch ? bedroomMatch[1] : null;
+  
+  return {
+    "@context": "https://schema.org",
+    "@type": "RealEstateListing",
+    "name": propertyData.title,
+    "description": propertyData.about?.substring(0, 200),
+    "url": canonicalUrl,
+    "image": propertyData.image || propertyData.gallery?.[0],
+    "datePosted": new Date().toISOString(),
+    "offers": {
+      "@type": "Offer",
+      "price": priceValue,
+      "priceCurrency": "INR",
+      "availability": "https://schema.org/InStock",
+      "validFrom": new Date().toISOString()
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": propertyData.location?.area,
+      "addressLocality": propertyData.location?.city,
+      "addressRegion": "Maharashtra",
+      "addressCountry": "IN"
+    },
+    "numberOfRooms": bedroomCount,
+    "floorSize": {
+      "@type": "QuantitativeValue",
+      "value": areaValue,
+      "unitCode": "SQM",
+      "unitText": "square feet"
+    },
+    "seller": {
+      "@type": "RealEstateAgent",
+      "name": propertyData.developer
+    }
+  };
+}
+
+// Generate RERA Schema
+function generateReraSchema(propertyData) {
+  if (!propertyData?.reraNumber) return null;
+  
+  return {
+    "@context": "https://schema.org",
+    "@type": "GovernmentPermit",
+    "name": "RERA Registration",
+    "identifier": propertyData.reraNumber,
+    "issuedBy": {
+      "@type": "GovernmentOrganization",
+      "name": "Maharashtra Real Estate Regulatory Authority",
+      "url": "https://maharera.mahaonline.gov.in"
+    },
+    "issuedFor": {
+      "@type": "RealEstateListing",
+      "name": propertyData.title
+    },
+    "validFrom": new Date().toISOString()
+  };
+}
+
+// Generate Breadcrumb Schema
+function generateBreadcrumbSchema(propertyData, canonicalUrl) {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://propfinder.in';
+  const cityName = propertyData?.location?.city?.toLowerCase() || 'pune';
+  
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": baseUrl
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": `${propertyData?.location?.city} Properties`,
+        "item": `${baseUrl}/locations/${cityName}`
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": propertyData?.title,
+        "item": canonicalUrl
+      }
+    ]
+  };
+}
+
+// ==================== ICONS COMPONENTS ====================
+
 const Icons = {
   Location: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>,
   Calendar: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>,
@@ -122,7 +227,7 @@ const Icons = {
   ArrowRight: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>,
 };
 
-// 🖼️ FULL SCREEN GALLERY MODAL COMPONENT
+// ==================== GALLERY MODAL ====================
 function GalleryModal({ images, initialIndex, onClose }) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
 
@@ -184,7 +289,7 @@ function GalleryModal({ images, initialIndex, onClose }) {
   );
 }
 
-// 🧮 EMI Calculator Popup Component
+// ==================== EMI CALCULATOR ====================
 function EmiCalculatorPopup({ onClose }) {
   const [loanAmount, setLoanAmount] = useState(5000000);
   const [rate, setRate] = useState(8.5);
@@ -260,11 +365,12 @@ function EmiCalculatorPopup({ onClose }) {
   );
 }
 
+// ==================== MAIN COMPONENT ====================
 export default function PropertyPage() {
   const [propertyData, setPropertyData] = useState(null);
   const [similarProjects, setSimilarProjects] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showPopup, setShowPopup] = useState(false);  // ← ADD THIS
+  const [showPopup, setShowPopup] = useState(false);
   const [showEmiPopup, setShowEmiPopup] = useState(false);
   const [galleryModalOpen, setGalleryModalOpen] = useState(false);
   const [galleryStartIndex, setGalleryStartIndex] = useState(0);
@@ -285,13 +391,12 @@ export default function PropertyPage() {
       const transformed = transformProject(project);
       setPropertyData(transformed);
 
-      // 🔁 Find similar projects (same city, different project)
       const cityName = project.fullLocation?.city?.toLowerCase() ||
         (project.location === 'pune' ? 'pune' :
           project.location === 'mumbai' ? 'navi mumbai' : 'kalyan');
 
       const similar = properties
-        .filter(p => p.slug !== slug) // Exclude current project
+        .filter(p => p.slug !== slug)
         .filter(p => {
           const pCity = p.fullLocation?.city?.toLowerCase() ||
             (p.location === 'pune' ? 'pune' :
@@ -387,31 +492,83 @@ export default function PropertyPage() {
     );
   }
 
-  const seoTitle = `${propertyData.title} - ${propertyData.configurations?.[0]?.type || ''} in ${propertyData.location.area}, ${propertyData.location.city} | PropFinder`;
-  const seoDescription = `${propertyData.title} by ${propertyData.developer}. ${propertyData.configurations?.[0]?.type} starting ${propertyData.priceRange}. ${propertyData.about?.substring(0, 150)}...`;
-  const canonicalUrl = `https://propfinder.in/property/${propertyData.slug}`;
+  // ==================== SEO VARIABLES ====================
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://propfinder.in';
+  const canonicalUrl = `${baseUrl}/property/${propertyData.slug}`;
+  
+  const seoTitle = `${propertyData.title} - ${propertyData.configurations?.[0]?.type || ''} in ${propertyData.location.area}, ${propertyData.location.city} | Associatte PropTech`;
+  const seoDescription = `${propertyData.title} by ${propertyData.developer}. ${propertyData.configurations?.[0]?.type} starting from ${propertyData.priceRange}. ${propertyData.about?.substring(0, 150)}...`;
+  
+  // Generate all schemas
+  const propertySchema = generatePropertySchema(propertyData, canonicalUrl);
+  const reraSchema = generateReraSchema(propertyData);
+  const breadcrumbSchema = generateBreadcrumbSchema(propertyData, canonicalUrl);
 
   return (
     <>
       <Head>
+        {/* Primary Meta Tags */}
         <title>{seoTitle}</title>
         <meta name="description" content={seoDescription} />
-        <meta name="keywords" content={`${propertyData.title}, ${propertyData.bhk} ${propertyData.location.area}, ${propertyData.developer}, property in ${propertyData.location.city}, PropFinder`} />
+        <meta name="keywords" content={`${propertyData.title}, ${propertyData.bhk} ${propertyData.location.area}, ${propertyData.developer}, property in ${propertyData.location.city}, real estate ${propertyData.location.city}, PropFinder, Associatte PropTech`} />
         <meta name="robots" content="index, follow" />
+        <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+        
+        {/* Canonical URL */}
         <link rel="canonical" href={canonicalUrl} />
+        
+        {/* Alternate URLs */}
+        <link rel="alternate" href={canonicalUrl} hrefLang="en-in" />
+        
+        {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
         <meta property="og:url" content={canonicalUrl} />
         <meta property="og:title" content={seoTitle} />
         <meta property="og:description" content={seoDescription} />
-        <meta property="og:image" content={propertyData.image || 'https://propfinder.in/og-image.jpg'} />
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:title" content={seoTitle} />
-        <meta property="twitter:description" content={seoDescription} />
-        <meta property="twitter:image" content={propertyData.image || 'https://propfinder.in/og-image.jpg'} />
+        <meta property="og:image" content={propertyData.image || `${baseUrl}/og-image.jpg`} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:site_name" content="Associatte PropTech" />
+        <meta property="og:locale" content="en_IN" />
+        
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={seoTitle} />
+        <meta name="twitter:description" content={seoDescription} />
+        <meta name="twitter:image" content={propertyData.image || `${baseUrl}/og-image.jpg`} />
+        <meta name="twitter:site" content="@associatte" />
+        
+        {/* Additional SEO Meta Tags */}
+        <meta name="author" content="Associatte PropTech" />
+        <meta name="distribution" content="global" />
+        <meta name="rating" content="general" />
+        <meta name="revisit-after" content="1 days" />
+        <meta name="language" content="English" />
+        
+        {/* JSON-LD Structured Data for Rich Snippets */}
+        {propertySchema && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(propertySchema) }}
+          />
+        )}
+        
+        {reraSchema && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(reraSchema) }}
+          />
+        )}
+        
+        {breadcrumbSchema && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+          />
+        )}
       </Head>
 
       <div className="min-h-screen bg-gray-50">
-
         {/* Header Section */}
         <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
           <div className="max-w-7xl mx-auto px-4 py-3">
@@ -433,7 +590,6 @@ export default function PropertyPage() {
                     <span className="px-2.5 py-1 text-xs font-semibold bg-[#005E60] text-white rounded-full">RERA Verified</span>
                   )}
                 </div>
-                {/* Developer name with link to projects page */}
                 <p className="text-gray-600 mt-1">
                   By{' '}
                   <Link
@@ -456,8 +612,6 @@ export default function PropertyPage() {
         <section className="bg-white border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 py-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-              {/* Main Image */}
               <div className="lg:col-span-2 cursor-pointer" onClick={() => openGallery(0)}>
                 <div className="relative aspect-video bg-gradient-to-br from-[#005E60] to-[#003d40] rounded-2xl overflow-hidden group">
                   <img src={propertyData.image} alt={propertyData.title} className="absolute inset-0 w-full h-full object-cover" loading="eager" />
@@ -471,8 +625,6 @@ export default function PropertyPage() {
                   </div>
                 </div>
               </div>
-
-              {/* Gallery Thumbnails */}
               <div className="grid grid-cols-2 gap-3 h-full">
                 {propertyData.gallery?.slice(0, 4).map((src, i) => (
                   <div key={i} className={`relative w-full h-full min-h-[150px] rounded-xl overflow-hidden cursor-pointer transition-all hover:ring-2 hover:ring-[#F8C21C] ${i === 0 ? 'ring-2 ring-[#005E60]' : ''}`} onClick={() => openGallery(i)}>
@@ -507,7 +659,6 @@ export default function PropertyPage() {
         <main className="max-w-7xl mx-auto px-4 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-6">
-
               <section id="configurations" className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden scroll-mt-24">
                 <div className="p-6 border-b border-gray-100">
                   <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2"><span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>Available Configurations</h2>
@@ -536,9 +687,7 @@ export default function PropertyPage() {
 
               <section id="floor-plans" className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden scroll-mt-24">
                 <div className="p-6 border-b border-gray-100">
-                  <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                    <span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>Floor Plans
-                  </h2>
+                  <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2"><span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>Floor Plans</h2>
                 </div>
                 <div className="p-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -552,7 +701,6 @@ export default function PropertyPage() {
                       </div>
                     ))}
                   </div>
-
                   {propertyData.masterPlan && (
                     <div className="mt-6">
                       <h3 className="text-lg font-semibold text-gray-900 mb-3">Master Plan</h3>
@@ -584,9 +732,7 @@ export default function PropertyPage() {
               </section>
 
               <section id="location" className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 scroll-mt-24">
-                <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>Location & Connectivity
-                </h2>
+                <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2"><span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>Location & Connectivity</h2>
                 {propertyData.locationMap ? (
                   <div className="aspect-video bg-gray-100 rounded-xl overflow-hidden mb-4 border border-gray-200">
                     <img src={propertyData.locationMap} alt={`${propertyData.title} Location Map`} className="w-full h-full object-cover" loading="lazy" />
@@ -608,11 +754,9 @@ export default function PropertyPage() {
                 </div>
               </section>
 
-              {/* Developer Section with Logo and Link to Projects */}
               <section id="developer" className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 scroll-mt-24">
                 <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2"><span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>About {propertyData.developerInfo.name}</h2>
                 <div className="flex flex-col md:flex-row gap-6 items-start">
-                  {/* Builder Logo */}
                   <div className="w-24 h-24 bg-white rounded-2xl border border-gray-200 flex items-center justify-center shadow-sm p-2 flex-shrink-0">
                     {propertyData.developerLogo ? (
                       <img
@@ -642,7 +786,6 @@ export default function PropertyPage() {
                       </div>
                     </div>
                     <p className="text-gray-700 leading-relaxed mb-4">{propertyData.developerInfo.description || `${propertyData.developerInfo.name} is a trusted name in real estate with decades of experience delivering quality homes.`}</p>
-                    {/* Link to projects page filtered by builder */}
                     <Link
                       href={`/projects?builder=${encodeURIComponent(propertyData.developer)}`}
                       className="inline-flex items-center gap-1 text-[#005E60] font-semibold text-sm hover:gap-2 transition-all duration-300"
@@ -686,7 +829,6 @@ export default function PropertyPage() {
                   </div>
                 </div>
 
-                {/* EMI Calculator Card */}
                 <div className="bg-gradient-to-br from-[#005E60] to-[#003d40] rounded-2xl shadow-lg p-6 text-white">
                   <div className="mb-4">
                     <div className="text-sm text-white/80">Starting EMI from</div>
@@ -807,7 +949,7 @@ export default function PropertyPage() {
         onClose={() => setShowPopup(false)}
         projectName={propertyData?.title || "Properties"}
         projectTagline={`Get detailed information about ${propertyData?.title}`}
-        formName={`Property Enquiry - ${propertyData?.title}`} // This will appear in remark field
+        formName={`Property Enquiry - ${propertyData?.title}`}
         trackingData={{
           source: 'property_page',
           campaign: 'property_enquiry',

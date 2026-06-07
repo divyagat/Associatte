@@ -334,11 +334,11 @@ export default function TopSellingProjects({
   const cityColor = getCityColor();
 
   return (
-    <section className={`py-10 md:py-14 bg-gray-50 ${className}`.trim()}>
+    <section className={`pt-4 md:pt-6 pb-10 md:pb-14 bg-gray-50 ${className}`.trim()}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
-        <div className="text-center mb-10 md:mb-12">
+        <div className="text-center mb-8 md:mb-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-white rounded-full shadow-sm mb-4">
             <TrendingUp size={14} className="text-orange-500" />
             <span className="text-xs font-medium text-gray-600">Hot Properties</span>
@@ -560,7 +560,7 @@ export default function TopSellingProjects({
         )}
 
         {/* View All */}
-        <div className="text-center mt-8">
+        <div className="text-center mt-6">
           <Link
             href={`/properties?city=${CITY_SLUG_MAP[city]}&sort=top-selling`}
             className="inline-flex items-center gap-1 text-sm font-medium hover:gap-2 transition-all"

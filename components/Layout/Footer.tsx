@@ -44,12 +44,31 @@ export default function Footer() {
     setOpenSection(openSection === section ? null : section);
   };
 
+  // Extracted disclaimer content
+  const disclaimerContent = (
+    <div className="bg-white/5 rounded-xl p-4 space-y-4">
+      <div>
+        <h4 className="font-semibold text-gray-300 text-sm mb-2">Disclaimer:</h4>
+        <p className="text-xs text-gray-500 leading-relaxed">
+          Associatte PropTech Pvt Ltd is only an intermediary offering its platform to advertise properties of Seller for a Customer/Buyer/User coming on its Website and is not and cannot be a party to or privy to or control in any manner any transactions between the Seller and the Customer/Buyer/User. All the prices or rates on this Website have been extended by various Builder(s)/Developer(s) who have advertised their products. Company shall neither be responsible nor liable to mediate or resolve any disputes or disagreements between the Customer/Buyer/User and the Seller and both Seller and Customer/Buyer/User shall settle all such disputes without involving Company in any manner.
+        </p>
+      </div>
+      <div>
+        <h4 className="font-semibold text-gray-300 text-sm mb-2">Consent to Communicate:</h4>
+        <p className="text-xs text-gray-500 leading-relaxed">
+          You consent to receive communications from us by way of SMS/email/phone calls and RCS with respect to your transactions on our Website. Users will be required to register their valid phone numbers and e-mail addresses to facilitate such communication. We may also use your e-mail address to send you updates, newsletters, changes to features of the Service, and the like to provide You better Services.
+        </p>
+      </div>
+    </div>
+  );
+
   return (
-    <footer className="bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800 text-gray-300 mt-20">
+    <footer className="bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800 text-gray-300">
       {/* Top Border */}
       <div className="h-1 bg-gradient-to-r from-[#F8C21C] via-[#005E60] to-[#F8C21C]" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+      {/* Reduced overall vertical padding */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-14">
 
         {/* Mobile Layout (Visible only on mobile) */}
         <div className="md:hidden space-y-4">
@@ -171,30 +190,7 @@ export default function Footer() {
             )}
           </div>
 
-          {/* Legal Accordion */}
-          <div className="border-b border-gray-800">
-            <button
-              onClick={() => toggleSection('legal')}
-              className="w-full flex justify-between items-center py-4 text-white font-semibold"
-            >
-              Legal
-              <ChevronDown size={18} className={`transition-transform ${openSection === 'legal' ? 'rotate-180' : ''}`} />
-            </button>
-            {openSection === 'legal' && (
-              <ul className="pb-4 space-y-3">
-                {legalLinks.map((link, idx) => (
-                  <li key={idx}>
-                    <Link href={link.href} className="text-gray-400 hover:text-[#F8C21C] transition-colors text-sm flex items-center gap-2">
-                      <ChevronRight size={12} className="text-[#F8C21C]" />
-                      {link.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-
-          {/* Facebook Posts - Mobile (Always Visible & Fully Responsive) */}
+          {/* Facebook Posts - Mobile */}
           <div className="border-b border-gray-800 pb-6">
             <h3 className="text-white font-semibold mb-4 flex items-center gap-2 pt-4">
               <FaFacebookF className="text-[#1877F2]" size={18} />
@@ -214,12 +210,18 @@ export default function Footer() {
               ></iframe>
             </div>
           </div>
+
+          {/* Disclaimer Section - Mobile */}
+          <div>
+            {disclaimerContent}
+          </div>
         </div>
 
         {/* Tablet & Desktop Grid Layout */}
-        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+        {/* Reduced gap from gap-8 lg:gap-12 to gap-6 lg:gap-8 */}
+        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
           {/* Column 1 - Brand */}
-          <div className="space-y-5">
+          <div className="space-y-4">
             <Link href="/" className="inline-block">
               <div className="w-20 h-20 bg-white/5 rounded-xl p-2 flex items-center justify-center hover:bg-white/10 transition-all">
                 <Image
@@ -262,10 +264,10 @@ export default function Footer() {
           </div>
 
           {/* Column 2 - Quick Links & Locations */}
-          <div className="space-y-8">
+          <div className="space-y-6">
             <div>
-              <h3 className="text-white font-semibold mb-4 text-base">Quick Links</h3>
-              <ul className="space-y-3">
+              <h3 className="text-white font-semibold mb-3 text-base">Quick Links</h3>
+              <ul className="space-y-2">
                 {quickLinks.map((link, idx) => (
                   <li key={idx}>
                     <Link
@@ -280,8 +282,8 @@ export default function Footer() {
               </ul>
             </div>
             <div>
-              <h3 className="text-white font-semibold mb-4 text-base">Top Locations</h3>
-              <ul className="space-y-3">
+              <h3 className="text-white font-semibold mb-3 text-base">Top Locations</h3>
+              <ul className="space-y-2">
                 {activeLocations.map((loc) => (
                   <li key={loc.slug}>
                     <Link
@@ -299,8 +301,8 @@ export default function Footer() {
 
           {/* Column 3 - Contact */}
           <div>
-            <h3 className="text-white font-semibold mb-5 text-base">Get in Touch</h3>
-            <ul className="space-y-4">
+            <h3 className="text-white font-semibold mb-4 text-base">Get in Touch</h3>
+            <ul className="space-y-3">
               <li className="flex gap-3">
                 <MapPin size={16} className="text-[#F8C21C] mt-0.5 flex-shrink-0" />
                 <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-[#F8C21C] transition-colors text-sm leading-relaxed">
@@ -326,9 +328,9 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Column 4 - Facebook Posts (Responsive) */}
+          {/* Column 4 - Facebook */}
           <div>
-            <h3 className="text-white font-semibold mb-4 text-base flex items-center gap-2">
+            <h3 className="text-white font-semibold mb-3 text-base flex items-center gap-2">
               <FaFacebookF className="text-[#1877F2]" size={16} />
               Follow Us
             </h3>
@@ -346,39 +348,31 @@ export default function Footer() {
               ></iframe>
             </div>
           </div>
-        </div>
 
-        {/* Desktop Legal Links */}
-        <div className="hidden md:flex flex-wrap justify-center gap-x-6 gap-y-3 mt-12 pt-8 border-t border-gray-800">
-          {legalLinks.map((link, idx) => (
-            <Link key={idx} href={link.href} className="text-xs text-gray-500 hover:text-[#F8C21C] transition-colors">
-              {link.name}
-            </Link>
-          ))}
-        </div>
-
-        {/* Disclaimer Section */}
-        <div className="mt-8 pt-6 border-t border-gray-800">
-          <div className="bg-white/5 rounded-xl p-5 space-y-4">
-            <div>
-              <h4 className="font-semibold text-gray-300 text-sm mb-2">Disclaimer:</h4>
-              <p className="text-xs text-gray-500 leading-relaxed">
-                Associatte PropTech Pvt Ltd is only an intermediary offering its platform to advertise properties of Seller for a Customer/Buyer/User coming on its Website and is not and cannot be a party to or privy to or control in any manner any transactions between the Seller and the Customer/Buyer/User. All the prices or rates on this Website have been extended by various Builder(s)/Developer(s) who have advertised their products. Company shall neither be responsible nor liable to mediate or resolve any disputes or disagreements between the Customer/Buyer/User and the Seller and both Seller and Customer/Buyer/User shall settle all such disputes without involving Company in any manner.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-semibold text-gray-300 text-sm mb-2">Consent to Communicate:</h4>
-              <p className="text-xs text-gray-500 leading-relaxed">
-                You consent to receive communications from us by way of SMS/email/phone calls and RCS with respect to your transactions on our Website. Users will be required to register their valid phone numbers and e-mail addresses to facilitate such communication. We may also use your e-mail address to send you updates, newsletters, changes to features of the Service, and the like to provide You better Services.
-              </p>
-            </div>
+          {/* Disclaimer Section - Desktop (Moved up with negative margin and no top padding) */}
+          <div className="md:col-span-2 lg:col-span-3  -mt-12 lg:-mt-16">
+            {disclaimerContent}
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-8 pt-6 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center gap-3 text-xs text-gray-500">
-          <p>© {currentYear} Associatte PropTech Pvt Ltd. All rights reserved.</p>
-          <p>
+        <div className="mt-6 pt-6 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
+          <p className="text-center md:text-left">© {currentYear} Associatte PropTech Pvt Ltd. All rights reserved.</p>
+
+          {/* Legal Links moved to the middle */}
+          <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
+            {legalLinks.map((link, idx) => (
+              <Link
+                key={idx}
+                href={link.href}
+                className="text-gray-400 hover:text-[#F8C21C] transition-colors"
+              >
+                {link.name}
+              </Link>
+            ))}
+          </div>
+
+          <p className="text-center md:text-right">
             Developed and powered by
             <span className="text-[#F8C21C] font-medium ml-1">Associatte PropTech</span>
           </p>

@@ -1,4 +1,4 @@
-// components/EnquiryPopup.tsx
+// components/common/EnquiryPopup.tsx
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
@@ -22,7 +22,9 @@ interface EnquiryPopupProps {
   showLegalLinks?: boolean;
   formName?: string;
   onSubmit?: (payload: any) => void;
-  trackingData?: TrackingData;  // ✅ ADD THIS
+  trackingData?: TrackingData;
+  autoPopup?: boolean;
+  popupDelay?: number;
 }
 
 interface FormErrors {
@@ -54,16 +56,19 @@ const countryCodes: CountryCode[] = [
 ];
 
 export default function EnquiryPopup({
-  isOpen = false,
-  onClose,
+  isOpen: externalIsOpen,
+  onClose: externalOnClose,
   projectName = 'Properties',
   projectTagline = 'Get personalized property recommendations',
   theme = 'default',
   showLegalLinks = true,
   formName = 'Website Enquiry Form',
   onSubmit,
-  trackingData,  // ✅ ADD THIS
+  trackingData,
+  autoPopup = true,
+  popupDelay = 5000,
 }: EnquiryPopupProps) {
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
@@ -72,14 +77,59 @@ export default function EnquiryPopup({
   const [countryCode, setCountryCode] = useState<string>('+91');
   const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  
+  // Determine if popup is controlled externally or internally
+  const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
+  
+  const handleClose = () => {
+    if (externalOnClose) {
+      externalOnClose();
+    } else {
+      setInternalIsOpen(false);
+    }
+    sessionStorage.setItem('enquiry_popup_closed', 'true');
+  };
 
-  // Fetch client IP
+  // ✅ AUTO-POPUP LOGIC - Simplified and guaranteed to work
+  useEffect(() => {
+    console.log('🔍 EnquiryPopup mounted, autoPopup:', autoPopup, 'popupDelay:', popupDelay);
+    
+    if (!autoPopup) {
+      console.log('❌ Auto-popup disabled');
+      return;
+    }
+
+    // Check if user has closed or submitted before in this session
+    const hasClosedBefore = sessionStorage.getItem('enquiry_popup_closed') === 'true';
+    const hasSubmittedBefore = sessionStorage.getItem('enquiry_submitted') === 'true';
+    
+    console.log('📊 Session state - closed:', hasClosedBefore, 'submitted:', hasSubmittedBefore, 'isOpen:', isOpen);
+    
+    // Only proceed if popup is not already open and user hasn't closed/submitted
+    if (!isOpen && !hasClosedBefore && !hasSubmittedBefore) {
+      console.log(`⏰ Setting auto-popup timer for ${popupDelay}ms`);
+      const timer = setTimeout(() => {
+        console.log('🎯 AUTO-POPUP TRIGGERED! Opening popup now...');
+        setInternalIsOpen(true);
+      }, popupDelay);
+      
+      return () => {
+        console.log('🧹 Cleaning up timer');
+        clearTimeout(timer);
+      };
+    } else {
+      console.log('⚠️ Skipping auto-popup - condition not met');
+    }
+  }, [autoPopup, popupDelay, isOpen]);
+
+  // Fetch client IP when popup opens
   useEffect(() => {
     const fetchIp = async () => {
       try {
         const ipResponse = await fetch('https://api.ipify.org?format=json');
         const ipData = await ipResponse.json();
         setClientIp(ipData.ip);
+        console.log('📡 Client IP fetched:', ipData.ip);
       } catch (error) {
         console.error('Failed to fetch IP:', error);
         setClientIp('Unknown');
@@ -155,7 +205,6 @@ export default function EnquiryPopup({
 
     const cleanPhoneNumber = phone.trim();
     
-    // Build remark with tracking data if provided
     let remark = `${formName} | IP: ${clientIp} | Country Code: ${countryCode}`;
     if (trackingData) {
       remark += ` | Source: ${trackingData.source} | Campaign: ${trackingData.campaign} | Medium: ${trackingData.medium} | City: ${trackingData.city || 'N/A'}`;
@@ -167,12 +216,13 @@ export default function EnquiryPopup({
       email: email || '',
       project: projectName,
       remark: remark,
-      trackingData: trackingData // Include tracking data in payload
+      trackingData: trackingData
     };
 
     console.log('📩 Enquiry Submitted:', payload);
 
-    // Call onSubmit callback if provided
+    sessionStorage.setItem('enquiry_submitted', 'true');
+
     if (onSubmit) {
       onSubmit(payload);
     }
@@ -197,7 +247,7 @@ export default function EnquiryPopup({
 
       setTimeout(() => {
         setSubmitSuccess(false);
-        onClose?.();
+        handleClose();
       }, 1500);
 
     } catch (error) {
@@ -222,7 +272,7 @@ export default function EnquiryPopup({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={onClose}
+            onClick={handleClose}
             className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
           />
 
@@ -244,7 +294,7 @@ export default function EnquiryPopup({
                   </p>
                 </div>
                 <button
-                  onClick={onClose}
+                  onClick={handleClose}
                   className={`p-2 ${isGradient ? 'hover:bg-white/10 text-white' : 'hover:bg-gray-100 text-gray-500'} rounded-full transition-colors`}
                   aria-label="Close"
                 >
@@ -260,7 +310,6 @@ export default function EnquiryPopup({
               )}
 
               <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                {/* Name Field */}
                 <div>
                   <label className={`block text-sm font-medium mb-2 ${isGradient ? 'text-white/90' : 'text-gray-700'}`}>
                     Full Name *
@@ -291,7 +340,6 @@ export default function EnquiryPopup({
                   )}
                 </div>
 
-                {/* Phone Field */}
                 <div>
                   <label className={`block text-sm font-medium mb-2 ${isGradient ? 'text-white/90' : 'text-gray-700'}`}>
                     Phone Number *
@@ -370,7 +418,6 @@ export default function EnquiryPopup({
                   )}
                 </div>
 
-                {/* Email Field */}
                 <div>
                   <label className={`block text-sm font-medium mb-2 ${isGradient ? 'text-white/90' : 'text-gray-700'}`}>
                     Email Address <span className="text-xs opacity-70">(Optional)</span>
@@ -397,7 +444,6 @@ export default function EnquiryPopup({
                   )}
                 </div>
 
-                {/* Legal Consent */}
                 {showLegalLinks && (
                   <div className="space-y-3">
                     <div className="flex items-start gap-3">
@@ -431,8 +477,7 @@ export default function EnquiryPopup({
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className={`w-full btn-primary ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
-                    }`}
+                  className={`w-full btn-primary ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
                 >
                   {isSubmitting ? (
                     <span className="flex items-center justify-center gap-2">
@@ -447,7 +492,6 @@ export default function EnquiryPopup({
                   )}
                 </button>
 
-                {/* Legal Footer Links */}
                 {showLegalLinks && (
                   <div className={`text-center pt-2 text-xs ${isGradient ? 'text-white/60' : 'text-gray-400'}`}>
                     <div className="flex justify-center gap-3">

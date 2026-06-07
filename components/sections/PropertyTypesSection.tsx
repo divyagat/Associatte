@@ -47,7 +47,7 @@ export default function PropertyTypesSection({ city }: PropertyTypesSectionProps
   });
 
   return (
-    <section className="py-10 md:py-14 bg-white">
+    <section className="pt-6 md:pt-8 pb-10 md:pb-14 bg-white">
       <div className="max-w-7xl mx-auto px-6">
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
@@ -60,7 +60,7 @@ export default function PropertyTypesSection({ city }: PropertyTypesSectionProps
               Locations
             </span>
             <h2 className="section-title text-gray-900">
-              Popular Cities in {city}
+              Popular Cities
             </h2>
             <p className="text-gray-500 mt-3 max-w-2xl">
               Discover the most sought-after real estate destinations with the best investment opportunities

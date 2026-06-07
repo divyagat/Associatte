@@ -195,23 +195,23 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
   return (
     <section className="relative w-full overflow-hidden bg-slate-950">
 
-      {/* 📱 MOBILE HERO IMAGE — Clean, bright, no black shade */}
+      {/* 📱 MOBILE HERO IMAGE — Fixed sizes prop for better performance */}
       <div className="md:hidden relative w-full h-[220px] sm:h-[260px] overflow-hidden">
         <Image
-          src="/Home/banner/b4.webp"
+          src="https://res.cloudinary.com/drdeqd8to/image/upload/f_auto,q_auto/b4_ajb1vz"
           alt="Hero Background"
           fill
-          sizes="100vw"
+          sizes="(max-width: 768px) 100vw, 100vw"
           className="object-cover object-center"
           priority
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-transparent to-slate-950/30 pointer-events-none" />
       </div>
 
-      {/* 💻 DESKTOP HERO IMAGE — Clear and vibrant */}
+      {/* 💻 DESKTOP HERO IMAGE — Fixed sizes prop */}
       <div className="hidden md:block absolute inset-0 z-0">
         <Image
-          src="/Home/banner/b4.webp"
+          src="https://res.cloudinary.com/drdeqd8to/image/upload/f_auto,q_auto/b4_ajb1vz"
           alt="Hero Background"
           fill
           sizes="100vw"
@@ -229,7 +229,7 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
           {/* Left Column */}
           <div className="lg:col-span-5 text-center lg:text-left order-1 lg:order-1 w-full">
             
-            {/* ✅ UPDATED: Light black shade (20% opacity) with blur for a soft, premium glass effect */}
+            {/* Light black shade (20% opacity) with blur for a soft, premium glass effect */}
             <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 py-1.5 sm:px-3.5 sm:py-2 bg-black/20 backdrop-blur-md rounded-full border border-white/10 mb-3 sm:mb-4 mx-auto lg:mx-0 shadow-sm">
               <Sparkles className="w-3 h-3 sm:w-4 sm:h-4" style={{ color: BRAND.yellow }} />
               <span className="text-[10px] sm:text-xs font-semibold text-white tracking-wide drop-shadow-sm">
