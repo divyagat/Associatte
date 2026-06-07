@@ -1,11 +1,14 @@
+// app/page.tsx
 'use client';
 
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import Head from 'next/head';
 import { useSearchParams } from 'next/navigation';
+import { Home, KeyRound, Building } from 'lucide-react';
 
 // 🧩 Component Imports
 import Hero, { SearchFilters } from '@/components/Home/Hero';
+import { StickySearchBar } from '@/components/Home/Hero/StickySearchBar';
 import NewlyLaunchedProjects from '@/components/sections/NewlyLaunchedProjects';
 import TopSellingProjects from '@/components/sections/TopSellingProjects';
 import TrustFeaturesSection from '@/components/sections/TrustFeaturesSection';
@@ -19,9 +22,9 @@ import InvestmentCtaSection from '@/components/sections/InvestmentCtaSection';
 import CtaFormSection from '@/components/sections/CtaFormSection';
 import BlogSection from '@/components/sections/BlogSection';
 import EnquiryPopup from '@/components/common/EnquiryPopup';
-import FloatingVideoPlayer from '../components/FloatingVideoPlayer';
+import FloatingVideoPlayer from '@/components/FloatingVideoPlayer';
 
-// 🗺️ Location Configuration
+// 🗺️ Location Configuration (FULL DATA PRESERVED)
 const LOCATION_CONFIG = {
   pune: {
     name: 'Pune',
@@ -112,8 +115,37 @@ export default function HomePage() {
     filters: {}
   });
 
-  // ✅ Popup state - controls both buttons
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+  // ✅ Scroll visibility state for SearchBar
+  const [isSearchVisible, setIsSearchVisible] = useState(false);
+
+  // ✅ State required for StickySearchBar
+  const [activeTab, setActiveTab] = useState('residential');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
+
+  const categories = [
+    { id: 'residential', label: 'Buy', icon: Home, gradient: '' },
+    { id: 'rent', label: 'Rent', icon: KeyRound, gradient: '' },
+    { id: 'commercial', label: 'Commercial', icon: Building, gradient: '' },
+  ];
+
+  // ✅ Scroll detection logic
+  useEffect(() => {
+    const handleScroll = () => {
+      // 🔑 INCREASED THRESHOLD: Set to 800px to prevent showing on a slight scroll after the hero banner.
+      // If your hero section is taller, increase this number (e.g., 900 or 1000).
+      // If it's shorter, decrease it (e.g., 600).
+      setIsSearchVisible(window.scrollY > 800);
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    // Run once on mount to set initial state
+    handleScroll();
+    
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleFilterChange = useCallback((data: { city: string; filters: SearchFilters }) => {
     setHeroFilters(data);
@@ -176,11 +208,28 @@ export default function HomePage() {
 
       <main className="min-h-screen bg-slate-50">
 
+        {/* Hero Section */}
         <Hero
           initialCity={config.name}
           onFilterChange={handleFilterChange}
           onSearch={handleSearch}
         />
+
+        {/* ✅ Scroll-Triggered Sticky Search Bar */}
+        {isSearchVisible && (
+          <div className="fixed top-[80px] lg:top-[96px] left-0 right-0 z-40 animate-in fade-in slide-in-from-top-2 duration-300">
+            <StickySearchBar
+              activeTab={activeTab}
+              selectedCity={config.name}
+              searchQuery={searchQuery}
+              categories={categories}
+              isSearching={isSearching}
+              onTabChange={setActiveTab}
+              onSearchQueryChange={setSearchQuery}
+              onSearch={() => handleSearch({ city: config.slug, query: searchQuery })}
+            />
+          </div>
+        )}
 
         <section aria-labelledby="newly-launched-heading">
           <NewlyLaunchedProjects
@@ -228,9 +277,9 @@ export default function HomePage() {
           <FeaturedProjectsSection city={config.name} />
         </section>
 
-        {/* <section aria-labelledby="testimonials-heading">
+        <section aria-labelledby="testimonials-heading">
           <TestimonialsAchievementsSection city={config.name} />
-        </section> */}
+        </section>
 
         {/* ✅ Investment CTA Section - Button opens popup */}
         <section aria-labelledby="investment-heading">
@@ -254,19 +303,13 @@ export default function HomePage() {
           <BlogSection city={config.name} />
         </section>
 
+        <FloatingVideoPlayer
+          videoId="U03yryIhSE0"
+          title="Mantra 1 Residences Tour"
+          position="bottom-right"
+        />
 
-
-  <FloatingVideoPlayer
-        videoId="U03yryIhSE0"
-        title="Mantra 1 Residences Tour"
-        position="bottom-right"
-      />
-
-
-
-
-
-        {/* ✅ Enquiry Popup - Fixed: Removed 'city' from trackingData */}
+        {/* ✅ Enquiry Popup */}
         <EnquiryPopup
           isOpen={isPopupOpen}
           onClose={() => setIsPopupOpen(false)}
@@ -277,7 +320,6 @@ export default function HomePage() {
             source: 'homepage',
             campaign: 'free_consultation',
             medium: 'website'
-            // ✅ REMOVE the 'city' line from here
           }}
         />
 
