@@ -129,7 +129,6 @@ const nextConfig = {
 
   // Bundle optimization (experimental features are safe)
   experimental: {
-    optimizeCss: true,
     optimizePackageImports: ['lucide-react', 'framer-motion', '@headlessui/react'],
   },
 
