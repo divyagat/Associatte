@@ -97,7 +97,7 @@ export async function deleteBlog(slug: string): Promise<boolean> {
 // ==================== HELPER FUNCTIONS ====================
 export async function getPropertiesByLocation(location: string): Promise<IProperty[]> {
   await dbConnect();
-  const properties = await Property.find({ location }).sort({ createdAt: -1 }).lean();
+  const properties = await Property.find({ location: location as any }).sort({ createdAt: -1 }).lean();
   return properties.map(p => ({ ...p, _id: p._id.toString() })) as any;
 }
 

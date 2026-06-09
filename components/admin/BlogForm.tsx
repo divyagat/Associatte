@@ -42,7 +42,7 @@ export default function BlogForm({ initialData, onSubmit, loading }: BlogFormPro
     const { name, value } = e.target;
     const keys = name.split('.');
     
-    setFormData(prev => {
+    setFormData((prev: any) => {
       const updated = { ...prev };
       let current: any = updated;
       
@@ -69,7 +69,7 @@ export default function BlogForm({ initialData, onSubmit, loading }: BlogFormPro
         body: formDataUpload,
       });
       const data = await response.json();
-      setFormData(prev => ({ ...prev, [field]: data.url }));
+      setFormData((prev: any) => ({ ...prev, [field]: data.url }));
     } catch (error) {
       console.error('Upload failed:', error);
     }
@@ -77,7 +77,7 @@ export default function BlogForm({ initialData, onSubmit, loading }: BlogFormPro
 
   const addTag = () => {
     if (currentTag.trim()) {
-      setFormData(prev => ({
+      setFormData((prev: any) => ({
         ...prev,
         tags: [...prev.tags, currentTag.trim()]
       }));
@@ -86,23 +86,23 @@ export default function BlogForm({ initialData, onSubmit, loading }: BlogFormPro
   };
 
   const removeTag = (index: number) => {
-    setFormData(prev => ({
+    setFormData((prev: any) => ({
       ...prev,
-      tags: prev.tags.filter((_, i) => i !== index)
+      tags: prev.tags.filter((_: any, i: number) => i !== index)
     }));
   };
 
   const addFAQ = () => {
-    setFormData(prev => ({
+    setFormData((prev: any) => ({
       ...prev,
       faqs: [...prev.faqs, { question: '', answer: '' }]
     }));
   };
 
   const removeFAQ = (index: number) => {
-    setFormData(prev => ({
+    setFormData((prev: any) => ({
       ...prev,
-      faqs: prev.faqs.filter((_, i) => i !== index)
+      faqs: prev.faqs.filter((_: any, i: number) => i !== index)
     }));
   };
 
@@ -401,7 +401,7 @@ export default function BlogForm({ initialData, onSubmit, loading }: BlogFormPro
                     onChange={(e) => {
                       const updated = [...formData.faqs];
                       updated[index].question = e.target.value;
-                      setFormData(prev => ({ ...prev, faqs: updated }));
+                      setFormData((prev: any) => ({ ...prev, faqs: updated }));
                     }}
                     className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]"
                   />
@@ -411,7 +411,7 @@ export default function BlogForm({ initialData, onSubmit, loading }: BlogFormPro
                     onChange={(e) => {
                       const updated = [...formData.faqs];
                       updated[index].answer = e.target.value;
-                      setFormData(prev => ({ ...prev, faqs: updated }));
+                      setFormData((prev: any) => ({ ...prev, faqs: updated }));
                     }}
                     rows={3}
                     className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]"

@@ -3,10 +3,11 @@ import { getPropertyBySlug, updateProperty, deleteProperty } from '@/lib/data-st
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  context: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const property = await getPropertyBySlug(params.slug);
+    const { slug } = await context.params;
+    const property = await getPropertyBySlug(slug);
     if (!property) {
       return NextResponse.json({ error: 'Property not found' }, { status: 404 });
     }
@@ -19,11 +20,12 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  context: { params: Promise<{ slug: string }> }
 ) {
   try {
+    const { slug } = await context.params;
     const body = await request.json();
-    const property = await updateProperty(params.slug, body);
+    const property = await updateProperty(slug, body);
     if (!property) {
       return NextResponse.json({ error: 'Property not found' }, { status: 404 });
     }
@@ -36,10 +38,11 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  context: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const success = await deleteProperty(params.slug);
+    const { slug } = await context.params;
+    const success = await deleteProperty(slug);
     if (!success) {
       return NextResponse.json({ error: 'Property not found' }, { status: 404 });
     }
