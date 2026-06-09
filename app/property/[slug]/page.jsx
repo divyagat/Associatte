@@ -442,23 +442,42 @@ export default function PropertyPage() {
     }
   };
 
-  const handleEnquirySubmit = async (payload) => {
-    try {
-      const response = await fetch('/api/enquiry', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...payload,
-          projectId: propertyData?.slug,
-          projectImage: propertyData?.image,
-        }),
-      });
-      if (!response.ok) throw new Error('Submission failed');
-      console.log('✅ Enquiry submitted for:', propertyData?.title);
-    } catch (error) {
-      console.error('❌ Error:', error);
+ const handleEnquirySubmit = async (payload) => {
+  try {
+    const response = await fetch('/api/enquiry', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: payload.name,
+        phone: payload.phone,
+        email: payload.email,
+        remark: payload.message || payload.remark || '',
+        project: propertyData?.title || 'General Enquiry',
+        projectImage: propertyData?.image,
+        projectLocation: propertyData?.location,
+        projectPrice: propertyData?.priceRange,
+        developer: propertyData?.developer,
+        source: 'property_page',
+        campaign: 'property_enquiry',
+        city: propertyData?.location?.city,
+      }),
+    });
+    
+    const result = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(result.error || 'Submission failed');
     }
-  };
+    
+    console.log('✅ Enquiry submitted to CRM:', result);
+    alert('Thank you! Our team will contact you shortly.');
+    return result;
+  } catch (error) {
+    console.error('❌ CRM Error:', error);
+    alert('Sorry, there was an error. Please try again.');
+    throw error;
+  }
+};
 
   const openGallery = (index) => {
     if (propertyData?.gallery && propertyData.gallery.length > 0) {
