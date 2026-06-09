@@ -1,11 +1,7 @@
 import mongoose from 'mongoose';
 
-// Changed default database name to "associatte"
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/associatte';
-
-if (!MONGODB_URI) {
-  throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
-}
+// Standard Connection String (no SRV lookup)
+const MONGODB_URI = 'mongodb://divyagate543_db_user:Associatte2024@ac-xxxxx-shard-00-00.nm1yl8x.mongodb.net:27017,ac-xxxxx-shard-00-01.nm1yl8x.mongodb.net:27017,ac-xxxxx-shard-00-02.nm1yl8x.mongodb.net:27017/associatte?ssl=true&replicaSet=atlas-xxxxx-shard-0&authSource=admin&retryWrites=true&w=majority';
 
 interface MongooseCache {
   conn: typeof mongoose | null;
@@ -32,15 +28,23 @@ async function dbConnect() {
       bufferCommands: false,
     };
 
+    console.log('🚀 Connecting to MongoDB Atlas...');
+    console.log('📍 Using Standard Connection String (no SRV lookup)');
+    
     cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
+      console.log('✅ MongoDB Atlas Connected Successfully!');
       return mongoose;
+    }).catch((error) => {
+      console.error('❌ MongoDB Connection Failed:', error.message);
+      throw error;
     });
   }
 
   try {
     cached.conn = await cached.promise;
   } catch (e) {
-    cached.promise = null;
+    cached.promise = null;  // ✅ Fixed - removed the 's'
+    console.error('❌ MongoDB Error:', e);
     throw e;
   }
 
