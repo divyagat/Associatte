@@ -277,9 +277,9 @@ export default function HomePage() {
           <FeaturedProjectsSection city={config.name} />
         </section>
 
-        <section aria-labelledby="testimonials-heading">
+        {/* <section aria-labelledby="testimonials-heading">
           <TestimonialsAchievementsSection city={config.name} />
-        </section>
+        </section> */}
 
         {/* ✅ Investment CTA Section - Button opens popup */}
         <section aria-labelledby="investment-heading">
