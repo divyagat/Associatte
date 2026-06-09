@@ -87,8 +87,7 @@ export default function AboutUs() {
         { name: 'Sonal Gaikwad', role: 'General Manager', img: '/Team/Pune/Sonal.webp', social: { linkedin: '#', twitter: '#' } },
         { name: 'Neha Bhattacharya', role: 'Sales Executive', img: '/Team/Pune/Neha .webp', social: { linkedin: '#', twitter: '#' } },
         { name: 'Rekha Rathod', role: 'Sales Executive', img: '/Team/Pune/Rekha.webp', social: { linkedin: '#', twitter: '#' } },
-        { name: 'Payal Singh', role: 'Sales Executive', img: '/Team/Pune/Payal .webp', social: { linkedin: '#', twitter: '#' } },
-        { name: 'Pallavi Khomane', role: 'Pre-Sales', img: '/Team/Pune/Pallavi.webp', social: { linkedin: '#', twitter: '#' } },
+        // { name: 'Pallavi Khomane', role: 'Pre-Sales', img: '/Team/Pune/Pallavi.webp', social: { linkedin: '#', twitter: '#' } },
       ],
     },
     {
@@ -100,7 +99,7 @@ export default function AboutUs() {
         { name: 'Simran Das', role: 'Sales Manager', img: '/Team/Mumbai/Simran Das.webp', social: { linkedin: '#', twitter: '#' } },
         { name: 'Sanjay Mane', role: 'Team Leader', img: '/Team/Mumbai/Sanjay.webp', social: { linkedin: '#', twitter: '#' } },
         { name: 'Sharvari Ambre', role: 'Sales Executive KDMC', img: '/Team/Mumbai/Sharvari.webp', social: { linkedin: '#', twitter: '#' } },
-        { name: 'Abhishek Notani', role: 'Presales Executive', img: '/Team/Mumbai/Abhishek.webp', social: { linkedin: '#', twitter: '#' } },
+        
       ],
     },
     {
