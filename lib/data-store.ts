@@ -6,16 +6,26 @@ import { IBlog } from './models/Blog';
 
 // ==================== PROPERTIES ====================
 export async function getAllProperties(): Promise<IProperty[]> {
-  await dbConnect();
-  const properties = await Property.find({}).sort({ createdAt: -1 }).lean();
-  return properties.map(p => ({ ...p, _id: p._id.toString() })) as any;
+  try {
+    await dbConnect();
+    const properties = await Property.find({}).sort({ createdAt: -1 }).lean();
+    return properties.map(p => ({ ...p, _id: p._id.toString() })) as any;
+  } catch (error) {
+    console.error('❌ getAllProperties failed:', (error as Error).message);
+    return [];
+  }
 }
 
 export async function getPropertyBySlug(slug: string): Promise<IProperty | null> {
-  await dbConnect();
-  const property = await Property.findOne({ slug }).lean();
-  if (!property) return null;
-  return { ...property, _id: property._id.toString() } as any;
+  try {
+    await dbConnect();
+    const property = await Property.findOne({ slug }).lean();
+    if (!property) return null;
+    return { ...property, _id: property._id.toString() } as any;
+  } catch (error) {
+    console.error('❌ getPropertyBySlug failed:', (error as Error).message);
+    return null;
+  }
 }
 
 export async function createProperty(propertyData: Partial<IProperty>): Promise<IProperty> {
@@ -51,16 +61,26 @@ export async function deleteProperty(slug: string): Promise<boolean> {
 
 // ==================== BLOGS ====================
 export async function getAllBlogs(): Promise<IBlog[]> {
-  await dbConnect();
-  const blogs = await Blog.find({}).sort({ createdAt: -1 }).lean();
-  return blogs.map(b => ({ ...b, _id: b._id.toString() })) as any;
+  try {
+    await dbConnect();
+    const blogs = await Blog.find({}).sort({ createdAt: -1 }).lean();
+    return blogs.map(b => ({ ...b, _id: b._id.toString() })) as any;
+  } catch (error) {
+    console.error('❌ getAllBlogs failed:', (error as Error).message);
+    return [];
+  }
 }
 
 export async function getBlogBySlug(slug: string): Promise<IBlog | null> {
-  await dbConnect();
-  const blog = await Blog.findOne({ slug }).lean();
-  if (!blog) return null;
-  return { ...blog, _id: blog._id.toString() } as any;
+  try {
+    await dbConnect();
+    const blog = await Blog.findOne({ slug }).lean();
+    if (!blog) return null;
+    return { ...blog, _id: blog._id.toString() } as any;
+  } catch (error) {
+    console.error('❌ getBlogBySlug failed:', (error as Error).message);
+    return null;
+  }
 }
 
 export async function createBlog(blogData: Partial<IBlog>): Promise<IBlog> {
@@ -96,38 +116,58 @@ export async function deleteBlog(slug: string): Promise<boolean> {
 
 // ==================== HELPER FUNCTIONS ====================
 export async function getPropertiesByLocation(location: string): Promise<IProperty[]> {
-  await dbConnect();
-  const properties = await Property.find({ location: location as any }).sort({ createdAt: -1 }).lean();
-  return properties.map(p => ({ ...p, _id: p._id.toString() })) as any;
+  try {
+    await dbConnect();
+    const properties = await Property.find({ location: location as any }).sort({ createdAt: -1 }).lean();
+    return properties.map(p => ({ ...p, _id: p._id.toString() })) as any;
+  } catch (error) {
+    console.error('❌ getPropertiesByLocation failed:', (error as Error).message);
+    return [];
+  }
 }
 
 export async function getBlogsByCategory(category: string): Promise<IBlog[]> {
-  await dbConnect();
-  const blogs = await Blog.find({ category }).sort({ createdAt: -1 }).lean();
-  return blogs.map(b => ({ ...b, _id: b._id.toString() })) as any;
+  try {
+    await dbConnect();
+    const blogs = await Blog.find({ category }).sort({ createdAt: -1 }).lean();
+    return blogs.map(b => ({ ...b, _id: b._id.toString() })) as any;
+  } catch (error) {
+    console.error('❌ getBlogsByCategory failed:', (error as Error).message);
+    return [];
+  }
 }
 
 export async function searchProperties(query: string): Promise<IProperty[]> {
-  await dbConnect();
-  const properties = await Property.find({
-    $or: [
-      { name: { $regex: query, $options: 'i' } },
-      { 'fullLocation.area': { $regex: query, $options: 'i' } },
-      { 'developer.name': { $regex: query, $options: 'i' } },
-    ]
-  }).lean();
-  return properties.map(p => ({ ...p, _id: p._id.toString() })) as any;
+  try {
+    await dbConnect();
+    const properties = await Property.find({
+      $or: [
+        { name: { $regex: query, $options: 'i' } },
+        { 'fullLocation.area': { $regex: query, $options: 'i' } },
+        { 'developer.name': { $regex: query, $options: 'i' } },
+      ]
+    }).lean();
+    return properties.map(p => ({ ...p, _id: p._id.toString() })) as any;
+  } catch (error) {
+    console.error('❌ searchProperties failed:', (error as Error).message);
+    return [];
+  }
 }
 
 export async function searchBlogs(query: string): Promise<IBlog[]> {
-  await dbConnect();
-  const blogs = await Blog.find({
-    $or: [
-      { title: { $regex: query, $options: 'i' } },
-      { excerpt: { $regex: query, $options: 'i' } },
-      { tags: { $regex: query, $options: 'i' } },
-      { category: { $regex: query, $options: 'i' } },
-    ]
-  }).lean();
-  return blogs.map(b => ({ ...b, _id: b._id.toString() })) as any;
+  try {
+    await dbConnect();
+    const blogs = await Blog.find({
+      $or: [
+        { title: { $regex: query, $options: 'i' } },
+        { excerpt: { $regex: query, $options: 'i' } },
+        { tags: { $regex: query, $options: 'i' } },
+        { category: { $regex: query, $options: 'i' } },
+      ]
+    }).lean();
+    return blogs.map(b => ({ ...b, _id: b._id.toString() })) as any;
+  } catch (error) {
+    console.error('❌ searchBlogs failed:', (error as Error).message);
+    return [];
+  }
 }

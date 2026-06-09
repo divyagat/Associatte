@@ -133,17 +133,6 @@ const nextConfig = {
     optimizePackageImports: ['lucide-react', 'framer-motion', '@headlessui/react'],
   },
 
-  // Redirects for SEO
-  async redirects() {
-    return [
-      {
-        source: '/property/:slug',
-        destination: '/property/:slug',
-        permanent: true,
-      },
-    ];
-  },
-
   // Environment variables exposed to browser
   env: {
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,

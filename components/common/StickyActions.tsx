@@ -165,8 +165,8 @@ export default function StickyActions({
                   {/* Icon Container */}
                   <motion.div 
                     className="w-12 h-12 flex items-center justify-center flex-shrink-0 z-10"
-                    animate={{ 
-                      backgroundColor: isHovered ? '#ffffff' : 'transparent',
+                    animate={{
+                      backgroundColor: isHovered ? '#ffffff' : 'rgba(255,255,255,0)',
                       borderRadius: '50%'
                     }}
                     transition={{ duration: 0.3, ease: "easeOut" }}
@@ -249,8 +249,8 @@ export default function StickyActions({
               >
                 <motion.div 
                   className="w-12 h-12 flex items-center justify-center flex-shrink-0 z-10"
-                  animate={{ 
-                    backgroundColor: hoveredId === 'scroll-top' ? '#ffffff' : 'transparent',
+                  animate={{
+                    backgroundColor: hoveredId === 'scroll-top' ? '#ffffff' : 'rgba(255,255,255,0)',
                     borderRadius: '50%'
                   }}
                   transition={{ duration: 0.3, ease: "easeOut" }}
