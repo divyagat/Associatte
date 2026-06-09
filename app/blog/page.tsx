@@ -15,7 +15,29 @@ export default function BlogListingPage() {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   useEffect(() => {
-    setAllBlogs(getAllBlogs());
+    const staticBlogs = getAllBlogs();
+    // Show static blogs immediately, then merge in DB blogs from the admin panel.
+    setAllBlogs(staticBlogs);
+
+    fetch('/api/blogs')
+      .then((res) => (res.ok ? res.json() : []))
+      .then((dbBlogs: any[]) => {
+        if (!Array.isArray(dbBlogs)) return;
+        const mapped: BlogPost[] = dbBlogs.map((b) => ({
+          ...b,
+          id: b._id?.toString?.() || b._id || b.slug,
+          tags: b.tags || [],
+          relatedSlugs: b.relatedSlugs || [],
+        }));
+        // Merge by slug; DB blogs take precedence over static ones.
+        const bySlug = new Map<string, BlogPost>();
+        staticBlogs.forEach((b) => bySlug.set(b.slug, b));
+        mapped.forEach((b) => bySlug.set(b.slug, b));
+        setAllBlogs(Array.from(bySlug.values()));
+      })
+      .catch(() => {
+        // Keep static blogs if the API/DB is unavailable.
+      });
   }, []);
 
   const featuredBlogs = allBlogs.slice(0, 2);

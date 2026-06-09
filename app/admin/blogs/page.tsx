@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { getAllBlogs } from '@/lib/data-store';
-import { Plus, Edit, Trash2, Search } from 'lucide-react';
+import { Plus, Edit } from 'lucide-react';
+import DeleteButton from '@/components/admin/DeleteButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -59,23 +60,13 @@ export default async function BlogsListPage() {
                 <td className="px-6 py-4 text-sm text-gray-600">{blog.date}</td>
                 <td className="px-6 py-4 text-right">
                   <div className="flex items-center justify-end gap-2">
-                    <Link 
+                    <Link
                       href={`/admin/blogs/${blog.slug}/edit`}
                       className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                     >
                       <Edit size={18} />
                     </Link>
-                    <button 
-                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                      onClick={async () => {
-                        if (confirm('Are you sure you want to delete this blog?')) {
-                          await fetch(`/api/blogs/${blog.slug}`, { method: 'DELETE' });
-                          window.location.reload();
-                        }
-                      }}
-                    >
-                      <Trash2 size={18} />
-                    </button>
+                    <DeleteButton slug={blog.slug} type="blogs" label="this blog" />
                   </div>
                 </td>
               </tr>

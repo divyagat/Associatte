@@ -52,7 +52,7 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
     const { name, value } = e.target;
     const keys = name.split('.');
     
-    setFormData(prev => {
+    setFormData((prev: any) => {
       const updated = { ...prev };
       let current: any = updated;
       
@@ -81,12 +81,12 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
       const data = await response.json();
       
       if (field === 'gallery') {
-        setFormData(prev => ({
+        setFormData((prev: any) => ({
           ...prev,
           gallery: [...prev.gallery, data.url]
         }));
       } else {
-        setFormData(prev => ({ ...prev, [field]: data.url }));
+        setFormData((prev: any) => ({ ...prev, [field]: data.url }));
       }
     } catch (error) {
       console.error('Upload failed:', error);
@@ -94,7 +94,7 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
   };
 
   const addConfiguration = () => {
-    setFormData(prev => ({
+    setFormData((prev: any) => ({
       ...prev,
       priceDetails: {
         ...prev.priceDetails,
@@ -104,18 +104,18 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
   };
 
   const removeConfiguration = (index: number) => {
-    setFormData(prev => ({
+    setFormData((prev: any) => ({
       ...prev,
       priceDetails: {
         ...prev.priceDetails,
-        configurations: prev.priceDetails.configurations.filter((_, i) => i !== index)
+        configurations: prev.priceDetails.configurations.filter((_: any, i: number) => i !== index)
       }
     }));
   };
 
   const addAmenity = () => {
     if (currentAmenity.trim()) {
-      setFormData(prev => ({
+      setFormData((prev: any) => ({
         ...prev,
         amenities: [...prev.amenities, currentAmenity.trim()]
       }));
@@ -124,9 +124,9 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
   };
 
   const removeAmenity = (index: number) => {
-    setFormData(prev => ({
+    setFormData((prev: any) => ({
       ...prev,
-      amenities: prev.amenities.filter((_, i) => i !== index)
+      amenities: prev.amenities.filter((_: any, i: number) => i !== index)
     }));
   };
 
@@ -309,9 +309,9 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
                   <button
                     type="button"
                     onClick={() => {
-                      setFormData(prev => ({
+                      setFormData((prev: any) => ({
                         ...prev,
-                        gallery: prev.gallery.filter((_, i) => i !== index)
+                        gallery: prev.gallery.filter((_: any, i: number) => i !== index)
                       }));
                     }}
                     className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
@@ -408,7 +408,7 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
                 onChange={(e) => {
                   const updated = [...formData.priceDetails.configurations];
                   updated[index].type = e.target.value;
-                  setFormData(prev => ({
+                  setFormData((prev: any) => ({
                     ...prev,
                     priceDetails: { ...prev.priceDetails, configurations: updated }
                   }));
@@ -422,7 +422,7 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
                 onChange={(e) => {
                   const updated = [...formData.priceDetails.configurations];
                   updated[index].area = e.target.value;
-                  setFormData(prev => ({
+                  setFormData((prev: any) => ({
                     ...prev,
                     priceDetails: { ...prev.priceDetails, configurations: updated }
                   }));
@@ -436,7 +436,7 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
                 onChange={(e) => {
                   const updated = [...formData.priceDetails.configurations];
                   updated[index].price = e.target.value;
-                  setFormData(prev => ({
+                  setFormData((prev: any) => ({
                     ...prev,
                     priceDetails: { ...prev.priceDetails, configurations: updated }
                   }));
@@ -450,7 +450,7 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
                 onChange={(e) => {
                   const updated = [...formData.priceDetails.configurations];
                   updated[index].description = e.target.value;
-                  setFormData(prev => ({
+                  setFormData((prev: any) => ({
                     ...prev,
                     priceDetails: { ...prev.priceDetails, configurations: updated }
                   }));

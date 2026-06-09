@@ -117,21 +117,53 @@ export default function BlogDetailPage() {
   }, []);
 
   useEffect(() => {
-    const blogPost = getBlogBySlug(slug);
-    if (!blogPost) {
-      router.push('/404');
-      return;
-    }
-    setPost(blogPost);
-    setLikesCount(Math.floor(Math.random() * 200) + 50);
-    
-    if (blogPost.relatedSlugs.length > 0) {
-      setRelatedPosts(getRelatedPosts(blogPost.relatedSlugs, 3));
-    }
-    setRecentPosts(getRecentPosts(slug, 4));
-    
-    const bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
-    setIsBookmarked(bookmarks.includes(slug));
+    let active = true;
+
+    const applyPost = (blogPost: BlogPost) => {
+      if (!active) return;
+      setPost(blogPost);
+      setLikesCount(Math.floor(Math.random() * 200) + 50);
+
+      if (blogPost.relatedSlugs && blogPost.relatedSlugs.length > 0) {
+        setRelatedPosts(getRelatedPosts(blogPost.relatedSlugs, 3));
+      }
+      setRecentPosts(getRecentPosts(slug, 4));
+
+      const bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
+      setIsBookmarked(bookmarks.includes(slug));
+    };
+
+    const load = async () => {
+      // Static blogs first (instant), then fall back to DB blogs from the admin panel.
+      const staticPost = getBlogBySlug(slug);
+      if (staticPost) {
+        applyPost(staticPost);
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/blogs/${slug}`);
+        if (res.ok) {
+          const b = await res.json();
+          applyPost({
+            ...b,
+            id: b._id?.toString?.() || b._id || b.slug,
+            tags: b.tags || [],
+            relatedSlugs: b.relatedSlugs || [],
+          });
+          return;
+        }
+      } catch {
+        // ignore and fall through to 404
+      }
+
+      if (active) router.push('/404');
+    };
+
+    load();
+    return () => {
+      active = false;
+    };
   }, [slug, router]);
 
   useEffect(() => {
