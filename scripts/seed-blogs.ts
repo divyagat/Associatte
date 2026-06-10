@@ -2,8 +2,8 @@
 // Idempotent: upserts by slug, so it is safe to run multiple times.
 // Run with:  node --experimental-strip-types --env-file=.env.local scripts/seed-blogs.ts
 import mongoose from 'mongoose';
-import { BLOG_POSTS } from '../lib/blog-data.ts';
-import Blog from '../lib/models/Blog.ts';
+import { BLOG_POSTS } from '../lib/blog-data';
+import Blog from '../lib/models/Blog';
 
 async function run() {
   const uri = process.env.MONGODB_URI;

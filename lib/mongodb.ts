@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 // Standard Connection String (no SRV lookup)
-const MONGODB_URI = 'mongodb://divyagate543_db_user:Associatte2024@ac-xxxxx-shard-00-00.nm1yl8x.mongodb.net:27017,ac-xxxxx-shard-00-01.nm1yl8x.mongodb.net:27017,ac-xxxxx-shard-00-02.nm1yl8x.mongodb.net:27017/associatte?ssl=true&replicaSet=atlas-xxxxx-shard-0&authSource=admin&retryWrites=true&w=majority';
+const MONGODB_URI = 'mongodb+srv://pushkargharate7_db_user:xiJLA62jsjF1d2wW@cluster0.wxn2vix.mongodb.net/mydatabase?retryWrites=true&w=majority';
 
 interface MongooseCache {
   conn: typeof mongoose | null;
