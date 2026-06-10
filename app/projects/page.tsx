@@ -1,24 +1,15 @@
 import { Metadata } from 'next';
 import ProjectCard from '@/components/builder-page/ProjectCard';
-import properties from '../../data/properties.json';
+import { getAllProperties } from '@/lib/data-store';
+
+// Read fresh from the data store on every request so projects added in the
+// admin panel show up immediately.
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'All Projects | Associatte PropTech',
   description: 'Explore all premium residential & commercial projects in Pune, Mumbai & KDMC. Filter by builder, location, budget & more.',
   keywords: ['projects', 'Pune', 'Mumbai', 'KDMC', 'real estate', 'properties'],
-};
-
-// ✅ Get unique values for filters - FIXED with Array.from
-const getAllLocations = () => Array.from(new Set(properties.map((p: any) => p.location).filter(Boolean)));
-const getAllBuilders = () => Array.from(new Set(properties.map((p: any) => p.developer?.name).filter(Boolean)));
-const getAllBHKs = () => {
-  const bhks = new Set<string>();
-  properties.forEach((p: any) => {
-    p.priceDetails?.configurations?.forEach((c: any) => {
-      if (c.type) bhks.add(c.type.split(' ')[0] + ' BHK');
-    });
-  });
-  return Array.from(bhks).sort();
 };
 
 // ✅ FIX: Added 'async' keyword for Next.js 15+ Promise searchParams
@@ -36,6 +27,22 @@ export default async function ProjectsPage({
 }) {
   // ✅ Now await works because function is async
   const params = await searchParams;
+
+  // Load all properties (static seed data + anything added via the admin panel)
+  const properties = await getAllProperties();
+
+  // ✅ Get unique values for filters - FIXED with Array.from
+  const getAllLocations = () => Array.from(new Set(properties.map((p: any) => p.location).filter(Boolean)));
+  const getAllBuilders = () => Array.from(new Set(properties.map((p: any) => p.developer?.name).filter(Boolean)));
+  const getAllBHKs = () => {
+    const bhks = new Set<string>();
+    properties.forEach((p: any) => {
+      p.priceDetails?.configurations?.forEach((c: any) => {
+        if (c.type) bhks.add(c.type.split(' ')[0] + ' BHK');
+      });
+    });
+    return Array.from(bhks).sort();
+  };
 
   // 🔍 Filter projects
   const filteredProjects = properties.filter((project: any) => {
