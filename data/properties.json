@@ -7,28 +7,95 @@
     "image": "/projects/mantra-one-residency.webp",
     "masterPlan": "/floorplans/mantra-one-residency-master.webp",
     "locationMap": "/maps/mantra-one-residency-location.webp",
-    "fullLocation": { "area": "Wakad", "city": "Pune", "state": "Maharashtra", "pincode": "411057", "landmark": "Near DYP College" },
-    "priceDetails": { "range": "₹80 Lakh - ₹1.15 Cr", "perSqft": "₹8,200/sq.ft", "configurations": [
-      { "type": "2 BHK", "area": "920 sq.ft", "price": "₹80 Lakh", "description": "Modern 2 BHK with modular kitchen" },
-      { "type": "3 BHK", "area": "1180 sq.ft", "price": "₹1.15 Cr", "description": "Spacious 3 BHK with balcony" }
-    ]},
-    "developer": { "name": "Mantra Developers", "established": "2010", "projectsCount": 12, "description": "Mantra Developers delivers quality homes in Pune with modern amenities and timely possession." },
+    "fullLocation": {
+      "area": "Wakad",
+      "city": "Pune",
+      "state": "Maharashtra",
+      "pincode": "411057",
+      "landmark": "Near DYP College"
+    },
+    "priceDetails": {
+      "range": "₹80 Lakh - ₹1.15 Cr",
+      "perSqft": "₹8,200/sq.ft",
+      "configurations": [
+        {
+          "type": "2 BHK",
+          "area": "920 sq.ft",
+          "price": "₹80 Lakh",
+          "description": "Modern 2 BHK with modular kitchen"
+        },
+        {
+          "type": "3 BHK",
+          "area": "1180 sq.ft",
+          "price": "₹1.15 Cr",
+          "description": "Spacious 3 BHK with balcony"
+        }
+      ]
+    },
+    "developer": {
+      "name": "Mantra Developers",
+      "established": "2010",
+      "projectsCount": 12,
+      "description": "Mantra Developers delivers quality homes in Pune with modern amenities and timely possession."
+    },
     "about": "Mantra One Residency offers premium 2 & 3 BHK homes in Wakad, Pune with excellent connectivity to Hinjewadi IT Park and Mumbai-Pune Expressway.",
-    "amenities": ["Swimming Pool", "Gym", "Children's Play Area", "Jogging Track", "24/7 Security", "Power Backup", "Clubhouse"],
+    "amenities": [
+      "Swimming Pool",
+      "Gym",
+      "Children's Play Area",
+      "Jogging Track",
+      "24/7 Security",
+      "Power Backup",
+      "Clubhouse"
+    ],
     "floorPlans": [
-      { "type": "2 BHK", "area": "920 sq.ft", "image": "/floorplans/mantra-2bhk.webp" },
-      { "type": "3 BHK", "area": "1180 sq.ft", "image": "/floorplans/mantra-3bhk.webp" }
+      {
+        "type": "2 BHK",
+        "area": "920 sq.ft",
+        "image": "/floorplans/mantra-2bhk.webp"
+      },
+      {
+        "type": "3 BHK",
+        "area": "1180 sq.ft",
+        "image": "/floorplans/mantra-3bhk.webp"
+      }
     ],
     "possessionDate": "Dec 2026",
     "reraNumber": "P52100048120",
-    "gallery": ["/gallery/mantra-1.webp", "/gallery/mantra-2.webp", "/gallery/mantra-3.webp","/gallery/mantra-4.webp", "/gallery/mantra-5.webp"],
-    "mapCoords": { "lat": 18.5975, "lng": 73.7898 },
-    "nearbyPlaces": [
-      { "type": "School", "name": "Delhi Public School", "distance": "1.0 km" },
-      { "type": "Hospital", "name": "Jupiter Hospital", "distance": "2.0 km" },
-      { "type": "Mall", "name": "Phoenix Mall", "distance": "2.5 km" }
+    "gallery": [
+      "/gallery/mantra-1.webp",
+      "/gallery/mantra-2.webp",
+      "/gallery/mantra-3.webp",
+      "/gallery/mantra-4.webp",
+      "/gallery/mantra-5.webp"
     ],
-    "emi": { "startingFrom": "₹36,500/month", "downPayment": "30%", "interestRate": "8.35%", "tenure": "25 Years" }
+    "mapCoords": {
+      "lat": 18.5975,
+      "lng": 73.7898
+    },
+    "nearbyPlaces": [
+      {
+        "type": "School",
+        "name": "Delhi Public School",
+        "distance": "1.0 km"
+      },
+      {
+        "type": "Hospital",
+        "name": "Jupiter Hospital",
+        "distance": "2.0 km"
+      },
+      {
+        "type": "Mall",
+        "name": "Phoenix Mall",
+        "distance": "2.5 km"
+      }
+    ],
+    "emi": {
+      "startingFrom": "₹36,500/month",
+      "downPayment": "30%",
+      "interestRate": "8.35%",
+      "tenure": "25 Years"
+    }
   },
   {
     "slug": "mantra-mayfair",
@@ -38,27 +105,89 @@
     "image": "/projects/mantra-mayfair.webp",
     "masterPlan": "/floorplans/mantra-mayfair-master.webp",
     "locationMap": "/maps/mantra-mayfair-location.webp",
-    "fullLocation": { "area": "Hinjewadi", "city": "Pune", "state": "Maharashtra", "pincode": "411057", "landmark": "Phase 2 IT Park" },
-    "priceDetails": { "range": "₹82 Lakh - ₹1.2 Cr", "perSqft": "₹8,400/sq.ft", "configurations": [
-      { "type": "2 BHK", "area": "940 sq.ft", "price": "₹82 Lakh", "description": "IT-friendly 2 BHK with work-from-home space" },
-      { "type": "3 BHK", "area": "1200 sq.ft", "price": "₹1.2 Cr", "description": "Premium 3 BHK with study room" }
-    ]},
-    "developer": { "name": "Mantra Developers", "established": "2010", "projectsCount": 12, "description": "Trusted builder in Pune with 12+ successful projects." },
+    "fullLocation": {
+      "area": "Hinjewadi",
+      "city": "Pune",
+      "state": "Maharashtra",
+      "pincode": "411057",
+      "landmark": "Phase 2 IT Park"
+    },
+    "priceDetails": {
+      "range": "₹82 Lakh - ₹1.2 Cr",
+      "perSqft": "₹8,400/sq.ft",
+      "configurations": [
+        {
+          "type": "2 BHK",
+          "area": "940 sq.ft",
+          "price": "₹82 Lakh",
+          "description": "IT-friendly 2 BHK with work-from-home space"
+        },
+        {
+          "type": "3 BHK",
+          "area": "1200 sq.ft",
+          "price": "₹1.2 Cr",
+          "description": "Premium 3 BHK with study room"
+        }
+      ]
+    },
+    "developer": {
+      "name": "Mantra Developers",
+      "established": "2010",
+      "projectsCount": 12,
+      "description": "Trusted builder in Pune with 12+ successful projects."
+    },
     "about": "Mantra Mayfair is strategically located in Hinjewadi Phase 2, offering seamless connectivity to IT parks and premium lifestyle amenities.",
-    "amenities": ["Swimming Pool", "Gym", "Kids Play Area", "Jogging Track", "24/7 Security", "Power Backup", "Landscaped Gardens"],
+    "amenities": [
+      "Swimming Pool",
+      "Gym",
+      "Kids Play Area",
+      "Jogging Track",
+      "24/7 Security",
+      "Power Backup",
+      "Landscaped Gardens"
+    ],
     "floorPlans": [
-      { "type": "2 BHK", "area": "940 sq.ft", "image": "/floorplans/mayfair-2bhk.webp" },
-      { "type": "3 BHK", "area": "1200 sq.ft", "image": "/floorplans/mayfair-2bhk.webp" }
+      {
+        "type": "2 BHK",
+        "area": "940 sq.ft",
+        "image": "/floorplans/mayfair-2bhk.webp"
+      },
+      {
+        "type": "3 BHK",
+        "area": "1200 sq.ft",
+        "image": "/floorplans/mayfair-2bhk.webp"
+      }
     ],
     "possessionDate": "Mar 2027",
     "reraNumber": "P52100048121",
-    "gallery": ["/gallery/mayfair-gallery1.webp", "/gallery/mayfair-gallery2.webp","/gallery/mayfair-gallery3.webp","public/gallery/mayfair-gallery4.webp"],
-    "mapCoords": { "lat": 18.5912, "lng": 73.7389 },
-    "nearbyPlaces": [
-      { "type": "Metro", "name": "Hinjewadi Metro", "distance": "0.5 km" },
-      { "type": "School", "name": "Vibgyor School", "distance": "1.2 km" }
+    "gallery": [
+      "/gallery/mayfair-gallery1.webp",
+      "/gallery/mayfair-gallery2.webp",
+      "/gallery/mayfair-gallery3.webp",
+      "public/gallery/mayfair-gallery4.webp"
     ],
-    "emi": { "startingFrom": "₹37,200/month", "downPayment": "30%", "interestRate": "8.35%", "tenure": "25 Years" }
+    "mapCoords": {
+      "lat": 18.5912,
+      "lng": 73.7389
+    },
+    "nearbyPlaces": [
+      {
+        "type": "Metro",
+        "name": "Hinjewadi Metro",
+        "distance": "0.5 km"
+      },
+      {
+        "type": "School",
+        "name": "Vibgyor School",
+        "distance": "1.2 km"
+      }
+    ],
+    "emi": {
+      "startingFrom": "₹37,200/month",
+      "downPayment": "30%",
+      "interestRate": "8.35%",
+      "tenure": "25 Years"
+    }
   },
   {
     "slug": "mantra-meridian",
@@ -68,27 +197,91 @@
     "image": "/projects/mantra-meridian.webp",
     "masterPlan": "/floorplans/mantra-meridian-master.webp",
     "locationMap": "/maps/mantra-meridian-location.webp",
-    "fullLocation": { "area": "Baner", "city": "Pune", "state": "Maharashtra", "pincode": "411045", "landmark": "Near Balewadi Stadium" },
-    "priceDetails": { "range": "₹85 Lakh - ₹1.3 Cr", "perSqft": "₹8,800/sq.ft", "configurations": [
-      { "type": "2 BHK", "area": "960 sq.ft", "price": "₹85 Lakh", "description": "Contemporary 2 BHK with premium finishes" },
-      { "type": "3 BHK", "area": "1280 sq.ft", "price": "₹1.3 Cr", "description": "Luxury 3 BHK with panoramic views" }
-    ]},
-    "developer": { "name": "Mantra Developers", "established": "2010", "projectsCount": 12, "description": "Award-winning developer with focus on quality and innovation." },
+    "fullLocation": {
+      "area": "Baner",
+      "city": "Pune",
+      "state": "Maharashtra",
+      "pincode": "411045",
+      "landmark": "Near Balewadi Stadium"
+    },
+    "priceDetails": {
+      "range": "₹85 Lakh - ₹1.3 Cr",
+      "perSqft": "₹8,800/sq.ft",
+      "configurations": [
+        {
+          "type": "2 BHK",
+          "area": "960 sq.ft",
+          "price": "₹85 Lakh",
+          "description": "Contemporary 2 BHK with premium finishes"
+        },
+        {
+          "type": "3 BHK",
+          "area": "1280 sq.ft",
+          "price": "₹1.3 Cr",
+          "description": "Luxury 3 BHK with panoramic views"
+        }
+      ]
+    },
+    "developer": {
+      "name": "Mantra Developers",
+      "established": "2010",
+      "projectsCount": 12,
+      "description": "Award-winning developer with focus on quality and innovation."
+    },
     "about": "Mantra Meridian in Baner offers sophisticated living with world-class amenities and excellent connectivity to Pune's key business districts.",
-    "amenities": ["Infinity Pool", "Gym", "Spa", "Kids Play Area", "Jogging Track", "24/7 Security", "Clubhouse", "Indoor Games"],
+    "amenities": [
+      "Infinity Pool",
+      "Gym",
+      "Spa",
+      "Kids Play Area",
+      "Jogging Track",
+      "24/7 Security",
+      "Clubhouse",
+      "Indoor Games"
+    ],
     "floorPlans": [
-      { "type": "2 BHK", "area": "960 sq.ft", "image": "/floorplans/meridian-2bhk.webp" },
-      { "type": "3 BHK", "area": "1280 sq.ft", "image": "/floorplans/meridian-3bhk.webp" }
+      {
+        "type": "2 BHK",
+        "area": "960 sq.ft",
+        "image": "/floorplans/meridian-2bhk.webp"
+      },
+      {
+        "type": "3 BHK",
+        "area": "1280 sq.ft",
+        "image": "/floorplans/meridian-3bhk.webp"
+      }
     ],
     "possessionDate": "Jun 2027",
     "reraNumber": "P52100048122",
-    "gallery": ["/gallery/meridian-1.webp", "/gallery/meridian-2.webp", "/gallery/meridian-3.webp","/gallery/meridian-4.webp","/gallery/meridian-5.webp"],
-    "mapCoords": { "lat": 18.5593, "lng": 73.7815 },
-    "nearbyPlaces": [
-      { "type": "Mall", "name": "Westend Mall", "distance": "0.8 km" },
-      { "type": "Hospital", "name": "Sahyadri Hospital", "distance": "1.5 km" }
+    "gallery": [
+      "/gallery/meridian-1.webp",
+      "/gallery/meridian-2.webp",
+      "/gallery/meridian-3.webp",
+      "/gallery/meridian-4.webp",
+      "/gallery/meridian-5.webp"
     ],
-    "emi": { "startingFrom": "₹38,500/month", "downPayment": "30%", "interestRate": "8.35%", "tenure": "25 Years" }
+    "mapCoords": {
+      "lat": 18.5593,
+      "lng": 73.7815
+    },
+    "nearbyPlaces": [
+      {
+        "type": "Mall",
+        "name": "Westend Mall",
+        "distance": "0.8 km"
+      },
+      {
+        "type": "Hospital",
+        "name": "Sahyadri Hospital",
+        "distance": "1.5 km"
+      }
+    ],
+    "emi": {
+      "startingFrom": "₹38,500/month",
+      "downPayment": "30%",
+      "interestRate": "8.35%",
+      "tenure": "25 Years"
+    }
   },
   {
     "slug": "mantra-magnus",
@@ -98,27 +291,89 @@
     "image": "/projects/mantra-magnus.webp",
     "masterPlan": "/floorplans/mantra-meridian-master.webp",
     "locationMap": "/maps/mantra-magnus-location.webp",
-    "fullLocation": { "area": "Wagholi", "city": "Pune", "state": "Maharashtra", "pincode": "412207", "landmark": "Near Phoenix Mall" },
-    "priceDetails": { "range": "₹78 Lakh - ₹1.1 Cr", "perSqft": "₹7,900/sq.ft", "configurations": [
-      { "type": "2 BHK", "area": "900 sq.ft", "price": "₹78 Lakh", "description": "Affordable 2 BHK with modern amenities" },
-      { "type": "3 BHK", "area": "1150 sq.ft", "price": "₹1.1 Cr", "description": "Value 3 BHK with spacious rooms" }
-    ]},
-    "developer": { "name": "Mantra Developers", "established": "2010", "projectsCount": 12, "description": "Focused on affordable luxury homes in emerging Pune locations." },
+    "fullLocation": {
+      "area": "Wagholi",
+      "city": "Pune",
+      "state": "Maharashtra",
+      "pincode": "412207",
+      "landmark": "Near Phoenix Mall"
+    },
+    "priceDetails": {
+      "range": "₹78 Lakh - ₹1.1 Cr",
+      "perSqft": "₹7,900/sq.ft",
+      "configurations": [
+        {
+          "type": "2 BHK",
+          "area": "900 sq.ft",
+          "price": "₹78 Lakh",
+          "description": "Affordable 2 BHK with modern amenities"
+        },
+        {
+          "type": "3 BHK",
+          "area": "1150 sq.ft",
+          "price": "₹1.1 Cr",
+          "description": "Value 3 BHK with spacious rooms"
+        }
+      ]
+    },
+    "developer": {
+      "name": "Mantra Developers",
+      "established": "2010",
+      "projectsCount": 12,
+      "description": "Focused on affordable luxury homes in emerging Pune locations."
+    },
     "about": "Mantra Magnus in Wagholi offers excellent value homes with modern amenities and growing connectivity to Pune's IT corridors.",
-    "amenities": ["Swimming Pool", "Gym", "Children's Play Area", "Jogging Track", "24/7 Security", "Power Backup"],
+    "amenities": [
+      "Swimming Pool",
+      "Gym",
+      "Children's Play Area",
+      "Jogging Track",
+      "24/7 Security",
+      "Power Backup"
+    ],
     "floorPlans": [
-      { "type": "2 BHK", "area": "900 sq.ft", "image": "/floorplans/magnus-2bhk.webp" },
-      { "type": "3 BHK", "area": "1150 sq.ft", "image": "/floorplans/magnus-2bhk.webp" }
+      {
+        "type": "2 BHK",
+        "area": "900 sq.ft",
+        "image": "/floorplans/magnus-2bhk.webp"
+      },
+      {
+        "type": "3 BHK",
+        "area": "1150 sq.ft",
+        "image": "/floorplans/magnus-2bhk.webp"
+      }
     ],
     "possessionDate": "Sep 2026",
     "reraNumber": "P52100048124",
-    "gallery": ["/gallery/magnus-1.webp", "/gallery/magnus-2.webp","/gallery/magnus-3.webp","/gallery/magnus-4.webp","/gallery/magnus-5.webp"],
-    "mapCoords": { "lat": 18.5679, "lng": 73.9719 },
-    "nearbyPlaces": [
-      { "type": "Mall", "name": "Phoenix Mall", "distance": "1.0 km" },
-      { "type": "School", "name": "Podar International", "distance": "1.8 km" }
+    "gallery": [
+      "/gallery/magnus-1.webp",
+      "/gallery/magnus-2.webp",
+      "/gallery/magnus-3.webp",
+      "/gallery/magnus-4.webp",
+      "/gallery/magnus-5.webp"
     ],
-    "emi": { "startingFrom": "₹35,200/month", "downPayment": "30%", "interestRate": "8.35%", "tenure": "25 Years" }
+    "mapCoords": {
+      "lat": 18.5679,
+      "lng": 73.9719
+    },
+    "nearbyPlaces": [
+      {
+        "type": "Mall",
+        "name": "Phoenix Mall",
+        "distance": "1.0 km"
+      },
+      {
+        "type": "School",
+        "name": "Podar International",
+        "distance": "1.8 km"
+      }
+    ],
+    "emi": {
+      "startingFrom": "₹35,200/month",
+      "downPayment": "30%",
+      "interestRate": "8.35%",
+      "tenure": "25 Years"
+    }
   },
   {
     "slug": "mantra-milange",
@@ -128,27 +383,90 @@
     "image": "/projects/milange.webp",
     "masterPlan": "/floorplans/mantra-meridian-master.webp",
     "locationMap": "/maps/mantra-milange-location.webp",
-    "fullLocation": { "area": "Kharadi", "city": "Pune", "state": "Maharashtra", "pincode": "411014", "landmark": "Near EON IT Park" },
-    "priceDetails": { "range": "₹83 Lakh - ₹1.25 Cr", "perSqft": "₹8,600/sq.ft", "configurations": [
-      { "type": "2 BHK", "area": "950 sq.ft", "price": "₹83 Lakh", "description": "IT-proximity 2 BHK with smart home features" },
-      { "type": "3 BHK", "area": "1220 sq.ft", "price": "₹1.25 Cr", "description": "Premium 3 BHK with balcony garden" }
-    ]},
-    "developer": { "name": "Mantra Developers", "established": "2010", "projectsCount": 12, "description": "Specializing in tech-friendly homes near Pune's IT hubs." },
+    "fullLocation": {
+      "area": "Kharadi",
+      "city": "Pune",
+      "state": "Maharashtra",
+      "pincode": "411014",
+      "landmark": "Near EON IT Park"
+    },
+    "priceDetails": {
+      "range": "₹83 Lakh - ₹1.25 Cr",
+      "perSqft": "₹8,600/sq.ft",
+      "configurations": [
+        {
+          "type": "2 BHK",
+          "area": "950 sq.ft",
+          "price": "₹83 Lakh",
+          "description": "IT-proximity 2 BHK with smart home features"
+        },
+        {
+          "type": "3 BHK",
+          "area": "1220 sq.ft",
+          "price": "₹1.25 Cr",
+          "description": "Premium 3 BHK with balcony garden"
+        }
+      ]
+    },
+    "developer": {
+      "name": "Mantra Developers",
+      "established": "2010",
+      "projectsCount": 12,
+      "description": "Specializing in tech-friendly homes near Pune's IT hubs."
+    },
     "about": "Mantra Milange in Kharadi offers smart homes with excellent connectivity to EON IT Park and Pune Airport.",
-    "amenities": ["Swimming Pool", "Gym", "Kids Play Area", "Jogging Track", "24/7 Security", "Power Backup", "Smart Home Features"],
+    "amenities": [
+      "Swimming Pool",
+      "Gym",
+      "Kids Play Area",
+      "Jogging Track",
+      "24/7 Security",
+      "Power Backup",
+      "Smart Home Features"
+    ],
     "floorPlans": [
-      { "type": "2 BHK", "area": "950 sq.ft", "image": "/floorplans/milange-2bhk.webp" },
-      { "type": "3 BHK", "area": "1220 sq.ft", "image": "/floorplans/milange-3bhk.webp" }
+      {
+        "type": "2 BHK",
+        "area": "950 sq.ft",
+        "image": "/floorplans/milange-2bhk.webp"
+      },
+      {
+        "type": "3 BHK",
+        "area": "1220 sq.ft",
+        "image": "/floorplans/milange-3bhk.webp"
+      }
     ],
     "possessionDate": "Dec 2026",
     "reraNumber": "P52100048125",
-    "gallery": ["/gallery/milange-1.webp", "/gallery/milange-2.webp","/gallery/milange-3.webp","/gallery/milange-4.webp","/gallery/milange-5.webp"],
-    "mapCoords": { "lat": 18.5579, "lng": 73.9453 },
-    "nearbyPlaces": [
-      { "type": "IT Park", "name": "EON IT Park", "distance": "0.3 km" },
-      { "type": "Airport", "name": "Pune Airport", "distance": "8 km" }
+    "gallery": [
+      "/gallery/milange-1.webp",
+      "/gallery/milange-2.webp",
+      "/gallery/milange-3.webp",
+      "/gallery/milange-4.webp",
+      "/gallery/milange-5.webp"
     ],
-    "emi": { "startingFrom": "₹37,500/month", "downPayment": "30%", "interestRate": "8.35%", "tenure": "25 Years" }
+    "mapCoords": {
+      "lat": 18.5579,
+      "lng": 73.9453
+    },
+    "nearbyPlaces": [
+      {
+        "type": "IT Park",
+        "name": "EON IT Park",
+        "distance": "0.3 km"
+      },
+      {
+        "type": "Airport",
+        "name": "Pune Airport",
+        "distance": "8 km"
+      }
+    ],
+    "emi": {
+      "startingFrom": "₹37,500/month",
+      "downPayment": "30%",
+      "interestRate": "8.35%",
+      "tenure": "25 Years"
+    }
   },
   {
     "slug": "mantra-codename-paradise",
@@ -158,29 +476,101 @@
     "image": "/projects/mantra-codename-paradise.webp",
     "masterPlan": "/floorplans/mantra-codename-paradise-master.webp",
     "locationMap": "/maps/mantra-codename-paradise-location.webp",
-    "fullLocation": { "area": "Sus", "city": "Pune", "state": "Maharashtra", "pincode": "411021", "landmark": "Near Hinjewadi IT Park" },
-    "priceDetails": { "range": "₹80 Lakh - ₹1.2 Cr", "perSqft": "₹8,500/sq.ft", "configurations": [
-      { "type": "2 BHK", "area": "950 sq.ft", "price": "₹80 Lakh", "description": "Spacious 2 BHK with modern amenities" },
-      { "type": "3 BHK", "area": "1250 sq.ft", "price": "₹1.1 Cr", "description": "Premium 3 BHK with balcony and study room" }
-    ]},
-    "developer": { "name": "Mantra Developers", "established": "2010", "projectsCount": 12, "description": "Mantra Developers is a trusted name in Pune real estate, delivering quality homes with modern amenities and timely possession since 2010." },
+    "fullLocation": {
+      "area": "Sus",
+      "city": "Pune",
+      "state": "Maharashtra",
+      "pincode": "411021",
+      "landmark": "Near Hinjewadi IT Park"
+    },
+    "priceDetails": {
+      "range": "₹80 Lakh - ₹1.2 Cr",
+      "perSqft": "₹8,500/sq.ft",
+      "configurations": [
+        {
+          "type": "2 BHK",
+          "area": "950 sq.ft",
+          "price": "₹80 Lakh",
+          "description": "Spacious 2 BHK with modern amenities"
+        },
+        {
+          "type": "3 BHK",
+          "area": "1250 sq.ft",
+          "price": "₹1.1 Cr",
+          "description": "Premium 3 BHK with balcony and study room"
+        }
+      ]
+    },
+    "developer": {
+      "name": "Mantra Developers",
+      "established": "2010",
+      "projectsCount": 12,
+      "description": "Mantra Developers is a trusted name in Pune real estate, delivering quality homes with modern amenities and timely possession since 2010."
+    },
     "about": "Mantra Codename Paradise offers luxurious 2 & 3 BHK homes in Sus, Pune with modern amenities, excellent connectivity to Hinjewadi IT Park, and a serene living environment. The project features landscaped gardens, 24/7 security, and premium finishes throughout.",
-    "amenities": ["Swimming Pool", "Gym", "Children's Play Area", "Jogging Track", "24/7 Security", "Power Backup", "Clubhouse", "Landscaped Gardens", "Indoor Games", "Yoga Deck"],
+    "amenities": [
+      "Swimming Pool",
+      "Gym",
+      "Children's Play Area",
+      "Jogging Track",
+      "24/7 Security",
+      "Power Backup",
+      "Clubhouse",
+      "Landscaped Gardens",
+      "Indoor Games",
+      "Yoga Deck"
+    ],
     "floorPlans": [
-      { "type": "2 BHK", "area": "950 sq.ft", "image": "/floorplans/mantra-codename-2bhk.webp" },
-      { "type": "3 BHK", "area": "1250 sq.ft", "image": "/floorplans/mantra-codename-3bhk.webp" }
+      {
+        "type": "2 BHK",
+        "area": "950 sq.ft",
+        "image": "/floorplans/mantra-codename-2bhk.webp"
+      },
+      {
+        "type": "3 BHK",
+        "area": "1250 sq.ft",
+        "image": "/floorplans/mantra-codename-3bhk.webp"
+      }
     ],
     "possessionDate": "Dec 2026",
     "reraNumber": "P52100048123",
-    "gallery": ["/gallery/mantra-codename-paradise-1.webp", "/gallery/mantra-codename-paradise-2.webp", "/gallery/mantra-codename-paradise-3.webp"],
-    "mapCoords": { "lat": 18.5912, "lng": 73.7389 },
-    "nearbyPlaces": [
-      { "type": "School", "name": "Delhi Public School", "distance": "1.2 km" },
-      { "type": "Hospital", "name": "Jupiter Hospital", "distance": "2.5 km" },
-      { "type": "Mall", "name": "Phoenix Mall", "distance": "3.1 km" },
-      { "type": "Metro", "name": "Hinjewadi Metro Station", "distance": "4.0 km" }
+    "gallery": [
+      "/gallery/mantra-codename-paradise-1.webp",
+      "/gallery/mantra-codename-paradise-2.webp",
+      "/gallery/mantra-codename-paradise-3.webp"
     ],
-    "emi": { "startingFrom": "₹36,700/month", "downPayment": "30%", "interestRate": "8.35%", "tenure": "25 Years" }
+    "mapCoords": {
+      "lat": 18.5912,
+      "lng": 73.7389
+    },
+    "nearbyPlaces": [
+      {
+        "type": "School",
+        "name": "Delhi Public School",
+        "distance": "1.2 km"
+      },
+      {
+        "type": "Hospital",
+        "name": "Jupiter Hospital",
+        "distance": "2.5 km"
+      },
+      {
+        "type": "Mall",
+        "name": "Phoenix Mall",
+        "distance": "3.1 km"
+      },
+      {
+        "type": "Metro",
+        "name": "Hinjewadi Metro Station",
+        "distance": "4.0 km"
+      }
+    ],
+    "emi": {
+      "startingFrom": "₹36,700/month",
+      "downPayment": "30%",
+      "interestRate": "8.35%",
+      "tenure": "25 Years"
+    }
   },
   {
     "slug": "lodha-mundhwa",
@@ -190,28 +580,99 @@
     "image": "/projects/lodha-mundhwa.webp",
     "masterPlan": "/floorplans/lodha-mundhwa-master.webp",
     "locationMap": "/maps/lodha-mundhwa-location.webp",
-    "fullLocation": { "area": "Mundhwa", "city": "Pune", "state": "Maharashtra", "pincode": "411036", "landmark": "Near Phoenix Mall" },
-    "priceDetails": { "range": "₹85 Lakh - ₹1.4 Cr", "perSqft": "₹9,200/sq.ft", "configurations": [
-      { "type": "2 BHK", "area": "980 sq.ft", "price": "₹85 Lakh", "description": "Premium 2 BHK with Lodha quality finishes" },
-      { "type": "3 BHK", "area": "1300 sq.ft", "price": "₹1.4 Cr", "description": "Luxury 3 BHK with panoramic views" }
-    ]},
-    "developer": { "name": "Lodha Group", "established": "1980", "projectsCount": 200, "description": "Lodha Group is India's largest real estate developer with iconic projects across Mumbai, Pune, Bangalore, and London." },
+    "fullLocation": {
+      "area": "Mundhwa",
+      "city": "Pune",
+      "state": "Maharashtra",
+      "pincode": "411036",
+      "landmark": "Near Phoenix Mall"
+    },
+    "priceDetails": {
+      "range": "₹85 Lakh - ₹1.4 Cr",
+      "perSqft": "₹9,200/sq.ft",
+      "configurations": [
+        {
+          "type": "2 BHK",
+          "area": "980 sq.ft",
+          "price": "₹85 Lakh",
+          "description": "Premium 2 BHK with Lodha quality finishes"
+        },
+        {
+          "type": "3 BHK",
+          "area": "1300 sq.ft",
+          "price": "₹1.4 Cr",
+          "description": "Luxury 3 BHK with panoramic views"
+        }
+      ]
+    },
+    "developer": {
+      "name": "Lodha Group",
+      "established": "1980",
+      "projectsCount": 200,
+      "description": "Lodha Group is India's largest real estate developer with iconic projects across Mumbai, Pune, Bangalore, and London."
+    },
     "about": "Lodha Mundhwa brings the Lodha legacy of excellence to Pune with premium homes, world-class amenities, and impeccable craftsmanship in a prime location.",
-    "amenities": ["Infinity Pool", "State-of-art Gym", "Spa & Sauna", "Kids Play Area", "Jogging Track", "24/7 Security", "Clubhouse", "Landscaped Gardens", "Tennis Court", "Indoor Games"],
+    "amenities": [
+      "Infinity Pool",
+      "State-of-art Gym",
+      "Spa & Sauna",
+      "Kids Play Area",
+      "Jogging Track",
+      "24/7 Security",
+      "Clubhouse",
+      "Landscaped Gardens",
+      "Tennis Court",
+      "Indoor Games"
+    ],
     "floorPlans": [
-      { "type": "1 BHK", "area": "980 sq.ft", "image": "/floorplans/lodha-1bhk.webp" },
-      { "type": "2 BHK", "area": "1300 sq.ft", "image": "/floorplans/lodha-2bhk.webp" }
+      {
+        "type": "1 BHK",
+        "area": "980 sq.ft",
+        "image": "/floorplans/lodha-1bhk.webp"
+      },
+      {
+        "type": "2 BHK",
+        "area": "1300 sq.ft",
+        "image": "/floorplans/lodha-2bhk.webp"
+      }
     ],
     "possessionDate": "Mar 2027",
     "reraNumber": "P52100048130",
-    "gallery": ["/gallery/lodha-1.webp", "/gallery/lodha-2.webp", "/gallery/lodha-3.webp","/gallery/lodha-4.webp","/gallery/lodha-5.webp","/gallery/lodha-gallery1.webp"],
-    "mapCoords": { "lat": 18.5314, "lng": 73.9260 },
-    "nearbyPlaces": [
-      { "type": "Mall", "name": "Phoenix Mall", "distance": "0.5 km" },
-      { "type": "School", "name": "Bishop School", "distance": "1.0 km" },
-      { "type": "Hospital", "name": "Sahyadri Hospital", "distance": "1.8 km" }
+    "gallery": [
+      "/gallery/lodha-1.webp",
+      "/gallery/lodha-2.webp",
+      "/gallery/lodha-3.webp",
+      "/gallery/lodha-4.webp",
+      "/gallery/lodha-5.webp",
+      "/gallery/lodha-gallery1.webp"
     ],
-    "emi": { "startingFrom": "₹39,500/month", "downPayment": "25%", "interestRate": "8.25%", "tenure": "30 Years" }
+    "mapCoords": {
+      "lat": 18.5314,
+      "lng": 73.926
+    },
+    "nearbyPlaces": [
+      {
+        "type": "Mall",
+        "name": "Phoenix Mall",
+        "distance": "0.5 km"
+      },
+      {
+        "type": "School",
+        "name": "Bishop School",
+        "distance": "1.0 km"
+      },
+      {
+        "type": "Hospital",
+        "name": "Sahyadri Hospital",
+        "distance": "1.8 km"
+      }
+    ],
+    "emi": {
+      "startingFrom": "₹39,500/month",
+      "downPayment": "25%",
+      "interestRate": "8.25%",
+      "tenure": "30 Years"
+    }
   },
   {
     "slug": "birla-punya",
@@ -221,27 +682,91 @@
     "image": "/projects/birla-punya.webp",
     "masterPlan": "/floorplans/birla-punya-master.webp",
     "locationMap": "/maps/birla-punya-location.webp",
-    "fullLocation": { "area": "Mohammadwadi", "city": "Pune", "state": "Maharashtra", "pincode": "411060", "landmark": "Near Amanora Mall" },
-    "priceDetails": { "range": "₹82 Lakh - ₹1.3 Cr", "perSqft": "₹8,700/sq.ft", "configurations": [
-      { "type": "2 BHK", "area": "940 sq.ft", "price": "₹82 Lakh", "description": "Elegant 2 BHK with Birla quality" },
-      { "type": "3 BHK", "area": "1240 sq.ft", "price": "₹1.3 Cr", "description": "Spacious 3 BHK with premium fittings" }
-    ]},
-    "developer": { "name": "Birla Estates", "established": "2017", "projectsCount": 15, "description": "Birla Estates brings the trusted Birla legacy to real estate with focus on quality, sustainability, and customer delight." },
+    "fullLocation": {
+      "area": "Mohammadwadi",
+      "city": "Pune",
+      "state": "Maharashtra",
+      "pincode": "411060",
+      "landmark": "Near Amanora Mall"
+    },
+    "priceDetails": {
+      "range": "₹82 Lakh - ₹1.3 Cr",
+      "perSqft": "₹8,700/sq.ft",
+      "configurations": [
+        {
+          "type": "2 BHK",
+          "area": "940 sq.ft",
+          "price": "₹82 Lakh",
+          "description": "Elegant 2 BHK with Birla quality"
+        },
+        {
+          "type": "3 BHK",
+          "area": "1240 sq.ft",
+          "price": "₹1.3 Cr",
+          "description": "Spacious 3 BHK with premium fittings"
+        }
+      ]
+    },
+    "developer": {
+      "name": "Birla Estates",
+      "established": "2017",
+      "projectsCount": 15,
+      "description": "Birla Estates brings the trusted Birla legacy to real estate with focus on quality, sustainability, and customer delight."
+    },
     "about": "Birla Punya in Mohammadwadi offers thoughtfully designed homes with premium amenities and excellent connectivity to Pune's key areas.",
-    "amenities": ["Swimming Pool", "Gym", "Kids Play Area", "Jogging Track", "24/7 Security", "Power Backup", "Clubhouse", "Yoga Deck"],
+    "amenities": [
+      "Swimming Pool",
+      "Gym",
+      "Kids Play Area",
+      "Jogging Track",
+      "24/7 Security",
+      "Power Backup",
+      "Clubhouse",
+      "Yoga Deck"
+    ],
     "floorPlans": [
-      { "type": "2 BHK", "area": "940 sq.ft", "image": "/floorplans/birla-2bhk.webp" },
-      { "type": "3 BHK", "area": "1240 sq.ft", "image": "/floorplans/birla-3bhk.webp" }
+      {
+        "type": "2 BHK",
+        "area": "940 sq.ft",
+        "image": "/floorplans/birla-2bhk.webp"
+      },
+      {
+        "type": "3 BHK",
+        "area": "1240 sq.ft",
+        "image": "/floorplans/birla-3bhk.webp"
+      }
     ],
     "possessionDate": "Jun 2027",
     "reraNumber": "P52100048131",
-    "gallery": ["/gallery/birla-punya1.webp", "/gallery/birla-punya2.webp","/gallery/birla-punya3.webp","/gallery/birla-punya4.webp","/gallery/birla-punya5.webp"],
-    "mapCoords": { "lat": 18.4912, "lng": 73.9098 },
-    "nearbyPlaces": [
-      { "type": "Mall", "name": "Amanora Mall", "distance": "1.2 km" },
-      { "type": "School", "name": "SNBP School", "distance": "0.8 km" }
+    "gallery": [
+      "/gallery/birla-punya1.webp",
+      "/gallery/birla-punya2.webp",
+      "/gallery/birla-punya3.webp",
+      "/gallery/birla-punya4.webp",
+      "/gallery/birla-punya5.webp"
     ],
-    "emi": { "startingFrom": "₹37,800/month", "downPayment": "30%", "interestRate": "8.35%", "tenure": "25 Years" }
+    "mapCoords": {
+      "lat": 18.4912,
+      "lng": 73.9098
+    },
+    "nearbyPlaces": [
+      {
+        "type": "Mall",
+        "name": "Amanora Mall",
+        "distance": "1.2 km"
+      },
+      {
+        "type": "School",
+        "name": "SNBP School",
+        "distance": "0.8 km"
+      }
+    ],
+    "emi": {
+      "startingFrom": "₹37,800/month",
+      "downPayment": "30%",
+      "interestRate": "8.35%",
+      "tenure": "25 Years"
+    }
   },
   {
     "slug": "birla-evem",
@@ -251,27 +776,90 @@
     "image": "/projects/birla-evem.webp",
     "masterPlan": "/floorplans/birla-evem-master.webp",
     "locationMap": "/maps/birla-evem-location.webp",
-    "fullLocation": { "area": "Kharadi", "city": "Pune", "state": "Maharashtra", "pincode": "411014", "landmark": "Near EON IT Park" },
-    "priceDetails": { "range": "₹84 Lakh - ₹1.35 Cr", "perSqft": "₹8,900/sq.ft", "configurations": [
-      { "type": "2 BHK", "area": "960 sq.ft", "price": "₹84 Lakh", "description": "Tech-ready 2 BHK for IT professionals" },
-      { "type": "3 BHK", "area": "1260 sq.ft", "price": "₹1.35 Cr", "description": "Premium 3 BHK with smart home features" }
-    ]},
-    "developer": { "name": "Birla Estates", "established": "2017", "projectsCount": 15, "description": "Creating sustainable, premium homes with the Birla promise of quality." },
+    "fullLocation": {
+      "area": "Kharadi",
+      "city": "Pune",
+      "state": "Maharashtra",
+      "pincode": "411014",
+      "landmark": "Near EON IT Park"
+    },
+    "priceDetails": {
+      "range": "₹84 Lakh - ₹1.35 Cr",
+      "perSqft": "₹8,900/sq.ft",
+      "configurations": [
+        {
+          "type": "2 BHK",
+          "area": "960 sq.ft",
+          "price": "₹84 Lakh",
+          "description": "Tech-ready 2 BHK for IT professionals"
+        },
+        {
+          "type": "3 BHK",
+          "area": "1260 sq.ft",
+          "price": "₹1.35 Cr",
+          "description": "Premium 3 BHK with smart home features"
+        }
+      ]
+    },
+    "developer": {
+      "name": "Birla Estates",
+      "established": "2017",
+      "projectsCount": 15,
+      "description": "Creating sustainable, premium homes with the Birla promise of quality."
+    },
     "about": "Birla Evem in Kharadi is designed for the modern professional with smart homes, excellent connectivity to IT parks, and premium lifestyle amenities.",
-    "amenities": ["Swimming Pool", "Gym", "Kids Play Area", "Jogging Track", "24/7 Security", "Power Backup", "Co-working Space", "Smart Home Features"],
+    "amenities": [
+      "Swimming Pool",
+      "Gym",
+      "Kids Play Area",
+      "Jogging Track",
+      "24/7 Security",
+      "Power Backup",
+      "Co-working Space",
+      "Smart Home Features"
+    ],
     "floorPlans": [
-      { "type": "2 BHK", "area": "960 sq.ft", "image": "/floorplans/evem-2bhk.webp" },
-      { "type": "3 BHK", "area": "1260 sq.ft", "image": "/floorplans/evem-3bhk.webp" }
+      {
+        "type": "2 BHK",
+        "area": "960 sq.ft",
+        "image": "/floorplans/evem-2bhk.webp"
+      },
+      {
+        "type": "3 BHK",
+        "area": "1260 sq.ft",
+        "image": "/floorplans/evem-3bhk.webp"
+      }
     ],
     "possessionDate": "Sep 2027",
     "reraNumber": "P52100048132",
-    "gallery": ["/gallery/evem-1.webp", "/gallery/evem-2.webp","/gallery/evem-3.webp","/gallery/evem-4.webp"],
-    "mapCoords": { "lat": 18.5579, "lng": 73.9453 },
-    "nearbyPlaces": [
-      { "type": "IT Park", "name": "EON IT Park", "distance": "0.5 km" },
-      { "type": "Metro", "name": "Kharadi Metro", "distance": "1.0 km" }
+    "gallery": [
+      "/gallery/evem-1.webp",
+      "/gallery/evem-2.webp",
+      "/gallery/evem-3.webp",
+      "/gallery/evem-4.webp"
     ],
-    "emi": { "startingFrom": "₹38,200/month", "downPayment": "30%", "interestRate": "8.35%", "tenure": "25 Years" }
+    "mapCoords": {
+      "lat": 18.5579,
+      "lng": 73.9453
+    },
+    "nearbyPlaces": [
+      {
+        "type": "IT Park",
+        "name": "EON IT Park",
+        "distance": "0.5 km"
+      },
+      {
+        "type": "Metro",
+        "name": "Kharadi Metro",
+        "distance": "1.0 km"
+      }
+    ],
+    "emi": {
+      "startingFrom": "₹38,200/month",
+      "downPayment": "30%",
+      "interestRate": "8.35%",
+      "tenure": "25 Years"
+    }
   },
   {
     "slug": "shapoorji-tree-cloud",
@@ -281,27 +869,93 @@
     "image": "/projects/shapoorji-tree-cloud.webp",
     "masterPlan": "/floorplans/shapoorji-tree-cloud-master.webp",
     "locationMap": "/maps/shapoorji-tree-cloud-location.webp",
-    "fullLocation": { "area": "Baner", "city": "Pune", "state": "Maharashtra", "pincode": "411045", "landmark": "Near Balewadi High Street" },
-    "priceDetails": { "range": "₹88 Lakh - ₹1.45 Cr", "perSqft": "₹9,500/sq.ft", "configurations": [
-      { "type": "2 BHK", "area": "990 sq.ft", "price": "₹88 Lakh", "description": "Nature-inspired 2 BHK with green views" },
-      { "type": "3 BHK", "area": "1320 sq.ft", "price": "₹1.45 Cr", "description": "Luxury 3 BHK with premium finishes" }
-    ]},
-    "developer": { "name": "Shapoorji Pallonji", "established": "1865", "projectsCount": 100, "description": "Shapoorji Pallonji is a 150+ year old legacy brand delivering iconic real estate projects across India." },
+    "fullLocation": {
+      "area": "Baner",
+      "city": "Pune",
+      "state": "Maharashtra",
+      "pincode": "411045",
+      "landmark": "Near Balewadi High Street"
+    },
+    "priceDetails": {
+      "range": "₹88 Lakh - ₹1.45 Cr",
+      "perSqft": "₹9,500/sq.ft",
+      "configurations": [
+        {
+          "type": "2 BHK",
+          "area": "990 sq.ft",
+          "price": "₹88 Lakh",
+          "description": "Nature-inspired 2 BHK with green views"
+        },
+        {
+          "type": "3 BHK",
+          "area": "1320 sq.ft",
+          "price": "₹1.45 Cr",
+          "description": "Luxury 3 BHK with premium finishes"
+        }
+      ]
+    },
+    "developer": {
+      "name": "Shapoorji Pallonji",
+      "established": "1865",
+      "projectsCount": 100,
+      "description": "Shapoorji Pallonji is a 150+ year old legacy brand delivering iconic real estate projects across India."
+    },
     "about": "Shapoorji Tree Cloud in Baner offers nature-inspired luxury homes with world-class amenities and the trusted Shapoorji Pallonji legacy.",
-    "amenities": ["Swimming Pool", "Gym", "Kids Play Area", "Jogging Track", "24/7 Security", "Power Backup", "Clubhouse", "Landscaped Gardens", "Amphitheatre"],
+    "amenities": [
+      "Swimming Pool",
+      "Gym",
+      "Kids Play Area",
+      "Jogging Track",
+      "24/7 Security",
+      "Power Backup",
+      "Clubhouse",
+      "Landscaped Gardens",
+      "Amphitheatre"
+    ],
     "floorPlans": [
-      { "type": "2 BHK", "area": "990 sq.ft", "image": "/floorplans/treecloud-2bhk.webp" },
-      { "type": "3 BHK", "area": "1320 sq.ft", "image": "/floorplans/opulis-1bhk.webp" }
+      {
+        "type": "2 BHK",
+        "area": "990 sq.ft",
+        "image": "/floorplans/treecloud-2bhk.webp"
+      },
+      {
+        "type": "3 BHK",
+        "area": "1320 sq.ft",
+        "image": "/floorplans/opulis-1bhk.webp"
+      }
     ],
     "possessionDate": "Dec 2027",
     "reraNumber": "P52100048133",
-    "gallery": ["/gallery/treecloud-1.webp", "/gallery/treecloud-2.webp","/gallery/treecloud-3.webp","/gallery/treecloud-4.webp","/gallery/treecloud-5.webp","/gallery/treecloud-6.webp"],
-    "mapCoords": { "lat": 18.5593, "lng": 73.7815 },
-    "nearbyPlaces": [
-      { "type": "Mall", "name": "Westend Mall", "distance": "0.6 km" },
-      { "type": "School", "name": "Orchid School", "distance": "1.0 km" }
+    "gallery": [
+      "/gallery/treecloud-1.webp",
+      "/gallery/treecloud-2.webp",
+      "/gallery/treecloud-3.webp",
+      "/gallery/treecloud-4.webp",
+      "/gallery/treecloud-5.webp",
+      "/gallery/treecloud-6.webp"
     ],
-    "emi": { "startingFrom": "₹40,500/month", "downPayment": "25%", "interestRate": "8.25%", "tenure": "30 Years" }
+    "mapCoords": {
+      "lat": 18.5593,
+      "lng": 73.7815
+    },
+    "nearbyPlaces": [
+      {
+        "type": "Mall",
+        "name": "Westend Mall",
+        "distance": "0.6 km"
+      },
+      {
+        "type": "School",
+        "name": "Orchid School",
+        "distance": "1.0 km"
+      }
+    ],
+    "emi": {
+      "startingFrom": "₹40,500/month",
+      "downPayment": "25%",
+      "interestRate": "8.25%",
+      "tenure": "30 Years"
+    }
   },
   {
     "slug": "shapoorji-celestia",
@@ -311,27 +965,90 @@
     "image": "/projects/shapoorji-celestia.webp",
     "masterPlan": "/floorplans/mantra-meridian-master.webp",
     "locationMap": "/maps/shapoorji-celestia-location.webp",
-    "fullLocation": { "area": "Wakad", "city": "Pune", "state": "Maharashtra", "pincode": "411057", "landmark": "Near DYP College" },
-    "priceDetails": { "range": "₹86 Lakh - ₹1.4 Cr", "perSqft": "₹9,200/sq.ft", "configurations": [
-      { "type": "2 BHK", "area": "970 sq.ft", "price": "₹86 Lakh", "description": "Contemporary 2 BHK with premium amenities" },
-      { "type": "3 BHK", "area": "1290 sq.ft", "price": "₹1.4 Cr", "description": "Spacious 3 BHK with balcony garden" }
-    ]},
-    "developer": { "name": "Shapoorji Pallonji", "established": "1865", "projectsCount": 100, "description": "India's oldest construction company delivering premium real estate with uncompromising quality." },
+    "fullLocation": {
+      "area": "Wakad",
+      "city": "Pune",
+      "state": "Maharashtra",
+      "pincode": "411057",
+      "landmark": "Near DYP College"
+    },
+    "priceDetails": {
+      "range": "₹86 Lakh - ₹1.4 Cr",
+      "perSqft": "₹9,200/sq.ft",
+      "configurations": [
+        {
+          "type": "2 BHK",
+          "area": "970 sq.ft",
+          "price": "₹86 Lakh",
+          "description": "Contemporary 2 BHK with premium amenities"
+        },
+        {
+          "type": "3 BHK",
+          "area": "1290 sq.ft",
+          "price": "₹1.4 Cr",
+          "description": "Spacious 3 BHK with balcony garden"
+        }
+      ]
+    },
+    "developer": {
+      "name": "Shapoorji Pallonji",
+      "established": "1865",
+      "projectsCount": 100,
+      "description": "India's oldest construction company delivering premium real estate with uncompromising quality."
+    },
     "about": "Shapoorji Celestia in Wakad offers premium homes with excellent connectivity to Hinjewadi IT Park and Mumbai-Pune Expressway.",
-    "amenities": ["Swimming Pool", "Gym", "Kids Play Area", "Jogging Track", "24/7 Security", "Power Backup", "Clubhouse", "Sky Lounge"],
+    "amenities": [
+      "Swimming Pool",
+      "Gym",
+      "Kids Play Area",
+      "Jogging Track",
+      "24/7 Security",
+      "Power Backup",
+      "Clubhouse",
+      "Sky Lounge"
+    ],
     "floorPlans": [
-      { "type": "2 BHK", "area": "970 sq.ft", "image": "/floorplans/celestia-2bhk.webp" },
-      { "type": "3 BHK", "area": "1290 sq.ft", "image": "/floorplans/celestia-3bhk.webp" }
+      {
+        "type": "2 BHK",
+        "area": "970 sq.ft",
+        "image": "/floorplans/celestia-2bhk.webp"
+      },
+      {
+        "type": "3 BHK",
+        "area": "1290 sq.ft",
+        "image": "/floorplans/celestia-3bhk.webp"
+      }
     ],
     "possessionDate": "Mar 2027",
     "reraNumber": "P52100048134",
-    "gallery": ["/gallery/celestia-1.webp", "/gallery/celestia-2.webp","/gallery/celestia-3.webp","/gallery/celestia-4.webp"],
-    "mapCoords": { "lat": 18.5975, "lng": 73.7898 },
-    "nearbyPlaces": [
-      { "type": "School", "name": "Delhi Public School", "distance": "0.8 km" },
-      { "type": "Hospital", "name": "Jupiter Hospital", "distance": "1.5 km" }
+    "gallery": [
+      "/gallery/celestia-1.webp",
+      "/gallery/celestia-2.webp",
+      "/gallery/celestia-3.webp",
+      "/gallery/celestia-4.webp"
     ],
-    "emi": { "startingFrom": "₹39,200/month", "downPayment": "25%", "interestRate": "8.25%", "tenure": "30 Years" }
+    "mapCoords": {
+      "lat": 18.5975,
+      "lng": 73.7898
+    },
+    "nearbyPlaces": [
+      {
+        "type": "School",
+        "name": "Delhi Public School",
+        "distance": "0.8 km"
+      },
+      {
+        "type": "Hospital",
+        "name": "Jupiter Hospital",
+        "distance": "1.5 km"
+      }
+    ],
+    "emi": {
+      "startingFrom": "₹39,200/month",
+      "downPayment": "25%",
+      "interestRate": "8.25%",
+      "tenure": "30 Years"
+    }
   },
   {
     "slug": "shapoorji-wildernest",
@@ -341,27 +1058,92 @@
     "image": "/projects/shapoorji-wildernest.webp",
     "masterPlan": "/floorplans/mantra-meridian-master.webp",
     "locationMap": "/maps/shapoorji-wildernest-location.webp",
-    "fullLocation": { "area": "Hinjewadi", "city": "Pune", "state": "Maharashtra", "pincode": "411057", "landmark": "Phase 3 IT Park" },
-    "priceDetails": { "range": "₹83 Lakh - ₹1.35 Cr", "perSqft": "₹8,800/sq.ft", "configurations": [
-      { "type": "2 BHK", "area": "950 sq.ft", "price": "₹83 Lakh", "description": "IT-proximity 2 BHK with work-from-home space" },
-      { "type": "3 BHK", "area": "1270 sq.ft", "price": "₹1.35 Cr", "description": "Premium 3 BHK with study room" }
-    ]},
-    "developer": { "name": "Shapoorji Pallonji", "established": "1865", "projectsCount": 100, "description": "Delivering quality homes near Pune's IT corridors with the Shapoorji legacy." },
+    "fullLocation": {
+      "area": "Hinjewadi",
+      "city": "Pune",
+      "state": "Maharashtra",
+      "pincode": "411057",
+      "landmark": "Phase 3 IT Park"
+    },
+    "priceDetails": {
+      "range": "₹83 Lakh - ₹1.35 Cr",
+      "perSqft": "₹8,800/sq.ft",
+      "configurations": [
+        {
+          "type": "2 BHK",
+          "area": "950 sq.ft",
+          "price": "₹83 Lakh",
+          "description": "IT-proximity 2 BHK with work-from-home space"
+        },
+        {
+          "type": "3 BHK",
+          "area": "1270 sq.ft",
+          "price": "₹1.35 Cr",
+          "description": "Premium 3 BHK with study room"
+        }
+      ]
+    },
+    "developer": {
+      "name": "Shapoorji Pallonji",
+      "established": "1865",
+      "projectsCount": 100,
+      "description": "Delivering quality homes near Pune's IT corridors with the Shapoorji legacy."
+    },
     "about": "Shapoorji Wildernest in Hinjewadi Phase 3 offers convenient living for IT professionals with modern amenities and excellent connectivity.",
-    "amenities": ["Swimming Pool", "Gym", "Kids Play Area", "Jogging Track", "24/7 Security", "Power Backup", "Co-working Space"],
+    "amenities": [
+      "Swimming Pool",
+      "Gym",
+      "Kids Play Area",
+      "Jogging Track",
+      "24/7 Security",
+      "Power Backup",
+      "Co-working Space"
+    ],
     "floorPlans": [
-      { "type": "3 BHK", "area": "950 sq.ft", "image": "/floorplans/wildernest-3bhk.webp" },
-      { "type": "4 BHK", "area": "1270 sq.ft", "image": "/floorplans/wildernest-4bhk.webp" }
+      {
+        "type": "3 BHK",
+        "area": "950 sq.ft",
+        "image": "/floorplans/wildernest-3bhk.webp"
+      },
+      {
+        "type": "4 BHK",
+        "area": "1270 sq.ft",
+        "image": "/floorplans/wildernest-4bhk.webp"
+      }
     ],
     "possessionDate": "Jun 2027",
     "reraNumber": "P52100048135",
-    "gallery": ["/gallery/wildernest-1.webp", "/gallery/wildernest-2.webp","/gallery/wildernest-3.webp","/gallery/wildernest-4.webp","/gallery/wildernest-5.webp","/gallery/wildernest-6.webp","/gallery/wildernest-7.webp"],
-    "mapCoords": { "lat": 18.5845, "lng": 73.7298 },
-    "nearbyPlaces": [
-      { "type": "IT Park", "name": "Hinjewadi Phase 3", "distance": "0.4 km" },
-      { "type": "Metro", "name": "Hinjewadi Metro", "distance": "0.8 km" }
+    "gallery": [
+      "/gallery/wildernest-1.webp",
+      "/gallery/wildernest-2.webp",
+      "/gallery/wildernest-3.webp",
+      "/gallery/wildernest-4.webp",
+      "/gallery/wildernest-5.webp",
+      "/gallery/wildernest-6.webp",
+      "/gallery/wildernest-7.webp"
     ],
-    "emi": { "startingFrom": "₹37,900/month", "downPayment": "30%", "interestRate": "8.35%", "tenure": "25 Years" }
+    "mapCoords": {
+      "lat": 18.5845,
+      "lng": 73.7298
+    },
+    "nearbyPlaces": [
+      {
+        "type": "IT Park",
+        "name": "Hinjewadi Phase 3",
+        "distance": "0.4 km"
+      },
+      {
+        "type": "Metro",
+        "name": "Hinjewadi Metro",
+        "distance": "0.8 km"
+      }
+    ],
+    "emi": {
+      "startingFrom": "₹37,900/month",
+      "downPayment": "30%",
+      "interestRate": "8.35%",
+      "tenure": "25 Years"
+    }
   },
   {
     "slug": "shapoorji-tree-topia",
@@ -371,27 +1153,90 @@
     "image": "/projects/shapoorji-tree-topia.webp",
     "masterPlan": "/floorplans/shapoorji-tree-topia-master.webp",
     "locationMap": "/maps/shapoorji-tree-topia-location.webp",
-    "fullLocation": { "area": "Pimple Saudagar", "city": "Pune", "state": "Maharashtra", "pincode": "411017", "landmark": "Near Metro Station" },
-    "priceDetails": { "range": "₹81 Lakh - ₹1.3 Cr", "perSqft": "₹8,600/sq.ft", "configurations": [
-      { "type": "2 BHK", "area": "930 sq.ft", "price": "₹81 Lakh", "description": "Metro-connected 2 BHK with modern amenities" },
-      { "type": "3 BHK", "area": "1230 sq.ft", "price": "₹1.3 Cr", "description": "Spacious 3 BHK with premium fittings" }
-    ]},
-    "developer": { "name": "Shapoorji Pallonji", "established": "1865", "projectsCount": 100, "description": "Creating connected living experiences with the Shapoorji Pallonji promise." },
+    "fullLocation": {
+      "area": "Pimple Saudagar",
+      "city": "Pune",
+      "state": "Maharashtra",
+      "pincode": "411017",
+      "landmark": "Near Metro Station"
+    },
+    "priceDetails": {
+      "range": "₹81 Lakh - ₹1.3 Cr",
+      "perSqft": "₹8,600/sq.ft",
+      "configurations": [
+        {
+          "type": "2 BHK",
+          "area": "930 sq.ft",
+          "price": "₹81 Lakh",
+          "description": "Metro-connected 2 BHK with modern amenities"
+        },
+        {
+          "type": "3 BHK",
+          "area": "1230 sq.ft",
+          "price": "₹1.3 Cr",
+          "description": "Spacious 3 BHK with premium fittings"
+        }
+      ]
+    },
+    "developer": {
+      "name": "Shapoorji Pallonji",
+      "established": "1865",
+      "projectsCount": 100,
+      "description": "Creating connected living experiences with the Shapoorji Pallonji promise."
+    },
     "about": "Shapoorji Tree Topia in Pimple Saudagar offers metro-connected homes with premium amenities and excellent connectivity across Pune.",
-    "amenities": ["Swimming Pool", "Gym", "Kids Play Area", "Jogging Track", "24/7 Security", "Power Backup", "Clubhouse"],
+    "amenities": [
+      "Swimming Pool",
+      "Gym",
+      "Kids Play Area",
+      "Jogging Track",
+      "24/7 Security",
+      "Power Backup",
+      "Clubhouse"
+    ],
     "floorPlans": [
-      { "type": "2 BHK", "area": "930 sq.ft", "image": "/floorplans/treetopia-2bhk.webp" },
-      { "type": "3 BHK", "area": "1230 sq.ft", "image": "/floorplans/treetopia-3bhk.webp" }
+      {
+        "type": "2 BHK",
+        "area": "930 sq.ft",
+        "image": "/floorplans/treetopia-2bhk.webp"
+      },
+      {
+        "type": "3 BHK",
+        "area": "1230 sq.ft",
+        "image": "/floorplans/treetopia-3bhk.webp"
+      }
     ],
     "possessionDate": "Sep 2026",
     "reraNumber": "P52100048136",
-    "gallery": ["/gallery/treetopia-1.webp", "/gallery/treetopia-2.webp","/gallery/treetopia-3.webp","/gallery/treetopia-4.webp","/gallery/treetopia-5.webp"],
-    "mapCoords": { "lat": 18.6298, "lng": 73.8045 },
-    "nearbyPlaces": [
-      { "type": "Metro", "name": "Pimple Saudagar Metro", "distance": "0.3 km" },
-      { "type": "Mall", "name": "Reliance Mall", "distance": "1.0 km" }
+    "gallery": [
+      "/gallery/treetopia-1.webp",
+      "/gallery/treetopia-2.webp",
+      "/gallery/treetopia-3.webp",
+      "/gallery/treetopia-4.webp",
+      "/gallery/treetopia-5.webp"
     ],
-    "emi": { "startingFrom": "₹37,100/month", "downPayment": "30%", "interestRate": "8.35%", "tenure": "25 Years" }
+    "mapCoords": {
+      "lat": 18.6298,
+      "lng": 73.8045
+    },
+    "nearbyPlaces": [
+      {
+        "type": "Metro",
+        "name": "Pimple Saudagar Metro",
+        "distance": "0.3 km"
+      },
+      {
+        "type": "Mall",
+        "name": "Reliance Mall",
+        "distance": "1.0 km"
+      }
+    ],
+    "emi": {
+      "startingFrom": "₹37,100/month",
+      "downPayment": "30%",
+      "interestRate": "8.35%",
+      "tenure": "25 Years"
+    }
   },
   {
     "slug": "shapoorji-villa",
@@ -401,27 +1246,89 @@
     "image": "/projects/shapoorji-villa.webp",
     "masterPlan": "/floorplans/shapoorji-villa-master.webp",
     "locationMap": "/maps/comming-soon.webp",
-    "fullLocation": { "area": "Undri", "city": "Pune", "state": "Maharashtra", "pincode": "411060", "landmark": "Near Amanora Park Town" },
-    "priceDetails": { "range": "₹1.2 Cr - ₹2.5 Cr", "perSqft": "₹10,500/sq.ft", "configurations": [
-      { "type": "3 BHK Villa", "area": "1800 sq.ft", "price": "₹1.2 Cr", "description": "Premium villa with private garden" },
-      { "type": "4 BHK Villa", "area": "2400 sq.ft", "price": "₹2.5 Cr", "description": "Luxury villa with terrace garden" }
-    ]},
-    "developer": { "name": "Shapoorji Pallonji", "established": "1865", "projectsCount": 100, "description": "Delivering premium villa experiences with the Shapoorji Pallonji legacy." },
+    "fullLocation": {
+      "area": "Undri",
+      "city": "Pune",
+      "state": "Maharashtra",
+      "pincode": "411060",
+      "landmark": "Near Amanora Park Town"
+    },
+    "priceDetails": {
+      "range": "₹1.2 Cr - ₹2.5 Cr",
+      "perSqft": "₹10,500/sq.ft",
+      "configurations": [
+        {
+          "type": "3 BHK Villa",
+          "area": "1800 sq.ft",
+          "price": "₹1.2 Cr",
+          "description": "Premium villa with private garden"
+        },
+        {
+          "type": "4 BHK Villa",
+          "area": "2400 sq.ft",
+          "price": "₹2.5 Cr",
+          "description": "Luxury villa with terrace garden"
+        }
+      ]
+    },
+    "developer": {
+      "name": "Shapoorji Pallonji",
+      "established": "1865",
+      "projectsCount": 100,
+      "description": "Delivering premium villa experiences with the Shapoorji Pallonji legacy."
+    },
     "about": "Shapoorji Villa in Undri offers exclusive villa living with private gardens, premium amenities, and the trusted Shapoorji quality.",
-    "amenities": ["Private Pool", "Gym", "Kids Play Area", "Jogging Track", "24/7 Security", "Power Backup", "Clubhouse", "Landscaped Gardens"],
+    "amenities": [
+      "Private Pool",
+      "Gym",
+      "Kids Play Area",
+      "Jogging Track",
+      "24/7 Security",
+      "Power Backup",
+      "Clubhouse",
+      "Landscaped Gardens"
+    ],
     "floorPlans": [
-      { "type": "3 BHK Villa", "area": "1800 sq.ft", "image": "/floorplans/shapoorji-villa-3bhk.webp" },
-      { "type": "4 BHK Villa", "area": "2400 sq.ft", "image": "/floorplans/shapoorji-villa-4bhk.webp" }
+      {
+        "type": "3 BHK Villa",
+        "area": "1800 sq.ft",
+        "image": "/floorplans/shapoorji-villa-3bhk.webp"
+      },
+      {
+        "type": "4 BHK Villa",
+        "area": "2400 sq.ft",
+        "image": "/floorplans/shapoorji-villa-4bhk.webp"
+      }
     ],
     "possessionDate": "Dec 2027",
     "reraNumber": "P52100048137",
-    "gallery": ["/gallery/shapoorji-villa-1.webp", "/gallery/shapoorji-villa-2.webp","/gallery/shapoorji-villa-3.webp"],
-    "mapCoords": { "lat": 18.4512, "lng": 73.9298 },
-    "nearbyPlaces": [
-      { "type": "Mall", "name": "Amanora Mall", "distance": "1.5 km" },
-      { "type": "School", "name": "SNBP School", "distance": "1.0 km" }
+    "gallery": [
+      "/gallery/shapoorji-villa-1.webp",
+      "/gallery/shapoorji-villa-2.webp",
+      "/gallery/shapoorji-villa-3.webp"
     ],
-    "emi": { "startingFrom": "₹55,000/month", "downPayment": "25%", "interestRate": "8.25%", "tenure": "30 Years" }
+    "mapCoords": {
+      "lat": 18.4512,
+      "lng": 73.9298
+    },
+    "nearbyPlaces": [
+      {
+        "type": "Mall",
+        "name": "Amanora Mall",
+        "distance": "1.5 km"
+      },
+      {
+        "type": "School",
+        "name": "SNBP School",
+        "distance": "1.0 km"
+      }
+    ],
+    "emi": {
+      "startingFrom": "₹55,000/month",
+      "downPayment": "25%",
+      "interestRate": "8.25%",
+      "tenure": "30 Years"
+    }
   },
   {
     "slug": "jhamtani-ace-abundance",
@@ -431,27 +1338,89 @@
     "image": "/projects/jhamtani-ace-abundance.webp",
     "masterPlan": "/floorplans/mantra-meridian-master.webp",
     "locationMap": "/maps/jhamtani-ace-abundance-location.webp",
-    "fullLocation": { "area": "Wagholi", "city": "Pune", "state": "Maharashtra", "pincode": "412207", "landmark": "Near Phoenix Mall" },
-    "priceDetails": { "range": "₹79 Lakh - ₹1.15 Cr", "perSqft": "₹8,100/sq.ft", "configurations": [
-      { "type": "2 BHK", "area": "910 sq.ft", "price": "₹79 Lakh", "description": "Value 2 BHK with modern amenities" },
-      { "type": "3 BHK", "area": "1190 sq.ft", "price": "₹1.15 Cr", "description": "Spacious 3 BHK with premium fittings" }
-    ]},
-    "developer": { "name": "Jhamtani Group", "established": "2005", "projectsCount": 8, "description": "Jhamtani Group delivers quality affordable homes in Pune's emerging locations." },
+    "fullLocation": {
+      "area": "Wagholi",
+      "city": "Pune",
+      "state": "Maharashtra",
+      "pincode": "412207",
+      "landmark": "Near Phoenix Mall"
+    },
+    "priceDetails": {
+      "range": "₹79 Lakh - ₹1.15 Cr",
+      "perSqft": "₹8,100/sq.ft",
+      "configurations": [
+        {
+          "type": "2 BHK",
+          "area": "910 sq.ft",
+          "price": "₹79 Lakh",
+          "description": "Value 2 BHK with modern amenities"
+        },
+        {
+          "type": "3 BHK",
+          "area": "1190 sq.ft",
+          "price": "₹1.15 Cr",
+          "description": "Spacious 3 BHK with premium fittings"
+        }
+      ]
+    },
+    "developer": {
+      "name": "Jhamtani Group",
+      "established": "2005",
+      "projectsCount": 8,
+      "description": "Jhamtani Group delivers quality affordable homes in Pune's emerging locations."
+    },
     "about": "Jhamtani Ace Abundance in Wagholi offers excellent value homes with modern amenities and growing connectivity to Pune's IT corridors.",
-    "amenities": ["Swimming Pool", "Gym", "Kids Play Area", "Jogging Track", "24/7 Security", "Power Backup"],
+    "amenities": [
+      "Swimming Pool",
+      "Gym",
+      "Kids Play Area",
+      "Jogging Track",
+      "24/7 Security",
+      "Power Backup"
+    ],
     "floorPlans": [
-      { "type": "3 BHK", "area": "910 sq.ft", "image": "/floorplans/ace-3bhk.webp" },
-      { "type": "3 BHK", "area": "1190 sq.ft", "image": "/floorplans/ace-3bhk.webp" }
+      {
+        "type": "3 BHK",
+        "area": "910 sq.ft",
+        "image": "/floorplans/ace-3bhk.webp"
+      },
+      {
+        "type": "3 BHK",
+        "area": "1190 sq.ft",
+        "image": "/floorplans/ace-3bhk.webp"
+      }
     ],
     "possessionDate": "Jun 2026",
     "reraNumber": "P52100048138",
-    "gallery": ["/gallery/ace-1.webp", "/gallery/ace-2.webp","/gallery/ace-3.webp","/gallery/ace-4.webp","/gallery/ace-5.webp"],
-    "mapCoords": { "lat": 18.5679, "lng": 73.9719 },
-    "nearbyPlaces": [
-      { "type": "Mall", "name": "Phoenix Mall", "distance": "1.2 km" },
-      { "type": "School", "name": "Podar International", "distance": "1.5 km" }
+    "gallery": [
+      "/gallery/ace-1.webp",
+      "/gallery/ace-2.webp",
+      "/gallery/ace-3.webp",
+      "/gallery/ace-4.webp",
+      "/gallery/ace-5.webp"
     ],
-    "emi": { "startingFrom": "₹35,800/month", "downPayment": "30%", "interestRate": "8.35%", "tenure": "25 Years" }
+    "mapCoords": {
+      "lat": 18.5679,
+      "lng": 73.9719
+    },
+    "nearbyPlaces": [
+      {
+        "type": "Mall",
+        "name": "Phoenix Mall",
+        "distance": "1.2 km"
+      },
+      {
+        "type": "School",
+        "name": "Podar International",
+        "distance": "1.5 km"
+      }
+    ],
+    "emi": {
+      "startingFrom": "₹35,800/month",
+      "downPayment": "30%",
+      "interestRate": "8.35%",
+      "tenure": "25 Years"
+    }
   },
   {
     "slug": "kumar-prism",
@@ -461,27 +1430,91 @@
     "image": "/projects/kumar-prism.webp",
     "masterPlan": "/floorplans/kumar-prism-master.webp",
     "locationMap": "/maps/kumar-prism-location.webp",
-    "fullLocation": { "area": "Kharadi", "city": "Pune", "state": "Maharashtra", "pincode": "411014", "landmark": "Near EON IT Park" },
-    "priceDetails": { "range": "₹84 Lakh - ₹1.32 Cr", "perSqft": "₹8,800/sq.ft", "configurations": [
-      { "type": "2 BHK", "area": "955 sq.ft", "price": "₹84 Lakh", "description": "IT-proximity 2 BHK with smart features" },
-      { "type": "3 BHK", "area": "1255 sq.ft", "price": "₹1.32 Cr", "description": "Premium 3 BHK with balcony garden" }
-    ]},
-    "developer": { "name": "Kumar Properties", "established": "1990", "projectsCount": 50, "description": "Kumar Properties is a trusted Pune developer with 30+ years of experience in quality construction." },
+    "fullLocation": {
+      "area": "Kharadi",
+      "city": "Pune",
+      "state": "Maharashtra",
+      "pincode": "411014",
+      "landmark": "Near EON IT Park"
+    },
+    "priceDetails": {
+      "range": "₹84 Lakh - ₹1.32 Cr",
+      "perSqft": "₹8,800/sq.ft",
+      "configurations": [
+        {
+          "type": "2 BHK",
+          "area": "955 sq.ft",
+          "price": "₹84 Lakh",
+          "description": "IT-proximity 2 BHK with smart features"
+        },
+        {
+          "type": "3 BHK",
+          "area": "1255 sq.ft",
+          "price": "₹1.32 Cr",
+          "description": "Premium 3 BHK with balcony garden"
+        }
+      ]
+    },
+    "developer": {
+      "name": "Kumar Properties",
+      "established": "1990",
+      "projectsCount": 50,
+      "description": "Kumar Properties is a trusted Pune developer with 30+ years of experience in quality construction."
+    },
     "about": "Kumar Prism in Kharadi offers smart homes with excellent connectivity to EON IT Park and Pune Airport.",
-    "amenities": ["Swimming Pool", "Gym", "Kids Play Area", "Jogging Track", "24/7 Security", "Power Backup", "Smart Home Features"],
+    "amenities": [
+      "Swimming Pool",
+      "Gym",
+      "Kids Play Area",
+      "Jogging Track",
+      "24/7 Security",
+      "Power Backup",
+      "Smart Home Features"
+    ],
     "floorPlans": [
-      { "type": "3 BHK", "area": "955 sq.ft", "image": "/floorplans/prism-3bhk.webp" },
-      { "type": "4 BHK", "area": "1255 sq.ft", "image": "/floorplans/prism-4bhk.webp" }
+      {
+        "type": "3 BHK",
+        "area": "955 sq.ft",
+        "image": "/floorplans/prism-3bhk.webp"
+      },
+      {
+        "type": "4 BHK",
+        "area": "1255 sq.ft",
+        "image": "/floorplans/prism-4bhk.webp"
+      }
     ],
     "possessionDate": "Mar 2027",
     "reraNumber": "P52100048139",
-    "gallery": ["/gallery/prism-1.webp", "/gallery/prism-2.webp","/gallery/prism-3.webp","/gallery/prism-4.webp","/gallery/prism-5.webp","/gallery/prism-6.webp"],
-    "mapCoords": { "lat": 18.5579, "lng": 73.9453 },
-    "nearbyPlaces": [
-      { "type": "IT Park", "name": "EON IT Park", "distance": "0.4 km" },
-      { "type": "Airport", "name": "Pune Airport", "distance": "7.5 km" }
+    "gallery": [
+      "/gallery/prism-1.webp",
+      "/gallery/prism-2.webp",
+      "/gallery/prism-3.webp",
+      "/gallery/prism-4.webp",
+      "/gallery/prism-5.webp",
+      "/gallery/prism-6.webp"
     ],
-    "emi": { "startingFrom": "₹38,100/month", "downPayment": "30%", "interestRate": "8.35%", "tenure": "25 Years" }
+    "mapCoords": {
+      "lat": 18.5579,
+      "lng": 73.9453
+    },
+    "nearbyPlaces": [
+      {
+        "type": "IT Park",
+        "name": "EON IT Park",
+        "distance": "0.4 km"
+      },
+      {
+        "type": "Airport",
+        "name": "Pune Airport",
+        "distance": "7.5 km"
+      }
+    ],
+    "emi": {
+      "startingFrom": "₹38,100/month",
+      "downPayment": "30%",
+      "interestRate": "8.35%",
+      "tenure": "25 Years"
+    }
   },
   {
     "slug": "panchshil-57avenue",
@@ -491,27 +1524,90 @@
     "image": "/projects/panchshil-57avenue.webp",
     "masterPlan": "/floorplans/panchshil-57avenue-master.webp",
     "locationMap": "/maps/panchshil-57avenue-location.webp",
-    "fullLocation": { "area": "Koregaon Park", "city": "Pune", "state": "Maharashtra", "pincode": "411001", "landmark": "Near Phoenix Mall" },
-    "priceDetails": { "range": "₹1.5 Cr - ₹3.5 Cr", "perSqft": "₹15,000/sq.ft", "configurations": [
-      { "type": "3 BHK", "area": "1600 sq.ft", "price": "₹1.5 Cr", "description": "Luxury 3 BHK in prime Koregaon Park" },
-      { "type": "4 BHK", "area": "2200 sq.ft", "price": "₹3.5 Cr", "description": "Penthouse-style 4 BHK with premium finishes" }
-    ]},
-    "developer": { "name": "Panchshil Realty", "established": "2003", "projectsCount": 25, "description": "Panchshil Realty creates iconic luxury properties in Pune's most premium locations." },
+    "fullLocation": {
+      "area": "Koregaon Park",
+      "city": "Pune",
+      "state": "Maharashtra",
+      "pincode": "411001",
+      "landmark": "Near Phoenix Mall"
+    },
+    "priceDetails": {
+      "range": "₹1.5 Cr - ₹3.5 Cr",
+      "perSqft": "₹15,000/sq.ft",
+      "configurations": [
+        {
+          "type": "3 BHK",
+          "area": "1600 sq.ft",
+          "price": "₹1.5 Cr",
+          "description": "Luxury 3 BHK in prime Koregaon Park"
+        },
+        {
+          "type": "4 BHK",
+          "area": "2200 sq.ft",
+          "price": "₹3.5 Cr",
+          "description": "Penthouse-style 4 BHK with premium finishes"
+        }
+      ]
+    },
+    "developer": {
+      "name": "Panchshil Realty",
+      "established": "2003",
+      "projectsCount": 25,
+      "description": "Panchshil Realty creates iconic luxury properties in Pune's most premium locations."
+    },
     "about": "Panchshil 57 Avenue in Koregaon Park offers ultra-luxury residences with world-class amenities in Pune's most prestigious address.",
-    "amenities": ["Infinity Pool", "Spa & Sauna", "Private Gym", "Concierge Service", "24/7 Security", "Valet Parking", "Sky Lounge", "Wine Cellar"],
+    "amenities": [
+      "Infinity Pool",
+      "Spa & Sauna",
+      "Private Gym",
+      "Concierge Service",
+      "24/7 Security",
+      "Valet Parking",
+      "Sky Lounge",
+      "Wine Cellar"
+    ],
     "floorPlans": [
-      { "type": "3 BHK", "area": "1600 sq.ft", "image": "/floorplans/57ave-3bhk.webp" },
-      { "type": "3.5 BHK", "area": "2200 sq.ft", "image": "/floorplans/57ave-3.5bhk.webp" }
+      {
+        "type": "3 BHK",
+        "area": "1600 sq.ft",
+        "image": "/floorplans/57ave-3bhk.webp"
+      },
+      {
+        "type": "3.5 BHK",
+        "area": "2200 sq.ft",
+        "image": "/floorplans/57ave-3.5bhk.webp"
+      }
     ],
     "possessionDate": "Dec 2027",
     "reraNumber": "P52100048140",
-    "gallery": ["/gallery/57ave-1.webp", "/gallery/57ave-2.webp","/gallery/57ave-3.webp","/gallery/57ave-4.webp"],
-    "mapCoords": { "lat": 18.5362, "lng": 73.8958 },
-    "nearbyPlaces": [
-      { "type": "Mall", "name": "Phoenix Mall", "distance": "0.5 km" },
-      { "type": "Restaurant", "name": "German Bakery", "distance": "0.3 km" }
+    "gallery": [
+      "/gallery/57ave-1.webp",
+      "/gallery/57ave-2.webp",
+      "/gallery/57ave-3.webp",
+      "/gallery/57ave-4.webp"
     ],
-    "emi": { "startingFrom": "₹68,000/month", "downPayment": "25%", "interestRate": "8.25%", "tenure": "30 Years" }
+    "mapCoords": {
+      "lat": 18.5362,
+      "lng": 73.8958
+    },
+    "nearbyPlaces": [
+      {
+        "type": "Mall",
+        "name": "Phoenix Mall",
+        "distance": "0.5 km"
+      },
+      {
+        "type": "Restaurant",
+        "name": "German Bakery",
+        "distance": "0.3 km"
+      }
+    ],
+    "emi": {
+      "startingFrom": "₹68,000/month",
+      "downPayment": "25%",
+      "interestRate": "8.25%",
+      "tenure": "30 Years"
+    }
   },
   {
     "slug": "panchshil-lohegaon-plotting",
@@ -521,27 +1617,96 @@
     "image": "/projects/panchshil-lohegaon-plotting.webp",
     "masterPlan": "/floorplans/panchshil-lohegaon-plotting-master.webp",
     "locationMap": "/maps/panchshil-lohegaon-plotting-location.webp",
-    "fullLocation": { "area": "Lohegaon", "city": "Pune", "state": "Maharashtra", "pincode": "411047", "landmark": "Near Airport" },
-    "priceDetails": { "range": "₹85 Lakh - ₹1.8 Cr", "perSqft": "₹4,500/sq.ft", "configurations": [
-      { "type": "Plot 120 sq.yd", "area": "120 sq.yd", "price": "₹85 Lakh", "description": "Ready-to-build plot with approval" },
-      { "type": "Plot 200 sq.yd", "area": "200 sq.yd", "price": "₹1.8 Cr", "description": "Premium corner plot with park facing" }
-    ]},
-    "developer": { "name": "Panchshil Realty", "established": "2003", "projectsCount": 25, "description": "Creating premium plotted developments in Pune's growth corridors." },
+    "fullLocation": {
+      "area": "Lohegaon",
+      "city": "Pune",
+      "state": "Maharashtra",
+      "pincode": "411047",
+      "landmark": "Near Airport"
+    },
+    "priceDetails": {
+      "range": "₹85 Lakh - ₹1.8 Cr",
+      "perSqft": "₹4,500/sq.ft",
+      "configurations": [
+        {
+          "type": "Plot 120 sq.yd",
+          "area": "120 sq.yd",
+          "price": "₹85 Lakh",
+          "description": "Ready-to-build plot with approval"
+        },
+        {
+          "type": "Plot 200 sq.yd",
+          "area": "200 sq.yd",
+          "price": "₹1.8 Cr",
+          "description": "Premium corner plot with park facing"
+        }
+      ]
+    },
+    "developer": {
+      "name": "Panchshil Realty",
+      "established": "2003",
+      "projectsCount": 25,
+      "description": "Creating premium plotted developments in Pune's growth corridors."
+    },
     "about": "Panchshil Lohegaon Plotting offers ready-to-build plots with all approvals, excellent connectivity to Pune Airport and upcoming metro.",
-    "amenities": ["Gated Community", "24/7 Security", "Landscaped Gardens", "Wide Roads", "Underground Wiring", "Rainwater Harvesting"],
+    "amenities": [
+      "Gated Community",
+      "24/7 Security",
+      "Landscaped Gardens",
+      "Wide Roads",
+      "Underground Wiring",
+      "Rainwater Harvesting"
+    ],
     "floorPlans": [
-      { "type": "Plot 120 sq.yd", "area": "120 sq.yd", "image": "/floorplans/lohegaon-120.webp" },
-      { "type": "Plot 200 sq.yd", "area": "200 sq.yd", "image": "/floorplans/lohegaon-200.webp" }
+      {
+        "type": "Plot 120 sq.yd",
+        "area": "120 sq.yd",
+        "image": "/floorplans/lohegaon-120.webp"
+      },
+      {
+        "type": "Plot 200 sq.yd",
+        "area": "200 sq.yd",
+        "image": "/floorplans/lohegaon-200.webp"
+      }
     ],
     "possessionDate": "Ready to Register",
     "reraNumber": "P52100048141",
-    "gallery": ["/gallery/lohegaon-1.webp", "/gallery/lohegaon-2.webp","/gallery/lohegaon-3.webp","/gallery/lohegaon-4.webp","/gallery/lohegaon-5.webp","/gallery/lohegaon-6.webp","/gallery/lohegaon-7.webp","/gallery/lohegaon-8.webp","/gallery/lohegaon-9.webp","/gallery/lohegaon-10.webp","/gallery/lohegaon-11.webp","/gallery/lohegaon-12.webp"],
-    "mapCoords": { "lat": 18.5812, "lng": 73.9098 },
-    "nearbyPlaces": [
-      { "type": "Airport", "name": "Pune Airport", "distance": "2.0 km" },
-      { "type": "Metro", "name": "Lohegaon Metro", "distance": "1.0 km" }
+    "gallery": [
+      "/gallery/lohegaon-1.webp",
+      "/gallery/lohegaon-2.webp",
+      "/gallery/lohegaon-3.webp",
+      "/gallery/lohegaon-4.webp",
+      "/gallery/lohegaon-5.webp",
+      "/gallery/lohegaon-6.webp",
+      "/gallery/lohegaon-7.webp",
+      "/gallery/lohegaon-8.webp",
+      "/gallery/lohegaon-9.webp",
+      "/gallery/lohegaon-10.webp",
+      "/gallery/lohegaon-11.webp",
+      "/gallery/lohegaon-12.webp"
     ],
-    "emi": { "startingFrom": "₹38,500/month", "downPayment": "30%", "interestRate": "8.35%", "tenure": "25 Years" }
+    "mapCoords": {
+      "lat": 18.5812,
+      "lng": 73.9098
+    },
+    "nearbyPlaces": [
+      {
+        "type": "Airport",
+        "name": "Pune Airport",
+        "distance": "2.0 km"
+      },
+      {
+        "type": "Metro",
+        "name": "Lohegaon Metro",
+        "distance": "1.0 km"
+      }
+    ],
+    "emi": {
+      "startingFrom": "₹38,500/month",
+      "downPayment": "30%",
+      "interestRate": "8.35%",
+      "tenure": "25 Years"
+    }
   },
   {
     "slug": "tribeca-lulla-nagar",
@@ -551,27 +1716,91 @@
     "image": "/projects/tribeca-lulla-nagar.webp",
     "masterPlan": "/floorplans/tribeca-lulla-nagar-master.webp",
     "locationMap": "/maps/tribeca-lulla-nagar-location.webp",
-    "fullLocation": { "area": "Lulla Nagar", "city": "Pune", "state": "Maharashtra", "pincode": "411015", "landmark": "Near Phoenix Mall" },
-    "priceDetails": { "range": "₹92 Lakh - ₹1.6 Cr", "perSqft": "₹10,200/sq.ft", "configurations": [
-      { "type": "2 BHK", "area": "1020 sq.ft", "price": "₹92 Lakh", "description": "Premium 2 BHK with Italian marble" },
-      { "type": "3 BHK", "area": "1380 sq.ft", "price": "₹1.6 Cr", "description": "Luxury 3 BHK with panoramic views" }
-    ]},
-    "developer": { "name": "Tribeca Developers", "established": "2015", "projectsCount": 6, "description": "Tribeca Developers creates boutique luxury properties in Pune's premium neighborhoods." },
+    "fullLocation": {
+      "area": "Lulla Nagar",
+      "city": "Pune",
+      "state": "Maharashtra",
+      "pincode": "411015",
+      "landmark": "Near Phoenix Mall"
+    },
+    "priceDetails": {
+      "range": "₹92 Lakh - ₹1.6 Cr",
+      "perSqft": "₹10,200/sq.ft",
+      "configurations": [
+        {
+          "type": "2 BHK",
+          "area": "1020 sq.ft",
+          "price": "₹92 Lakh",
+          "description": "Premium 2 BHK with Italian marble"
+        },
+        {
+          "type": "3 BHK",
+          "area": "1380 sq.ft",
+          "price": "₹1.6 Cr",
+          "description": "Luxury 3 BHK with panoramic views"
+        }
+      ]
+    },
+    "developer": {
+      "name": "Tribeca Developers",
+      "established": "2015",
+      "projectsCount": 6,
+      "description": "Tribeca Developers creates boutique luxury properties in Pune's premium neighborhoods."
+    },
     "about": "Tribeca Lulla Nagar offers boutique luxury residences with premium finishes and personalized service in one of Pune's most sought-after addresses.",
-    "amenities": ["Infinity Pool", "Spa", "Private Gym", "Concierge", "24/7 Security", "Valet Parking", "Sky Lounge", "Wine Room"],
+    "amenities": [
+      "Infinity Pool",
+      "Spa",
+      "Private Gym",
+      "Concierge",
+      "24/7 Security",
+      "Valet Parking",
+      "Sky Lounge",
+      "Wine Room"
+    ],
     "floorPlans": [
-      { "type": "2 BHK", "area": "1020 sq.ft", "image": "/floorplans/tribeca-2bhk.webp" },
-      { "type": "3 BHK", "area": "1380 sq.ft", "image": "/floorplans/tribeca-2bhk.webp" }
+      {
+        "type": "2 BHK",
+        "area": "1020 sq.ft",
+        "image": "/floorplans/tribeca-2bhk.webp"
+      },
+      {
+        "type": "3 BHK",
+        "area": "1380 sq.ft",
+        "image": "/floorplans/tribeca-2bhk.webp"
+      }
     ],
     "possessionDate": "Jun 2027",
     "reraNumber": "P52100048142",
-    "gallery": ["/gallery/tribeca-1.webp", "/gallery/tribeca-2.webp","/gallery/tribeca-3.webp","/gallery/tribeca-4.webp","/gallery/tribeca-5.webp"],
-    "mapCoords": { "lat": 18.5456, "lng": 73.8123 },
-    "nearbyPlaces": [
-      { "type": "Mall", "name": "Phoenix Mall", "distance": "0.8 km" },
-      { "type": "School", "name": "Bishop School", "distance": "1.2 km" }
+    "gallery": [
+      "/gallery/tribeca-1.webp",
+      "/gallery/tribeca-2.webp",
+      "/gallery/tribeca-3.webp",
+      "/gallery/tribeca-4.webp",
+      "/gallery/tribeca-5.webp"
     ],
-    "emi": { "startingFrom": "₹42,000/month", "downPayment": "25%", "interestRate": "8.25%", "tenure": "30 Years" }
+    "mapCoords": {
+      "lat": 18.5456,
+      "lng": 73.8123
+    },
+    "nearbyPlaces": [
+      {
+        "type": "Mall",
+        "name": "Phoenix Mall",
+        "distance": "0.8 km"
+      },
+      {
+        "type": "School",
+        "name": "Bishop School",
+        "distance": "1.2 km"
+      }
+    ],
+    "emi": {
+      "startingFrom": "₹42,000/month",
+      "downPayment": "25%",
+      "interestRate": "8.25%",
+      "tenure": "30 Years"
+    }
   },
   {
     "slug": "tribeca-trump-tower",
@@ -581,27 +1810,91 @@
     "image": "/projects/tribeca-trump-tower.webp",
     "masterPlan": "/floorplans/tribeca-trump-tower-master.webp",
     "locationMap": "/maps/tribeca-trump-tower-location.webp",
-    "fullLocation": { "area": "Baner", "city": "Pune", "state": "Maharashtra", "pincode": "411045", "landmark": "Near Balewadi Stadium" },
-    "priceDetails": { "range": "₹1.8 Cr - ₹4.5 Cr", "perSqft": "₹18,000/sq.ft", "configurations": [
-      { "type": "3 BHK", "area": "1800 sq.ft", "price": "₹1.8 Cr", "description": "Luxury 3 BHK with Trump Collection finishes" },
-      { "type": "4 BHK", "area": "2800 sq.ft", "price": "₹4.5 Cr", "description": "Penthouse 4 BHK with private terrace" }
-    ]},
-    "developer": { "name": "Tribeca Developers", "established": "2015", "projectsCount": 6, "description": "Creating ultra-luxury branded residences in partnership with global luxury brands." },
+    "fullLocation": {
+      "area": "Baner",
+      "city": "Pune",
+      "state": "Maharashtra",
+      "pincode": "411045",
+      "landmark": "Near Balewadi Stadium"
+    },
+    "priceDetails": {
+      "range": "₹1.8 Cr - ₹4.5 Cr",
+      "perSqft": "₹18,000/sq.ft",
+      "configurations": [
+        {
+          "type": "3 BHK",
+          "area": "1800 sq.ft",
+          "price": "₹1.8 Cr",
+          "description": "Luxury 3 BHK with Trump Collection finishes"
+        },
+        {
+          "type": "4 BHK",
+          "area": "2800 sq.ft",
+          "price": "₹4.5 Cr",
+          "description": "Penthouse 4 BHK with private terrace"
+        }
+      ]
+    },
+    "developer": {
+      "name": "Tribeca Developers",
+      "established": "2015",
+      "projectsCount": 6,
+      "description": "Creating ultra-luxury branded residences in partnership with global luxury brands."
+    },
     "about": "Tribeca Trump Tower brings the iconic Trump luxury brand to Pune with ultra-premium residences, world-class amenities, and unparalleled service.",
-    "amenities": ["Infinity Pool", "Spa & Wellness", "Private Gym", "Concierge", "24/7 Security", "Valet Parking", "Sky Lounge", "Private Dining", "Cigar Lounge"],
+    "amenities": [
+      "Infinity Pool",
+      "Spa & Wellness",
+      "Private Gym",
+      "Concierge",
+      "24/7 Security",
+      "Valet Parking",
+      "Sky Lounge",
+      "Private Dining",
+      "Cigar Lounge"
+    ],
     "floorPlans": [
-      { "type": "3 BHK", "area": "1800 sq.ft", "image": "/floorplans/trump-3bhk.webp" },
-      { "type": "4 BHK", "area": "2800 sq.ft", "image": "/floorplans/trump-4bhk.webp" }
+      {
+        "type": "3 BHK",
+        "area": "1800 sq.ft",
+        "image": "/floorplans/trump-3bhk.webp"
+      },
+      {
+        "type": "4 BHK",
+        "area": "2800 sq.ft",
+        "image": "/floorplans/trump-4bhk.webp"
+      }
     ],
     "possessionDate": "Dec 2028",
     "reraNumber": "P52100048143",
-    "gallery": ["/gallery/trump-1.webp", "/gallery/trump-2.webp","/gallery/trump-3.webp","/gallery/trump-4.webp"],
-    "mapCoords": { "lat": 18.5593, "lng": 73.7815 },
-    "nearbyPlaces": [
-      { "type": "Mall", "name": "Westend Mall", "distance": "0.5 km" },
-      { "type": "Golf", "name": "Poona Golf Club", "distance": "1.0 km" }
+    "gallery": [
+      "/gallery/trump-1.webp",
+      "/gallery/trump-2.webp",
+      "/gallery/trump-3.webp",
+      "/gallery/trump-4.webp"
     ],
-    "emi": { "startingFrom": "₹82,000/month", "downPayment": "25%", "interestRate": "8.25%", "tenure": "30 Years" }
+    "mapCoords": {
+      "lat": 18.5593,
+      "lng": 73.7815
+    },
+    "nearbyPlaces": [
+      {
+        "type": "Mall",
+        "name": "Westend Mall",
+        "distance": "0.5 km"
+      },
+      {
+        "type": "Golf",
+        "name": "Poona Golf Club",
+        "distance": "1.0 km"
+      }
+    ],
+    "emi": {
+      "startingFrom": "₹82,000/month",
+      "downPayment": "25%",
+      "interestRate": "8.25%",
+      "tenure": "30 Years"
+    }
   },
   {
     "slug": "magarpatta-city-nova-residency",
@@ -611,28 +1904,95 @@
     "image": "/projects/magarpatta-nova-residency.webp",
     "masterPlan": "/floorplans/magarpatta-nova-residency-master.webp",
     "locationMap": "/maps/magarpatta-nova-residency-location.webp",
-    "fullLocation": { "area": "Magarpatta City", "city": "Pune", "state": "Maharashtra", "pincode": "411028", "landmark": "Within Magarpatta Township" },
-    "priceDetails": { "range": "₹86 Lakh - ₹1.4 Cr", "perSqft": "₹9,100/sq.ft", "configurations": [
-      { "type": "2 BHK", "area": "980 sq.ft", "price": "₹86 Lakh", "description": "Township living 2 BHK with all amenities" },
-      { "type": "3 BHK", "area": "1310 sq.ft", "price": "₹1.4 Cr", "description": "Premium 3 BHK with garden views" }
-    ]},
-    "developer": { "name": "Magarpatta City", "established": "2000", "projectsCount": 1, "description": "Magarpatta City is India's first integrated township developed by farmers, offering self-sustainable living." },
+    "fullLocation": {
+      "area": "Magarpatta City",
+      "city": "Pune",
+      "state": "Maharashtra",
+      "pincode": "411028",
+      "landmark": "Within Magarpatta Township"
+    },
+    "priceDetails": {
+      "range": "₹86 Lakh - ₹1.4 Cr",
+      "perSqft": "₹9,100/sq.ft",
+      "configurations": [
+        {
+          "type": "2 BHK",
+          "area": "980 sq.ft",
+          "price": "₹86 Lakh",
+          "description": "Township living 2 BHK with all amenities"
+        },
+        {
+          "type": "3 BHK",
+          "area": "1310 sq.ft",
+          "price": "₹1.4 Cr",
+          "description": "Premium 3 BHK with garden views"
+        }
+      ]
+    },
+    "developer": {
+      "name": "Magarpatta City",
+      "established": "2000",
+      "projectsCount": 1,
+      "description": "Magarpatta City is India's first integrated township developed by farmers, offering self-sustainable living."
+    },
     "about": "Nova Residency within Magarpatta City offers township living with all amenities within walking distance - schools, hospitals, malls, and IT parks.",
-    "amenities": ["Swimming Pool", "Gym", "Kids Play Area", "Jogging Track", "24/7 Security", "Power Backup", "Clubhouse", "Shopping Complex", "Schools", "Hospitals"],
+    "amenities": [
+      "Swimming Pool",
+      "Gym",
+      "Kids Play Area",
+      "Jogging Track",
+      "24/7 Security",
+      "Power Backup",
+      "Clubhouse",
+      "Shopping Complex",
+      "Schools",
+      "Hospitals"
+    ],
     "floorPlans": [
-      { "type": "2 BHK", "area": "980 sq.ft", "image": "/floorplans/nova-2bhk.webp" },
-      { "type": "3 BHK", "area": "1310 sq.ft", "image": "/floorplans/nova-3bhk.webp" }
+      {
+        "type": "2 BHK",
+        "area": "980 sq.ft",
+        "image": "/floorplans/nova-2bhk.webp"
+      },
+      {
+        "type": "3 BHK",
+        "area": "1310 sq.ft",
+        "image": "/floorplans/nova-3bhk.webp"
+      }
     ],
     "possessionDate": "Ready to Move",
     "reraNumber": "P52100048144",
-    "gallery": ["/gallery/nova-1.webp", "/gallery/nova-2.webp"],
-    "mapCoords": { "lat": 18.5167, "lng": 73.9298 },
-    "nearbyPlaces": [
-      { "type": "School", "name": "Magarpatta School", "distance": "0.2 km" },
-      { "type": "Mall", "name": "Seasons Mall", "distance": "0.5 km" },
-      { "type": "IT Park", "name": "Magarpatta IT Park", "distance": "0.3 km" }
+    "gallery": [
+      "/gallery/nova-1.webp",
+      "/gallery/nova-2.webp"
     ],
-    "emi": { "startingFrom": "₹39,000/month", "downPayment": "30%", "interestRate": "8.35%", "tenure": "25 Years" }
+    "mapCoords": {
+      "lat": 18.5167,
+      "lng": 73.9298
+    },
+    "nearbyPlaces": [
+      {
+        "type": "School",
+        "name": "Magarpatta School",
+        "distance": "0.2 km"
+      },
+      {
+        "type": "Mall",
+        "name": "Seasons Mall",
+        "distance": "0.5 km"
+      },
+      {
+        "type": "IT Park",
+        "name": "Magarpatta IT Park",
+        "distance": "0.3 km"
+      }
+    ],
+    "emi": {
+      "startingFrom": "₹39,000/month",
+      "downPayment": "30%",
+      "interestRate": "8.35%",
+      "tenure": "25 Years"
+    }
   },
   {
     "slug": "magarpatta-city-nova-elegance",
@@ -642,27 +2002,90 @@
     "image": "/projects/magarpatta-nova-elegance.webp",
     "masterPlan": "/floorplans/magarpatta-nova-elegance-master.webp",
     "locationMap": "/maps/magarpatta-nova-elegance-location.webp",
-    "fullLocation": { "area": "Magarpatta City", "city": "Pune", "state": "Maharashtra", "pincode": "411028", "landmark": "Within Magarpatta Township" },
-    "priceDetails": { "range": "₹88 Lakh - ₹1.45 Cr", "perSqft": "₹9,300/sq.ft", "configurations": [
-      { "type": "2 BHK", "area": "990 sq.ft", "price": "₹88 Lakh", "description": "Elegant 2 BHK with premium township amenities" },
-      { "type": "3 BHK", "area": "1330 sq.ft", "price": "₹1.45 Cr", "description": "Luxury 3 BHK with panoramic views" }
-    ]},
-    "developer": { "name": "Magarpatta City", "established": "2000", "projectsCount": 1, "description": "Pioneering integrated township living with self-sustainable infrastructure." },
+    "fullLocation": {
+      "area": "Magarpatta City",
+      "city": "Pune",
+      "state": "Maharashtra",
+      "pincode": "411028",
+      "landmark": "Within Magarpatta Township"
+    },
+    "priceDetails": {
+      "range": "₹88 Lakh - ₹1.45 Cr",
+      "perSqft": "₹9,300/sq.ft",
+      "configurations": [
+        {
+          "type": "2 BHK",
+          "area": "990 sq.ft",
+          "price": "₹88 Lakh",
+          "description": "Elegant 2 BHK with premium township amenities"
+        },
+        {
+          "type": "3 BHK",
+          "area": "1330 sq.ft",
+          "price": "₹1.45 Cr",
+          "description": "Luxury 3 BHK with panoramic views"
+        }
+      ]
+    },
+    "developer": {
+      "name": "Magarpatta City",
+      "established": "2000",
+      "projectsCount": 1,
+      "description": "Pioneering integrated township living with self-sustainable infrastructure."
+    },
     "about": "Nova Elegance offers upgraded finishes and premium amenities within the self-sustainable Magarpatta City township.",
-    "amenities": ["Swimming Pool", "Gym", "Kids Play Area", "Jogging Track", "24/7 Security", "Power Backup", "Clubhouse", "Shopping Complex", "Schools", "Hospitals"],
+    "amenities": [
+      "Swimming Pool",
+      "Gym",
+      "Kids Play Area",
+      "Jogging Track",
+      "24/7 Security",
+      "Power Backup",
+      "Clubhouse",
+      "Shopping Complex",
+      "Schools",
+      "Hospitals"
+    ],
     "floorPlans": [
-      { "type": "2 BHK", "area": "990 sq.ft", "image": "/floorplans/elegance-2bhk.webp" },
-      { "type": "3 BHK", "area": "1330 sq.ft", "image": "/floorplans/elegance-3bhk.webp" }
+      {
+        "type": "2 BHK",
+        "area": "990 sq.ft",
+        "image": "/floorplans/elegance-2bhk.webp"
+      },
+      {
+        "type": "3 BHK",
+        "area": "1330 sq.ft",
+        "image": "/floorplans/elegance-3bhk.webp"
+      }
     ],
     "possessionDate": "Ready to Move",
     "reraNumber": "P52100048145",
-    "gallery": ["/gallery/elegance-1.webp", "/gallery/elegance-2.webp"],
-    "mapCoords": { "lat": 18.5167, "lng": 73.9298 },
-    "nearbyPlaces": [
-      { "type": "School", "name": "Magarpatta School", "distance": "0.2 km" },
-      { "type": "Mall", "name": "Seasons Mall", "distance": "0.5 km" }
+    "gallery": [
+      "/gallery/elegance-1.webp",
+      "/gallery/elegance-2.webp"
     ],
-    "emi": { "startingFrom": "₹39,800/month", "downPayment": "30%", "interestRate": "8.35%", "tenure": "25 Years" }
+    "mapCoords": {
+      "lat": 18.5167,
+      "lng": 73.9298
+    },
+    "nearbyPlaces": [
+      {
+        "type": "School",
+        "name": "Magarpatta School",
+        "distance": "0.2 km"
+      },
+      {
+        "type": "Mall",
+        "name": "Seasons Mall",
+        "distance": "0.5 km"
+      }
+    ],
+    "emi": {
+      "startingFrom": "₹39,800/month",
+      "downPayment": "30%",
+      "interestRate": "8.35%",
+      "tenure": "25 Years"
+    }
   },
   {
     "slug": "magarpatta-city-rvc-hornbill",
@@ -672,27 +2095,91 @@
     "image": "/projects/magarpatta-rvc-hornbill.webp",
     "masterPlan": "/floorplans/magarpatta-rvc-hornbill-master.webp",
     "locationMap": "/maps/magarpatta-rvc-hornbill-location.webp",
-    "fullLocation": { "area": "Magarpatta City", "city": "Pune", "state": "Maharashtra", "pincode": "411028", "landmark": "Within Magarpatta Township" },
-    "priceDetails": { "range": "₹90 Lakh - ₹1.5 Cr", "perSqft": "₹9,500/sq.ft", "configurations": [
-      { "type": "2 BHK", "area": "1000 sq.ft", "price": "₹90 Lakh", "description": "Premium 2 BHK with upgraded finishes" },
-      { "type": "3 BHK", "area": "1350 sq.ft", "price": "₹1.5 Cr", "description": "Luxury 3 BHK with balcony garden" }
-    ]},
-    "developer": { "name": "Magarpatta City", "established": "2000", "projectsCount": 1, "description": "Creating sustainable township living with world-class infrastructure." },
+    "fullLocation": {
+      "area": "Magarpatta City",
+      "city": "Pune",
+      "state": "Maharashtra",
+      "pincode": "411028",
+      "landmark": "Within Magarpatta Township"
+    },
+    "priceDetails": {
+      "range": "₹90 Lakh - ₹1.5 Cr",
+      "perSqft": "₹9,500/sq.ft",
+      "configurations": [
+        {
+          "type": "2 BHK",
+          "area": "1000 sq.ft",
+          "price": "₹90 Lakh",
+          "description": "Premium 2 BHK with upgraded finishes"
+        },
+        {
+          "type": "3 BHK",
+          "area": "1350 sq.ft",
+          "price": "₹1.5 Cr",
+          "description": "Luxury 3 BHK with balcony garden"
+        }
+      ]
+    },
+    "developer": {
+      "name": "Magarpatta City",
+      "established": "2000",
+      "projectsCount": 1,
+      "description": "Creating sustainable township living with world-class infrastructure."
+    },
     "about": "RVC Hornbill offers premium residences within Magarpatta City with upgraded amenities and finishes.",
-    "amenities": ["Swimming Pool", "Gym", "Kids Play Area", "Jogging Track", "24/7 Security", "Power Backup", "Clubhouse", "Shopping Complex"],
+    "amenities": [
+      "Swimming Pool",
+      "Gym",
+      "Kids Play Area",
+      "Jogging Track",
+      "24/7 Security",
+      "Power Backup",
+      "Clubhouse",
+      "Shopping Complex"
+    ],
     "floorPlans": [
-      { "type": "2 BHK", "area": "1000 sq.ft", "image": "/floorplans/hornbill-2bhk.webp" },
-      { "type": "3 BHK", "area": "1350 sq.ft", "image": "/floorplans/hornbill-3bhk.webp" }
+      {
+        "type": "2 BHK",
+        "area": "1000 sq.ft",
+        "image": "/floorplans/hornbill-2bhk.webp"
+      },
+      {
+        "type": "3 BHK",
+        "area": "1350 sq.ft",
+        "image": "/floorplans/hornbill-3bhk.webp"
+      }
     ],
     "possessionDate": "Ready to Move",
     "reraNumber": "P52100048146",
-    "gallery": ["/gallery/hornbill-1.webp", "/gallery/hornbill-2.webp", "/gallery/hornbill-3.webp", "/gallery/hornbill-4.webp","/gallery/hornbill-5.webp"],
-    "mapCoords": { "lat": 18.5167, "lng": 73.9298 },
-    "nearbyPlaces": [
-      { "type": "School", "name": "Magarpatta School", "distance": "0.2 km" },
-      { "type": "IT Park", "name": "Magarpatta IT Park", "distance": "0.3 km" }
+    "gallery": [
+      "/gallery/hornbill-1.webp",
+      "/gallery/hornbill-2.webp",
+      "/gallery/hornbill-3.webp",
+      "/gallery/hornbill-4.webp",
+      "/gallery/hornbill-5.webp"
     ],
-    "emi": { "startingFrom": "₹40,800/month", "downPayment": "30%", "interestRate": "8.35%", "tenure": "25 Years" }
+    "mapCoords": {
+      "lat": 18.5167,
+      "lng": 73.9298
+    },
+    "nearbyPlaces": [
+      {
+        "type": "School",
+        "name": "Magarpatta School",
+        "distance": "0.2 km"
+      },
+      {
+        "type": "IT Park",
+        "name": "Magarpatta IT Park",
+        "distance": "0.3 km"
+      }
+    ],
+    "emi": {
+      "startingFrom": "₹40,800/month",
+      "downPayment": "30%",
+      "interestRate": "8.35%",
+      "tenure": "25 Years"
+    }
   },
   {
     "slug": "magarpatta-city-rvc-flamingo",
@@ -702,27 +2189,92 @@
     "image": "/projects/magarpatta-rvc-flamingo.webp",
     "masterPlan": "/floorplans/magarpatta-rvc-flamingo-master.webp",
     "locationMap": "/maps/magarpatta-rvc-flamingo-location.webp",
-    "fullLocation": { "area": "Magarpatta City", "city": "Pune", "state": "Maharashtra", "pincode": "411028", "landmark": "Within Magarpatta Township" },
-    "priceDetails": { "range": "₹92 Lakh - ₹1.55 Cr", "perSqft": "₹9,700/sq.ft", "configurations": [
-      { "type": "2 BHK", "area": "1010 sq.ft", "price": "₹92 Lakh", "description": "Ultra-premium 2 BHK with luxury finishes" },
-      { "type": "3 BHK", "area": "1370 sq.ft", "price": "₹1.55 Cr", "description": "Penthouse-style 3 BHK with terrace" }
-    ]},
-    "developer": { "name": "Magarpatta City", "established": "2000", "projectsCount": 1, "description": "Delivering the finest township living experience in Pune." },
+    "fullLocation": {
+      "area": "Magarpatta City",
+      "city": "Pune",
+      "state": "Maharashtra",
+      "pincode": "411028",
+      "landmark": "Within Magarpatta Township"
+    },
+    "priceDetails": {
+      "range": "₹92 Lakh - ₹1.55 Cr",
+      "perSqft": "₹9,700/sq.ft",
+      "configurations": [
+        {
+          "type": "2 BHK",
+          "area": "1010 sq.ft",
+          "price": "₹92 Lakh",
+          "description": "Ultra-premium 2 BHK with luxury finishes"
+        },
+        {
+          "type": "3 BHK",
+          "area": "1370 sq.ft",
+          "price": "₹1.55 Cr",
+          "description": "Penthouse-style 3 BHK with terrace"
+        }
+      ]
+    },
+    "developer": {
+      "name": "Magarpatta City",
+      "established": "2000",
+      "projectsCount": 1,
+      "description": "Delivering the finest township living experience in Pune."
+    },
     "about": "RVC Flamingo is the flagship tower within Magarpatta City offering ultra-premium residences with the best views and finishes.",
-    "amenities": ["Infinity Pool", "Spa", "Private Gym", "Concierge", "24/7 Security", "Valet Parking", "Sky Lounge", "Shopping Complex"],
+    "amenities": [
+      "Infinity Pool",
+      "Spa",
+      "Private Gym",
+      "Concierge",
+      "24/7 Security",
+      "Valet Parking",
+      "Sky Lounge",
+      "Shopping Complex"
+    ],
     "floorPlans": [
-      { "type": "2 BHK", "area": "1010 sq.ft", "image": "/floorplans/flamingo-2bhk.webp" },
-      { "type": "3 BHK", "area": "1370 sq.ft", "image": "/floorplans/flamingo-3bhk.webp" }
+      {
+        "type": "2 BHK",
+        "area": "1010 sq.ft",
+        "image": "/floorplans/flamingo-2bhk.webp"
+      },
+      {
+        "type": "3 BHK",
+        "area": "1370 sq.ft",
+        "image": "/floorplans/flamingo-3bhk.webp"
+      }
     ],
     "possessionDate": "Ready to Move",
     "reraNumber": "P52100048147",
-    "gallery": ["/gallery/flamingo-1.webp", "/gallery/flamingo-2.webp","/gallery/flamingo-3.webp","/gallery/flamingo-4.webp","/gallery/flamingo-5.webp","/gallery/flamingo-6.webp"],
-    "mapCoords": { "lat": 18.5167, "lng": 73.9298 },
-    "nearbyPlaces": [
-      { "type": "School", "name": "Magarpatta School", "distance": "0.2 km" },
-      { "type": "Mall", "name": "Seasons Mall", "distance": "0.5 km" }
+    "gallery": [
+      "/gallery/flamingo-1.webp",
+      "/gallery/flamingo-2.webp",
+      "/gallery/flamingo-3.webp",
+      "/gallery/flamingo-4.webp",
+      "/gallery/flamingo-5.webp",
+      "/gallery/flamingo-6.webp"
     ],
-    "emi": { "startingFrom": "₹41,800/month", "downPayment": "30%", "interestRate": "8.35%", "tenure": "25 Years" }
+    "mapCoords": {
+      "lat": 18.5167,
+      "lng": 73.9298
+    },
+    "nearbyPlaces": [
+      {
+        "type": "School",
+        "name": "Magarpatta School",
+        "distance": "0.2 km"
+      },
+      {
+        "type": "Mall",
+        "name": "Seasons Mall",
+        "distance": "0.5 km"
+      }
+    ],
+    "emi": {
+      "startingFrom": "₹41,800/month",
+      "downPayment": "30%",
+      "interestRate": "8.35%",
+      "tenure": "25 Years"
+    }
   },
   {
     "slug": "sai-world-one",
@@ -732,29 +2284,103 @@
     "image": "/projects/sai-world-one.webp",
     "masterPlan": "/floorplans/sai-world-one-master.webp",
     "locationMap": "/maps/sai-world-one-location.webp",
-    "fullLocation": { "area": "Panvel", "city": "Navi Mumbai", "state": "Maharashtra", "pincode": "410206", "landmark": "Near Mumbai-Pune Expressway" },
-    "priceDetails": { "range": "₹95 Lakh - ₹2.2 Cr", "perSqft": "₹11,500/sq.ft", "configurations": [
-      { "type": "1 BHK", "area": "480 sq.ft", "price": "₹95 Lakh", "description": "Compact 1 BHK ideal for first-time buyers" },
-      { "type": "2 BHK", "area": "780 sq.ft", "price": "₹1.5 Cr", "description": "Spacious 2 BHK with modular kitchen" },
-      { "type": "3 BHK", "area": "1150 sq.ft", "price": "₹2.2 Cr", "description": "Premium 3 BHK with premium finishes" }
-    ]},
-    "developer": { "name": "Paradise Group", "established": "1995", "projectsCount": 28, "description": "Paradise Group is a leading developer in Navi Mumbai with over 25 years of experience in creating premium residential spaces." },
+    "fullLocation": {
+      "area": "Panvel",
+      "city": "Navi Mumbai",
+      "state": "Maharashtra",
+      "pincode": "410206",
+      "landmark": "Near Mumbai-Pune Expressway"
+    },
+    "priceDetails": {
+      "range": "₹95 Lakh - ₹2.2 Cr",
+      "perSqft": "₹11,500/sq.ft",
+      "configurations": [
+        {
+          "type": "1 BHK",
+          "area": "480 sq.ft",
+          "price": "₹95 Lakh",
+          "description": "Compact 1 BHK ideal for first-time buyers"
+        },
+        {
+          "type": "2 BHK",
+          "area": "780 sq.ft",
+          "price": "₹1.5 Cr",
+          "description": "Spacious 2 BHK with modular kitchen"
+        },
+        {
+          "type": "3 BHK",
+          "area": "1150 sq.ft",
+          "price": "₹2.2 Cr",
+          "description": "Premium 3 BHK with premium finishes"
+        }
+      ]
+    },
+    "developer": {
+      "name": "Paradise Group",
+      "established": "1995",
+      "projectsCount": 28,
+      "description": "Paradise Group is a leading developer in Navi Mumbai with over 25 years of experience in creating premium residential spaces."
+    },
     "about": "Sai World One in Panvel offers premium homes with excellent connectivity to Mumbai-Pune Expressway and upcoming Navi Mumbai Airport.",
-    "amenities": ["Clubhouse", "Swimming Pool", "Gym", "Kids Play Area", "Jogging Track", "24/7 Security", "Power Backup", "Landscaped Gardens"],
+    "amenities": [
+      "Clubhouse",
+      "Swimming Pool",
+      "Gym",
+      "Kids Play Area",
+      "Jogging Track",
+      "24/7 Security",
+      "Power Backup",
+      "Landscaped Gardens"
+    ],
     "floorPlans": [
-      { "type": "1 BHK", "area": "480 sq.ft", "image": "/floorplans/sai1-1bhk.webp" },
-      { "type": "2 BHK", "area": "780 sq.ft", "image": "/floorplans/sai1-2bhk.webp" },
-      { "type": "3 BHK", "area": "1150 sq.ft", "image": "/floorplans/sai1-3bhk.webp" }
+      {
+        "type": "1 BHK",
+        "area": "480 sq.ft",
+        "image": "/floorplans/sai1-1bhk.webp"
+      },
+      {
+        "type": "2 BHK",
+        "area": "780 sq.ft",
+        "image": "/floorplans/sai1-2bhk.webp"
+      },
+      {
+        "type": "3 BHK",
+        "area": "1150 sq.ft",
+        "image": "/floorplans/sai1-3bhk.webp"
+      }
     ],
     "possessionDate": "Dec 2026",
     "reraNumber": "P52000048035",
-    "gallery": ["/gallery/sai1-1.webp", "/gallery/sai1-2.webp","/gallery/sai1-3.webp","/gallery/sai1-4.webp","/gallery/sai1-5.webp","/gallery/sai1-6.webp"],
-    "mapCoords": { "lat": 18.9894, "lng": 73.1103 },
-    "nearbyPlaces": [
-      { "type": "Airport", "name": "Navi Mumbai Airport", "distance": "5 km" },
-      { "type": "Expressway", "name": "Mumbai-Pune Expressway", "distance": "2 km" }
+    "gallery": [
+      "/gallery/sai1-1.webp",
+      "/gallery/sai1-2.webp",
+      "/gallery/sai1-3.webp",
+      "/gallery/sai1-4.webp",
+      "/gallery/sai1-5.webp",
+      "/gallery/sai1-6.webp"
     ],
-    "emi": { "startingFrom": "₹43,000/month", "downPayment": "25%", "interestRate": "8.50%", "tenure": "30 Years" }
+    "mapCoords": {
+      "lat": 18.9894,
+      "lng": 73.1103
+    },
+    "nearbyPlaces": [
+      {
+        "type": "Airport",
+        "name": "Navi Mumbai Airport",
+        "distance": "5 km"
+      },
+      {
+        "type": "Expressway",
+        "name": "Mumbai-Pune Expressway",
+        "distance": "2 km"
+      }
+    ],
+    "emi": {
+      "startingFrom": "₹43,000/month",
+      "downPayment": "25%",
+      "interestRate": "8.50%",
+      "tenure": "30 Years"
+    }
   },
   {
     "slug": "sai-world-empire",
@@ -764,31 +2390,116 @@
     "image": "/projects/sai-world-empire.webp",
     "masterPlan": "/floorplans/sai-world-empire-master.webp",
     "locationMap": "/maps/sai-world-empire-location.webp",
-    "fullLocation": { "area": "Kharghar", "city": "Navi Mumbai", "state": "Maharashtra", "pincode": "410210", "landmark": "Near Central Park" },
-    "priceDetails": { "range": "₹95 Lakh - ₹2.5 Cr", "perSqft": "₹12,000/sq.ft", "configurations": [
-      { "type": "1 BHK", "area": "450 sq.ft", "price": "₹95 Lakh", "description": "Compact 1 BHK ideal for singles and couples" },
-      { "type": "2 BHK", "area": "750 sq.ft", "price": "₹1.5 Cr", "description": "Spacious 2 BHK with modular kitchen" },
-      { "type": "3 BHK", "area": "1100 sq.ft", "price": "₹2.5 Cr", "description": "Luxury 3 BHK with premium finishes" }
-    ]},
-    "developer": { "name": "Paradise Group", "established": "1995", "projectsCount": 28, "description": "Paradise Group is a leading developer in Navi Mumbai with over 25 years of experience in creating premium residential and commercial spaces." },
+    "fullLocation": {
+      "area": "Kharghar",
+      "city": "Navi Mumbai",
+      "state": "Maharashtra",
+      "pincode": "410210",
+      "landmark": "Near Central Park"
+    },
+    "priceDetails": {
+      "range": "₹95 Lakh - ₹2.5 Cr",
+      "perSqft": "₹12,000/sq.ft",
+      "configurations": [
+        {
+          "type": "1 BHK",
+          "area": "450 sq.ft",
+          "price": "₹95 Lakh",
+          "description": "Compact 1 BHK ideal for singles and couples"
+        },
+        {
+          "type": "2 BHK",
+          "area": "750 sq.ft",
+          "price": "₹1.5 Cr",
+          "description": "Spacious 2 BHK with modular kitchen"
+        },
+        {
+          "type": "3 BHK",
+          "area": "1100 sq.ft",
+          "price": "₹2.5 Cr",
+          "description": "Luxury 3 BHK with premium finishes"
+        }
+      ]
+    },
+    "developer": {
+      "name": "Paradise Group",
+      "established": "1995",
+      "projectsCount": 28,
+      "description": "Paradise Group is a leading developer in Navi Mumbai with over 25 years of experience in creating premium residential and commercial spaces."
+    },
     "about": "Sai World Empire is a premium township in Kharghar offering 1, 2 & 3 BHK residences with world-class amenities. Located near Central Park with excellent connectivity to Mumbai and Pune, the project offers a perfect blend of luxury and convenience.",
-    "amenities": ["Clubhouse", "Infinity Pool", "Tennis Court", "Spa", "Landscaped Gardens", "Jogging Track", "Kids Play Area", "24/7 Security", "Power Backup", "Rainwater Harvesting", "Multipurpose Hall", "Indoor Games"],
+    "amenities": [
+      "Clubhouse",
+      "Infinity Pool",
+      "Tennis Court",
+      "Spa",
+      "Landscaped Gardens",
+      "Jogging Track",
+      "Kids Play Area",
+      "24/7 Security",
+      "Power Backup",
+      "Rainwater Harvesting",
+      "Multipurpose Hall",
+      "Indoor Games"
+    ],
     "floorPlans": [
-      { "type": "1 BHK", "area": "450 sq.ft", "image": "/floorplans/sai-1bhk.webp" },
-      { "type": "2 BHK", "area": "750 sq.ft", "image": "/floorplans/sai-2bhk.webp" },
-      { "type": "3 BHK", "area": "1100 sq.ft", "image": "/floorplans/sai-3bhk.webp" }
+      {
+        "type": "1 BHK",
+        "area": "450 sq.ft",
+        "image": "/floorplans/sai-1bhk.webp"
+      },
+      {
+        "type": "2 BHK",
+        "area": "750 sq.ft",
+        "image": "/floorplans/sai-2bhk.webp"
+      },
+      {
+        "type": "3 BHK",
+        "area": "1100 sq.ft",
+        "image": "/floorplans/sai-3bhk.webp"
+      }
     ],
     "possessionDate": "Jun 2027",
     "reraNumber": "P52000048037",
-    "gallery": ["/gallery/sai-World Empire1.webp", "/gallery/sai-World Empire2.webp", "/gallery/sai-World Empire3.webp", "/gallery/sai-World Empire4.webp", "/gallery/sai-World Empire5.webp"],
-    "mapCoords": { "lat": 19.0448, "lng": 73.0678 },
-    "nearbyPlaces": [
-      { "type": "School", "name": "Ryan International School", "distance": "0.8 km" },
-      { "type": "Hospital", "name": "Fortis Hospital", "distance": "1.5 km" },
-      { "type": "Mall", "name": "Inorbit Mall", "distance": "2.2 km" },
-      { "type": "Metro", "name": "Kharghar Metro Station", "distance": "1.0 km" }
+    "gallery": [
+      "/gallery/sai-World Empire1.webp",
+      "/gallery/sai-World Empire2.webp",
+      "/gallery/sai-World Empire3.webp",
+      "/gallery/sai-World Empire4.webp",
+      "/gallery/sai-World Empire5.webp"
     ],
-    "emi": { "startingFrom": "₹42,500/month", "downPayment": "25%", "interestRate": "8.50%", "tenure": "30 Years" }
+    "mapCoords": {
+      "lat": 19.0448,
+      "lng": 73.0678
+    },
+    "nearbyPlaces": [
+      {
+        "type": "School",
+        "name": "Ryan International School",
+        "distance": "0.8 km"
+      },
+      {
+        "type": "Hospital",
+        "name": "Fortis Hospital",
+        "distance": "1.5 km"
+      },
+      {
+        "type": "Mall",
+        "name": "Inorbit Mall",
+        "distance": "2.2 km"
+      },
+      {
+        "type": "Metro",
+        "name": "Kharghar Metro Station",
+        "distance": "1.0 km"
+      }
+    ],
+    "emi": {
+      "startingFrom": "₹42,500/month",
+      "downPayment": "25%",
+      "interestRate": "8.50%",
+      "tenure": "30 Years"
+    }
   },
   {
     "slug": "sai-world-dreams",
@@ -798,29 +2509,105 @@
     "image": "/projects/sai-world-dreams.webp",
     "masterPlan": "/floorplans/sai-world-dreams-master.webp",
     "locationMap": "/maps/sai-world-dreams-location.webp",
-    "fullLocation": { "area": "Taloja", "city": "Navi Mumbai", "state": "Maharashtra", "pincode": "410208", "landmark": "Near MIDC" },
-    "priceDetails": { "range": "₹95 Lakh - ₹2.0 Cr", "perSqft": "₹10,800/sq.ft", "configurations": [
-      { "type": "1 BHK", "area": "460 sq.ft", "price": "₹95 Lakh", "description": "Affordable 1 BHK for first-time buyers" },
-      { "type": "2 BHK", "area": "760 sq.ft", "price": "₹1.4 Cr", "description": "Value 2 BHK with modern amenities" },
-      { "type": "3 BHK", "area": "1080 sq.ft", "price": "₹2.0 Cr", "description": "Spacious 3 BHK with premium fittings" }
-    ]},
-    "developer": { "name": "Paradise Group", "established": "1995", "projectsCount": 28, "description": "Creating affordable luxury homes in Navi Mumbai's growth corridors." },
+    "fullLocation": {
+      "area": "Taloja",
+      "city": "Navi Mumbai",
+      "state": "Maharashtra",
+      "pincode": "410208",
+      "landmark": "Near MIDC"
+    },
+    "priceDetails": {
+      "range": "₹95 Lakh - ₹2.0 Cr",
+      "perSqft": "₹10,800/sq.ft",
+      "configurations": [
+        {
+          "type": "1 BHK",
+          "area": "460 sq.ft",
+          "price": "₹95 Lakh",
+          "description": "Affordable 1 BHK for first-time buyers"
+        },
+        {
+          "type": "2 BHK",
+          "area": "760 sq.ft",
+          "price": "₹1.4 Cr",
+          "description": "Value 2 BHK with modern amenities"
+        },
+        {
+          "type": "3 BHK",
+          "area": "1080 sq.ft",
+          "price": "₹2.0 Cr",
+          "description": "Spacious 3 BHK with premium fittings"
+        }
+      ]
+    },
+    "developer": {
+      "name": "Paradise Group",
+      "established": "1995",
+      "projectsCount": 28,
+      "description": "Creating affordable luxury homes in Navi Mumbai's growth corridors."
+    },
     "about": "Sai World Dreams in Taloja offers excellent value homes with modern amenities and growing connectivity to Mumbai and Pune.",
-    "amenities": ["Swimming Pool", "Gym", "Kids Play Area", "Jogging Track", "24/7 Security", "Power Backup", "Clubhouse"],
+    "amenities": [
+      "Swimming Pool",
+      "Gym",
+      "Kids Play Area",
+      "Jogging Track",
+      "24/7 Security",
+      "Power Backup",
+      "Clubhouse"
+    ],
     "floorPlans": [
-      { "type": "3 BHK", "area": "460 sq.ft", "image": "/floorplans/dreams-3bhk.webp" },
-      { "type": "4 BHK", "area": "760 sq.ft", "image": "/floorplans/dreams-4bhk.webp" },
-      { "type": "3 BHK", "area": "1080 sq.ft", "image": "/floorplans/dreams-3bhk.webp" }
+      {
+        "type": "3 BHK",
+        "area": "460 sq.ft",
+        "image": "/floorplans/dreams-3bhk.webp"
+      },
+      {
+        "type": "4 BHK",
+        "area": "760 sq.ft",
+        "image": "/floorplans/dreams-4bhk.webp"
+      },
+      {
+        "type": "3 BHK",
+        "area": "1080 sq.ft",
+        "image": "/floorplans/dreams-3bhk.webp"
+      }
     ],
     "possessionDate": "Mar 2027",
     "reraNumber": "P52000048038",
-    "gallery": ["/gallery/dreams-1.webp", "/gallery/dreams-2.webp", "/gallery/dreams-3.webp", "/gallery/dreams-4.webp", "/gallery/dreams-5.webp", "/gallery/dreams-6.webp","/gallery/dreams-7.webp","/gallery/dreams-8.webp","/gallery/dreams-9.webp"],
-    "mapCoords": { "lat": 19.0123, "lng": 73.1234 },
-    "nearbyPlaces": [
-      { "type": "Industrial", "name": "Taloja MIDC", "distance": "1.0 km" },
-      { "type": "School", "name": "Ryan International", "distance": "1.5 km" }
+    "gallery": [
+      "/gallery/dreams-1.webp",
+      "/gallery/dreams-2.webp",
+      "/gallery/dreams-3.webp",
+      "/gallery/dreams-4.webp",
+      "/gallery/dreams-5.webp",
+      "/gallery/dreams-6.webp",
+      "/gallery/dreams-7.webp",
+      "/gallery/dreams-8.webp",
+      "/gallery/dreams-9.webp"
     ],
-    "emi": { "startingFrom": "₹43,200/month", "downPayment": "25%", "interestRate": "8.50%", "tenure": "30 Years" }
+    "mapCoords": {
+      "lat": 19.0123,
+      "lng": 73.1234
+    },
+    "nearbyPlaces": [
+      {
+        "type": "Industrial",
+        "name": "Taloja MIDC",
+        "distance": "1.0 km"
+      },
+      {
+        "type": "School",
+        "name": "Ryan International",
+        "distance": "1.5 km"
+      }
+    ],
+    "emi": {
+      "startingFrom": "₹43,200/month",
+      "downPayment": "25%",
+      "interestRate": "8.50%",
+      "tenure": "30 Years"
+    }
   },
   {
     "slug": "today-nova-vista-nerul",
@@ -830,29 +2617,103 @@
     "image": "/projects/today-nova-vista-nerul.webp",
     "masterPlan": "/floorplans/today-nova-vista-nerul-master.webp",
     "locationMap": "/maps/today-nova-vista-nerul-location.webp",
-    "fullLocation": { "area": "Nerul", "city": "Navi Mumbai", "state": "Maharashtra", "pincode": "400706", "landmark": "Near CBD Belapur" },
-    "priceDetails": { "range": "₹98 Lakh - ₹2.3 Cr", "perSqft": "₹12,500/sq.ft", "configurations": [
-      { "type": "1 BHK", "area": "470 sq.ft", "price": "₹98 Lakh", "description": "Premium 1 BHK in prime Nerul" },
-      { "type": "2 BHK", "area": "770 sq.ft", "price": "₹1.6 Cr", "description": "Luxury 2 BHK with sea views" },
-      { "type": "3 BHK", "area": "1120 sq.ft", "price": "₹2.3 Cr", "description": "Penthouse-style 3 BHK with terrace" }
-    ]},
-    "developer": { "name": "Today Global", "established": "2004", "projectsCount": 4, "description": "Today Global Group is a leading developer in Navi Mumbai with focus on quality construction and timely delivery." },
+    "fullLocation": {
+      "area": "Nerul",
+      "city": "Navi Mumbai",
+      "state": "Maharashtra",
+      "pincode": "400706",
+      "landmark": "Near CBD Belapur"
+    },
+    "priceDetails": {
+      "range": "₹98 Lakh - ₹2.3 Cr",
+      "perSqft": "₹12,500/sq.ft",
+      "configurations": [
+        {
+          "type": "1 BHK",
+          "area": "470 sq.ft",
+          "price": "₹98 Lakh",
+          "description": "Premium 1 BHK in prime Nerul"
+        },
+        {
+          "type": "2 BHK",
+          "area": "770 sq.ft",
+          "price": "₹1.6 Cr",
+          "description": "Luxury 2 BHK with sea views"
+        },
+        {
+          "type": "3 BHK",
+          "area": "1120 sq.ft",
+          "price": "₹2.3 Cr",
+          "description": "Penthouse-style 3 BHK with terrace"
+        }
+      ]
+    },
+    "developer": {
+      "name": "Today Global",
+      "established": "2004",
+      "projectsCount": 4,
+      "description": "Today Global Group is a leading developer in Navi Mumbai with focus on quality construction and timely delivery."
+    },
     "about": "Today Nova Vista Nerul offers premium homes in one of Navi Mumbai's most established locations with excellent connectivity and amenities.",
-    "amenities": ["Swimming Pool", "Gym", "Kids Play Area", "Jogging Track", "24/7 Security", "Power Backup", "Clubhouse", "Sea View"],
+    "amenities": [
+      "Swimming Pool",
+      "Gym",
+      "Kids Play Area",
+      "Jogging Track",
+      "24/7 Security",
+      "Power Backup",
+      "Clubhouse",
+      "Sea View"
+    ],
     "floorPlans": [
-      { "type": "1 BHK", "area": "470 sq.ft", "image": "/floorplans/novavista-1bhk.webp" },
-      { "type": "2 BHK", "area": "770 sq.ft", "image": "/floorplans/novavista-2bhk.webp" },
-      { "type": "3 BHK", "area": "1120 sq.ft", "image": "/floorplans/novavista-3bhk.webp" }
+      {
+        "type": "1 BHK",
+        "area": "470 sq.ft",
+        "image": "/floorplans/novavista-1bhk.webp"
+      },
+      {
+        "type": "2 BHK",
+        "area": "770 sq.ft",
+        "image": "/floorplans/novavista-2bhk.webp"
+      },
+      {
+        "type": "3 BHK",
+        "area": "1120 sq.ft",
+        "image": "/floorplans/novavista-3bhk.webp"
+      }
     ],
     "possessionDate": "Sep 2027",
     "reraNumber": "P52000048040",
-    "gallery": ["/gallery/novavista-1.webp", "/gallery/novavista-2.webp", "/gallery/novavista-3.webp", "/gallery/novavista-4.webp", "/gallery/novavista-5.webp", "/gallery/novavista-6.webp"],
-    "mapCoords": { "lat": 19.0330, "lng": 73.0169 },
-    "nearbyPlaces": [
-      { "type": "Metro", "name": "Nerul Metro", "distance": "0.5 km" },
-      { "type": "School", "name": "DAV Public School", "distance": "1.0 km" }
+    "gallery": [
+      "/gallery/novavista-1.webp",
+      "/gallery/novavista-2.webp",
+      "/gallery/novavista-3.webp",
+      "/gallery/novavista-4.webp",
+      "/gallery/novavista-5.webp",
+      "/gallery/novavista-6.webp"
     ],
-    "emi": { "startingFrom": "₹44,500/month", "downPayment": "25%", "interestRate": "8.50%", "tenure": "30 Years" }
+    "mapCoords": {
+      "lat": 19.033,
+      "lng": 73.0169
+    },
+    "nearbyPlaces": [
+      {
+        "type": "Metro",
+        "name": "Nerul Metro",
+        "distance": "0.5 km"
+      },
+      {
+        "type": "School",
+        "name": "DAV Public School",
+        "distance": "1.0 km"
+      }
+    ],
+    "emi": {
+      "startingFrom": "₹44,500/month",
+      "downPayment": "25%",
+      "interestRate": "8.50%",
+      "tenure": "30 Years"
+    }
   },
   {
     "slug": "today-airoli",
@@ -862,29 +2723,103 @@
     "image": "/projects/today-airoli.webp",
     "masterPlan": "/floorplans/today-airoli-master.webp",
     "locationMap": "/maps/today-airoli-location.webp",
-    "fullLocation": { "area": "Airoli", "city": "Navi Mumbai", "state": "Maharashtra", "pincode": "400708", "landmark": "Near Thane-Belapur Road" },
-    "priceDetails": { "range": "₹96 Lakh - ₹2.1 Cr", "perSqft": "₹11,800/sq.ft", "configurations": [
-      { "type": "1 BHK", "area": "465 sq.ft", "price": "₹96 Lakh", "description": "IT-proximity 1 BHK for professionals" },
-      { "type": "2 BHK", "area": "765 sq.ft", "price": "₹1.5 Cr", "description": "Spacious 2 BHK with modern amenities" },
-      { "type": "3 BHK", "area": "1100 sq.ft", "price": "₹2.1 Cr", "description": "Premium 3 BHK with balcony garden" }
-    ]},
-    "developer": { "name": "Today Global", "established": "2004", "projectsCount": 4, "description": "Delivering quality homes in Navi Mumbai's IT corridors with timely possession." },
+    "fullLocation": {
+      "area": "Airoli",
+      "city": "Navi Mumbai",
+      "state": "Maharashtra",
+      "pincode": "400708",
+      "landmark": "Near Thane-Belapur Road"
+    },
+    "priceDetails": {
+      "range": "₹96 Lakh - ₹2.1 Cr",
+      "perSqft": "₹11,800/sq.ft",
+      "configurations": [
+        {
+          "type": "1 BHK",
+          "area": "465 sq.ft",
+          "price": "₹96 Lakh",
+          "description": "IT-proximity 1 BHK for professionals"
+        },
+        {
+          "type": "2 BHK",
+          "area": "765 sq.ft",
+          "price": "₹1.5 Cr",
+          "description": "Spacious 2 BHK with modern amenities"
+        },
+        {
+          "type": "3 BHK",
+          "area": "1100 sq.ft",
+          "price": "₹2.1 Cr",
+          "description": "Premium 3 BHK with balcony garden"
+        }
+      ]
+    },
+    "developer": {
+      "name": "Today Global",
+      "established": "2004",
+      "projectsCount": 4,
+      "description": "Delivering quality homes in Navi Mumbai's IT corridors with timely possession."
+    },
     "about": "Today Airoli offers convenient living for IT professionals with excellent connectivity to Thane-Belapur Road and upcoming metro.",
-    "amenities": ["Swimming Pool", "Gym", "Kids Play Area", "Jogging Track", "24/7 Security", "Power Backup", "Co-working Space"],
+    "amenities": [
+      "Swimming Pool",
+      "Gym",
+      "Kids Play Area",
+      "Jogging Track",
+      "24/7 Security",
+      "Power Backup",
+      "Co-working Space"
+    ],
     "floorPlans": [
-      { "type": "1 BHK", "area": "465 sq.ft", "image": "/floorplans/airoli-1bhk.webp" },
-      { "type": "2 BHK", "area": "765 sq.ft", "image": "/floorplans/airoli-2bhk.webp" },
-      { "type": "3 BHK", "area": "1100 sq.ft", "image": "/floorplans/airoli-3bhk.webp" }
+      {
+        "type": "1 BHK",
+        "area": "465 sq.ft",
+        "image": "/floorplans/airoli-1bhk.webp"
+      },
+      {
+        "type": "2 BHK",
+        "area": "765 sq.ft",
+        "image": "/floorplans/airoli-2bhk.webp"
+      },
+      {
+        "type": "3 BHK",
+        "area": "1100 sq.ft",
+        "image": "/floorplans/airoli-3bhk.webp"
+      }
     ],
     "possessionDate": "Jun 2027",
     "reraNumber": "P52000048041",
-    "gallery": ["/gallery/airoli-1.webp", "/gallery/airoli-2.webp", "/gallery/airoli-3.webp","/gallery/airoli-4.webp","/gallery/airoli-5.webp","/gallery/airoli-6.webp","/gallery/airoli-7.webp"],
-    "mapCoords": { "lat": 19.1567, "lng": 72.9989 },
-    "nearbyPlaces": [
-      { "type": "IT Park", "name": "Airoli IT Park", "distance": "0.8 km" },
-      { "type": "Metro", "name": "Airoli Metro", "distance": "1.2 km" }
+    "gallery": [
+      "/gallery/airoli-1.webp",
+      "/gallery/airoli-2.webp",
+      "/gallery/airoli-3.webp",
+      "/gallery/airoli-4.webp",
+      "/gallery/airoli-5.webp",
+      "/gallery/airoli-6.webp",
+      "/gallery/airoli-7.webp"
     ],
-    "emi": { "startingFrom": "₹43,500/month", "downPayment": "25%", "interestRate": "8.50%", "tenure": "30 Years" }
+    "mapCoords": {
+      "lat": 19.1567,
+      "lng": 72.9989
+    },
+    "nearbyPlaces": [
+      {
+        "type": "IT Park",
+        "name": "Airoli IT Park",
+        "distance": "0.8 km"
+      },
+      {
+        "type": "Metro",
+        "name": "Airoli Metro",
+        "distance": "1.2 km"
+      }
+    ],
+    "emi": {
+      "startingFrom": "₹43,500/month",
+      "downPayment": "25%",
+      "interestRate": "8.50%",
+      "tenure": "30 Years"
+    }
   },
   {
     "slug": "today-kharghar",
@@ -894,29 +2829,103 @@
     "image": "/projects/today-kharghar.webp",
     "masterPlan": "/floorplans/today-kharghar-master.webp",
     "locationMap": "/maps/today-kharghar-location.webp",
-    "fullLocation": { "area": "Kharghar", "city": "Navi Mumbai", "state": "Maharashtra", "pincode": "410210", "landmark": "Near Central Park" },
-    "priceDetails": { "range": "₹97 Lakh - ₹2.4 Cr", "perSqft": "₹12,200/sq.ft", "configurations": [
-      { "type": "1 BHK", "area": "475 sq.ft", "price": "₹97 Lakh", "description": "Premium 1 BHK near Central Park" },
-      { "type": "2 BHK", "area": "775 sq.ft", "price": "₹1.65 Cr", "description": "Luxury 2 BHK with park views" },
-      { "type": "3 BHK", "area": "1130 sq.ft", "price": "₹2.4 Cr", "description": "Premium 3 BHK with premium finishes" }
-    ]},
-    "developer": { "name": "Today Global", "established": "2004", "projectsCount": 4, "description": "Creating premium homes in Navi Mumbai's most desirable locations." },
+    "fullLocation": {
+      "area": "Kharghar",
+      "city": "Navi Mumbai",
+      "state": "Maharashtra",
+      "pincode": "410210",
+      "landmark": "Near Central Park"
+    },
+    "priceDetails": {
+      "range": "₹97 Lakh - ₹2.4 Cr",
+      "perSqft": "₹12,200/sq.ft",
+      "configurations": [
+        {
+          "type": "1 BHK",
+          "area": "475 sq.ft",
+          "price": "₹97 Lakh",
+          "description": "Premium 1 BHK near Central Park"
+        },
+        {
+          "type": "2 BHK",
+          "area": "775 sq.ft",
+          "price": "₹1.65 Cr",
+          "description": "Luxury 2 BHK with park views"
+        },
+        {
+          "type": "3 BHK",
+          "area": "1130 sq.ft",
+          "price": "₹2.4 Cr",
+          "description": "Premium 3 BHK with premium finishes"
+        }
+      ]
+    },
+    "developer": {
+      "name": "Today Global",
+      "established": "2004",
+      "projectsCount": 4,
+      "description": "Creating premium homes in Navi Mumbai's most desirable locations."
+    },
     "about": "Today Kharghar offers premium residences near Central Park with world-class amenities and excellent connectivity across Mumbai.",
-    "amenities": ["Clubhouse", "Swimming Pool", "Gym", "Kids Play Area", "Jogging Track", "24/7 Security", "Power Backup", "Landscaped Gardens"],
+    "amenities": [
+      "Clubhouse",
+      "Swimming Pool",
+      "Gym",
+      "Kids Play Area",
+      "Jogging Track",
+      "24/7 Security",
+      "Power Backup",
+      "Landscaped Gardens"
+    ],
     "floorPlans": [
-      { "type": "1 BHK", "area": "475 sq.ft", "image": "/floorplans/Comming soon.webp" },
-      { "type": "2 BHK", "area": "775 sq.ft", "image": "/floorplans/Comming soon.webp" },
-      { "type": "3 BHK", "area": "1130 sq.ft", "image": "/floorplans/Comming soon.webp" }
+      {
+        "type": "1 BHK",
+        "area": "475 sq.ft",
+        "image": "/floorplans/Comming soon.webp"
+      },
+      {
+        "type": "2 BHK",
+        "area": "775 sq.ft",
+        "image": "/floorplans/Comming soon.webp"
+      },
+      {
+        "type": "3 BHK",
+        "area": "1130 sq.ft",
+        "image": "/floorplans/Comming soon.webp"
+      }
     ],
     "possessionDate": "Dec 2027",
     "reraNumber": "P52000048042",
-    "gallery": ["/gallery/kharghar-1.webp", "/gallery/kharghar-2.webp","/gallery/kharghar-3.webp","/gallery/kharghar-4.webp","/gallery/kharghar-5.webp","/gallery/kharghar-6.webp"],
-    "mapCoords": { "lat": 19.0448, "lng": 73.0678 },
-    "nearbyPlaces": [
-      { "type": "Park", "name": "Central Park", "distance": "0.3 km" },
-      { "type": "Metro", "name": "Kharghar Metro", "distance": "0.8 km" }
+    "gallery": [
+      "/gallery/kharghar-1.webp",
+      "/gallery/kharghar-2.webp",
+      "/gallery/kharghar-3.webp",
+      "/gallery/kharghar-4.webp",
+      "/gallery/kharghar-5.webp",
+      "/gallery/kharghar-6.webp"
     ],
-    "emi": { "startingFrom": "₹44,000/month", "downPayment": "25%", "interestRate": "8.50%", "tenure": "30 Years" }
+    "mapCoords": {
+      "lat": 19.0448,
+      "lng": 73.0678
+    },
+    "nearbyPlaces": [
+      {
+        "type": "Park",
+        "name": "Central Park",
+        "distance": "0.3 km"
+      },
+      {
+        "type": "Metro",
+        "name": "Kharghar Metro",
+        "distance": "0.8 km"
+      }
+    ],
+    "emi": {
+      "startingFrom": "₹44,000/month",
+      "downPayment": "25%",
+      "interestRate": "8.50%",
+      "tenure": "30 Years"
+    }
   },
   {
     "slug": "runwal-gardens",
@@ -926,29 +2935,102 @@
     "image": "/projects/runwal-gardens.webp",
     "masterPlan": "/floorplans/runwal-gardens-master.webp",
     "locationMap": "/maps/runwal-gardens-location.webp",
-    "fullLocation": { "area": "Dombivli", "city": "Kalyan", "state": "Maharashtra", "pincode": "421204", "landmark": "Near Kalyan-Shil Road" },
-    "priceDetails": { "range": "₹60 Lakh - ₹95 Lakh", "perSqft": "₹7,200/sq.ft", "configurations": [
-      { "type": "1 BHK", "area": "420 sq.ft", "price": "₹60 Lakh", "description": "Affordable 1 BHK for first-time buyers" },
-      { "type": "2 BHK", "area": "650 sq.ft", "price": "₹85 Lakh", "description": "Value 2 BHK with modern amenities" },
-      { "type": "3 BHK", "area": "900 sq.ft", "price": "₹95 Lakh", "description": "Spacious 3 BHK with premium fittings" }
-    ]},
-    "developer": { "name": "Runwal Group", "established": "1978", "projectsCount": 40, "description": "Runwal Group is one of Mumbai's most trusted developers with 40+ years of experience in quality construction." },
+    "fullLocation": {
+      "area": "Dombivli",
+      "city": "Kalyan",
+      "state": "Maharashtra",
+      "pincode": "421204",
+      "landmark": "Near Kalyan-Shil Road"
+    },
+    "priceDetails": {
+      "range": "₹60 Lakh - ₹95 Lakh",
+      "perSqft": "₹7,200/sq.ft",
+      "configurations": [
+        {
+          "type": "1 BHK",
+          "area": "420 sq.ft",
+          "price": "₹60 Lakh",
+          "description": "Affordable 1 BHK for first-time buyers"
+        },
+        {
+          "type": "2 BHK",
+          "area": "650 sq.ft",
+          "price": "₹85 Lakh",
+          "description": "Value 2 BHK with modern amenities"
+        },
+        {
+          "type": "3 BHK",
+          "area": "900 sq.ft",
+          "price": "₹95 Lakh",
+          "description": "Spacious 3 BHK with premium fittings"
+        }
+      ]
+    },
+    "developer": {
+      "name": "Runwal Group",
+      "established": "1978",
+      "projectsCount": 40,
+      "description": "Runwal Group is one of Mumbai's most trusted developers with 40+ years of experience in quality construction."
+    },
     "about": "Runwal Gardens in Dombivli offers affordable homes with modern amenities and excellent connectivity to Mumbai via Central Railway.",
-    "amenities": ["Swimming Pool", "Gym", "Kids Play Area", "Jogging Track", "24/7 Security", "Power Backup", "Clubhouse"],
+    "amenities": [
+      "Swimming Pool",
+      "Gym",
+      "Kids Play Area",
+      "Jogging Track",
+      "24/7 Security",
+      "Power Backup",
+      "Clubhouse"
+    ],
     "floorPlans": [
-      { "type": "1 BHK", "area": "420 sq.ft", "image": "/floorplans/runwal-1bhk.webp" },
-      { "type": "2 BHK", "area": "650 sq.ft", "image": "/floorplans/runwal-2bhk.webp" },
-      { "type": "3 BHK", "area": "900 sq.ft", "image": "/floorplans/runwal-3bhk.webp" }
+      {
+        "type": "1 BHK",
+        "area": "420 sq.ft",
+        "image": "/floorplans/runwal-1bhk.webp"
+      },
+      {
+        "type": "2 BHK",
+        "area": "650 sq.ft",
+        "image": "/floorplans/runwal-2bhk.webp"
+      },
+      {
+        "type": "3 BHK",
+        "area": "900 sq.ft",
+        "image": "/floorplans/runwal-3bhk.webp"
+      }
     ],
     "possessionDate": "Mar 2026",
     "reraNumber": "P52000048050",
-    "gallery": ["/gallery/runwal-1.webp", "/gallery/runwal-2.webp", "/gallery/runwal-3.webp", "/gallery/runwal-4.webp", "/gallery/runwal-5.webp", "/gallery/runwal-6.webp"],
-    "mapCoords": { "lat": 19.2183, "lng": 73.0789 },
-    "nearbyPlaces": [
-      { "type": "Railway", "name": "Dombivli Station", "distance": "1.5 km" },
-      { "type": "School", "name": "Podar International", "distance": "1.0 km" }
+    "gallery": [
+      "/gallery/runwal-1.webp",
+      "/gallery/runwal-2.webp",
+      "/gallery/runwal-3.webp",
+      "/gallery/runwal-4.webp",
+      "/gallery/runwal-5.webp",
+      "/gallery/runwal-6.webp"
     ],
-    "emi": { "startingFrom": "₹27,200/month", "downPayment": "30%", "interestRate": "8.35%", "tenure": "25 Years" }
+    "mapCoords": {
+      "lat": 19.2183,
+      "lng": 73.0789
+    },
+    "nearbyPlaces": [
+      {
+        "type": "Railway",
+        "name": "Dombivli Station",
+        "distance": "1.5 km"
+      },
+      {
+        "type": "School",
+        "name": "Podar International",
+        "distance": "1.0 km"
+      }
+    ],
+    "emi": {
+      "startingFrom": "₹27,200/month",
+      "downPayment": "30%",
+      "interestRate": "8.35%",
+      "tenure": "25 Years"
+    }
   },
   {
     "slug": "lodha-premier",
@@ -958,29 +3040,102 @@
     "image": "/projects/lodha-premier.webp",
     "masterPlan": "/floorplans/lodha-premier-master.webp",
     "locationMap": "/maps/lodha-premier-location.webp",
-    "fullLocation": { "area": "Kalyan", "city": "Kalyan", "state": "Maharashtra", "pincode": "421306", "landmark": "Near Kalyan Station" },
-    "priceDetails": { "range": "₹65 Lakh - ₹1.1 Cr", "perSqft": "₹7,800/sq.ft", "configurations": [
-      { "type": "1 BHK", "area": "440 sq.ft", "price": "₹65 Lakh", "description": "Premium 1 BHK with Lodha quality" },
-      { "type": "2 BHK", "area": "680 sq.ft", "price": "₹90 Lakh", "description": "Luxury 2 BHK with premium finishes" },
-      { "type": "3 BHK", "area": "950 sq.ft", "price": "₹1.1 Cr", "description": "Spacious 3 BHK with balcony garden" }
-    ]},
-    "developer": { "name": "Lodha Group", "established": "1980", "projectsCount": 200, "description": "India's largest real estate developer bringing Lodha quality to Kalyan with premium homes and amenities." },
+    "fullLocation": {
+      "area": "Kalyan",
+      "city": "Kalyan",
+      "state": "Maharashtra",
+      "pincode": "421306",
+      "landmark": "Near Kalyan Station"
+    },
+    "priceDetails": {
+      "range": "₹65 Lakh - ₹1.1 Cr",
+      "perSqft": "₹7,800/sq.ft",
+      "configurations": [
+        {
+          "type": "1 BHK",
+          "area": "440 sq.ft",
+          "price": "₹65 Lakh",
+          "description": "Premium 1 BHK with Lodha quality"
+        },
+        {
+          "type": "2 BHK",
+          "area": "680 sq.ft",
+          "price": "₹90 Lakh",
+          "description": "Luxury 2 BHK with premium finishes"
+        },
+        {
+          "type": "3 BHK",
+          "area": "950 sq.ft",
+          "price": "₹1.1 Cr",
+          "description": "Spacious 3 BHK with balcony garden"
+        }
+      ]
+    },
+    "developer": {
+      "name": "Lodha Group",
+      "established": "1980",
+      "projectsCount": 200,
+      "description": "India's largest real estate developer bringing Lodha quality to Kalyan with premium homes and amenities."
+    },
     "about": "Lodha Premier in Kalyan offers premium homes with the Lodha legacy of excellence, modern amenities, and excellent railway connectivity to Mumbai.",
-    "amenities": ["Swimming Pool", "Gym", "Kids Play Area", "Jogging Track", "24/7 Security", "Power Backup", "Clubhouse", "Landscaped Gardens"],
+    "amenities": [
+      "Swimming Pool",
+      "Gym",
+      "Kids Play Area",
+      "Jogging Track",
+      "24/7 Security",
+      "Power Backup",
+      "Clubhouse",
+      "Landscaped Gardens"
+    ],
     "floorPlans": [
-      { "type": "1 BHK", "area": "440 sq.ft", "image": "/floorplans/premier-1bhk.webp" },
-      { "type": "2 BHK", "area": "680 sq.ft", "image": "/floorplans/premier-2bhk.webp" },
-      { "type": "3 BHK", "area": "950 sq.ft", "image": "/floorplans/premier-3bhk.webp" }
+      {
+        "type": "1 BHK",
+        "area": "440 sq.ft",
+        "image": "/floorplans/premier-1bhk.webp"
+      },
+      {
+        "type": "2 BHK",
+        "area": "680 sq.ft",
+        "image": "/floorplans/premier-2bhk.webp"
+      },
+      {
+        "type": "3 BHK",
+        "area": "950 sq.ft",
+        "image": "/floorplans/premier-3bhk.webp"
+      }
     ],
     "possessionDate": "Jun 2026",
     "reraNumber": "P52000048051",
-    "gallery": ["/gallery/premier-1.webp", "/gallery/premier-2.webp", "/gallery/premier-3.webp", "/gallery/premier-4.webp", "/gallery/premier-5.webp"],
-    "mapCoords": { "lat": 19.2403, "lng": 73.1305 },
-    "nearbyPlaces": [
-      { "type": "Railway", "name": "Kalyan Station", "distance": "1.0 km" },
-      { "type": "School", "name": "Birla School", "distance": "1.2 km" }
+    "gallery": [
+      "/gallery/premier-1.webp",
+      "/gallery/premier-2.webp",
+      "/gallery/premier-3.webp",
+      "/gallery/premier-4.webp",
+      "/gallery/premier-5.webp"
     ],
-    "emi": { "startingFrom": "₹29,500/month", "downPayment": "25%", "interestRate": "8.25%", "tenure": "30 Years" }
+    "mapCoords": {
+      "lat": 19.2403,
+      "lng": 73.1305
+    },
+    "nearbyPlaces": [
+      {
+        "type": "Railway",
+        "name": "Kalyan Station",
+        "distance": "1.0 km"
+      },
+      {
+        "type": "School",
+        "name": "Birla School",
+        "distance": "1.2 km"
+      }
+    ],
+    "emi": {
+      "startingFrom": "₹29,500/month",
+      "downPayment": "25%",
+      "interestRate": "8.25%",
+      "tenure": "30 Years"
+    }
   },
   {
     "slug": "lodha-opulis",
@@ -990,28 +3145,100 @@
     "image": "/projects/lodha-opulis.webp",
     "masterPlan": "/floorplans/lodha-opulis-master.webp",
     "locationMap": "/maps/lodha-opulis-location.webp",
-    "fullLocation": { "area": "Dombivli East", "city": "Kalyan", "state": "Maharashtra", "pincode": "421204", "landmark": "Near Kalyan-Shil Road" },
-    "priceDetails": { "range": "₹62 Lakh - ₹1.05 Cr", "perSqft": "₹7,500/sq.ft", "configurations": [
-      { "type": "1 BHK", "area": "430 sq.ft", "price": "₹62 Lakh", "description": "Value 1 BHK with Lodha quality" },
-      { "type": "2 BHK", "area": "670 sq.ft", "price": "₹88 Lakh", "description": "Premium 2 BHK with modern amenities" },
-      { "type": "3 BHK", "area": "930 sq.ft", "price": "₹1.05 Cr", "description": "Spacious 3 BHK with premium fittings" }
-    ]},
-    "developer": { "name": "Lodha Group", "established": "1980", "projectsCount": 200, "description": "Bringing the Lodha promise of quality and timely delivery to Kalyan's growth corridor." },
+    "fullLocation": {
+      "area": "Dombivli East",
+      "city": "Kalyan",
+      "state": "Maharashtra",
+      "pincode": "421204",
+      "landmark": "Near Kalyan-Shil Road"
+    },
+    "priceDetails": {
+      "range": "₹62 Lakh - ₹1.05 Cr",
+      "perSqft": "₹7,500/sq.ft",
+      "configurations": [
+        {
+          "type": "1 BHK",
+          "area": "430 sq.ft",
+          "price": "₹62 Lakh",
+          "description": "Value 1 BHK with Lodha quality"
+        },
+        {
+          "type": "2 BHK",
+          "area": "670 sq.ft",
+          "price": "₹88 Lakh",
+          "description": "Premium 2 BHK with modern amenities"
+        },
+        {
+          "type": "3 BHK",
+          "area": "930 sq.ft",
+          "price": "₹1.05 Cr",
+          "description": "Spacious 3 BHK with premium fittings"
+        }
+      ]
+    },
+    "developer": {
+      "name": "Lodha Group",
+      "established": "1980",
+      "projectsCount": 200,
+      "description": "Bringing the Lodha promise of quality and timely delivery to Kalyan's growth corridor."
+    },
     "about": "Lodha Opulis in Dombivli East offers excellent value homes with Lodha quality, modern amenities, and growing connectivity to Mumbai.",
-    "amenities": ["Swimming Pool", "Gym", "Kids Play Area", "Jogging Track", "24/7 Security", "Power Backup", "Clubhouse"],
+    "amenities": [
+      "Swimming Pool",
+      "Gym",
+      "Kids Play Area",
+      "Jogging Track",
+      "24/7 Security",
+      "Power Backup",
+      "Clubhouse"
+    ],
     "floorPlans": [
-      { "type": "1 BHK", "area": "430 sq.ft", "image": "/floorplans/opulis-1bhk.webp" },
-      { "type": "2 BHK", "area": "670 sq.ft", "image": "/floorplans/opulis-1bhk.webp" },
-      { "type": "3 BHK", "area": "930 sq.ft", "image": "/floorplans/opulis-1bhk.webp" }
+      {
+        "type": "1 BHK",
+        "area": "430 sq.ft",
+        "image": "/floorplans/opulis-1bhk.webp"
+      },
+      {
+        "type": "2 BHK",
+        "area": "670 sq.ft",
+        "image": "/floorplans/opulis-1bhk.webp"
+      },
+      {
+        "type": "3 BHK",
+        "area": "930 sq.ft",
+        "image": "/floorplans/opulis-1bhk.webp"
+      }
     ],
     "possessionDate": "Sep 2026",
     "reraNumber": "P52000048052",
-    "gallery": ["/gallery/opulis-1.webp", "/gallery/opulis-2.webp","/gallery/opulis-3.webp","/gallery/opulis-4.webp","/gallery/opulis-5.webp"],
-    "mapCoords": { "lat": 19.2183, "lng": 73.0789 },
-    "nearbyPlaces": [
-      { "type": "Railway", "name": "Dombivli Station", "distance": "1.8 km" },
-      { "type": "School", "name": "Podar International", "distance": "1.2 km" }
+    "gallery": [
+      "/gallery/opulis-1.webp",
+      "/gallery/opulis-2.webp",
+      "/gallery/opulis-3.webp",
+      "/gallery/opulis-4.webp",
+      "/gallery/opulis-5.webp"
     ],
-    "emi": { "startingFrom": "₹28,200/month", "downPayment": "30%", "interestRate": "8.35%", "tenure": "25 Years" }
+    "mapCoords": {
+      "lat": 19.2183,
+      "lng": 73.0789
+    },
+    "nearbyPlaces": [
+      {
+        "type": "Railway",
+        "name": "Dombivli Station",
+        "distance": "1.8 km"
+      },
+      {
+        "type": "School",
+        "name": "Podar International",
+        "distance": "1.2 km"
+      }
+    ],
+    "emi": {
+      "startingFrom": "₹28,200/month",
+      "downPayment": "30%",
+      "interestRate": "8.35%",
+      "tenure": "25 Years"
+    }
   }
 ]

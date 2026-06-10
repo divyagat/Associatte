@@ -1,173 +1,191 @@
-import dbConnect from './mongodb';
-import Property from './models/Property';
-import Blog from './models/Blog';
-import { IProperty } from './models/Property';
-import { IBlog } from './models/Blog';
+import { promises as fs } from 'fs';
+import path from 'path';
+import type { IProperty } from './models/Property';
+import type { IBlog } from './models/Blog';
 
-// ==================== PROPERTIES ====================
-export async function getAllProperties(): Promise<IProperty[]> {
+/**
+ * File-based data store.
+ *
+ * Properties are persisted to `data/properties.json` — the SAME file the public
+ * pages (/projects, /properties, property detail, locations, builders, etc.)
+ * already read. So anything added through the admin panel shows up on the site.
+ *
+ * Blogs are persisted to `data/blogs.json`. The blog listing/detail pages merge
+ * these on top of the static blogs in `lib/blog-data.ts`, so existing blogs are
+ * untouched and admin blogs appear alongside them.
+ *
+ * No database / network is required — this works fully offline and removes the
+ * MongoDB Atlas connection that was failing (IP whitelist / placeholder URI).
+ */
+
+const DATA_DIR = path.join(process.cwd(), 'data');
+const PROPERTIES_FILE = path.join(DATA_DIR, 'properties.json');
+const BLOGS_FILE = path.join(DATA_DIR, 'blogs.json');
+
+// ==================== LOW-LEVEL FILE HELPERS ====================
+async function readArray<T = any>(file: string): Promise<T[]> {
   try {
-    await dbConnect();
-    const properties = await Property.find({}).sort({ createdAt: -1 }).lean();
-    return properties.map(p => ({ ...p, _id: p._id.toString() })) as any;
-  } catch (error) {
-    console.error('❌ getAllProperties failed:', (error as Error).message);
+    const raw = await fs.readFile(file, 'utf-8');
+    const data = JSON.parse(raw);
+    return Array.isArray(data) ? data : [];
+  } catch (error: any) {
+    if (error?.code === 'ENOENT') return []; // file doesn't exist yet
+    console.error(`❌ Failed to read ${path.basename(file)}:`, error.message);
     return [];
   }
 }
 
+async function writeArray<T = any>(file: string, data: T[]): Promise<void> {
+  await fs.mkdir(path.dirname(file), { recursive: true });
+  await fs.writeFile(file, JSON.stringify(data, null, 2), 'utf-8');
+}
+
+// Ensure every record has a stable id (admin/blog UIs use `_id`).
+function withId<T extends { slug?: string; _id?: string }>(record: T): T {
+  return { ...record, _id: record._id || record.slug } as T;
+}
+
+// ==================== PROPERTIES ====================
+export async function getAllProperties(): Promise<IProperty[]> {
+  const properties = await readArray(PROPERTIES_FILE);
+  return properties.map(withId) as any;
+}
+
 export async function getPropertyBySlug(slug: string): Promise<IProperty | null> {
-  try {
-    await dbConnect();
-    const property = await Property.findOne({ slug }).lean();
-    if (!property) return null;
-    return { ...property, _id: property._id.toString() } as any;
-  } catch (error) {
-    console.error('❌ getPropertyBySlug failed:', (error as Error).message);
-    return null;
-  }
+  const properties = await readArray(PROPERTIES_FILE);
+  const property = properties.find((p: any) => p.slug === slug);
+  return property ? (withId(property) as any) : null;
 }
 
 export async function createProperty(propertyData: Partial<IProperty>): Promise<IProperty> {
-  await dbConnect();
-  
-  const existing = await Property.findOne({ slug: propertyData.slug });
-  if (existing) {
+  const properties = await readArray(PROPERTIES_FILE);
+
+  if (properties.some((p: any) => p.slug === propertyData.slug)) {
     throw new Error('Property with this slug already exists');
   }
-  
-  const property = new Property(propertyData);
-  await property.save();
-  return { ...property.toObject(), _id: property._id.toString() } as any;
+
+  const now = new Date().toISOString();
+  const property = withId({
+    ...propertyData,
+    createdAt: now,
+    updatedAt: now,
+  } as any);
+
+  // Newest first so it surfaces at the top of the projects grid.
+  properties.unshift(property);
+  await writeArray(PROPERTIES_FILE, properties);
+  return property as any;
 }
 
 export async function updateProperty(slug: string, updates: Partial<IProperty>): Promise<IProperty | null> {
-  await dbConnect();
-  const property = await Property.findOneAndUpdate(
-    { slug },
-    { $set: updates },
-    { new: true, runValidators: true }
-  ).lean();
-  
-  if (!property) return null;
-  return { ...property, _id: property._id.toString() } as any;
+  const properties = await readArray(PROPERTIES_FILE);
+  const index = properties.findIndex((p: any) => p.slug === slug);
+  if (index === -1) return null;
+
+  const updated = withId({
+    ...properties[index],
+    ...updates,
+    slug: properties[index].slug, // slug is the identifier, keep it stable
+    updatedAt: new Date().toISOString(),
+  });
+  properties[index] = updated;
+  await writeArray(PROPERTIES_FILE, properties);
+  return updated as any;
 }
 
 export async function deleteProperty(slug: string): Promise<boolean> {
-  await dbConnect();
-  const result = await Property.deleteOne({ slug });
-  return result.deletedCount > 0;
+  const properties = await readArray(PROPERTIES_FILE);
+  const next = properties.filter((p: any) => p.slug !== slug);
+  if (next.length === properties.length) return false;
+  await writeArray(PROPERTIES_FILE, next);
+  return true;
 }
 
 // ==================== BLOGS ====================
 export async function getAllBlogs(): Promise<IBlog[]> {
-  try {
-    await dbConnect();
-    const blogs = await Blog.find({}).sort({ createdAt: -1 }).lean();
-    return blogs.map(b => ({ ...b, _id: b._id.toString() })) as any;
-  } catch (error) {
-    console.error('❌ getAllBlogs failed:', (error as Error).message);
-    return [];
-  }
+  const blogs = await readArray(BLOGS_FILE);
+  return blogs.map(withId) as any;
 }
 
 export async function getBlogBySlug(slug: string): Promise<IBlog | null> {
-  try {
-    await dbConnect();
-    const blog = await Blog.findOne({ slug }).lean();
-    if (!blog) return null;
-    return { ...blog, _id: blog._id.toString() } as any;
-  } catch (error) {
-    console.error('❌ getBlogBySlug failed:', (error as Error).message);
-    return null;
-  }
+  const blogs = await readArray(BLOGS_FILE);
+  const blog = blogs.find((b: any) => b.slug === slug);
+  return blog ? (withId(blog) as any) : null;
 }
 
 export async function createBlog(blogData: Partial<IBlog>): Promise<IBlog> {
-  await dbConnect();
-  
-  const existing = await Blog.findOne({ slug: blogData.slug });
-  if (existing) {
+  const blogs = await readArray(BLOGS_FILE);
+
+  if (blogs.some((b: any) => b.slug === blogData.slug)) {
     throw new Error('Blog with this slug already exists');
   }
-  
-  const blog = new Blog(blogData);
-  await blog.save();
-  return { ...blog.toObject(), _id: blog._id.toString() } as any;
+
+  const now = new Date().toISOString();
+  const blog = withId({
+    ...blogData,
+    tags: blogData.tags || [],
+    relatedSlugs: blogData.relatedSlugs || [],
+    createdAt: now,
+    updatedAt: now,
+  } as any);
+
+  blogs.unshift(blog);
+  await writeArray(BLOGS_FILE, blogs);
+  return blog as any;
 }
 
 export async function updateBlog(slug: string, updates: Partial<IBlog>): Promise<IBlog | null> {
-  await dbConnect();
-  const blog = await Blog.findOneAndUpdate(
-    { slug },
-    { $set: updates },
-    { new: true, runValidators: true }
-  ).lean();
-  
-  if (!blog) return null;
-  return { ...blog, _id: blog._id.toString() } as any;
+  const blogs = await readArray(BLOGS_FILE);
+  const index = blogs.findIndex((b: any) => b.slug === slug);
+  if (index === -1) return null;
+
+  const updated = withId({
+    ...blogs[index],
+    ...updates,
+    slug: blogs[index].slug,
+    updatedAt: new Date().toISOString(),
+  });
+  blogs[index] = updated;
+  await writeArray(BLOGS_FILE, blogs);
+  return updated as any;
 }
 
 export async function deleteBlog(slug: string): Promise<boolean> {
-  await dbConnect();
-  const result = await Blog.deleteOne({ slug });
-  return result.deletedCount > 0;
+  const blogs = await readArray(BLOGS_FILE);
+  const next = blogs.filter((b: any) => b.slug !== slug);
+  if (next.length === blogs.length) return false;
+  await writeArray(BLOGS_FILE, next);
+  return true;
 }
 
 // ==================== HELPER FUNCTIONS ====================
 export async function getPropertiesByLocation(location: string): Promise<IProperty[]> {
-  try {
-    await dbConnect();
-    const properties = await Property.find({ location: location as any }).sort({ createdAt: -1 }).lean();
-    return properties.map(p => ({ ...p, _id: p._id.toString() })) as any;
-  } catch (error) {
-    console.error('❌ getPropertiesByLocation failed:', (error as Error).message);
-    return [];
-  }
+  const properties = await getAllProperties();
+  return properties.filter((p: any) => p.location === location) as any;
 }
 
 export async function getBlogsByCategory(category: string): Promise<IBlog[]> {
-  try {
-    await dbConnect();
-    const blogs = await Blog.find({ category }).sort({ createdAt: -1 }).lean();
-    return blogs.map(b => ({ ...b, _id: b._id.toString() })) as any;
-  } catch (error) {
-    console.error('❌ getBlogsByCategory failed:', (error as Error).message);
-    return [];
-  }
+  const blogs = await getAllBlogs();
+  return blogs.filter((b: any) => b.category === category) as any;
 }
 
 export async function searchProperties(query: string): Promise<IProperty[]> {
-  try {
-    await dbConnect();
-    const properties = await Property.find({
-      $or: [
-        { name: { $regex: query, $options: 'i' } },
-        { 'fullLocation.area': { $regex: query, $options: 'i' } },
-        { 'developer.name': { $regex: query, $options: 'i' } },
-      ]
-    }).lean();
-    return properties.map(p => ({ ...p, _id: p._id.toString() })) as any;
-  } catch (error) {
-    console.error('❌ searchProperties failed:', (error as Error).message);
-    return [];
-  }
+  const q = query.toLowerCase();
+  const properties = await getAllProperties();
+  return properties.filter((p: any) =>
+    p.name?.toLowerCase().includes(q) ||
+    p.fullLocation?.area?.toLowerCase().includes(q) ||
+    p.developer?.name?.toLowerCase().includes(q)
+  ) as any;
 }
 
 export async function searchBlogs(query: string): Promise<IBlog[]> {
-  try {
-    await dbConnect();
-    const blogs = await Blog.find({
-      $or: [
-        { title: { $regex: query, $options: 'i' } },
-        { excerpt: { $regex: query, $options: 'i' } },
-        { tags: { $regex: query, $options: 'i' } },
-        { category: { $regex: query, $options: 'i' } },
-      ]
-    }).lean();
-    return blogs.map(b => ({ ...b, _id: b._id.toString() })) as any;
-  } catch (error) {
-    console.error('❌ searchBlogs failed:', (error as Error).message);
-    return [];
-  }
+  const q = query.toLowerCase();
+  const blogs = await getAllBlogs();
+  return blogs.filter((b: any) =>
+    b.title?.toLowerCase().includes(q) ||
+    b.excerpt?.toLowerCase().includes(q) ||
+    b.category?.toLowerCase().includes(q) ||
+    (Array.isArray(b.tags) && b.tags.some((t: string) => t.toLowerCase().includes(q)))
+  ) as any;
 }
