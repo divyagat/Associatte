@@ -1,14 +1,30 @@
 import { MetadataRoute } from 'next'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://propfinder.in';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.associatte.com';
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
-  // Fetch dynamic content (with fallbacks)
-  const [properties, projects] = await Promise.all([
+  // Fetch dynamic content (with fallbacks).
+  // Coerce to an array: the API may be down (rejects), or may return an
+  // object/error payload instead of an array — either way we must not .map() it.
+  const toArray = (value: unknown): any[] => {
+    if (Array.isArray(value)) return value;
+    if (value && typeof value === 'object') {
+      const obj = value as Record<string, unknown>;
+      if (Array.isArray(obj.data)) return obj.data;
+      if (Array.isArray(obj.properties)) return obj.properties;
+      if (Array.isArray(obj.projects)) return obj.projects;
+    }
+    return [];
+  };
+
+  const [propertiesRaw, projectsRaw] = await Promise.all([
     fetch(`${apiUrl}/properties`).then(res => res.json()).catch(() => []),
     fetch(`${apiUrl}/projects`).then(res => res.json()).catch(() => [])
   ]);
+
+  const properties = toArray(propertiesRaw);
+  const projects = toArray(projectsRaw);
 
   const locations = ['mumbai', 'pune', 'kharghar', 'navi-mumbai', 'sus-pune'];
 
@@ -29,7 +45,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     {
       url: `${baseUrl}/projects`,
       lastModified: new Date(),
-      changeFrequency: 'weekly',
+      changeFrequency: 'weekly' as const,
       priority: 0.85,
     },
     {
@@ -55,7 +71,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...properties.map((property: any) => ({
       url: `${baseUrl}/property/${property.slug}`,
       lastModified: property.updatedAt || new Date(),
-      changeFrequency: 'weekly',
+      changeFrequency: 'weekly' as const,
       priority: 0.8,
     })),
     
@@ -63,7 +79,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...projects.map((project: any) => ({
       url: `${baseUrl}/project/${project.slug}`,
       lastModified: project.updatedAt || new Date(),
-      changeFrequency: 'weekly',
+      changeFrequency: 'weekly' as const,
       priority: 0.8,
     })),
     
@@ -71,7 +87,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...locations.map((location) => ({
       url: `${baseUrl}/locations/${location}`,
       lastModified: new Date(),
-      changeFrequency: 'weekly',
+      changeFrequency: 'weekly' as const,
       priority: 0.75,
     })),
   ];

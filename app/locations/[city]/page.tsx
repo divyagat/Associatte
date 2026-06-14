@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import Head from 'next/head';
+import { CITY_METADATA } from "./cityMetadata";
 import properties from "../../../data/properties.json";
 import Image from "next/image";
 import Link from "next/link";
@@ -56,15 +56,6 @@ interface Project {
   amenities?: string[];
   mapCoords?: MapCoords;
   createdAt?: string;
-}
-
-interface CityData {
-  lat: number;
-  lng: number;
-  zoom: number;
-  title: string;
-  description: string;
-  keywords: string[];
 }
 
 interface Highlight {
@@ -128,58 +119,6 @@ const MAP_OPTIONS: google.maps.MapOptions = {
   ]
 };
 
-// 📍 City coordinates + SEO metadata
-const CITY_METADATA: Record<string, CityData> = {
-  pune: { 
-    lat: 18.5204, 
-    lng: 73.8567, 
-    zoom: 11,
-    title: "Properties in Pune | 2, 3, 4 BHK Flats & Apartments",
-    description: "Find verified 2, 3, 4 BHK properties in Pune. Browse new launches & ready-to-move projects by top builders. Starting ₹75L. PropFinder by Associatte PropTech.",
-    keywords: ["properties in Pune", "flats in Pune", "3 BHK Pune", "new launch Pune", "ready to move Pune", "PropFinder", "Associatte PropTech"]
-  },
-  mumbai: { 
-    lat: 19.0760, 
-    lng: 72.8777, 
-    zoom: 11,
-    title: "Properties in Mumbai | 2, 3, 4 BHK Flats & Apartments",
-    description: "Discover premium 2, 3, 4 BHK properties in Mumbai. Verified listings, transparent pricing, RERA registered projects. Starting ₹75L. PropFinder by Associatte PropTech.",
-    keywords: ["properties in Mumbai", "flats in Mumbai", "3 BHK Mumbai", "new launch Mumbai", "ready to move Mumbai", "PropFinder", "Associatte PropTech"]
-  },
-  kharghar: { 
-    lat: 19.0433, 
-    lng: 73.0636, 
-    zoom: 13,
-    title: "Properties in Kharghar | 3 BHK Flats Under 1 Crore",
-    description: "Find affordable 2, 3, 4 BHK properties in Kharghar, Navi Mumbai. Ready to move & under construction projects. Starting ₹75L. PropFinder by Associatte PropTech.",
-    keywords: ["properties in Kharghar", "3 BHK Kharghar", "flats under 1 crore Kharghar", "Navi Mumbai properties", "PropFinder", "Associatte PropTech", "Paradise Sai World Empire", "Mantra 1 Residences"]
-  },
-  "sus-pune": {
-    lat: 18.5912,
-    lng: 73.7389,
-    zoom: 13,
-    title: "Properties in Sus, Pune | New Launch Projects",
-    description: "Explore new launch & under construction projects in Sus, Pune. 2, 3, 4 BHK homes by trusted builders. PropFinder by Associatte PropTech.",
-    keywords: ["properties in Sus Pune", "new launch Sus", "Mantra Codename Paradise", "flats in Sus", "PropFinder", "Associatte PropTech"]
-  },
-  kdmc: { 
-    lat: 19.2183, 
-    lng: 73.0789, 
-    zoom: 12,
-    title: "Properties in Kalyan-Dombivli | Affordable 2, 3 BHK Flats",
-    description: "Find affordable 2, 3 BHK properties in Kalyan-Dombivli. RERA registered projects, transparent pricing. Starting ₹40L. PropFinder by Associatte PropTech.",
-    keywords: ["properties in Kalyan", "flats in Dombivli", "affordable homes KDMC", "2 BHK Kalyan", "PropFinder", "Associatte PropTech"]
-  },
-  default: { 
-    lat: 19.0760, 
-    lng: 72.8777, 
-    zoom: 10,
-    title: "Properties in Maharashtra | Find Your Dream Home",
-    description: "Browse verified real estate projects across Maharashtra. 2, 3, 4 BHK homes in Mumbai, Pune, Navi Mumbai & more. PropFinder by Associatte PropTech.",
-    keywords: ["properties in Maharashtra", "real estate Maharashtra", "flats in Maharashtra", "PropFinder", "Associatte PropTech"]
-  }
-};
-
 // 🏙️ Location Schema Component (JSON-LD)
 function LocationSchema({ city, projects }: { city: string; projects: Project[] }) {
   const cityData = CITY_METADATA[city.toLowerCase()] || CITY_METADATA.default;
@@ -217,8 +156,8 @@ function LocationSchema({ city, projects }: { city: string; projects: Project[] 
     "provider": {
       "@type": "Organization",
       "name": "Associatte PropTech Pvt Ltd",
-      "url": "https://propfinder.in",
-      "logo": "https://propfinder.in/logo.png"
+      "url": "https://www.associatte.com",
+      "logo": "https://www.associatte.com/logos/associattewhitelogo.webp"
     }
   };
 
@@ -384,52 +323,13 @@ export default function CityPage() {
     console.error('Map load error:', loadError);
   }
 
-  // 🔹 Generate SEO metadata
-  const seoTitle = cityData.title;
-  const seoDescription = cityData.description;
-  const canonicalUrl = `https://propfinder.in/city/${cityName}`;
-  const locationKeywords = [...cityData.keywords, `${cityDisplayName} real estate`, `buy property in ${cityDisplayName}`];
-
   return (
     <>
-      {/* 🎯 ENHANCED SEO HEAD FOR LOCATION PAGE */}
-      <Head>
-        {/* Primary Meta Tags */}
-        <title>{seoTitle} | PropFinder</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="keywords" content={locationKeywords.join(', ')} />
-        <meta name="author" content="Associatte PropTech Pvt Ltd" />
-        <meta name="robots" content="index, follow" />
-        
-        {/* Canonical URL */}
-        <link rel="canonical" href={canonicalUrl} />
-        
-        {/* Open Graph / Facebook */}
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content={canonicalUrl} />
-        <meta property="og:title" content={`${seoTitle} | PropFinder`} />
-        <meta property="og:description" content={seoDescription} />
-        <meta property="og:image" content="https://propfinder.in/og-image.jpg" />
-        <meta property="og:site_name" content="PropFinder" />
-        <meta property="og:locale" content="en_IN" />
-        
-        {/* Twitter */}
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content={canonicalUrl} />
-        <meta property="twitter:title" content={`${seoTitle} | PropFinder`} />
-        <meta property="twitter:description" content={seoDescription} />
-        <meta property="twitter:image" content="https://propfinder.in/og-image.jpg" />
-        
-        {/* Geo Tags for Local SEO */}
-        <meta name="geo.region" content="IN-MH" />
-        <meta name="geo.placename" content={cityDisplayName} />
-        <meta name="geo.position" content={`${cityData.lat};${cityData.lng}`} />
-        <meta name="ICBM" content={`${cityData.lat}, ${cityData.lng}`} />
-        
-        {/* Location Schema (JSON-LD) */}
-        <PlaceSchema city={cityName} />
-        <LocationSchema city={cityName} projects={filteredProjects} />
-      </Head>
+      {/* SEO: <title>/description/canonical/OG come from the server layout's
+          generateMetadata (app/locations/[city]/layout.tsx). JSON-LD is emitted
+          here in the body — Google reads structured data from anywhere. */}
+      <PlaceSchema city={cityName} />
+      <LocationSchema city={cityName} projects={filteredProjects} />
 
       <div className="min-h-screen bg-gray-50">
         

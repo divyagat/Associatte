@@ -15,8 +15,8 @@ const PropertySchema = ({ property }: { property: any }) => {
     "provider": {
       "@type": "Organization",
       "name": "Associatte PropTech Pvt Ltd",
-      "url": "https://propfinder.in",
-      "logo": "https://propfinder.in/logo.png"
+      "url": "https://www.associatte.com",
+      "logo": "https://www.associatte.com/logos/associattewhitelogo.webp"
     },
     "offers": {
       "@type": "Offer",
@@ -26,7 +26,7 @@ const PropertySchema = ({ property }: { property: any }) => {
       "availability": property.status === 'Ready to Move' 
         ? "https://schema.org/InStock" 
         : "https://schema.org/PreOrder",
-      "url": `https://propfinder.in/property/${property.slug}`
+      "url": `https://www.associatte.com/property/${property.slug}`
     },
     "address": {
       "@type": "PostalAddress",

@@ -1,8 +1,7 @@
 // app/page.tsx
 'use client';
 
-import { useState, useCallback, useMemo, useEffect } from 'react';
-import Head from 'next/head';
+import { useState, useCallback, useMemo, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Home, KeyRound, Building } from 'lucide-react';
 
@@ -68,42 +67,37 @@ interface HomePageSEOProps {
   city: CitySlug;
 }
 
+// NOTE: This is a Client Component, so it cannot use the App Router Metadata API
+// (generateMetadata) or `next/head` — `next/head` is a no-op in the App Router and
+// was silently dropping all of these tags. The page-level title/description/OG tags
+// are provided by the static metadata in `app/layout.tsx`. Here we emit valid
+// JSON-LD structured data, which Google reads from anywhere in the document and
+// which meaningfully improves rich-result eligibility.
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.associatte.com';
+
 const HomePageSEO: React.FC<HomePageSEOProps> = ({ city }) => {
   const config = LOCATION_CONFIG[city];
-  const canonicalUrl = `https://propfinder.in?city=${city}`;
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'RealEstateAgent',
+    name: 'Associatte PropTech Pvt Ltd',
+    url: `${SITE_URL}/?city=${config.slug}`,
+    description: config.metaDescription,
+    areaServed: { '@type': 'City', name: config.name, address: { '@type': 'PostalAddress', addressRegion: 'Maharashtra', addressCountry: 'IN' } },
+    priceRange: `${config.priceRange.min} - ${config.priceRange.max}`,
+  };
 
   return (
-    <Head>
-      <title>{config.metaTitle}</title>
-      <meta name="description" content={config.metaDescription} />
-      <meta name="keywords" content={config.metaKeywords} />
-      <meta name="author" content="Associatte PropTech Pvt Ltd" />
-      <meta name="robots" content="index, follow, max-image-preview:large" />
-      <meta property="og:type" content="website" />
-      <meta property="og:url" content={canonicalUrl} />
-      <meta property="og:title" content={config.metaTitle} />
-      <meta property="og:description" content={config.metaDescription} />
-      <meta property="og:image" content="https://propfinder.in/og-image.jpg" />
-      <meta property="og:image:width" content="1200" />
-      <meta property="og:image:height" content="630" />
-      <meta property="og:locale" content="en_IN" />
-      <meta property="og:site_name" content="PropFinder by Associatte" />
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:url" content={canonicalUrl} />
-      <meta name="twitter:title" content={config.metaTitle} />
-      <meta name="twitter:description" content={config.metaDescription} />
-      <meta name="twitter:image" content="https://propfinder.in/og-image.jpg" />
-      <meta name="twitter:creator" content="@AssociatteProp" />
-      <link rel="canonical" href={canonicalUrl} />
-      <meta name="geo.region" content="IN-MH" />
-      <meta name="geo.placename" content={config.name} />
-      <link rel="alternate" hrefLang="en-in" href={canonicalUrl} />
-    </Head>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
   );
 };
 
 // 🏠 Main HomePage Component
-export default function HomePage() {
+function HomePageContent() {
   const searchParams = useSearchParams();
 
   const cityParam = (searchParams?.get('city') || 'pune') as CitySlug;
@@ -325,5 +319,15 @@ export default function HomePage() {
 
       </main>
     </>
+  );
+}
+
+// ✅ Wrap in Suspense because HomePageContent uses useSearchParams().
+// Without this, the page fails to prerender during `next build`.
+export default function HomePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-50" />}>
+      <HomePageContent />
+    </Suspense>
   );
 }
