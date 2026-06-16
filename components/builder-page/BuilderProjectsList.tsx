@@ -1,9 +1,7 @@
 // client/components/builder-page/BuilderProjectsList.tsx
 'use client';
 
-import BuilderHero from './BuilderHero';
-import BuilderProjects from './BuilderProjects'; // ✅ For /builders/[slug] - shows projects
-// import BuilderSearchContainer from './BuilderSearchContainer'; // ✅ For /builders - shows builder cards
+import BuilderProjects from './BuilderProjects';
 
 interface BuilderProjectsListProps {
   initialSlug: string;
@@ -16,16 +14,6 @@ export default function BuilderProjectsList({
 }: BuilderProjectsListProps) {
   
   const projects = Array.isArray(initialProjects) ? initialProjects : [];
-  const isLocationPage = ['pune', 'mumbai', 'kdmc'].includes(initialSlug);
-  
-  // 🔍 Debug
-  if (process.env.NODE_ENV === 'development') {
-    console.log('[BuilderProjectsList]', { 
-      slug: initialSlug, 
-      isLocationPage, 
-      projectCount: projects.length 
-    });
-  }
   
   if (projects.length === 0) {
     return (
@@ -36,54 +24,6 @@ export default function BuilderProjectsList({
     );
   }
   
-  // ✅ Builder detail page (/builders/[slug]) → Show projects with BuilderProjects
-  if (!isLocationPage) {
-    return (
-      <>
-        <BuilderHero 
-          builderName={projects[0]?.developer?.name || initialSlug} 
-          projectCount={projects.length}
-          slug={initialSlug}
-        />
-        <BuilderProjects slug={initialSlug} projects={projects} />
-      </>
-    );
-  }
-  
-  // ✅ Location page (/builders?location=pune) → Show builder cards (if needed)
-  // Uncomment if you want location-based builder listing:
-  /*
-  return (
-    <BuilderSearchContainer 
-      initialBuilders={transformProjectsToBuilders(projects)} 
-      initialQuery="" 
-      initialLocation={initialSlug} 
-    />
-  );
-  */
-  
-  // Default fallback
+  // ✅ Just show the projects - BuilderHeader already handles the hero section
   return <BuilderProjects slug={initialSlug} projects={projects} />;
 }
-
-// Optional: Helper to transform projects → builder summaries (if needed for location pages)
-/*
-const transformProjectsToBuilders = (projects: any[]) => {
-  const map = new Map();
-  projects.forEach(p => {
-    const name = p.developer?.name;
-    if (!name) return;
-    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-    if (!map.has(slug)) {
-      map.set(slug, {
-        id: slug, name, slug, years: '10y +',
-        logo: `/logos/${slug}.png`, totalProjects: 0, locations: [] as string[],
-      });
-    }
-    const b = map.get(slug);
-    b.totalProjects += 1;
-    if (p.location && !b.locations.includes(p.location)) b.locations.push(p.location);
-  });
-  return Array.from(map.values());
-};
-*/
