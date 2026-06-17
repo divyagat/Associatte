@@ -3,32 +3,50 @@
     "slug": "mantra-one-residency",
     "name": "Mantra One Residency",
     "location": "pune",
-    "price": "₹80 Lakh onwards",
+    "price": "₹2.4 Cr",
     "image": "/projects/mantra-one-residency.webp",
     "masterPlan": "/floorplans/mantra-one-residency-master.webp",
     "locationMap": "/maps/mantra-one-residency-location.webp",
     "fullLocation": {
-      "area": "Wakad",
+      "area": "Magarpatta",
       "city": "Pune",
       "state": "Maharashtra",
-      "pincode": "411057",
-      "landmark": "Near DYP College"
+      "pincode": "411013",
+      "landmark": "Magarpatta"
     },
     "priceDetails": {
-      "range": "₹80 Lakh - ₹1.15 Cr",
-      "perSqft": "₹8,200/sq.ft",
+      "range": "₹ 2.4 Cr* Onwards",
+      "perSqft": "1236 sq.ft - 3800 sq.ft",
       "configurations": [
         {
           "type": "2 BHK",
-          "area": "920 sq.ft",
-          "price": "₹80 Lakh",
+          "area": "1236 sq.ft",
+          "price": "₹2.4 Cr* Onwards",
           "description": "Modern 2 BHK with modular kitchen"
         },
         {
           "type": "3 BHK",
-          "area": "1180 sq.ft",
-          "price": "₹1.15 Cr",
+          "area": "1464 - 1696 sq.ft",
+          "price": "₹2.85 Cr* Onwards",
           "description": "Spacious 3 BHK with balcony"
+        },
+        {
+          "type": "4 BHK",
+          "area": "1874 - 2088 sq.ft",
+          "price": "₹3.75 Cr* Onwards",
+          "description": "Spacious 4 BHK with balcony"
+        },
+        {
+          "type": "Penthouse",
+          "area": "3525 sq.ft",
+          "price": "₹On Request*",
+          "description": ""
+        },
+        {
+          "type": "Garden Villa",
+          "area": "3800 sq.ft",
+          "price": "₹On Request*",
+          "description": ""
         }
       ]
     },
@@ -36,7 +54,7 @@
       "name": "Mantra Developers",
       "established": "2010",
       "projectsCount": 12,
-      "description": "Mantra Developers delivers quality homes in Pune with modern amenities and timely possession."
+      "description": "Step into elevated living at Mantra One Residences by Burgundy – The Luxury Line, where design, scale, and sophistication come together at Magarpatta Road, Pune. Mantra One Residences is a landmark with five iconic towers, each 37 floors high, with just four residences per floor for unmatched privacy. Spread across a total land parcel of 10 acres—8.5 acres residential and 1.5 acres commercial—Mantra One Residences delivers a thoughtfully balanced lifestyle. At Mantra One Residences, discover expansive 3.5 and 4.5 BHK residences alongside ultra-luxurious 6.5 BHK garden villas, crafted for refined living. Every space at Mantra One Residences reflects modern elegance and timeless detail. Positioned in Magarpatta City, Mantra One Residences ensures seamless connectivity to Solapur Highway and Pune Nagar Highway. With panoramic skyline views and curated experiences, Mantra One Residences redefines urban luxury and is a true symbol of iconic living."
     },
     "about": "Mantra One Residency offers premium 2 & 3 BHK homes in Wakad, Pune with excellent connectivity to Hinjewadi IT Park and Mumbai-Pune Expressway.",
     "amenities": [
@@ -51,17 +69,17 @@
     "floorPlans": [
       {
         "type": "2 BHK",
-        "area": "920 sq.ft",
+        "area": "1236 sq.ft",
         "image": "/floorplans/mantra-2bhk.webp"
       },
       {
         "type": "3 BHK",
-        "area": "1180 sq.ft",
+        "area": "1464 - 1696 sq.ft",
         "image": "/floorplans/mantra-3bhk.webp"
       }
     ],
-    "possessionDate": "Dec 2026",
-    "reraNumber": "P52100048120",
+    "possessionDate": "Dec 2029",
+    "reraNumber": "P52100066482",
     "gallery": [
       "/gallery/mantra-1.webp",
       "/gallery/mantra-2.webp",
@@ -101,33 +119,35 @@
     "slug": "mantra-mayfair",
     "name": "Mantra Mayfair",
     "location": "pune",
-    "price": "₹80 Lakh onwards",
+    "price": "₹1.96 Cr* onwards",
     "image": "/projects/mantra-mayfair.webp",
     "masterPlan": "/floorplans/mantra-mayfair-master.webp",
     "locationMap": "/maps/mantra-mayfair-location.webp",
     "fullLocation": {
-      "area": "Hinjewadi",
+      "area": "Koregaon Park",
       "city": "Pune",
       "state": "Maharashtra",
-      "pincode": "411057",
-      "landmark": "Phase 2 IT Park"
+      "pincode": "411036",
+      "landmark": "Magarpatta IT Park"
     },
     "priceDetails": {
-      "range": "₹82 Lakh - ₹1.2 Cr",
-      "perSqft": "₹8,400/sq.ft",
+      "range": "₹1.96 Cr* Onwards",
+      "perSqft": "1386 sq.ft - 2088 sq.ft",
       "configurations": [
         {
-          "type": "2 BHK",
-          "area": "940 sq.ft",
-          "price": "₹82 Lakh",
-          "description": "IT-friendly 2 BHK with work-from-home space"
-        },
-        {
           "type": "3 BHK",
-          "area": "1200 sq.ft",
-          "price": "₹1.2 Cr",
-          "description": "Premium 3 BHK with study room"
+          "area": "1386 sq.ft - 1509 sq.ft",
+          "price": "₹1.96 Cr* Onwards",
+          "description": "IT-friendly 3 BHK with work-from-home space"
+        },
+        
+        {
+          "type": "4 BHK",
+          "area": "1628 - 1747 sq.ft",
+          "price": "₹2.40 Cr* Onwards",
+          "description": "Premium 4 BHK with study room"
         }
+       
       ]
     },
     "developer": {
@@ -136,7 +156,7 @@
       "projectsCount": 12,
       "description": "Trusted builder in Pune with 12+ successful projects."
     },
-    "about": "Mantra Mayfair is strategically located in Hinjewadi Phase 2, offering seamless connectivity to IT parks and premium lifestyle amenities.",
+    "about": "Mantra Mayfair River Residences redefines riverside luxury at Koregaon Park Annex with ultra-spacious 3 and 4 BHK homes crafted for refined urban living. Set along a serene riverfront, Mantra Mayfair River Residences blends natural calm with modern sophistication in one of Pune’s most prestigious neighbourhoods. Designed and styled by Burgundy, Mantra Mayfair River Residences showcases striking architecture and an elevated lifestyle experience. Residents enjoy curated amenities including a Pilates studio, luxury spa retreat, culinary pavilion, M Café, gaming den, and a private cinema lounge, all complemented by an imperial entrance. Located in Upper Koregaon Park, Mantra Mayfair River Residences offers seamless connectivity to Pune’s prime hubs. With Magarpatta City close by, Mantra Mayfair River Residences delivers the perfect balance of convenience and tranquillity. More than just a home, Mantra Mayfair River Residences stands as a bold statement of elevated living and timeless luxury.",
     "amenities": [
       "Swimming Pool",
       "Gym",
@@ -148,18 +168,18 @@
     ],
     "floorPlans": [
       {
-        "type": "2 BHK",
-        "area": "940 sq.ft",
+        "type": "3 BHK",
+        "area": "1386 - 1509 sq.ft",
         "image": "/floorplans/mayfair-2bhk.webp"
       },
       {
-        "type": "3 BHK",
-        "area": "1200 sq.ft",
+        "type": "4 BHK",
+        "area": "1628 - 2088 sq.ft",
         "image": "/floorplans/mayfair-2bhk.webp"
       }
     ],
-    "possessionDate": "Mar 2027",
-    "reraNumber": "P52100048121",
+    "possessionDate": "Dec 2030",
+    "reraNumber": "P52100079211 | P52100079077",
     "gallery": [
       "/gallery/mayfair-gallery1.webp",
       "/gallery/mayfair-gallery2.webp",
@@ -193,32 +213,39 @@
     "slug": "mantra-meridian",
     "name": "Mantra Meridian",
     "location": "pune",
-    "price": "₹80 Lakh onwards",
+    "price": "₹1.20 Cr onwards",
     "image": "/projects/mantra-meridian.webp",
     "masterPlan": "/floorplans/mantra-meridian-master.webp",
     "locationMap": "/maps/mantra-meridian-location.webp",
     "fullLocation": {
-      "area": "Baner",
+      "area": "Balewadi",
       "city": "Pune",
       "state": "Maharashtra",
       "pincode": "411045",
       "landmark": "Near Balewadi Stadium"
     },
     "priceDetails": {
-      "range": "₹85 Lakh - ₹1.3 Cr",
-      "perSqft": "₹8,800/sq.ft",
+      "range": "₹1.20 Cr* Onwards",
+      "perSqft": "834 sq.ft - 1724 sq.ft",
       "configurations": [
         {
           "type": "2 BHK",
-          "area": "960 sq.ft",
-          "price": "₹85 Lakh",
+          "area": "834 sq.ft - 879 sq.ft",
+          "price": "₹1.26 Cr* Onwards",
           "description": "Contemporary 2 BHK with premium finishes"
         },
         {
           "type": "3 BHK",
-          "area": "1280 sq.ft",
-          "price": "₹1.3 Cr",
+          "area": "1043 sq.ft - 1171 sq.ft",
+          "price": "₹1.65 Cr* Onwards",
           "description": "Luxury 3 BHK with panoramic views"
+        }
+        ,
+        {
+          "type": "4 BHK",
+          "area": "1724 sq.ft ",
+          "price": "₹2.99 Cr* Onwards",
+          "description": "Luxury 4 BHK with panoramic views"
         }
       ]
     },
@@ -228,7 +255,7 @@
       "projectsCount": 12,
       "description": "Award-winning developer with focus on quality and innovation."
     },
-    "about": "Mantra Meridian in Baner offers sophisticated living with world-class amenities and excellent connectivity to Pune's key business districts.",
+    "about": "Discover Mantra Meridian, a premium 12-acre residential development in the heart of Balewadi, Pune. Just steps away from the serene Holy River, this landmark project offers an exquisite collection of 2, 3, and 4 BHK homes, along with exclusive 3 BHK duplex apartments designed for those who appreciate the perfect balance of tranquility and modern city life.",
     "amenities": [
       "Infinity Pool",
       "Gym",
@@ -242,17 +269,17 @@
     "floorPlans": [
       {
         "type": "2 BHK",
-        "area": "960 sq.ft",
+        "area": "834 sq.ft - 879 sq.ft",
         "image": "/floorplans/meridian-2bhk.webp"
       },
       {
         "type": "3 BHK",
-        "area": "1280 sq.ft",
+        "area": "1043 sq.ft - 1171 sq.ft",
         "image": "/floorplans/meridian-3bhk.webp"
       }
     ],
-    "possessionDate": "Jun 2027",
-    "reraNumber": "P52100048122",
+    "possessionDate": "Dec 2029",
+    "reraNumber": "P52100045688",
     "gallery": [
       "/gallery/meridian-1.webp",
       "/gallery/meridian-2.webp",
@@ -287,31 +314,31 @@
     "slug": "mantra-magnus",
     "name": "Mantra Magnus",
     "location": "pune",
-    "price": "₹80 Lakh onwards",
+    "price": "₹1.40 Cr* Onwards",
     "image": "/projects/mantra-magnus.webp",
     "masterPlan": "/floorplans/mantra-meridian-master.webp",
     "locationMap": "/maps/mantra-magnus-location.webp",
     "fullLocation": {
-      "area": "Wagholi",
+      "area": "Mundhwa",
       "city": "Pune",
       "state": "Maharashtra",
-      "pincode": "412207",
-      "landmark": "Near Phoenix Mall"
+      "pincode": "411036",
+      "landmark": "Near MIT College Rd"
     },
     "priceDetails": {
-      "range": "₹78 Lakh - ₹1.1 Cr",
-      "perSqft": "₹7,900/sq.ft",
+      "range": "₹1.40 Cr* Onwards",
+      "perSqft": "1134 sq.ft -  1358 sq.ft",
       "configurations": [
         {
-          "type": "2 BHK",
-          "area": "900 sq.ft",
-          "price": "₹78 Lakh",
-          "description": "Affordable 2 BHK with modern amenities"
+          "type": "3 BHK",
+          "area": "1134 - 1146 sq.ft",
+          "price": "₹1.40 Cr* Onwards",
+          "description": "Affordable 3 BHK with modern amenities"
         },
         {
-          "type": "3 BHK",
-          "area": "1150 sq.ft",
-          "price": "₹1.1 Cr",
+          "type": "3.5 BHK",
+          "area": "1358 sq.ft",
+          "price": "₹1.65 Cr* Onwards",
           "description": "Value 3 BHK with spacious rooms"
         }
       ]
@@ -322,7 +349,7 @@
       "projectsCount": 12,
       "description": "Focused on affordable luxury homes in emerging Pune locations."
     },
-    "about": "Mantra Magnus in Wagholi offers excellent value homes with modern amenities and growing connectivity to Pune's IT corridors.",
+    "about": "Magnus Elite, located in the vibrant neighborhood of Mundhwa, Pune, is a premium residential project that redefines contemporary living. Offering elegantly designed 1, 2, 3, and 4 BHK apartments and duplexes, the project combines luxury with functionality. With amenities such as a grand clubhouse, swimming pool, gym, landscaped gardens, kids’ play areas, and indoor games, Magnus Elite ensures a well-rounded lifestyle for residents. Its strategic location provides seamless connectivity to Koregaon Park, Kharadi IT hubs, educational institutions, shopping malls, and healthcare centers, making it an ideal address for working professionals and families seeking urban convenience and serene living",
     "amenities": [
       "Swimming Pool",
       "Gym",
@@ -333,18 +360,18 @@
     ],
     "floorPlans": [
       {
-        "type": "2 BHK",
-        "area": "900 sq.ft",
+        "type": "3 BHK",
+        "area": "1134 sq.ft - 1146 sq.ft",
         "image": "/floorplans/magnus-2bhk.webp"
       },
       {
-        "type": "3 BHK",
-        "area": "1150 sq.ft",
+        "type": "3.5 BHK",
+        "area": "1358 sq.ft",
         "image": "/floorplans/magnus-2bhk.webp"
       }
     ],
-    "possessionDate": "Sep 2026",
-    "reraNumber": "P52100048124",
+    "possessionDate": "Dec 2029-30",
+    "reraNumber": "P52100054373",
     "gallery": [
       "/gallery/magnus-1.webp",
       "/gallery/magnus-2.webp",
@@ -377,9 +404,9 @@
   },
   {
     "slug": "mantra-milange",
-    "name": "Mantra Milange",
+    "name": "Mantra Melange",
     "location": "pune",
-    "price": "₹80 Lakh onwards",
+    "price": "₹1.05 Cr* onwards",
     "image": "/projects/milange.webp",
     "masterPlan": "/floorplans/mantra-meridian-master.webp",
     "locationMap": "/maps/mantra-milange-location.webp",
@@ -391,19 +418,19 @@
       "landmark": "Near EON IT Park"
     },
     "priceDetails": {
-      "range": "₹83 Lakh - ₹1.25 Cr",
-      "perSqft": "₹8,600/sq.ft",
+      "range": "₹1.05 Cr* Onwards",
+      "perSqft": "843 sq.ft - 1177 sq.ft",
       "configurations": [
         {
           "type": "2 BHK",
-          "area": "950 sq.ft",
-          "price": "₹83 Lakh",
+          "area": "843 - 884 sq.ft",
+          "price": "₹1.05 Cr* onwards",
           "description": "IT-proximity 2 BHK with smart home features"
         },
         {
           "type": "3 BHK",
-          "area": "1220 sq.ft",
-          "price": "₹1.25 Cr",
+          "area": "1098 - 1177 sq.ft",
+          "price": "₹1.55 Cr* Onwards",
           "description": "Premium 3 BHK with balcony garden"
         }
       ]
@@ -414,7 +441,7 @@
       "projectsCount": 12,
       "description": "Specializing in tech-friendly homes near Pune's IT hubs."
     },
-    "about": "Mantra Milange in Kharadi offers smart homes with excellent connectivity to EON IT Park and Pune Airport.",
+    "about": "Welcome to Mantra Melange, a thoughtfully crafted residential address on Old Mundhwa Highway, Pune, where contemporary architecture, seamless connectivity, and elevated living come together beautifully. Spread across 8.72 acres, this premium development features elegant glass façade towers, grand double-height entrance lobbies, and thoughtfully planned spaces designed for modern lifestyles. Strategically located with excellent access to Kharadi, Magarpatta, Hadapsar, and Viman Nagar, Mantra Melange keeps you close to Pune's key destinations while offering a peaceful living environment.",
     "amenities": [
       "Swimming Pool",
       "Gym",
@@ -427,17 +454,17 @@
     "floorPlans": [
       {
         "type": "2 BHK",
-        "area": "950 sq.ft",
+        "area": "843 - 884 sq.ft",
         "image": "/floorplans/milange-2bhk.webp"
       },
       {
         "type": "3 BHK",
-        "area": "1220 sq.ft",
+        "area": "1098 - 1177 sq.ft",
         "image": "/floorplans/milange-3bhk.webp"
       }
     ],
-    "possessionDate": "Dec 2026",
-    "reraNumber": "P52100048125",
+    "possessionDate": "Dec 2029-30",
+    "reraNumber": "P52100079582",
     "gallery": [
       "/gallery/milange-1.webp",
       "/gallery/milange-2.webp",
@@ -472,7 +499,7 @@
     "slug": "mantra-codename-paradise",
     "name": "Mantra Codename Paradise",
     "location": "pune",
-    "price": "₹80 Lakh onwards",
+    "price": "₹69.90 Lakh onwards",
     "image": "/projects/mantra-codename-paradise.webp",
     "masterPlan": "/floorplans/mantra-codename-paradise-master.webp",
     "locationMap": "/maps/mantra-codename-paradise-location.webp",
@@ -484,19 +511,19 @@
       "landmark": "Near Hinjewadi IT Park"
     },
     "priceDetails": {
-      "range": "₹80 Lakh - ₹1.2 Cr",
-      "perSqft": "₹8,500/sq.ft",
+      "range": "₹69.90 Lacs Onwards",
+      "perSqft": "710 - 940 sq.ft",
       "configurations": [
         {
           "type": "2 BHK",
-          "area": "950 sq.ft",
-          "price": "₹80 Lakh",
+          "area": "710 - 758 sq.ft",
+          "price": "₹69.90 Lacs Onwards",
           "description": "Spacious 2 BHK with modern amenities"
         },
         {
           "type": "3 BHK",
-          "area": "1250 sq.ft",
-          "price": "₹1.1 Cr",
+          "area": "940 sq.ft",
+          "price": "₹92.90 Lacs Onwards",
           "description": "Premium 3 BHK with balcony and study room"
         }
       ]
@@ -523,17 +550,17 @@
     "floorPlans": [
       {
         "type": "2 BHK",
-        "area": "950 sq.ft",
+        "area": "710 - 758 sq.ft",
         "image": "/floorplans/mantra-codename-2bhk.webp"
       },
       {
         "type": "3 BHK",
-        "area": "1250 sq.ft",
+        "area": "940 sq.ft",
         "image": "/floorplans/mantra-codename-3bhk.webp"
       }
     ],
-    "possessionDate": "Dec 2026",
-    "reraNumber": "P52100048123",
+    "possessionDate": "Dec 2029-30",
+    "reraNumber": "Comming Soon",
     "gallery": [
       "/gallery/mantra-codename-paradise-1.webp",
       "/gallery/mantra-codename-paradise-2.webp",
@@ -576,9 +603,9 @@
     "slug": "lodha-mundhwa",
     "name": "Lodha Mundhwa",
     "location": "pune",
-    "price": "₹80 Lakh onwards",
+    "price": "₹ On Request",
     "image": "/projects/lodha-mundhwa.webp",
-    "masterPlan": "/floorplans/lodha-mundhwa-master.webp",
+    "masterPlan": "/floorplans/Comming soon.webp",
     "locationMap": "/maps/lodha-mundhwa-location.webp",
     "fullLocation": {
       "area": "Mundhwa",
@@ -588,19 +615,19 @@
       "landmark": "Near Phoenix Mall"
     },
     "priceDetails": {
-      "range": "₹85 Lakh - ₹1.4 Cr",
-      "perSqft": "₹9,200/sq.ft",
+      "range": "₹On Request",
+      "perSqft": "Coming Soon sq.ft",
       "configurations": [
         {
           "type": "2 BHK",
-          "area": "980 sq.ft",
-          "price": "₹85 Lakh",
+          "area": "Comming Soon sq.ft",
+          "price": "₹On Request",
           "description": "Premium 2 BHK with Lodha quality finishes"
         },
         {
           "type": "3 BHK",
-          "area": "1300 sq.ft",
-          "price": "₹1.4 Cr",
+          "area": "Comming Soon sq.ft",
+          "price": "₹On Request",
           "description": "Luxury 3 BHK with panoramic views"
         }
       ]
@@ -611,7 +638,7 @@
       "projectsCount": 200,
       "description": "Lodha Group is India's largest real estate developer with iconic projects across Mumbai, Pune, Bangalore, and London."
     },
-    "about": "Lodha Mundhwa brings the Lodha legacy of excellence to Pune with premium homes, world-class amenities, and impeccable craftsmanship in a prime location.",
+    "about": "Lodha Mundhwa is an upcoming apartment project in Mundhwa, Pune. It offers 2 and 3 BHK homes designed for modern family living. The project is in the pre-launch stage, which means early buyers can get special prices. The exact sizes and rates will be shared with registered customers first. Right now, the starting price is on request. Lodha Group is known for quality construction and on-time delivery. With possession set for May 2029, you have time to plan your finances. Mundhwa is close to IT parks, schools, and hospitals, making it a smart choice for both living and long-term value. Prices will depend on the floor, view, and size of the apartment. Reach out to our team to get the latest price list and floor plans. Booking early gives you access to the best units at the most attractive rates.",
     "amenities": [
       "Infinity Pool",
       "State-of-art Gym",
@@ -626,18 +653,18 @@
     ],
     "floorPlans": [
       {
-        "type": "1 BHK",
-        "area": "980 sq.ft",
+        "type": "2 BHK",
+        "area": "Comming Soon sq.ft",
         "image": "/floorplans/lodha-1bhk.webp"
       },
       {
-        "type": "2 BHK",
-        "area": "1300 sq.ft",
+        "type": "3 BHK",
+        "area": "Comming Soon sq.ft",
         "image": "/floorplans/lodha-2bhk.webp"
       }
     ],
     "possessionDate": "Mar 2027",
-    "reraNumber": "P52100048130",
+    "reraNumber": "Comming Soon",
     "gallery": [
       "/gallery/lodha-1.webp",
       "/gallery/lodha-2.webp",
@@ -678,32 +705,37 @@
     "slug": "birla-punya",
     "name": "Birla Punya",
     "location": "pune",
-    "price": "₹80 Lakh onwards",
+    "price": "₹1.75 Cr* Onwards",
     "image": "/projects/birla-punya.webp",
     "masterPlan": "/floorplans/birla-punya-master.webp",
     "locationMap": "/maps/birla-punya-location.webp",
     "fullLocation": {
-      "area": "Mohammadwadi",
+      "area": "Sangamwadi",
       "city": "Pune",
       "state": "Maharashtra",
-      "pincode": "411060",
+      "pincode": "411006",
       "landmark": "Near Amanora Mall"
     },
     "priceDetails": {
-      "range": "₹82 Lakh - ₹1.3 Cr",
-      "perSqft": "₹8,700/sq.ft",
+      "range": "₹1.86 Cr* Onwards",
+      "perSqft": "875 - 1805 sq.ft",
       "configurations": [
         {
           "type": "2 BHK",
-          "area": "940 sq.ft",
-          "price": "₹82 Lakh",
-          "description": "Elegant 2 BHK with Birla quality"
+          "area": "875 - 909 sq.ft",
+          "price": "₹1.86 Cr* onwards",
+          "description": "Elegant 1 BHK with Birla quality"
         },
         {
           "type": "3 BHK",
-          "area": "1240 sq.ft",
-          "price": "₹1.3 Cr",
+          "area": "1451 - 1465 sq.ft",
+          "price": "₹3.39 Cr* Onwards",
           "description": "Spacious 3 BHK with premium fittings"
+        }, {
+          "type": "4 BHK",
+          "area": "1805 sq.ft",
+          "price": "₹4.35 Cr* Onwards",
+          "description": "Spacious 4 BHK with premium fittings"
         }
       ]
     },
@@ -713,7 +745,7 @@
       "projectsCount": 15,
       "description": "Birla Estates brings the trusted Birla legacy to real estate with focus on quality, sustainability, and customer delight."
     },
-    "about": "Birla Punya in Mohammadwadi offers thoughtfully designed homes with premium amenities and excellent connectivity to Pune's key areas.",
+    "about": "Birla Punya is an opulent residential community in Sangamwadi, Central Pune. It presents 2 BHK, 3 BHK, and 4 BHK lavish residences with huge decks. The newly launched Signature tower under Phase 2 comprises exclusive 4 BHK apartments for the discerning individuals. The apartments are finely designed with imported marble flooring, high-end finishes, and branded CP fittings by Kohler, Grohe, and Toto. These Vastu-compliant homes are well-designed, providing ample space, natural light, and ventilation. Along with this, it also hosts 50+ lifestyle amenities. They are a business lounge, semi-olympic swimming pool, landscaped garden, gymnasium, riverfront promenades, kids’ play area, spa, mini theatre, net cricket, lounge deck, etc.",
     "amenities": [
       "Swimming Pool",
       "Gym",
@@ -727,17 +759,17 @@
     "floorPlans": [
       {
         "type": "2 BHK",
-        "area": "940 sq.ft",
+        "area": "875 - 909 sq.ft",
         "image": "/floorplans/birla-2bhk.webp"
       },
       {
         "type": "3 BHK",
-        "area": "1240 sq.ft",
+        "area": "1451 - 1465 sq.ft",
         "image": "/floorplans/birla-3bhk.webp"
       }
     ],
-    "possessionDate": "Jun 2027",
-    "reraNumber": "P52100048131",
+    "possessionDate": "Dec 2031",
+    "reraNumber": "P52100079533",
     "gallery": [
       "/gallery/birla-punya1.webp",
       "/gallery/birla-punya2.webp",
@@ -772,31 +804,31 @@
     "slug": "birla-evem",
     "name": "Birla Evem",
     "location": "pune",
-    "price": "₹80 Lakh onwards",
+    "price": "₹71.55 Lacs onwards",
     "image": "/projects/birla-evem.webp",
     "masterPlan": "/floorplans/birla-evem-master.webp",
     "locationMap": "/maps/birla-evem-location.webp",
     "fullLocation": {
-      "area": "Kharadi",
+      "area": "Manjari",
       "city": "Pune",
       "state": "Maharashtra",
-      "pincode": "411014",
+      "pincode": "412307",
       "landmark": "Near EON IT Park"
     },
     "priceDetails": {
-      "range": "₹84 Lakh - ₹1.35 Cr",
-      "perSqft": "₹8,900/sq.ft",
+      "range": "₹71.55 Lacs Onwards",
+      "perSqft": "707 - 1122 sq.ft",
       "configurations": [
         {
           "type": "2 BHK",
-          "area": "960 sq.ft",
-          "price": "₹84 Lakh",
+          "area": "707- 805 sq.ft",
+          "price": "₹71.55 Lacs Onwards",
           "description": "Tech-ready 2 BHK for IT professionals"
         },
         {
           "type": "3 BHK",
-          "area": "1260 sq.ft",
-          "price": "₹1.35 Cr",
+          "area": "962 - 1122 sq.ft",
+          "price": "₹97.25 Lacs Onwards",
           "description": "Premium 3 BHK with smart home features"
         }
       ]
@@ -807,7 +839,7 @@
       "projectsCount": 15,
       "description": "Creating sustainable, premium homes with the Birla promise of quality."
     },
-    "about": "Birla Evem in Kharadi is designed for the modern professional with smart homes, excellent connectivity to IT parks, and premium lifestyle amenities.",
+    "about": "Birla Manjari brings a new vision of contemporary living to Pune East, offering a thoughtfully designed residential destination that balances elegance, comfort, and nature. Set across a vast 16.5 acre canvas, the project is enriched with expansive green open areas and carefully curated lifestyle amenities that encourage relaxation, recreation, and community living. The sleek high-rise towers are designed to maximize space, light, and ventilation, creating homes that feel open, airy, and welcoming. Located in the rapidly developing Hadapsar–Manjari belt, the project enjoys seamless access to major business districts, reputed schools, healthcare facilities, and shopping destinations. Every element of the development is crafted to support a well-rounded lifestyle — from peaceful landscaped zones to vibrant social spaces. With smartly planned 2 and 3 BHK residences, Birla Manjari stands as a modern address for families who aspire to live in a well-connected, nature-inspired, and future-ready environment.",
     "amenities": [
       "Swimming Pool",
       "Gym",
@@ -821,17 +853,17 @@
     "floorPlans": [
       {
         "type": "2 BHK",
-        "area": "960 sq.ft",
+        "area": "707- 805 sq.ft",
         "image": "/floorplans/evem-2bhk.webp"
       },
       {
         "type": "3 BHK",
-        "area": "1260 sq.ft",
+        "area": "962 - 1122 sq.ft",
         "image": "/floorplans/evem-3bhk.webp"
       }
     ],
-    "possessionDate": "Sep 2027",
-    "reraNumber": "P52100048132",
+    "possessionDate": "Jun 2031",
+    "reraNumber": "PR1261012500295",
     "gallery": [
       "/gallery/evem-1.webp",
       "/gallery/evem-2.webp",
@@ -865,32 +897,32 @@
     "slug": "shapoorji-tree-cloud",
     "name": "Shapoorji Tree Cloud",
     "location": "pune",
-    "price": "₹80 Lakh onwards",
+    "price": "₹1.48 Cr* Onwards",
     "image": "/projects/shapoorji-tree-cloud.webp",
     "masterPlan": "/floorplans/shapoorji-tree-cloud-master.webp",
     "locationMap": "/maps/shapoorji-tree-cloud-location.webp",
     "fullLocation": {
-      "area": "Baner",
+      "area": "Hadapsar",
       "city": "Pune",
       "state": "Maharashtra",
-      "pincode": "411045",
+      "pincode": "411028",
       "landmark": "Near Balewadi High Street"
     },
     "priceDetails": {
-      "range": "₹88 Lakh - ₹1.45 Cr",
-      "perSqft": "₹9,500/sq.ft",
+      "range": "₹1.48 Cr* Onwards",
+      "perSqft": "1270 - 1858 sq.ft",
       "configurations": [
         {
-          "type": "2 BHK",
-          "area": "990 sq.ft",
-          "price": "₹88 Lakh",
-          "description": "Nature-inspired 2 BHK with green views"
+          "type": "3 BHK",
+          "area": "1270 - 1405 sq.ft",
+          "price": "₹1.48 Cr* Onwards",
+          "description": "Nature-inspired 3 BHK with green views"
         },
         {
-          "type": "3 BHK",
-          "area": "1320 sq.ft",
-          "price": "₹1.45 Cr",
-          "description": "Luxury 3 BHK with premium finishes"
+          "type": "4 BHK",
+          "area": "1858 sq.ft",
+          "price": "₹2.55 Cr* Onwards",
+          "description": "Luxury 4 BHK with premium finishes"
         }
       ]
     },
@@ -900,7 +932,7 @@
       "projectsCount": 100,
       "description": "Shapoorji Pallonji is a 150+ year old legacy brand delivering iconic real estate projects across India."
     },
-    "about": "Shapoorji Tree Cloud in Baner offers nature-inspired luxury homes with world-class amenities and the trusted Shapoorji Pallonji legacy.",
+    "about": "Shapoorji Pallonji Codename Tree Clouds is a residential enclave part of a 225-acre township in Hadapsar, Pune. This enclave presents 7 signature towers, featuring 3 BHK and 4 BHK luxury residences with expansive decks & bay windows. The entire township is nestled in the lush green charm of nature and surrounded by century-old trees. While this landmark’s environment ensures you breathe healthy air, it also offers curated amenities such as a gymnasium, swimming pool, jogging track, landscaped garden, kids’ play area, indoor games area, multipurpose court, banquet hall, senior citizens' area, amphitheatre, etc.",
     "amenities": [
       "Swimming Pool",
       "Gym",
@@ -914,18 +946,18 @@
     ],
     "floorPlans": [
       {
-        "type": "2 BHK",
-        "area": "990 sq.ft",
+        "type": "3 BHK",
+        "area": "1270 - 1405 sq.ft",
         "image": "/floorplans/treecloud-2bhk.webp"
       },
       {
-        "type": "3 BHK",
-        "area": "1320 sq.ft",
+        "type": "4 BHK",
+        "area": "1858 sq.ft",
         "image": "/floorplans/opulis-1bhk.webp"
       }
     ],
-    "possessionDate": "Dec 2027",
-    "reraNumber": "P52100048133",
+    "possessionDate": "Dec 2031",
+    "reraNumber": "PR1260002503056",
     "gallery": [
       "/gallery/treecloud-1.webp",
       "/gallery/treecloud-2.webp",
@@ -961,31 +993,31 @@
     "slug": "shapoorji-celestia",
     "name": "Shapoorji Celestia",
     "location": "pune",
-    "price": "₹80 Lakh onwards",
+    "price": "₹78 Lacs onwards",
     "image": "/projects/shapoorji-celestia.webp",
     "masterPlan": "/floorplans/mantra-meridian-master.webp",
     "locationMap": "/maps/shapoorji-celestia-location.webp",
     "fullLocation": {
-      "area": "Wakad",
+      "area": "Shewalewadi",
       "city": "Pune",
       "state": "Maharashtra",
-      "pincode": "411057",
+      "pincode": "412307",
       "landmark": "Near DYP College"
     },
     "priceDetails": {
-      "range": "₹86 Lakh - ₹1.4 Cr",
-      "perSqft": "₹9,200/sq.ft",
+      "range": "₹78 Lacs Onwards",
+      "perSqft": "595 - 1270 sq.ft",
       "configurations": [
         {
           "type": "2 BHK",
-          "area": "970 sq.ft",
-          "price": "₹86 Lakh",
+          "area": "595 - 707 sq.ft",
+          "price": "₹78 - 90.9 Lacs Onwards",
           "description": "Contemporary 2 BHK with premium amenities"
         },
         {
           "type": "3 BHK",
-          "area": "1290 sq.ft",
-          "price": "₹1.4 Cr",
+          "area": "935 - 1270 sq.ft",
+          "price": "₹ 1.16 - 1.67 Cr* Onwards",
           "description": "Spacious 3 BHK with balcony garden"
         }
       ]
@@ -996,7 +1028,7 @@
       "projectsCount": 100,
       "description": "India's oldest construction company delivering premium real estate with uncompromising quality."
     },
-    "about": "Shapoorji Celestia in Wakad offers premium homes with excellent connectivity to Hinjewadi IT Park and Mumbai-Pune Expressway.",
+    "about": "Nestled in the heart of a bustling city, Shapoorji Pallonji Joyville Celestia represents the perfect blend of contemporary living and timeless elegance. Situated in a sought-after residential locale, this development stands as a testament to urban sophistication and modern design, offering residents an oasis of calm amidst the vibrant city.",
     "amenities": [
       "Swimming Pool",
       "Gym",
@@ -1010,17 +1042,17 @@
     "floorPlans": [
       {
         "type": "2 BHK",
-        "area": "970 sq.ft",
+        "area": "595 - 707 sq.ft",
         "image": "/floorplans/celestia-2bhk.webp"
       },
       {
         "type": "3 BHK",
-        "area": "1290 sq.ft",
-        "image": "/floorplans/celestia-3bhk.webp"
+        "area": "935 - 1270 sq.ft",
+        "image": "/floorplans/celestia-2bhk.webp"
       }
     ],
-    "possessionDate": "Mar 2027",
-    "reraNumber": "P52100048134",
+    "possessionDate": "Dec 2031",
+    "reraNumber": "P52100048338",
     "gallery": [
       "/gallery/celestia-1.webp",
       "/gallery/celestia-2.webp",
@@ -1054,32 +1086,45 @@
     "slug": "shapoorji-wildernest",
     "name": "Shapoorji Wildernest",
     "location": "pune",
-    "price": "₹80 Lakh onwards",
+    "price": "₹1.84 Cr* onwards",
     "image": "/projects/shapoorji-wildernest.webp",
     "masterPlan": "/floorplans/mantra-meridian-master.webp",
     "locationMap": "/maps/shapoorji-wildernest-location.webp",
     "fullLocation": {
-      "area": "Hinjewadi",
+      "area": "Hadapsar",
       "city": "Pune",
       "state": "Maharashtra",
-      "pincode": "411057",
+      "pincode": "412307",
       "landmark": "Phase 3 IT Park"
     },
     "priceDetails": {
-      "range": "₹83 Lakh - ₹1.35 Cr",
-      "perSqft": "₹8,800/sq.ft",
+      "range": "₹1.84 Cr* Onwards",
+      "perSqft": "1400 - 5628 sq.ft",
       "configurations": [
         {
-          "type": "2 BHK",
-          "area": "950 sq.ft",
-          "price": "₹83 Lakh",
-          "description": "IT-proximity 2 BHK with work-from-home space"
+          "type": "3 BHK",
+          "area": "1400 sq.ft",
+          "price": "₹1.84 Cr* Onwards",
+          "description": "IT-proximity 3 BHK with work-from-home space"
         },
         {
-          "type": "3 BHK",
-          "area": "1270 sq.ft",
-          "price": "₹1.35 Cr",
-          "description": "Premium 3 BHK with study room"
+          "type": "4 BHK",
+          "area": "1910 sq.ft",
+          "price": "₹2.45 Cr* Onwards",
+          "description": "Premium 4 BHK with study room"
+        }
+        ,
+        {
+          "type": "The Elite Villament",
+          "area": "3463 SqFt - 3812 SqFt",
+          "price": "₹On Request",
+          "description": "Premium 4 BHK with study room"
+        },
+        {
+          "type": "The Grand Villa",
+          "area": "5628 SqFt",
+          "price": "₹On Request",
+          "description": "Premium 4 BHK with study room"
         }
       ]
     },
@@ -1089,7 +1134,7 @@
       "projectsCount": 100,
       "description": "Delivering quality homes near Pune's IT corridors with the Shapoorji legacy."
     },
-    "about": "Shapoorji Wildernest in Hinjewadi Phase 3 offers convenient living for IT professionals with modern amenities and excellent connectivity.",
+    "about": "Shapoorji Pallonji Wildernest is a prestigious residential enclave at SP Kingstown in Hadapsar Annexe, Pune. This aspirational gated community has catered to all your needs by featuring 4 exemplary towers with 3 BHK & 4 BHK Vastu-compliant homes, along with grand villas and elite villaments. The entire township is blessed with a verdant Mango orchard, and every residence is surrounded by 75% open, lush green space. Furthermore, your leisure and necessities will be taken care of by 30+ lifestyle amenities, including an infinity-edge swimming pool, party lawn, gymnasium, cricket pitch, skating rink, cycling track, central mango garden, multipurpose hall, co-working spaces, senior citizen area, amphitheatre, mini theatre, etc.",
     "amenities": [
       "Swimming Pool",
       "Gym",
@@ -1102,17 +1147,17 @@
     "floorPlans": [
       {
         "type": "3 BHK",
-        "area": "950 sq.ft",
+        "area": "1400 sq.ft",
         "image": "/floorplans/wildernest-3bhk.webp"
       },
       {
         "type": "4 BHK",
-        "area": "1270 sq.ft",
+        "area": "1910 sq.ft",
         "image": "/floorplans/wildernest-4bhk.webp"
       }
     ],
     "possessionDate": "Jun 2027",
-    "reraNumber": "P52100048135",
+    "reraNumber": "P52100052683",
     "gallery": [
       "/gallery/wildernest-1.webp",
       "/gallery/wildernest-2.webp",
@@ -1149,31 +1194,38 @@
     "slug": "shapoorji-tree-topia",
     "name": "Shapoorji Tree Topia",
     "location": "pune",
-    "price": "₹80 Lakh onwards",
+    "price": "₹90 Lacs onwards",
     "image": "/projects/shapoorji-tree-topia.webp",
     "masterPlan": "/floorplans/shapoorji-tree-topia-master.webp",
     "locationMap": "/maps/shapoorji-tree-topia-location.webp",
     "fullLocation": {
-      "area": "Pimple Saudagar",
+      "area": "Jadhav Wadi, Hadapsar–Saswad Rd",
       "city": "Pune",
       "state": "Maharashtra",
-      "pincode": "411017",
+      "pincode": "412301",
       "landmark": "Near Metro Station"
     },
     "priceDetails": {
-      "range": "₹81 Lakh - ₹1.3 Cr",
-      "perSqft": "₹8,600/sq.ft",
+      "range": "₹90 Lacs",
+      "perSqft": "2000 - 3000 sq.ft",
       "configurations": [
         {
-          "type": "2 BHK",
-          "area": "930 sq.ft",
-          "price": "₹81 Lakh",
+          "type": "Phase 2 - Limited Plots",
+          "area": "2000 sq.ft",
+          "price": "₹90 Lacs Onwards",
           "description": "Metro-connected 2 BHK with modern amenities"
         },
         {
-          "type": "3 BHK",
-          "area": "1230 sq.ft",
-          "price": "₹1.3 Cr",
+          "type": "Phase 3 & 4- Limited Luxury Bungalow Plots",
+          "area": "3000 sq.ft",
+          "price": "₹1.50 Cr* Onwards",
+          "description": "Spacious 3 BHK with premium fittings"
+        }
+        ,
+        {
+          "type": "Phase 6 - Premium Bungalow Plots",
+          "area": "2000 sq.ft",
+          "price": "₹99 Lacs* Onwards",
           "description": "Spacious 3 BHK with premium fittings"
         }
       ]
@@ -1184,7 +1236,7 @@
       "projectsCount": 100,
       "description": "Creating connected living experiences with the Shapoorji Pallonji promise."
     },
-    "about": "Shapoorji Tree Topia in Pimple Saudagar offers metro-connected homes with premium amenities and excellent connectivity across Pune.",
+    "about": "SPRE Jadhavwadi Plots Treetopia by Shapoorji Pallonji Real Estate (SPRE) redefine premium plotted living along Hadapsar–Saswad Road, East Pune. Spread across a vast 105-acre hillside landscape, this gated development offers premium NA villa plots with individual 7/12 extracts, making it a rare and legally robust offering in the Jadhavwadi micro-market. Designed around nature, Treetopia Jadhavwadi by Shapoorji Pallonji features over 60% open and green spaces, a 25-acre natural reservoir, scenic hill views, and a well-planned internal layout with wide spine roads, pedestrian-friendly zones, and a dedicated lakeside promenade. A luxury clubhouse set on a 3-acre parcel anchors the lifestyle experience, blending open landscapes with thoughtful modern planning.",
     "amenities": [
       "Swimming Pool",
       "Gym",
@@ -1196,18 +1248,18 @@
     ],
     "floorPlans": [
       {
-        "type": "2 BHK",
-        "area": "930 sq.ft",
+        "type": "Phase 2 - Limited Plots",
+        "area": "2000 sq.ft",
         "image": "/floorplans/treetopia-2bhk.webp"
       },
       {
-        "type": "3 BHK",
-        "area": "1230 sq.ft",
+        "type": "Phase 3 & 4- Limited Luxury Bungalow Plots",
+        "area": "3000 sq.ft",
         "image": "/floorplans/treetopia-3bhk.webp"
       }
     ],
-    "possessionDate": "Sep 2026",
-    "reraNumber": "P52100048136",
+    "possessionDate": "June 2027",
+    "reraNumber": "PP1261012501803",
     "gallery": [
       "/gallery/treetopia-1.webp",
       "/gallery/treetopia-2.webp",
@@ -1242,7 +1294,7 @@
     "slug": "shapoorji-villa",
     "name": "Shapoorji Villa",
     "location": "pune",
-    "price": "₹80 Lakh onwards",
+    "price": "₹4.70 Cr* Onwards",
     "image": "/projects/shapoorji-villa.webp",
     "masterPlan": "/floorplans/shapoorji-villa-master.webp",
     "locationMap": "/maps/comming-soon.webp",
@@ -1254,19 +1306,19 @@
       "landmark": "Near Amanora Park Town"
     },
     "priceDetails": {
-      "range": "₹1.2 Cr - ₹2.5 Cr",
-      "perSqft": "₹10,500/sq.ft",
+      "range": "₹4.70 Cr* Onwards",
+      "perSqft": "₹3463 - 5628 sq.ft",
       "configurations": [
         {
           "type": "3 BHK Villa",
-          "area": "1800 sq.ft",
-          "price": "₹1.2 Cr",
+          "area": "3463 - 3812  sq.ft",
+          "price": "₹4.70 Cr* Onwards",
           "description": "Premium villa with private garden"
         },
         {
           "type": "4 BHK Villa",
-          "area": "2400 sq.ft",
-          "price": "₹2.5 Cr",
+          "area": "5628 sq.ft",
+          "price": "₹On Request",
           "description": "Luxury villa with terrace garden"
         }
       ]
@@ -1277,7 +1329,7 @@
       "projectsCount": 100,
       "description": "Delivering premium villa experiences with the Shapoorji Pallonji legacy."
     },
-    "about": "Shapoorji Villa in Undri offers exclusive villa living with private gardens, premium amenities, and the trusted Shapoorji quality.",
+    "about": "Tucked away in serene surroundings, the Mango Tree Villas offers a tranquil escape from the hustle and bustle of urban life. These low-rise villas provide a unique sense of privacy and spaciousness, making them an ideal choice for those who cherish a quieter, more exclusive lifestyle.",
     "amenities": [
       "Private Pool",
       "Gym",
@@ -1291,17 +1343,17 @@
     "floorPlans": [
       {
         "type": "3 BHK Villa",
-        "area": "1800 sq.ft",
+        "area": "On Request",
         "image": "/floorplans/shapoorji-villa-3bhk.webp"
       },
       {
         "type": "4 BHK Villa",
-        "area": "2400 sq.ft",
+        "area": "On Request",
         "image": "/floorplans/shapoorji-villa-4bhk.webp"
       }
     ],
     "possessionDate": "Dec 2027",
-    "reraNumber": "P52100048137",
+    "reraNumber": "P52100052683",
     "gallery": [
       "/gallery/shapoorji-villa-1.webp",
       "/gallery/shapoorji-villa-2.webp",
@@ -3036,37 +3088,37 @@
     "slug": "lodha-premier",
     "name": "Lodha Premier",
     "location": "kdmc",
-    "price": "₹60 Lakh onwards",
+    "price": "₹59.99 Lacs onwards",
     "image": "/projects/lodha-premier.webp",
     "masterPlan": "/floorplans/lodha-premier-master.webp",
     "locationMap": "/maps/lodha-premier-location.webp",
     "fullLocation": {
       "area": "Kalyan",
-      "city": "Kalyan",
+      "city": "kdmc ",
       "state": "Maharashtra",
       "pincode": "421306",
       "landmark": "Near Kalyan Station"
     },
     "priceDetails": {
-      "range": "₹65 Lakh - ₹1.1 Cr",
-      "perSqft": "₹7,800/sq.ft",
+      "range": "₹59.99 Lacs Onwards",
+      "perSqft": "₹479 - 960 sq.ft",
       "configurations": [
         {
           "type": "1 BHK",
-          "area": "440 sq.ft",
-          "price": "₹65 Lakh",
+          "area": "479 sq.ft",
+          "price": "₹59.99 Lacs Onwards",
           "description": "Premium 1 BHK with Lodha quality"
         },
         {
           "type": "2 BHK",
-          "area": "680 sq.ft",
-          "price": "₹90 Lakh",
+          "area": "572 - 656 sq.ft",
+          "price": "₹69.99 Lacs Onwards",
           "description": "Luxury 2 BHK with premium finishes"
         },
         {
           "type": "3 BHK",
-          "area": "950 sq.ft",
-          "price": "₹1.1 Cr",
+          "area": "759 - 960 sq.ft",
+          "price": "₹94.99 Lacs Onwards",
           "description": "Spacious 3 BHK with balcony garden"
         }
       ]
@@ -3077,7 +3129,7 @@
       "projectsCount": 200,
       "description": "India's largest real estate developer bringing Lodha quality to Kalyan with premium homes and amenities."
     },
-    "about": "Lodha Premier in Kalyan offers premium homes with the Lodha legacy of excellence, modern amenities, and excellent railway connectivity to Mumbai.",
+    "about": "Lodha Premier is a beautiful residential development project located at Manpada, Dombivli. Lodha Premier offers excellently created 1, 2 & 3 BHK lavishly furnished apartments with large sundecks, floor-to-ceiling windows, and designer bath fittingsnestled next to acres of forest greens. Exclusively, Lodha Premier Dombivli also comes along with an array of exceptional modern lifestyle amenities. It is an all-encompassing package that will comprise amenities such as a large sports complex, a school, a business district, a clubhouse, floral gardens, high street retail, and more. Right on the Kalyan-Shil Road, the property itself is close to Dombivli Station, Airoli, and a metro station on the upcoming Kalyan-Taloja line. The locale also features the top essentials such as hospitals, shopping malls, banks, ATMs, and restaurants. Guardian School & Aims Hospital are 15-20 minutes away. Overall, Lodha Codename Premier offers a stunning self-sufficient township that brings the best of modernity to your fingertips.",
     "amenities": [
       "Swimming Pool",
       "Gym",
@@ -3091,22 +3143,22 @@
     "floorPlans": [
       {
         "type": "1 BHK",
-        "area": "440 sq.ft",
+        "area": "479 sq.ft",
         "image": "/floorplans/premier-1bhk.webp"
       },
       {
         "type": "2 BHK",
-        "area": "680 sq.ft",
+        "area": "572 - 656 sq.ft",
         "image": "/floorplans/premier-2bhk.webp"
       },
       {
         "type": "3 BHK",
-        "area": "950 sq.ft",
+        "area": "759 - 960 sq.ft",
         "image": "/floorplans/premier-3bhk.webp"
       }
     ],
-    "possessionDate": "Jun 2026",
-    "reraNumber": "P52000048051",
+    "possessionDate": "Dec 2024",
+    "reraNumber": "P51700033751",
     "gallery": [
       "/gallery/premier-1.webp",
       "/gallery/premier-2.webp",
@@ -3141,9 +3193,9 @@
     "slug": "lodha-opulis",
     "name": "Lodha Opulis",
     "location": "kdmc",
-    "price": "₹60 Lakh onwards",
+    "price": "₹1.44 Cr* onwards",
     "image": "/projects/lodha-opulis.webp",
-    "masterPlan": "/floorplans/lodha-opulis-master.webp",
+    "masterPlan": "/floorplans/On- request-master.webp",
     "locationMap": "/maps/lodha-opulis-location.webp",
     "fullLocation": {
       "area": "Dombivli East",
@@ -3153,26 +3205,20 @@
       "landmark": "Near Kalyan-Shil Road"
     },
     "priceDetails": {
-      "range": "₹62 Lakh - ₹1.05 Cr",
-      "perSqft": "₹7,500/sq.ft",
+      "range": "₹1.44 Cr* Onwards",
+      "perSqft": "1113 - 2498 sq.ft",
       "configurations": [
         {
-          "type": "1 BHK",
-          "area": "430 sq.ft",
-          "price": "₹62 Lakh",
+          "type": "3 BHK",
+          "area": "1113 - 2498 sq.ft",
+          "price": "₹1.44 Cr* Onwards",
           "description": "Value 1 BHK with Lodha quality"
         },
         {
-          "type": "2 BHK",
-          "area": "670 sq.ft",
-          "price": "₹88 Lakh",
+          "type": "4 BHK",
+          "area": "2297 - 3300 sq.ft",
+          "price": "₹On Request",
           "description": "Premium 2 BHK with modern amenities"
-        },
-        {
-          "type": "3 BHK",
-          "area": "930 sq.ft",
-          "price": "₹1.05 Cr",
-          "description": "Spacious 3 BHK with premium fittings"
         }
       ]
     },
@@ -3182,7 +3228,7 @@
       "projectsCount": 200,
       "description": "Bringing the Lodha promise of quality and timely delivery to Kalyan's growth corridor."
     },
-    "about": "Lodha Opulis in Dombivli East offers excellent value homes with Lodha quality, modern amenities, and growing connectivity to Mumbai.",
+    "about": "Lodha Opulis Palava - a 50-acre masterpiece that redefines luxury living in MMR. Designed by the visionary Hafeez Contractor, this Art Deco-inspired landmark boasts the region’s largest 1 lakh sq. ft. clubhouse, seamlessly integrated with over 30 acres of lush open spaces. A sanctuary of elegance and tranquility, it deals an escape from the city's hustle while embracing sophistication at its finest.",
     "amenities": [
       "Swimming Pool",
       "Gym",
@@ -3194,23 +3240,18 @@
     ],
     "floorPlans": [
       {
-        "type": "1 BHK",
-        "area": "430 sq.ft",
-        "image": "/floorplans/opulis-1bhk.webp"
-      },
-      {
-        "type": "2 BHK",
-        "area": "670 sq.ft",
-        "image": "/floorplans/opulis-1bhk.webp"
-      },
-      {
         "type": "3 BHK",
-        "area": "930 sq.ft",
+        "area": "113 - 2498 sq.ft",
+        "image": "/floorplans/opulis-1bhk.webp"
+      },
+      {
+        "type": "4 BHK",
+        "area": "2297 - 3300 sq.ft",
         "image": "/floorplans/opulis-1bhk.webp"
       }
     ],
-    "possessionDate": "Sep 2026",
-    "reraNumber": "P52000048052",
+    "possessionDate": "Sep 2029 - 30",
+    "reraNumber": "P51700079035",
     "gallery": [
       "/gallery/opulis-1.webp",
       "/gallery/opulis-2.webp",
