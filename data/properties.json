@@ -1386,32 +1386,39 @@
     "slug": "jhamtani-ace-abundance",
     "name": "Jhamtani Ace Abundance",
     "location": "pune",
-    "price": "₹80 Lakh onwards",
+    "price": "₹1.85 Cr* Onwards",
     "image": "/projects/jhamtani-ace-abundance.webp",
     "masterPlan": "/floorplans/mantra-meridian-master.webp",
     "locationMap": "/maps/jhamtani-ace-abundance-location.webp",
     "fullLocation": {
-      "area": "Wagholi",
+      "area": "Mundhwa",
       "city": "Pune",
       "state": "Maharashtra",
-      "pincode": "412207",
+      "pincode": "411036",
       "landmark": "Near Phoenix Mall"
     },
     "priceDetails": {
-      "range": "₹79 Lakh - ₹1.15 Cr",
-      "perSqft": "₹8,100/sq.ft",
+      "range": "₹1.85 Cr* Onwards",
+      "perSqft": "1293 - 1916 sq.ft",
       "configurations": [
         {
-          "type": "2 BHK",
-          "area": "910 sq.ft",
-          "price": "₹79 Lakh",
-          "description": "Value 2 BHK with modern amenities"
+          "type": "3 BHK",
+          "area": "1293 sq.ft",
+          "price": "₹1.85 Cr* Onwards",
+          "description": "Value 3 BHK with modern amenities"
+        },
+        
+        {
+          "type": "4 BHK",
+          "area": "1808 sq.ft",
+          "price": "₹2.64 Cr* Onwards",
+          "description": "Spacious 4 BHK with premium fittings"
         },
         {
-          "type": "3 BHK",
-          "area": "1190 sq.ft",
-          "price": "₹1.15 Cr",
-          "description": "Spacious 3 BHK with premium fittings"
+          "type": "4.5 BHK",
+          "area": "1916 sq.ft",
+          "price": "₹2.90 Cr* Onwards",
+          "description": "Spacious 4.5 BHK with premium fittings"
         }
       ]
     },
@@ -1421,7 +1428,7 @@
       "projectsCount": 8,
       "description": "Jhamtani Group delivers quality affordable homes in Pune's emerging locations."
     },
-    "about": "Jhamtani Ace Abundance in Wagholi offers excellent value homes with modern amenities and growing connectivity to Pune's IT corridors.",
+    "about": "Ace Abundance rises at the coveted address of Mundhwa — a setting that places you at the intersection of access and privacy. Close to premium lifestyle hubs, workplaces, gardens, and schools, yet quietly removed from the bustle, it offers the rare privilege of being in the heart of the city and in the calm of your own world. Offering spacious 3, 4 & 4.5 Bed Signature Residences, Ace Abundance celebrates sophistication, wellness, and convenience through 40+ lifestyle amenities crafted for physical, social, and emotional well-being.",
     "amenities": [
       "Swimming Pool",
       "Gym",
@@ -1433,17 +1440,17 @@
     "floorPlans": [
       {
         "type": "3 BHK",
-        "area": "910 sq.ft",
+        "area": "1293 sq.ft",
         "image": "/floorplans/ace-3bhk.webp"
       },
       {
-        "type": "3 BHK",
-        "area": "1190 sq.ft",
-        "image": "/floorplans/ace-3bhk.webp"
+        "type": "4.5 BHK",
+        "area": "1916 sq.ft",
+        "image": "/floorplans/Comming soon.webp"
       }
     ],
-    "possessionDate": "Jun 2026",
-    "reraNumber": "P52100048138",
+    "possessionDate": "Dec 2027 - 30 ",
+    "reraNumber": "PR1260002500852",
     "gallery": [
       "/gallery/ace-1.webp",
       "/gallery/ace-2.webp",
@@ -1478,32 +1485,32 @@
     "slug": "kumar-prism",
     "name": "Kumar Prism",
     "location": "pune",
-    "price": "₹80 Lakh onwards",
+    "price": "₹1.95 Cr* Onwards",
     "image": "/projects/kumar-prism.webp",
     "masterPlan": "/floorplans/kumar-prism-master.webp",
     "locationMap": "/maps/kumar-prism-location.webp",
     "fullLocation": {
-      "area": "Kharadi",
+      "area": "Magarpatta",
       "city": "Pune",
       "state": "Maharashtra",
-      "pincode": "411014",
+      "pincode": "411013",
       "landmark": "Near EON IT Park"
     },
     "priceDetails": {
-      "range": "₹84 Lakh - ₹1.32 Cr",
-      "perSqft": "₹8,800/sq.ft",
+      "range": "₹1.95 Cr* Onwards",
+      "perSqft": "1335 - 1722 sq.ft",
       "configurations": [
         {
-          "type": "2 BHK",
-          "area": "955 sq.ft",
-          "price": "₹84 Lakh",
-          "description": "IT-proximity 2 BHK with smart features"
+          "type": "3 BHK",
+          "area": "1335 - 1358 sq.ft",
+          "price": "₹1.95 Cr* Onwards",
+          "description": "IT-proximity 3 BHK with smart features"
         },
         {
-          "type": "3 BHK",
-          "area": "1255 sq.ft",
-          "price": "₹1.32 Cr",
-          "description": "Premium 3 BHK with balcony garden"
+          "type": "4 BHK",
+          "area": "1722 sq.ft",
+          "price": "₹2.75 Cr* Onwards",
+          "description": "Premium 4 BHK with balcony garden"
         }
       ]
     },
@@ -1513,7 +1520,7 @@
       "projectsCount": 50,
       "description": "Kumar Properties is a trusted Pune developer with 30+ years of experience in quality construction."
     },
-    "about": "Kumar Prism in Kharadi offers smart homes with excellent connectivity to EON IT Park and Pune Airport.",
+    "about": "Kumar Prism, Magarpatta – Pune offers an elevated lifestyle in one of East Pune’s most sought-after locations. Spread across 2.5 acres, this premium residential development features 2 iconic towers with G+4P+28 floors, thoughtfully designed to capture scenic city and river views. The project blends contemporary architecture with open spaces, creating a refined urban living experience. Residents at Kumar Prism enjoy access to 50+ premium amenities, catering to wellness, leisure, fitness, and social living. Designed for modern families, the project ensures luxury living with effortless connectivity to Magarpatta, IT hubs, business districts, schools, healthcare, and lifestyle destinations, making everyday life convenient and well-connected. Choose from spacious 3 & 4 BHK luxury residences, crafted with efficient layouts, ample natural light, and high-quality finishes. With possession planned for December 2031, Kumar Prism presents a perfect balance of comfort, exclusivity, and long-term value, with homes.",
     "amenities": [
       "Swimming Pool",
       "Gym",
@@ -1526,12 +1533,12 @@
     "floorPlans": [
       {
         "type": "3 BHK",
-        "area": "955 sq.ft",
+        "area": "1335 - 1358 sq.ft",
         "image": "/floorplans/prism-3bhk.webp"
       },
       {
         "type": "4 BHK",
-        "area": "1255 sq.ft",
+        "area": "1722 sq.ft",
         "image": "/floorplans/prism-4bhk.webp"
       }
     ],
@@ -1572,32 +1579,38 @@
     "slug": "panchshil-57avenue",
     "name": "Panchshil 57 Avenue",
     "location": "pune",
-    "price": "₹80 Lakh onwards",
+    "price": "₹4 Cr++ onwards",
     "image": "/projects/panchshil-57avenue.webp",
-    "masterPlan": "/floorplans/panchshil-57avenue-master.webp",
+    "masterPlan": "/floorplans/On- request-master.webp",
     "locationMap": "/maps/panchshil-57avenue-location.webp",
     "fullLocation": {
-      "area": "Koregaon Park",
+      "area": "Mundhwa",
       "city": "Pune",
       "state": "Maharashtra",
-      "pincode": "411001",
+      "pincode": "411036",
       "landmark": "Near Phoenix Mall"
     },
     "priceDetails": {
-      "range": "₹1.5 Cr - ₹3.5 Cr",
-      "perSqft": "₹15,000/sq.ft",
+      "range": "₹4 Cr++ Onwards",
+      "perSqft": "1803 - 2701 sq.ft",
       "configurations": [
         {
           "type": "3 BHK",
-          "area": "1600 sq.ft",
-          "price": "₹1.5 Cr",
+          "area": "On Request",
+          "price": "₹On Request",
+          "description": "Luxury 3 BHK in prime Koregaon Park"
+        },
+         {
+          "type": "3.5 BHK",
+          "area": "1803.27 Sq. ft",
+          "price": "₹On Request",
           "description": "Luxury 3 BHK in prime Koregaon Park"
         },
         {
-          "type": "4 BHK",
-          "area": "2200 sq.ft",
-          "price": "₹3.5 Cr",
-          "description": "Penthouse-style 4 BHK with premium finishes"
+          "type": "4.5 BHK",
+          "area": "2701.20 sq.ft",
+          "price": "₹On Request",
+          "description": "Penthouse-style 4.5 BHK with premium finishes"
         }
       ]
     },
@@ -1607,7 +1620,7 @@
       "projectsCount": 25,
       "description": "Panchshil Realty creates iconic luxury properties in Pune's most premium locations."
     },
-    "about": "Panchshil 57 Avenue in Koregaon Park offers ultra-luxury residences with world-class amenities in Pune's most prestigious address.",
+    "about": "Panchshil 57 Avenue is an exclusive luxury address in Mundhwa, Pune, offering premium 3 & 4 BHK residences across a landmark 17-acre development with 50% open green spaces. Featuring four iconic 27 storey towers, centrally air conditioned homes with VRV/VRF systems, expansive decks, and world-class lifestyle amenities, it delivers an elevated living experience in one of Pune's most sought after locations.",
     "amenities": [
       "Infinity Pool",
       "Spa & Sauna",
@@ -1620,18 +1633,18 @@
     ],
     "floorPlans": [
       {
-        "type": "3 BHK",
-        "area": "1600 sq.ft",
-        "image": "/floorplans/57ave-3bhk.webp"
+        "type": "3.5 BHK",
+        "area": "1803.27 Sq. ft",
+        "image": "/floorplans/57ave-3.5bhk.webp"
       },
       {
-        "type": "3.5 BHK",
-        "area": "2200 sq.ft",
-        "image": "/floorplans/57ave-3.5bhk.webp"
+        "type": "4.5 BHK",
+        "area": "2701.20 sq.ft",
+        "image": "/floorplans/Comming soon.webp"
       }
     ],
-    "possessionDate": "Dec 2027",
-    "reraNumber": "P52100048140",
+    "possessionDate": "Dec 2029 - 30",
+    "reraNumber": "PR1260002503013",
     "gallery": [
       "/gallery/57ave-1.webp",
       "/gallery/57ave-2.webp",
@@ -1665,7 +1678,7 @@
     "slug": "panchshil-lohegaon-plotting",
     "name": "Panchshil Lohegaon Plotting",
     "location": "pune",
-    "price": "₹80 Lakh onwards",
+    "price": "₹2.6 cR* Onwards",
     "image": "/projects/panchshil-lohegaon-plotting.webp",
     "masterPlan": "/floorplans/panchshil-lohegaon-plotting-master.webp",
     "locationMap": "/maps/panchshil-lohegaon-plotting-location.webp",
@@ -1677,20 +1690,14 @@
       "landmark": "Near Airport"
     },
     "priceDetails": {
-      "range": "₹85 Lakh - ₹1.8 Cr",
-      "perSqft": "₹4,500/sq.ft",
+      "range": "₹2.6 Cr* Onwards",
+      "perSqft": "3711 - 5812 sq.ft",
       "configurations": [
         {
-          "type": "Plot 120 sq.yd",
-          "area": "120 sq.yd",
-          "price": "₹85 Lakh",
+          "type": "Plot sq.ft",
+          "area": "3711 - 5812 sq.ft",
+          "price": "₹2.6 Cr* Onwards",
           "description": "Ready-to-build plot with approval"
-        },
-        {
-          "type": "Plot 200 sq.yd",
-          "area": "200 sq.yd",
-          "price": "₹1.8 Cr",
-          "description": "Premium corner plot with park facing"
         }
       ]
     },
@@ -1700,7 +1707,7 @@
       "projectsCount": 25,
       "description": "Creating premium plotted developments in Pune's growth corridors."
     },
-    "about": "Panchshil Lohegaon Plotting offers ready-to-build plots with all approvals, excellent connectivity to Pune Airport and upcoming metro.",
+    "about": "Bougain Villa at Lohegaon by Panchshil Realty is a premium residential plotted development in Lohegaon, Pune, offering an exclusive opportunity to build your dream home in a serene yet well-connected location. Nestled amidst lush green surroundings, this development seamlessly blends nature, luxury, and modern infrastructure. Each plot at Bougain Villa is thoughtfully designed with wide internal roads, landscaped avenues, and essential utilities to ensure a comfortable and refined living experience. Located close to Pune Airport and key city hubs, Bougain Villa at Lohegaon offers the perfect balance of peace and accessibility, making it one of the most sought-after residential plot communities.",
     "amenities": [
       "Gated Community",
       "24/7 Security",
@@ -1711,18 +1718,18 @@
     ],
     "floorPlans": [
       {
-        "type": "Plot 120 sq.yd",
-        "area": "120 sq.yd",
+        "type": "Plot 3711 sq.yd",
+        "area": "3711 - 5812 sq.yd",
         "image": "/floorplans/lohegaon-120.webp"
       },
       {
-        "type": "Plot 200 sq.yd",
-        "area": "200 sq.yd",
+        "type": "Plot 5812 sq.yd",
+        "area": "3711 - 5812 sq.yd",
         "image": "/floorplans/lohegaon-200.webp"
       }
     ],
     "possessionDate": "Ready to Register",
-    "reraNumber": "P52100048141",
+    "reraNumber": "P52100034062",
     "gallery": [
       "/gallery/lohegaon-1.webp",
       "/gallery/lohegaon-2.webp",
@@ -1764,9 +1771,9 @@
     "slug": "tribeca-lulla-nagar",
     "name": "Tribeca Lulla Nagar",
     "location": "pune",
-    "price": "₹80 Lakh onwards",
+    "price": "₹3.46 Cr* Onwards",
     "image": "/projects/tribeca-lulla-nagar.webp",
-    "masterPlan": "/floorplans/tribeca-lulla-nagar-master.webp",
+    "masterPlan": "/floorplans/On- request-master.webp",
     "locationMap": "/maps/tribeca-lulla-nagar-location.webp",
     "fullLocation": {
       "area": "Lulla Nagar",
@@ -1776,20 +1783,26 @@
       "landmark": "Near Phoenix Mall"
     },
     "priceDetails": {
-      "range": "₹92 Lakh - ₹1.6 Cr",
-      "perSqft": "₹10,200/sq.ft",
+      "range": "₹3.46 Cr* Onwards",
+      "perSqft": "1859 - 3314 sq.ft",
       "configurations": [
         {
-          "type": "2 BHK",
-          "area": "1020 sq.ft",
-          "price": "₹92 Lakh",
-          "description": "Premium 2 BHK with Italian marble"
+          "type": "3 BHK",
+          "area": "1859 sq.ft",
+          "price": "₹3.46 Cr* Onwards",
+          "description": "Premium 3 BHK with Italian marble"
+        },
+          {
+          "type": "4 BHK",
+          "area": "2225 - 2439 sq.ft",
+          "price": "₹4.77 Cr* Onwards",
+          "description": "Premium 4 BHK with Italian marble"
         },
         {
-          "type": "3 BHK",
-          "area": "1380 sq.ft",
-          "price": "₹1.6 Cr",
-          "description": "Luxury 3 BHK with panoramic views"
+          "type": "5 BHK",
+          "area": "2828 - 3314 sq.ft",
+          "price": "₹On Request",
+          "description": "Luxury 5 BHK with panoramic views"
         }
       ]
     },
@@ -1799,7 +1812,7 @@
       "projectsCount": 6,
       "description": "Tribeca Developers creates boutique luxury properties in Pune's premium neighborhoods."
     },
-    "about": "Tribeca Lulla Nagar offers boutique luxury residences with premium finishes and personalized service in one of Pune's most sought-after addresses.",
+    "about": "The Everett by Tribeca is a newly launched ultra-luxury residential project situated in the elite enclave of Lullanagar, Pune South. Spanning a generous 3.6-acre land parcel, this iconic twin-tower landmark soaring 29 storeys high redefines the city’s skyline with a premium, mixed-use ecosystem. The development features a rare, limited collection of vaastu-aligned 3, 4 & 5 BHK luxury apartments and palatial Homes ranging up to 3,320 sq. ft. Designed for ultimate privacy, each residence boasts a striking glass façade, private elevators opening into grand double-height living spaces, and expansive, horizon-facing private decks. Residents enjoy world-class, Tribeca-standard luxury amenities, including an infinity-edge rooftop swimming pool, a sky lounge, and multi-level wellness zones. Strategically located near Pune Cantonment, the property ensures seamless connectivity to major commercial hubs like Magarpatta City IT Park, premium micro-markets like Koregaon Park, and the Pune International Airport.",
     "amenities": [
       "Infinity Pool",
       "Spa",
@@ -1812,18 +1825,24 @@
     ],
     "floorPlans": [
       {
-        "type": "2 BHK",
-        "area": "1020 sq.ft",
-        "image": "/floorplans/tribeca-2bhk.webp"
+        "type": "3 BHK",
+        "area": "1859 sq.ft",
+        "image": "/floorplans/Onrequest-unit-plan.webp"
       },
       {
-        "type": "3 BHK",
-        "area": "1380 sq.ft",
-        "image": "/floorplans/tribeca-2bhk.webp"
+        "type": "4 BHK",
+        "area": "2225 - 2439 sq.ft",
+        "image": "/floorplans/Onrequest-unit-plan.webp"
+      }
+      ,
+      {
+        "type": "5 BHK",
+        "area": "2828 - 3314 sq.ft",
+        "image": "/floorplans/Onrequest-unit-plan.webp"
       }
     ],
-    "possessionDate": "Jun 2027",
-    "reraNumber": "P52100048142",
+    "possessionDate": "Jun 2027 - 30",
+    "reraNumber": "PM1261012600059",
     "gallery": [
       "/gallery/tribeca-1.webp",
       "/gallery/tribeca-2.webp",
@@ -1858,32 +1877,26 @@
     "slug": "tribeca-trump-tower",
     "name": "Tribeca Trump Tower",
     "location": "pune",
-    "price": "₹80 Lakh onwards",
+    "price": "₹8.10 Cr* Onwards",
     "image": "/projects/tribeca-trump-tower.webp",
     "masterPlan": "/floorplans/tribeca-trump-tower-master.webp",
-    "locationMap": "/maps/tribeca-trump-tower-location.webp",
+    "locationMap": "/maps/tribeca-trump-tower-location.webp.jpeg",
     "fullLocation": {
-      "area": "Baner",
+      "area": "Koregaon Park",
       "city": "Pune",
       "state": "Maharashtra",
-      "pincode": "411045",
+      "pincode": "411001",
       "landmark": "Near Balewadi Stadium"
     },
     "priceDetails": {
-      "range": "₹1.8 Cr - ₹4.5 Cr",
-      "perSqft": "₹18,000/sq.ft",
+      "range": "₹8.10 Cr* Onwards",
+      "perSqft": "3000 - 18000 sq.ft",
       "configurations": [
         {
-          "type": "3 BHK",
-          "area": "1800 sq.ft",
-          "price": "₹1.8 Cr",
-          "description": "Luxury 3 BHK with Trump Collection finishes"
-        },
-        {
-          "type": "4 BHK",
-          "area": "2800 sq.ft",
-          "price": "₹4.5 Cr",
-          "description": "Penthouse 4 BHK with private terrace"
+          "type": "Office Space",
+          "area": "3000 - 18000 sq.ft",
+          "price": "₹8.10 Cr* Onwards",
+          "description": "Luxury established enterprises"
         }
       ]
     },
@@ -1893,7 +1906,7 @@
       "projectsCount": 6,
       "description": "Creating ultra-luxury branded residences in partnership with global luxury brands."
     },
-    "about": "Tribeca Trump Tower brings the iconic Trump luxury brand to Pune with ultra-premium residences, world-class amenities, and unparalleled service.",
+    "about": "Tribeca Trump World Center is an iconic and distinctive commercial landmark in Koregaon Park Annexe, Pune. It comprises Grade A offices across a varied carpet range. These full glass facade towers give it an appealing look and ensure seamless natural light. This is the first-ever commercial development in India by the Trump organisation. Every office unit features an expansive layout, world-class design, and top-notch specifications. This office development offers flexibility to select from half-floor plate to full-floor plate options. Additional features like a basement parking, podium parking, concierge desk, multi-tier security, CCTV surveillance, and high-speed elevators assure convenience.",
     "amenities": [
       "Infinity Pool",
       "Spa & Wellness",
@@ -1908,22 +1921,24 @@
     "floorPlans": [
       {
         "type": "3 BHK",
-        "area": "1800 sq.ft",
-        "image": "/floorplans/trump-3bhk.webp"
+        "area": "3525 sq.ft",
+        "image": "/floorplans/trump-tower-floor-plan-1-a.webp"
       },
       {
         "type": "4 BHK",
-        "area": "2800 sq.ft",
-        "image": "/floorplans/trump-4bhk.webp"
+        "area": "4550 - 6050 sq.ft",
+        "image": "/floorplans/trump-tower-floor-plan-10-a.webp"
       }
     ],
-    "possessionDate": "Dec 2028",
-    "reraNumber": "P52100048143",
+    "possessionDate": "Dec 2028 - 30",
+    "reraNumber": "P52100066551",
     "gallery": [
       "/gallery/trump-1.webp",
       "/gallery/trump-2.webp",
       "/gallery/trump-3.webp",
-      "/gallery/trump-4.webp"
+      "/gallery/trump-4.webp",
+      "/gallery/trump-5.webp",
+      "/gallery/trump-6.webp"
     ],
     "mapCoords": {
       "lat": 18.5593,
@@ -1952,7 +1967,7 @@
     "slug": "magarpatta-city-nova-residency",
     "name": "Magarpatta City Nova Residency",
     "location": "pune",
-    "price": "₹80 Lakh onwards",
+    "price": "₹1.05 Cr* Onwards",
     "image": "/projects/magarpatta-nova-residency.webp",
     "masterPlan": "/floorplans/magarpatta-nova-residency-master.webp",
     "locationMap": "/maps/magarpatta-nova-residency-location.webp",
@@ -1964,19 +1979,19 @@
       "landmark": "Within Magarpatta Township"
     },
     "priceDetails": {
-      "range": "₹86 Lakh - ₹1.4 Cr",
-      "perSqft": "₹9,100/sq.ft",
+      "range": "₹1.05 Cr* Onwards",
+      "perSqft": "809.56 - 14.27.95 sq.ft",
       "configurations": [
         {
           "type": "2 BHK",
-          "area": "980 sq.ft",
-          "price": "₹86 Lakh",
+          "area": "809.56 - 989.97 sq.ft",
+          "price": "₹1.05 Cr* Onwards",
           "description": "Township living 2 BHK with all amenities"
         },
         {
           "type": "3 BHK",
-          "area": "1310 sq.ft",
-          "price": "₹1.4 Cr",
+          "area": "1082.32 - 1427.95 sq.ft",
+          "price": "₹1.51 Cr* Onwards",
           "description": "Premium 3 BHK with garden views"
         }
       ]
@@ -1987,7 +2002,7 @@
       "projectsCount": 1,
       "description": "Magarpatta City is India's first integrated township developed by farmers, offering self-sustainable living."
     },
-    "about": "Nova Residency within Magarpatta City offers township living with all amenities within walking distance - schools, hospitals, malls, and IT parks.",
+    "about": "Nova Apartments present budget-friendly, comfortable living spaces with essential amenities. For those seeking a premium experience, Nova Residency offers upscale homes with luxurious features and modern conveniences. Elevate your lifestyle further with Nova Elegance, where luxury reaches its pinnacle with spacious 4.5 BHK residences designed for opulence and sophistication.",
     "amenities": [
       "Swimming Pool",
       "Gym",
@@ -2003,17 +2018,17 @@
     "floorPlans": [
       {
         "type": "2 BHK",
-        "area": "980 sq.ft",
+        "area": "809.56 - 989.97 sq.ft",
         "image": "/floorplans/nova-2bhk.webp"
       },
       {
         "type": "3 BHK",
-        "area": "1310 sq.ft",
+        "area": "1082.32 - 1427.95 sq.ft",
         "image": "/floorplans/nova-3bhk.webp"
       }
     ],
     "possessionDate": "Ready to Move",
-    "reraNumber": "P52100048144",
+    "reraNumber": "P52100055577",
     "gallery": [
       "/gallery/nova-1.webp",
       "/gallery/nova-2.webp"
@@ -2050,9 +2065,9 @@
     "slug": "magarpatta-city-nova-elegance",
     "name": "Magarpatta City Nova Elegance",
     "location": "pune",
-    "price": "₹80 Lakh onwards",
+    "price": "₹3.81 Cr* Onwards",
     "image": "/projects/magarpatta-nova-elegance.webp",
-    "masterPlan": "/floorplans/magarpatta-nova-elegance-master.webp",
+    "masterPlan": "/floorplans/blur-master.webp",
     "locationMap": "/maps/magarpatta-nova-elegance-location.webp",
     "fullLocation": {
       "area": "Magarpatta City",
@@ -2062,20 +2077,14 @@
       "landmark": "Within Magarpatta Township"
     },
     "priceDetails": {
-      "range": "₹88 Lakh - ₹1.45 Cr",
-      "perSqft": "₹9,300/sq.ft",
+      "range": "₹3.81 Cr* Onwards",
+      "perSqft": "2726 sq.ft",
       "configurations": [
         {
-          "type": "2 BHK",
-          "area": "990 sq.ft",
-          "price": "₹88 Lakh",
-          "description": "Elegant 2 BHK with premium township amenities"
-        },
-        {
-          "type": "3 BHK",
-          "area": "1330 sq.ft",
-          "price": "₹1.45 Cr",
-          "description": "Luxury 3 BHK with panoramic views"
+          "type": "4.5 BHK",
+          "area": "2726 sq.ft",
+          "price": "₹3.81 Cr* Onwards",
+          "description": "Elegant 4.5 BHK with premium township amenities"
         }
       ]
     },
@@ -2085,7 +2094,7 @@
       "projectsCount": 1,
       "description": "Pioneering integrated township living with self-sustainable infrastructure."
     },
-    "about": "Nova Elegance offers upgraded finishes and premium amenities within the self-sustainable Magarpatta City township.",
+    "about": "Introducing Nova Elegance, the highly anticipated successor to an already illustrious luxury housing brand. Building upon the unprecedented standards of living established by its predecessor at Nova, this remarkable development is poised to transcend all expectations, resulting in a living experience that is nothing short of surreal. Nova Elegance aspires to redefine the essence of opulence, ensuring that each resident's lifestyle is elevated to new heights. With an unwavering commitment to luxury, this project seeks to epitomize the very dream of extravagant living. In Nova Elegance, you can anticipate a lifestyle that seamlessly fuses sophistication, comfort, and innovation. This is where the boundaries between the ordinary and the extraordinary blur, as residents are greeted with an abundance of amenities, architectural marvels, and the finest craftsmanship. From the meticulously designed interiors to the meticulously manicured landscapes, every detail reflects a dedication to exceeding your expectations. Nova Elegance transcends the ordinary, creating a haven where your dreams of luxury find their realization. Welcome to Nova Elegance, where luxury and dreams intertwine to create an unparalleled living experience, promising to take you beyond the limits of your imagination. Nova Elegance, where reality meets the dream of luxury",
     "amenities": [
       "Swimming Pool",
       "Gym",
@@ -2100,18 +2109,13 @@
     ],
     "floorPlans": [
       {
-        "type": "2 BHK",
-        "area": "990 sq.ft",
+        "type": "4.5 BHK",
+        "area": "2726 sq.ft",
         "image": "/floorplans/elegance-2bhk.webp"
-      },
-      {
-        "type": "3 BHK",
-        "area": "1330 sq.ft",
-        "image": "/floorplans/elegance-3bhk.webp"
       }
     ],
     "possessionDate": "Ready to Move",
-    "reraNumber": "P52100048145",
+    "reraNumber": "P52100053062",
     "gallery": [
       "/gallery/elegance-1.webp",
       "/gallery/elegance-2.webp"
@@ -2143,7 +2147,7 @@
     "slug": "magarpatta-city-rvc-hornbill",
     "name": "Magarpatta City RVC Hornbill",
     "location": "pune",
-    "price": "₹80 Lakh onwards",
+    "price": "₹80.50 Lacs Onwards",
     "image": "/projects/magarpatta-rvc-hornbill.webp",
     "masterPlan": "/floorplans/magarpatta-rvc-hornbill-master.webp",
     "locationMap": "/maps/magarpatta-rvc-hornbill-location.webp",
@@ -2155,20 +2159,14 @@
       "landmark": "Within Magarpatta Township"
     },
     "priceDetails": {
-      "range": "₹90 Lakh - ₹1.5 Cr",
-      "perSqft": "₹9,500/sq.ft",
+      "range": "₹80.50 Lacs Onwards",
+      "perSqft": "898.26 - 1096.96 sq.ft",
       "configurations": [
         {
           "type": "2 BHK",
-          "area": "1000 sq.ft",
-          "price": "₹90 Lakh",
+          "area": "898.26 - 1096.96 sq.ft",
+          "price": "₹80.50 - 1.01 Cr* Onwards",
           "description": "Premium 2 BHK with upgraded finishes"
-        },
-        {
-          "type": "3 BHK",
-          "area": "1350 sq.ft",
-          "price": "₹1.5 Cr",
-          "description": "Luxury 3 BHK with balcony garden"
         }
       ]
     },
@@ -2178,7 +2176,7 @@
       "projectsCount": 1,
       "description": "Creating sustainable township living with world-class infrastructure."
     },
-    "about": "RVC Hornbill offers premium residences within Magarpatta City with upgraded amenities and finishes.",
+    "about": "Hornbill Heights offers thoughtfully designed 2 & 2.5 BHK homes in Loni Kalbhor, Pune, and is part of Riverview City – a well-planned integrated township. Enjoy a complete lifestyle with modern amenities and essential infrastructure within the community, all at comfortable walking distance. Secure your 2 or 2.5 BHK at Hornbill Heights and experience premium township living at its best.",
     "amenities": [
       "Swimming Pool",
       "Gym",
@@ -2192,17 +2190,12 @@
     "floorPlans": [
       {
         "type": "2 BHK",
-        "area": "1000 sq.ft",
+        "area": "898.26 - 1096.96 sq.ft",
         "image": "/floorplans/hornbill-2bhk.webp"
-      },
-      {
-        "type": "3 BHK",
-        "area": "1350 sq.ft",
-        "image": "/floorplans/hornbill-3bhk.webp"
       }
     ],
     "possessionDate": "Ready to Move",
-    "reraNumber": "P52100048146",
+    "reraNumber": "P52100053795",
     "gallery": [
       "/gallery/hornbill-1.webp",
       "/gallery/hornbill-2.webp",
@@ -2237,7 +2230,7 @@
     "slug": "magarpatta-city-rvc-flamingo",
     "name": "Magarpatta City RVC Flamingo",
     "location": "pune",
-    "price": "₹80 Lakh onwards",
+    "price": "₹73.85 Lacs Onwards",
     "image": "/projects/magarpatta-rvc-flamingo.webp",
     "masterPlan": "/floorplans/magarpatta-rvc-flamingo-master.webp",
     "locationMap": "/maps/magarpatta-rvc-flamingo-location.webp",
@@ -2249,19 +2242,19 @@
       "landmark": "Within Magarpatta Township"
     },
     "priceDetails": {
-      "range": "₹92 Lakh - ₹1.55 Cr",
-      "perSqft": "₹9,700/sq.ft",
+      "range": "₹73.85 Lacs Onwards",
+      "perSqft": "755 - 1190 sq.ft",
       "configurations": [
         {
           "type": "2 BHK",
-          "area": "1010 sq.ft",
-          "price": "₹92 Lakh",
+          "area": "755 - 980 sq.ft",
+          "price": "₹73.85 Lacs Onwards",
           "description": "Ultra-premium 2 BHK with luxury finishes"
         },
         {
           "type": "3 BHK",
-          "area": "1370 sq.ft",
-          "price": "₹1.55 Cr",
+          "area": "1145 - 1190 sq.ft",
+          "price": "₹1.12 Cr* Onwards",
           "description": "Penthouse-style 3 BHK with terrace"
         }
       ]
@@ -2272,7 +2265,7 @@
       "projectsCount": 1,
       "description": "Delivering the finest township living experience in Pune."
     },
-    "about": "RVC Flamingo is the flagship tower within Magarpatta City offering ultra-premium residences with the best views and finishes.",
+    "about": "Welcome to Flamingo Park at River View City Pune, a premium residential offering within the well-planned township of Magarpatta Riverview City, Loni Kalbhor. Developed by the trusted Magarpatta Group, this RERA-approved project offers spacious 2, 2.5 & 3 BHK flats designed for modern living.",
     "amenities": [
       "Infinity Pool",
       "Spa",
@@ -2286,17 +2279,17 @@
     "floorPlans": [
       {
         "type": "2 BHK",
-        "area": "1010 sq.ft",
+        "area": "755 - 840 sq.ft",
         "image": "/floorplans/flamingo-2bhk.webp"
       },
       {
         "type": "3 BHK",
-        "area": "1370 sq.ft",
-        "image": "/floorplans/flamingo-3bhk.webp"
+        "area": "1145 - 1190 sq.ft",
+        "image": "/floorplans/Onrequest-unit-plan.webp"
       }
     ],
     "possessionDate": "Ready to Move",
-    "reraNumber": "P52100048147",
+    "reraNumber": "PR1260002600177",
     "gallery": [
       "/gallery/flamingo-1.webp",
       "/gallery/flamingo-2.webp",
@@ -2332,7 +2325,7 @@
     "slug": "sai-world-one",
     "name": "Sai World One",
     "location": "mumbai",
-    "price": "₹95 Lakh onwards",
+    "price": "₹1.80 Cr* Onwards",
     "image": "/projects/sai-world-one.webp",
     "masterPlan": "/floorplans/sai-world-one-master.webp",
     "locationMap": "/maps/sai-world-one-location.webp",
@@ -2344,26 +2337,20 @@
       "landmark": "Near Mumbai-Pune Expressway"
     },
     "priceDetails": {
-      "range": "₹95 Lakh - ₹2.2 Cr",
-      "perSqft": "₹11,500/sq.ft",
+      "range": "₹1.80 Cr* Onwards",
+      "perSqft": "815 - 1370 sq.ft",
       "configurations": [
         {
-          "type": "1 BHK",
-          "area": "480 sq.ft",
-          "price": "₹95 Lakh",
-          "description": "Compact 1 BHK ideal for first-time buyers"
-        },
-        {
           "type": "2 BHK",
-          "area": "780 sq.ft",
-          "price": "₹1.5 Cr",
-          "description": "Spacious 2 BHK with modular kitchen"
+          "area": "815 sq.ft",
+          "price": "₹1.80 Cr* Onwards",
+          "description": "Compact 2 BHK ideal for first-time buyers"
         },
         {
           "type": "3 BHK",
-          "area": "1150 sq.ft",
-          "price": "₹2.2 Cr",
-          "description": "Premium 3 BHK with premium finishes"
+          "area": "1370 -1468 sq.ft",
+          "price": "₹2.65 Cr* Onwards",
+          "description": "Spacious 3 BHK with modular kitchen"
         }
       ]
     },
@@ -2373,7 +2360,7 @@
       "projectsCount": 28,
       "description": "Paradise Group is a leading developer in Navi Mumbai with over 25 years of experience in creating premium residential spaces."
     },
-    "about": "Sai World One in Panvel offers premium homes with excellent connectivity to Mumbai-Pune Expressway and upcoming Navi Mumbai Airport.",
+    "about": "Sai World One is a lavish gated community opposite the DY Patil Stadium in Nerul, Navi Mumbai. It comprises 2 BHK and 3 BHK luxurious apartments with wide decks. There is also a provision for Jodi flats (2 + 2) and (3 + 3). The apartments come with a huge deck in the living room, a balcony in the master bedroom, and a dry balcony in the kitchen for washing purposes. The apartments are spacious and optimally ventilated. These luxury homes are complemented by curated indulgences like a pickleball court, dual gymnasium, multipurpose sports turf, clubhouse, infinity swimming pool, grand designer lobby, landscaped garden, and more. This gated community also features a G + 38 storey commercial tower and a G + 2 retail development. The commercial tower comes with boutique office spaces and double-height ceilings.",
     "amenities": [
       "Clubhouse",
       "Swimming Pool",
@@ -2386,23 +2373,18 @@
     ],
     "floorPlans": [
       {
-        "type": "1 BHK",
-        "area": "480 sq.ft",
+        "type": "2 BHK",
+        "area": "815 sq.ft",
         "image": "/floorplans/sai1-1bhk.webp"
       },
       {
-        "type": "2 BHK",
-        "area": "780 sq.ft",
-        "image": "/floorplans/sai1-2bhk.webp"
-      },
-      {
         "type": "3 BHK",
-        "area": "1150 sq.ft",
-        "image": "/floorplans/sai1-3bhk.webp"
+        "area": "1370 - 1468 sq.ft",
+        "image": "/floorplans/sai1-1bhk.webp"
       }
     ],
-    "possessionDate": "Dec 2026",
-    "reraNumber": "P52000048035",
+    "possessionDate": "Dec 2028",
+    "reraNumber": "Comming Soon",
     "gallery": [
       "/gallery/sai1-1.webp",
       "/gallery/sai1-2.webp",
@@ -2438,7 +2420,7 @@
     "slug": "sai-world-empire",
     "name": "Sai World Empire",
     "location": "mumbai",
-    "price": "₹95 Lakh onwards",
+    "price": "₹1.53 Cr* Onwards",
     "image": "/projects/sai-world-empire.webp",
     "masterPlan": "/floorplans/sai-world-empire-master.webp",
     "locationMap": "/maps/sai-world-empire-location.webp",
@@ -2450,26 +2432,26 @@
       "landmark": "Near Central Park"
     },
     "priceDetails": {
-      "range": "₹95 Lakh - ₹2.5 Cr",
-      "perSqft": "₹12,000/sq.ft",
+      "range": "₹1.53 Cr* Onwards",
+      "perSqft": "907 - 3530 sq.ft",
       "configurations": [
         {
-          "type": "1 BHK",
-          "area": "450 sq.ft",
-          "price": "₹95 Lakh",
-          "description": "Compact 1 BHK ideal for singles and couples"
-        },
-        {
           "type": "2 BHK",
-          "area": "750 sq.ft",
-          "price": "₹1.5 Cr",
-          "description": "Spacious 2 BHK with modular kitchen"
+          "area": "907 sq.ft",
+          "price": "₹1.53 Cr* Onwards",
+          "description": "Compact 2 BHK ideal for singles and couples"
         },
         {
           "type": "3 BHK",
-          "area": "1100 sq.ft",
-          "price": "₹2.5 Cr",
-          "description": "Luxury 3 BHK with premium finishes"
+          "area": "1400 - 2300 sq.ft",
+          "price": "₹2.84 Cr* Onwards",
+          "description": "Spacious 3 BHK with modular kitchen"
+        },
+        {
+          "type": "4 BHK",
+          "area": "2250 - 3530 sq.ft",
+          "price": "₹4.80 Cr* Onwards",
+          "description": "Luxury 4 BHK with premium finishes"
         }
       ]
     },
@@ -2479,7 +2461,7 @@
       "projectsCount": 28,
       "description": "Paradise Group is a leading developer in Navi Mumbai with over 25 years of experience in creating premium residential and commercial spaces."
     },
-    "about": "Sai World Empire is a premium township in Kharghar offering 1, 2 & 3 BHK residences with world-class amenities. Located near Central Park with excellent connectivity to Mumbai and Pune, the project offers a perfect blend of luxury and convenience.",
+    "about": "Sai World Empire, Kharghar is a majestic 18-acre realm where the legacy of six grand empires comes alive in modern luxury. With six towering G+49 marvels offering 2, 3 & 4 BHK regal residences, thisd kingdom is adorned with royal indulgences like Club Athena and the Aswan Spa. Inspired by the opulence of Roman, Egyptian, Greek, French, British, and Spanish dynasties, every space is crafted to echo the splendour of a bygone era.",
     "amenities": [
       "Clubhouse",
       "Infinity Pool",
@@ -2496,23 +2478,23 @@
     ],
     "floorPlans": [
       {
-        "type": "1 BHK",
-        "area": "450 sq.ft",
+        "type": "2 BHK",
+        "area": "907 - 1490 sq.ft",
         "image": "/floorplans/sai-1bhk.webp"
       },
       {
-        "type": "2 BHK",
-        "area": "750 sq.ft",
+        "type": "3 BHK",
+        "area": "1400 - 2300 sq.ft",
         "image": "/floorplans/sai-2bhk.webp"
       },
       {
-        "type": "3 BHK",
-        "area": "1100 sq.ft",
+        "type": "4 BHK",
+        "area": "2250 - 3530 sq.ft",
         "image": "/floorplans/sai-3bhk.webp"
       }
     ],
     "possessionDate": "Jun 2027",
-    "reraNumber": "P52000048037",
+    "reraNumber": "P51700002446",
     "gallery": [
       "/gallery/sai-World Empire1.webp",
       "/gallery/sai-World Empire2.webp",
@@ -2557,38 +2539,32 @@
     "slug": "sai-world-dreams",
     "name": "Sai World Dreams",
     "location": "mumbai",
-    "price": "₹95 Lakh onwards",
+    "price": "₹69 Lacs Onwards",
     "image": "/projects/sai-world-dreams.webp",
     "masterPlan": "/floorplans/sai-world-dreams-master.webp",
     "locationMap": "/maps/sai-world-dreams-location.webp",
     "fullLocation": {
-      "area": "Taloja",
-      "city": "Navi Mumbai",
+      "area": "Kalyan-Shil Road",
+      "city": "Dombivli",
       "state": "Maharashtra",
       "pincode": "410208",
       "landmark": "Near MIDC"
     },
     "priceDetails": {
-      "range": "₹95 Lakh - ₹2.0 Cr",
-      "perSqft": "₹10,800/sq.ft",
+      "range": "₹69 Lacs Onwards",
+      "perSqft": "609 - 1313sq.ft",
       "configurations": [
         {
-          "type": "1 BHK",
-          "area": "460 sq.ft",
-          "price": "₹95 Lakh",
-          "description": "Affordable 1 BHK for first-time buyers"
-        },
-        {
           "type": "2 BHK",
-          "area": "760 sq.ft",
-          "price": "₹1.4 Cr",
-          "description": "Value 2 BHK with modern amenities"
+          "area": "609 - 825 sq.ft",
+          "price": "₹69 Lacs Onwards",
+          "description": "Affordable 2 BHK for first-time buyers"
         },
         {
           "type": "3 BHK",
-          "area": "1080 sq.ft",
-          "price": "₹2.0 Cr",
-          "description": "Spacious 3 BHK with premium fittings"
+          "area": "1194 - 1313 sq.ft",
+          "price": "₹1.35 Cr* Onwards",
+          "description": "Value 3 BHK with modern amenities"
         }
       ]
     },
@@ -2598,7 +2574,7 @@
       "projectsCount": 28,
       "description": "Creating affordable luxury homes in Navi Mumbai's growth corridors."
     },
-    "about": "Sai World Dreams in Taloja offers excellent value homes with modern amenities and growing connectivity to Mumbai and Pune.",
+    "about": "Experience a new dimension of luxury at Sai World Dreams Dombivli, a RERA-registered integrated township by the legendary Paradise Group on Kalyan-Shilphata Road. This 18-acre vastu-compliant masterpiece features eight magnificent towers, blending residential elegance with a storey business hub and high-street retail. Currently under construction with a clear possession timeline, Sai World Dreams offers meticulously designed 1, 2, 2.5 & 3 BHK flats. Boasting a 5-star hotel and 6 acres of podium amenities, this landmark ensures unmatched capital appreciation and a global lifestyle.",
     "amenities": [
       "Swimming Pool",
       "Gym",
@@ -2610,23 +2586,18 @@
     ],
     "floorPlans": [
       {
-        "type": "3 BHK",
-        "area": "460 sq.ft",
+        "type": "2 BHK",
+        "area": "609 - 93.50 sq.ft",
         "image": "/floorplans/dreams-3bhk.webp"
       },
       {
-        "type": "4 BHK",
-        "area": "760 sq.ft",
+        "type": "3 BHK",
+        "area": "1194 - 1313 sq.ft",
         "image": "/floorplans/dreams-4bhk.webp"
-      },
-      {
-        "type": "3 BHK",
-        "area": "1080 sq.ft",
-        "image": "/floorplans/dreams-3bhk.webp"
       }
     ],
     "possessionDate": "Mar 2027",
-    "reraNumber": "P52000048038",
+    "reraNumber": "P51700035191",
     "gallery": [
       "/gallery/dreams-1.webp",
       "/gallery/dreams-2.webp",
@@ -2665,9 +2636,9 @@
     "slug": "today-nova-vista-nerul",
     "name": "Today Nova Vista Nerul",
     "location": "mumbai",
-    "price": "₹95 Lakh onwards",
+    "price": "₹2.05 Cr* Onwards",
     "image": "/projects/today-nova-vista-nerul.webp",
-    "masterPlan": "/floorplans/today-nova-vista-nerul-master.webp",
+    "masterPlan": "/floorplans/blur2-master.webp",
     "locationMap": "/maps/today-nova-vista-nerul-location.webp",
     "fullLocation": {
       "area": "Nerul",
@@ -2677,26 +2648,20 @@
       "landmark": "Near CBD Belapur"
     },
     "priceDetails": {
-      "range": "₹98 Lakh - ₹2.3 Cr",
-      "perSqft": "₹12,500/sq.ft",
+      "range": "₹2.05 Cr* Onwards",
+      "perSqft": "850 - 1984 sq.ft",
       "configurations": [
         {
-          "type": "1 BHK",
-          "area": "470 sq.ft",
-          "price": "₹98 Lakh",
-          "description": "Premium 1 BHK in prime Nerul"
-        },
-        {
           "type": "2 BHK",
-          "area": "770 sq.ft",
-          "price": "₹1.6 Cr",
-          "description": "Luxury 2 BHK with sea views"
+          "area": "850 - 900 sq.ft",
+          "price": "₹2.05 Cr* Onwards",
+          "description": "Premium 2 BHK in prime Nerul"
         },
         {
-          "type": "3 BHK",
-          "area": "1120 sq.ft",
-          "price": "₹2.3 Cr",
-          "description": "Penthouse-style 3 BHK with terrace"
+          "type": "4 BHK",
+          "area": "1984 sq.ft",
+          "price": "₹On Request",
+          "description": "Luxury 4 BHK with sea views"
         }
       ]
     },
@@ -2706,7 +2671,7 @@
       "projectsCount": 4,
       "description": "Today Global Group is a leading developer in Navi Mumbai with focus on quality construction and timely delivery."
     },
-    "about": "Today Nova Vista Nerul offers premium homes in one of Navi Mumbai's most established locations with excellent connectivity and amenities.",
+    "about": "Today Group presents Nova Vista a thoughtfully crafted residential experience shaped by inward looking philosophy, making it one of the most distinctive project in Nerul. Designed around landscaped courtyards, private decks and curated wellness spaces, it offers a sense of calm within the city’s constant rhythm. Rising as two elegant towers in Nerul, this development stands out as one of the premium residential projects in Nerul, blending low density planning with refined, privacy focused layouts with abundant natural light. As one of the most promising under construction projects in Nerul, Nova Vista brings together modern design and serene living in a truly elevated setting.",
     "amenities": [
       "Swimming Pool",
       "Gym",
@@ -2719,23 +2684,18 @@
     ],
     "floorPlans": [
       {
-        "type": "1 BHK",
-        "area": "470 sq.ft",
-        "image": "/floorplans/novavista-1bhk.webp"
-      },
-      {
         "type": "2 BHK",
-        "area": "770 sq.ft",
-        "image": "/floorplans/novavista-2bhk.webp"
+        "area": "850 - 900 sq.ft",
+        "image": "/floorplans/Blur-unit.webp"
       },
       {
-        "type": "3 BHK",
-        "area": "1120 sq.ft",
-        "image": "/floorplans/novavista-3bhk.webp"
+        "type": "4 BHK",
+        "area": "1984 sq.ft",
+        "image": "/floorplans/Blur-unit.webp"
       }
     ],
-    "possessionDate": "Sep 2027",
-    "reraNumber": "P52000048040",
+    "possessionDate": "Dec 2029",
+    "reraNumber": "PR1330002600138",
     "gallery": [
       "/gallery/novavista-1.webp",
       "/gallery/novavista-2.webp",
@@ -2771,7 +2731,7 @@
     "slug": "today-airoli",
     "name": "Today Airoli",
     "location": "mumbai",
-    "price": "₹95 Lakh onwards",
+    "price": "₹1.75 Cr* Onwards",
     "image": "/projects/today-airoli.webp",
     "masterPlan": "/floorplans/today-airoli-master.webp",
     "locationMap": "/maps/today-airoli-location.webp",
@@ -2783,26 +2743,26 @@
       "landmark": "Near Thane-Belapur Road"
     },
     "priceDetails": {
-      "range": "₹96 Lakh - ₹2.1 Cr",
-      "perSqft": "₹11,800/sq.ft",
+      "range": "₹1.75 Cr* Onwards",
+      "perSqft": "725 - 1450 sq.ft",
       "configurations": [
         {
-          "type": "1 BHK",
-          "area": "465 sq.ft",
-          "price": "₹96 Lakh",
+          "type": "2 BHK",
+          "area": "7255 sq.ft",
+          "price": "₹1.75 Cr* Onwards",
           "description": "IT-proximity 1 BHK for professionals"
         },
         {
-          "type": "2 BHK",
-          "area": "765 sq.ft",
-          "price": "₹1.5 Cr",
-          "description": "Spacious 2 BHK with modern amenities"
+          "type": "3 BHK",
+          "area": "1050 sq.ft",
+          "price": "₹2.60 Cr* Onwards",
+          "description": "Spacious 3 BHK with modern amenities"
         },
         {
-          "type": "3 BHK",
-          "area": "1100 sq.ft",
-          "price": "₹2.1 Cr",
-          "description": "Premium 3 BHK with balcony garden"
+          "type": "4 BHK",
+          "area": "1450 sq.ft",
+          "price": "₹3.85 Cr* Onwards",
+          "description": "Premium 4 BHK with balcony garden"
         }
       ]
     },
@@ -2812,7 +2772,7 @@
       "projectsCount": 4,
       "description": "Delivering quality homes in Navi Mumbai's IT corridors with timely possession."
     },
-    "about": "Today Airoli offers convenient living for IT professionals with excellent connectivity to Thane-Belapur Road and upcoming metro.",
+    "about": "Jindal Today Airoli introduces a sophisticated paradigm of urban living, featuring bespoke luxury apartments and elite business suites designed for the modern real estate connoisseur. Jindal Today stands as a landmark development by esteemed builders, strategically situated in the high-demand enclave of Sector 48 for premium lifestyle seekers.This dual-purpose venture by Jindal Today Navi Mumbai seamlessly integrates high-end housing with commercial spaces, catering to families and professionals who strictly demand excellence.The architectural design at Jindal Today Thane Belapur Road focuses on vastu-compliant layouts, ensuring each apartment enjoys optimal natural light and superior cross-ventilation throughout.Residents of Today Airoli in Sector 48 will benefit from a high-rise structure featuring podium parking and several levels of sheer residential luxury.",
     "amenities": [
       "Swimming Pool",
       "Gym",
@@ -2832,15 +2792,10 @@
         "type": "2 BHK",
         "area": "765 sq.ft",
         "image": "/floorplans/airoli-2bhk.webp"
-      },
-      {
-        "type": "3 BHK",
-        "area": "1100 sq.ft",
-        "image": "/floorplans/airoli-3bhk.webp"
       }
     ],
-    "possessionDate": "Jun 2027",
-    "reraNumber": "P52000048041",
+    "possessionDate": "Sep 2032",
+    "reraNumber": "P52000005932",
     "gallery": [
       "/gallery/airoli-1.webp",
       "/gallery/airoli-2.webp",
@@ -2877,8 +2832,8 @@
     "slug": "today-kharghar",
     "name": "Today Kharghar",
     "location": "mumbai",
-    "price": "₹95 Lakh onwards",
-    "image": "/projects/today-kharghar.webp",
+    "price": "₹On Request",
+    "image": "/projects/today-kharghar.jpg",
     "masterPlan": "/floorplans/today-kharghar-master.webp",
     "locationMap": "/maps/today-kharghar-location.webp",
     "fullLocation": {
@@ -2889,26 +2844,14 @@
       "landmark": "Near Central Park"
     },
     "priceDetails": {
-      "range": "₹97 Lakh - ₹2.4 Cr",
-      "perSqft": "₹12,200/sq.ft",
+      "range": "₹On Request",
+      "perSqft": "Coming Soon sq.ft",
       "configurations": [
         {
-          "type": "1 BHK",
-          "area": "475 sq.ft",
-          "price": "₹97 Lakh",
-          "description": "Premium 1 BHK near Central Park"
-        },
-        {
-          "type": "2 BHK",
-          "area": "775 sq.ft",
-          "price": "₹1.65 Cr",
-          "description": "Luxury 2 BHK with park views"
-        },
-        {
-          "type": "3 BHK",
-          "area": "1130 sq.ft",
-          "price": "₹2.4 Cr",
-          "description": "Premium 3 BHK with premium finishes"
+          "type": "On Request BHK",
+          "area": "On Request",
+          "price": "₹On Request",
+          "description": "Premium BHK near Central Park"
         }
       ]
     },
@@ -2918,7 +2861,7 @@
       "projectsCount": 4,
       "description": "Creating premium homes in Navi Mumbai's most desirable locations."
     },
-    "about": "Today Kharghar offers premium residences near Central Park with world-class amenities and excellent connectivity across Mumbai.",
+    "about": "Today Kharghar is a premium residential project by Today Group in Kharghar, Navi Mumbai, offering modern homes, lifestyle amenities, excellent connectivity, and strong investment potential in a rapidly growing location.",
     "amenities": [
       "Clubhouse",
       "Swimming Pool",
@@ -2932,22 +2875,22 @@
     "floorPlans": [
       {
         "type": "1 BHK",
-        "area": "475 sq.ft",
+        "area": "On Request",
         "image": "/floorplans/Comming soon.webp"
       },
       {
         "type": "2 BHK",
-        "area": "775 sq.ft",
+        "area": "On Request",
         "image": "/floorplans/Comming soon.webp"
       },
       {
         "type": "3 BHK",
-        "area": "1130 sq.ft",
+        "area": "On Request",
         "image": "/floorplans/Comming soon.webp"
       }
     ],
     "possessionDate": "Dec 2027",
-    "reraNumber": "P52000048042",
+    "reraNumber": "P52000048037",
     "gallery": [
       "/gallery/kharghar-1.webp",
       "/gallery/kharghar-2.webp",
@@ -2983,7 +2926,7 @@
     "slug": "runwal-gardens",
     "name": "Runwal Gardens",
     "location": "kdmc",
-    "price": "₹60 Lakh onwards",
+    "price": "₹37.50 Lacs onwards",
     "image": "/projects/runwal-gardens.webp",
     "masterPlan": "/floorplans/runwal-gardens-master.webp",
     "locationMap": "/maps/runwal-gardens-location.webp",
@@ -2995,25 +2938,25 @@
       "landmark": "Near Kalyan-Shil Road"
     },
     "priceDetails": {
-      "range": "₹60 Lakh - ₹95 Lakh",
-      "perSqft": "₹7,200/sq.ft",
+      "range": "₹37.50 Lacs Onwards",
+      "perSqft": "On Request sq.ft",
       "configurations": [
         {
           "type": "1 BHK",
-          "area": "420 sq.ft",
-          "price": "₹60 Lakh",
+          "area": "On Request sq.ft",
+          "price": "₹On Request",
           "description": "Affordable 1 BHK for first-time buyers"
         },
         {
           "type": "2 BHK",
-          "area": "650 sq.ft",
-          "price": "₹85 Lakh",
+          "area": "On Request sq.ft",
+          "price": "₹On Request",
           "description": "Value 2 BHK with modern amenities"
         },
         {
           "type": "3 BHK",
-          "area": "900 sq.ft",
-          "price": "₹95 Lakh",
+          "area": "On Request sq.ft",
+          "price": "₹On Request",
           "description": "Spacious 3 BHK with premium fittings"
         }
       ]
@@ -3024,7 +2967,7 @@
       "projectsCount": 40,
       "description": "Runwal Group is one of Mumbai's most trusted developers with 40+ years of experience in quality construction."
     },
-    "about": "Runwal Gardens in Dombivli offers affordable homes with modern amenities and excellent connectivity to Mumbai via Central Railway.",
+    "about": "Runwal Gardens is an exceptional integrated township designed to bring harmony, comfort, and modern living together in one serene address. Nestled in the vibrant suburb of Dombivli, this landmark development offers a lifestyle that beautifully blends nature's charm with world-class conveniences. With 10 acres of lush gardens, 5-star amenities, two reputed schools, and a thriving community atmosphere, every detail at Runwal Gardens is thoughtfully crafted to enrich your everyday life. From the ever-changing beauty of the outdoors to the comfort of elegant residences, this township ensures a truly fulfilling living experience.",
     "amenities": [
       "Swimming Pool",
       "Gym",
@@ -3037,22 +2980,22 @@
     "floorPlans": [
       {
         "type": "1 BHK",
-        "area": "420 sq.ft",
+        "area": "On Request sq.ft",
         "image": "/floorplans/runwal-1bhk.webp"
       },
       {
         "type": "2 BHK",
-        "area": "650 sq.ft",
+        "area": "On Request sq.ft",
         "image": "/floorplans/runwal-2bhk.webp"
       },
       {
         "type": "3 BHK",
-        "area": "900 sq.ft",
+        "area": "On Request sq.ft",
         "image": "/floorplans/runwal-3bhk.webp"
       }
     ],
-    "possessionDate": "Mar 2026",
-    "reraNumber": "P52000048050",
+    "possessionDate": "Ready To Move In",
+    "reraNumber": "P51700022699",
     "gallery": [
       "/gallery/runwal-1.webp",
       "/gallery/runwal-2.webp",
