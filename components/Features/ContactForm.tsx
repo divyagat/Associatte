@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Phone, Mail, User, MessageSquare, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import CountryCodeSelect from "@/components/common/CountryCodeSelect";
 
 interface ContactFormProps {
   propertyId?: string;
@@ -32,6 +33,7 @@ export default function ContactForm({
       : "",
   });
 
+  const [countryCode, setCountryCode] = useState("+91");
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -67,6 +69,7 @@ export default function ContactForm({
 
     leads.push({
       ...form,
+      countryCode,
       propertyId,
       propertyTitle,
       createdAt: new Date().toISOString(),
@@ -163,27 +166,27 @@ export default function ContactForm({
         <label className="block text-sm font-medium text-gray-700 mb-1.5">
           Mobile Number
         </label>
-        <div className="relative">
-          <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <span className="absolute left-10 top-1/2 -translate-y-1/2 text-sm text-gray-500">
-            +91
-          </span>
-          <input
-            type="tel"
-            placeholder="10-digit mobile"
-            value={form.phone}
-            onChange={(e) => {
-              setForm({
-                ...form,
-                phone: e.target.value.replace(/\D/g, "").slice(0, 10),
-              });
-              setErrors({ ...errors, phone: "" });
-            }}
-            className={cn(
-              "input-field pl-[4.5rem]",
-              errors.phone && "border-red-400 focus:ring-red-400"
-            )}
-          />
+        <div className="flex gap-2">
+          <CountryCodeSelect value={countryCode} onChange={setCountryCode} />
+          <div className="relative flex-1">
+            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              type="tel"
+              placeholder="10-digit mobile"
+              value={form.phone}
+              onChange={(e) => {
+                setForm({
+                  ...form,
+                  phone: e.target.value.replace(/\D/g, "").slice(0, 10),
+                });
+                setErrors({ ...errors, phone: "" });
+              }}
+              className={cn(
+                "input-field pl-10",
+                errors.phone && "border-red-400 focus:ring-red-400"
+              )}
+            />
+          </div>
         </div>
         {errors.phone && (
           <p className="mt-1 text-xs text-red-500">{errors.phone}</p>

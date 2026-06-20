@@ -17,6 +17,7 @@ import {
   Mail,
   Zap
 } from "lucide-react";
+import CountryCodeSelect from "@/components/common/CountryCodeSelect";
 
 interface Message {
   id: string;
@@ -56,6 +57,7 @@ export default function Chatbot() {
     project: '',
     remark: ''
   });
+  const [countryCode, setCountryCode] = useState("+91");
   const [errors, setErrors] = useState<{ name?: string; mobile?: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userIP, setUserIP] = useState("");
@@ -202,10 +204,11 @@ export default function Chatbot() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: leadData.name,
+          countryCode,
           mobile: leadData.mobile,
           email: leadData.email || "",
           project: leadData.project,
-          remark: `${leadData.remark} | IP: ${userIP}`
+          remark: `${leadData.remark} | Country Code: ${countryCode} | IP: ${userIP}`
         })
       });
       
@@ -424,20 +427,23 @@ export default function Chatbot() {
                     )}
                   </div>
                   <div>
-                    <input
-                      type="tel"
-                      placeholder="Mobile number * (10 digits)"
-                      value={leadData.mobile}
-                      onChange={(e) => {
-                        if (e.target.value.length <= 10 && /^\d*$/.test(e.target.value)) {
-                          setLeadData({ ...leadData, mobile: e.target.value });
-                          if (errors.mobile) setErrors({});
-                        }
-                      }}
-                      className={`w-full px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all ${
-                        errors.mobile ? 'border-red-500 bg-red-50' : 'border-gray-200'
-                      }`}
-                    />
+                    <div className="flex gap-2">
+                      <CountryCodeSelect value={countryCode} onChange={setCountryCode} />
+                      <input
+                        type="tel"
+                        placeholder="Mobile number * (10 digits)"
+                        value={leadData.mobile}
+                        onChange={(e) => {
+                          if (e.target.value.length <= 10 && /^\d*$/.test(e.target.value)) {
+                            setLeadData({ ...leadData, mobile: e.target.value });
+                            if (errors.mobile) setErrors({});
+                          }
+                        }}
+                        className={`flex-1 w-full px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all ${
+                          errors.mobile ? 'border-red-500 bg-red-50' : 'border-gray-200'
+                        }`}
+                      />
+                    </div>
                     {errors.mobile && (
                       <p className="text-red-500 text-[10px] mt-1 flex items-center gap-1">
                         <AlertCircle size={10} /> {errors.mobile}

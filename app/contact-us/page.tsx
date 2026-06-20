@@ -3,6 +3,7 @@
 import { useState, FormEvent, ChangeEvent, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import CountryCodeSelect from "@/components/common/CountryCodeSelect";
 import { 
   MapPin, 
   Phone, 
@@ -93,6 +94,7 @@ export default function ContactUsPage() {
     preferredLocation: "",
     message: "",
   });
+  const [countryCode, setCountryCode] = useState("+91");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
   const [errors, setErrors] = useState<FormErrors>({});
@@ -200,11 +202,12 @@ export default function ContactUsPage() {
     setStatus("idle");
 
     // Create remark for CRM
-    const remark = `Contact Us Form | IP: ${clientIp} | Property Type: ${formData.propertyType} | Budget: ${formData.budget} | Location: ${formData.preferredLocation || 'Not specified'} | Message: ${formData.message || 'None'}`;
-    
+    const remark = `Contact Us Form | IP: ${clientIp} | Country Code: ${countryCode} | Property Type: ${formData.propertyType} | Budget: ${formData.budget} | Location: ${formData.preferredLocation || 'Not specified'} | Message: ${formData.message || 'None'}`;
+
     // Prepare payload for CRM
     const payload = {
       name: formData.name.trim(),
+      countryCode,
       phone: formData.phone.trim(),
       email: formData.email.trim(),
       project: "Contact Us Inquiry",
@@ -394,12 +397,15 @@ export default function ContactUsPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-2">Phone Number <span className="text-red-500">*</span></label>
-                    <input
-                      type="tel" name="phone" value={formData.phone} onChange={handleChange}
-                      className={`w-full px-4 py-2.5 sm:py-3 rounded-xl border bg-slate-50/50 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:bg-white transition-all duration-200 text-sm sm:text-base ${errors.phone ? 'border-red-400 focus:ring-red-200' : 'border-slate-200 focus:ring-[#005E60]/20 focus:border-[#005E60]'}`}
-                      placeholder="9876543210"
-                      maxLength={10}
-                    />
+                    <div className="flex gap-2">
+                      <CountryCodeSelect value={countryCode} onChange={setCountryCode} />
+                      <input
+                        type="tel" name="phone" value={formData.phone} onChange={handleChange}
+                        className={`flex-1 w-full px-4 py-2.5 sm:py-3 rounded-xl border bg-slate-50/50 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:bg-white transition-all duration-200 text-sm sm:text-base ${errors.phone ? 'border-red-400 focus:ring-red-200' : 'border-slate-200 focus:ring-[#005E60]/20 focus:border-[#005E60]'}`}
+                        placeholder="9876543210"
+                        maxLength={10}
+                      />
+                    </div>
                     {errors.phone && <p className="mt-1.5 text-xs sm:text-sm text-red-500 flex items-center gap-1"><AlertCircle size={14} />{errors.phone}</p>}
                     <p className="text-xs text-slate-400 mt-1">Enter 10-digit mobile number</p>
                   </div>

@@ -160,58 +160,50 @@ export default function StickyActions({
       {/* Mobile Version */}
       {isMobile && (
         <>
-          {/* Mobile Bottom Dock */}
-          <motion.div 
+          {/* Mobile Bottom Dock — labeled pills for primary actions + a More toggle */}
+          <motion.div
             initial={{ y: 100 }}
             animate={{ y: 0 }}
             transition={{ type: "spring", stiffness: 400, damping: 30 }}
-            className="fixed bottom-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-md border-t border-gray-200 px-4 py-3 shadow-2xl md:hidden"
+            className="fixed bottom-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-xl border-t border-gray-200 shadow-2xl md:hidden"
+            style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
           >
-            <div className="flex items-center justify-between max-w-md mx-auto">
-              {/* Quick Actions - WhatsApp & Call with brand colors */}
+            <div className="flex items-center gap-2 max-w-md mx-auto px-3 py-2.5">
+              {/* Primary actions — full-width colored pills */}
               {highPriorityActions.map((action) => {
                 const Icon = action.icon;
+                const isWhatsApp = action.id === 'whatsapp';
+                const bg = isWhatsApp ? BRAND_PRIMARY : BRAND_SECONDARY;
                 return (
                   <motion.button
                     key={action.id}
                     onClick={() => handleAction(action)}
-                    whileTap={{ scale: 0.9 }}
-                    className="flex flex-col items-center gap-1 group"
+                    whileTap={{ scale: 0.96 }}
+                    className="flex-1 flex items-center justify-center gap-2 h-12 rounded-xl text-white font-semibold text-[13px] shadow-md active:shadow-sm transition-shadow"
+                    style={{ backgroundColor: bg, boxShadow: `0 4px 14px -4px ${bg}99` }}
                   >
-                    <div 
-                      className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 group-active:scale-95"
-                      style={{ 
-                        backgroundColor: BRAND_PRIMARY,
-                        color: '#FFFFFF'
-                      }}
-                    >
-                      <Icon className="w-5 h-5" />
-                    </div>
-                    <span className="text-[10px] font-medium text-gray-600">{action.label}</span>
+                    <Icon className="w-[18px] h-[18px]" />
+                    <span>{isWhatsApp ? 'WhatsApp' : 'Call Now'}</span>
                   </motion.button>
                 );
               })}
 
-              {/* Menu Toggle Button - Brand themed */}
+              {/* More toggle */}
               <motion.button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                whileTap={{ scale: 0.9 }}
-                className="flex flex-col items-center gap-1 group"
+                whileTap={{ scale: 0.92 }}
+                aria-label="More options"
+                className="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center shadow-md transition-colors"
+                style={{
+                  backgroundColor: isMobileMenuOpen ? BRAND_SECONDARY : BRAND_LIGHT,
+                  color: isMobileMenuOpen ? '#FFFFFF' : BRAND_PRIMARY,
+                }}
               >
-                <div 
-                  className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-all duration-300"
-                  style={{ 
-                    backgroundColor: isMobileMenuOpen ? BRAND_SECONDARY : BRAND_LIGHT,
-                    color: isMobileMenuOpen ? '#FFFFFF' : BRAND_PRIMARY
-                  }}
-                >
-                  {isMobileMenuOpen ? (
-                    <MdClose className="w-5 h-5" />
-                  ) : (
-                    <BsGrid3X3GapFill className="w-5 h-5" />
-                  )}
-                </div>
-                <span className="text-[10px] font-medium text-gray-600">More</span>
+                {isMobileMenuOpen ? (
+                  <MdClose className="w-5 h-5" />
+                ) : (
+                  <BsGrid3X3GapFill className="w-5 h-5" />
+                )}
               </motion.button>
             </div>
           </motion.div>

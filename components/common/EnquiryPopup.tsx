@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Mail, Phone, User, CheckCircle, AlertCircle, ChevronDown } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { COUNTRY_CODES } from './CountryCodeSelect';
 
 interface TrackingData {
   source: string;
@@ -34,26 +35,7 @@ interface FormErrors {
   consent?: string;
 }
 
-interface CountryCode {
-  code: string;
-  flag: string;
-  name: string;
-}
-
-const countryCodes: CountryCode[] = [
-  { code: '+91', flag: '🇮🇳', name: 'India' },
-  { code: '+1', flag: '🇺🇸', name: 'USA' },
-  { code: '+44', flag: '🇬🇧', name: 'UK' },
-  { code: '+971', flag: '🇦🇪', name: 'UAE' },
-  { code: '+65', flag: '🇸🇬', name: 'Singapore' },
-  { code: '+61', flag: '🇦🇺', name: 'Australia' },
-  { code: '+49', flag: '🇩🇪', name: 'Germany' },
-  { code: '+33', flag: '🇫🇷', name: 'France' },
-  { code: '+81', flag: '🇯🇵', name: 'Japan' },
-  { code: '+852', flag: '🇭🇰', name: 'Hong Kong' },
-  { code: '+86', flag: '🇨🇳', name: 'China' },
-  { code: '+7', flag: '🇷🇺', name: 'Russia' },
-];
+const countryCodes = COUNTRY_CODES;
 
 export default function EnquiryPopup({
   isOpen: externalIsOpen,
@@ -367,7 +349,7 @@ export default function EnquiryPopup({
                           <div className="max-h-60 overflow-y-auto">
                             {countryCodes.map((country) => (
                               <button
-                                key={country.code}
+                                key={`${country.code}-${country.name}`}
                                 type="button"
                                 onClick={() => {
                                   setCountryCode(country.code);

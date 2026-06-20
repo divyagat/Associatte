@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPropertyBySlug, updateProperty, deleteProperty } from '@/lib/data-store';
+import { getRoleFromRequest } from '@/lib/admin-auth';
 
 export async function GET(
   request: NextRequest,
@@ -40,6 +41,10 @@ export async function DELETE(
   request: NextRequest,
   context: { params: Promise<{ slug: string }> }
 ) {
+  // Only the main admin may delete properties — employees can add/edit only.
+  if (getRoleFromRequest(request) !== 'admin') {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
   try {
     const { slug } = await context.params;
     const success = await deleteProperty(slug);

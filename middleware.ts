@@ -1,13 +1,23 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-// Name + expected value of the admin session cookie (set in /api/admin/login).
+// Name of the admin session cookie (set in /api/admin/login). Its value is the
+// signed-in role: `admin`, `employee`, or legacy `authenticated` (== admin).
 export const ADMIN_COOKIE = 'associatte_admin';
-const AUTH_VALUE = 'authenticated';
+
+function roleFromCookie(value: string | undefined): 'admin' | 'employee' | null {
+  if (value === 'admin' || value === 'authenticated') return 'admin';
+  if (value === 'employee') return 'employee';
+  return null;
+}
+
+// Routes only the main admin may reach. Employees are redirected to /admin.
+const ADMIN_ONLY = ['/admin/employees', '/admin/blogs'];
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  const isAuthed = req.cookies.get(ADMIN_COOKIE)?.value === AUTH_VALUE;
+  const role = roleFromCookie(req.cookies.get(ADMIN_COOKIE)?.value);
+  const isAuthed = role !== null;
 
   // The login page is the only /admin route reachable while signed out.
   if (pathname === '/admin/login') {
@@ -19,8 +29,12 @@ export function middleware(req: NextRequest) {
 
   // Guard everything else under /admin.
   if (!isAuthed) {
-    const loginUrl = new URL('/admin/login', req.url);
-    return NextResponse.redirect(loginUrl);
+    return NextResponse.redirect(new URL('/admin/login', req.url));
+  }
+
+  // Employees can't reach admin-only sections.
+  if (role === 'employee' && ADMIN_ONLY.some((p) => pathname.startsWith(p))) {
+    return NextResponse.redirect(new URL('/admin', req.url));
   }
 
   return NextResponse.next();

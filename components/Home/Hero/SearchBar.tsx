@@ -69,7 +69,7 @@ export const SearchBar = memo(({
   }, [onSearch, onCityDropdownToggle]);
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-4 lg:p-5 mb-20">
+    <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-4 lg:p-5 mb-4 lg:mb-20">
       {/* Category Tabs */}
       <div className="mb-4 overflow-x-auto pb-1 scrollbar-hide">
         <div className="flex gap-2 min-w-max">

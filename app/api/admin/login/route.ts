@@ -1,24 +1,34 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { findEmployeeByCredentials } from '@/lib/admin-users';
+import { ADMIN_COOKIE } from '@/lib/admin-auth';
 
-// Admin credentials. Change these here (or move to env vars) when needed.
+// Main admin credentials. Change these here (or move to env vars) when needed.
 const ADMIN_EMAIL = 'divyagate123@gmail.com';
 const ADMIN_PASSWORD = 'divya123';
-
-const ADMIN_COOKIE = 'associatte_admin';
 
 export async function POST(request: NextRequest) {
   try {
     const { email, password } = await request.json();
 
-    const emailOk = typeof email === 'string' && email.trim().toLowerCase() === ADMIN_EMAIL;
-    const passwordOk = password === ADMIN_PASSWORD;
+    if (typeof email !== 'string' || typeof password !== 'string') {
+      return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
+    }
 
-    if (!emailOk || !passwordOk) {
+    // 1) Main admin (full access).
+    const isMainAdmin =
+      email.trim().toLowerCase() === ADMIN_EMAIL && password === ADMIN_PASSWORD;
+
+    // 2) Otherwise, an employee account (limited access).
+    const employee = isMainAdmin ? null : await findEmployeeByCredentials(email, password);
+
+    if (!isMainAdmin && !employee) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
     }
 
-    const response = NextResponse.json({ success: true });
-    response.cookies.set(ADMIN_COOKIE, 'authenticated', {
+    const role = isMainAdmin ? 'admin' : 'employee';
+
+    const response = NextResponse.json({ success: true, role });
+    response.cookies.set(ADMIN_COOKIE, role, {
       httpOnly: true,
       sameSite: 'lax',
       path: '/',

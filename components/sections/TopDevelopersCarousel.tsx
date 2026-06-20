@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowRight, Building2 } from 'lucide-react';
+import { ArrowRight, Building2, CalendarClock, LayoutGrid } from 'lucide-react';
 import { useMemo } from 'react';
 import Image from 'next/image';
 import properties from '../../data/properties.json';
@@ -15,6 +15,8 @@ interface Developer {
   slug: string;
   logoSrc: string;
   logoType: 'image' | 'text';
+  established?: string;
+  projectsCount?: number;
 }
 
 interface TopDevelopersCarouselProps {
@@ -52,6 +54,8 @@ export default function TopDevelopersCarousel({ city }: TopDevelopersCarouselPro
           slug: navSlug,
           logoSrc,
           logoType,
+          established: p.developer?.established,
+          projectsCount: p.developer?.projectsCount,
         });
       }
     });
@@ -69,17 +73,26 @@ export default function TopDevelopersCarousel({ city }: TopDevelopersCarouselPro
 
   if (!developers?.length) return null;
 
-  const renderCard = (dev: Developer, index: number) => (
+  const currentYear = new Date().getFullYear();
+
+  const renderCard = (dev: Developer, index: number) => {
+    const establishedYear = dev.established ? parseInt(dev.established, 10) : null;
+    const experience =
+      establishedYear && !Number.isNaN(establishedYear)
+        ? currentYear - establishedYear
+        : null;
+
+    return (
     <div
       key={`${dev.id}-${index}`}
-      className="flex-shrink-0 w-[160px] sm:w-[200px] md:w-[240px] px-3 group"
+      className="flex-shrink-0 w-[170px] sm:w-[210px] md:w-[240px] px-2 sm:px-3 group"
     >
       <a
         href={`/builders/${dev.slug}`}
-        className="block bg-white rounded-2xl border border-[var(--color-accent)] p-4 md:p-5 transition-all duration-300 hover:border-[var(--color-primary)] hover:shadow-xl hover:-translate-y-1.5 h-full flex flex-col items-center justify-center"
+        className="block bg-white rounded-2xl border border-[var(--color-accent)] p-3.5 sm:p-4 md:p-5 transition-all duration-300 hover:border-[var(--color-primary)] hover:shadow-xl hover:-translate-y-1.5 h-full flex flex-col"
       >
         {/* Logo Container */}
-        <div className="h-16 md:h-20 w-full flex items-center justify-center mb-4 bg-[var(--color-accent)]/40 rounded-xl p-2 transition-colors group-hover:bg-[var(--color-accent)]/60">
+        <div className="h-14 sm:h-16 md:h-20 w-full flex items-center justify-center mb-3 bg-[var(--color-accent)]/40 rounded-xl p-2 transition-colors group-hover:bg-[var(--color-accent)]/60">
           {dev.slug === 'lodha' ? (
             <span
               className="font-heading font-black text-[var(--color-foreground)] tracking-tight leading-none"
@@ -114,9 +127,31 @@ export default function TopDevelopersCarousel({ city }: TopDevelopersCarouselPro
             </div>
           )}
         </div>
+
+        {/* Developer Name */}
+        <h3 className="text-sm md:text-base font-semibold text-[var(--color-foreground)] text-center line-clamp-1 mb-2.5">
+          {dev.name}
+        </h3>
+
+        {/* Experience & Projects badges */}
+        <div className="mt-auto flex items-center justify-center gap-1.5 flex-wrap">
+          {experience && experience > 0 && (
+            <span className="inline-flex items-center gap-1 text-[10px] md:text-[11px] font-semibold text-[var(--color-primary)] bg-[var(--color-primary)]/10 px-2 py-1 rounded-full whitespace-nowrap">
+              <CalendarClock className="w-3 h-3" />
+              {experience}+ Yrs
+            </span>
+          )}
+          {dev.projectsCount && dev.projectsCount > 0 && (
+            <span className="inline-flex items-center gap-1 text-[10px] md:text-[11px] font-semibold text-[var(--color-secondary)] bg-[var(--color-secondary)]/10 px-2 py-1 rounded-full whitespace-nowrap">
+              <LayoutGrid className="w-3 h-3" />
+              {dev.projectsCount} Projects
+            </span>
+          )}
+        </div>
       </a>
     </div>
-  );
+    );
+  };
 
   return (
     <section className="pt-0 md:pt-10 pb-12 md:pb-20 bg-[var(--bgColor)] overflow-hidden">

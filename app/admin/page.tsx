@@ -1,17 +1,21 @@
 import { getAllProperties, getAllBlogs } from '@/lib/data-store';
-import { Building2, FileText, TrendingUp, Eye, MapPin } from 'lucide-react';
+import { getAdminRole } from '@/lib/admin-auth';
+import { Building2, FileText, MapPin } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminDashboard() {
+  const role = await getAdminRole();
+  const isAdmin = role === 'admin';
+
+  // Employees don't manage blogs, so skip fetching/showing them.
   const [properties, blogs] = await Promise.all([
     getAllProperties(),
-    getAllBlogs()
+    isAdmin ? getAllBlogs() : Promise.resolve([]),
   ]);
 
   const puneCount = properties.filter(p => p.location === 'pune').length;
   const mumbaiCount = properties.filter(p => p.location === 'mumbai').length;
-  const kdmcCount = properties.filter(p => p.location === 'kdmc').length;
 
   const stats = [
     {
@@ -21,13 +25,13 @@ export default async function AdminDashboard() {
       color: 'bg-[#005E60]',
       change: '+12%'
     },
-    {
+    ...(isAdmin ? [{
       title: 'Total Blogs',
       value: blogs.length,
       icon: FileText,
       color: 'bg-[#F8C21C]',
       change: '+8%'
-    },
+    }] : []),
     {
       title: 'Pune Properties',
       value: puneCount,
@@ -45,14 +49,16 @@ export default async function AdminDashboard() {
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Associatte Dashboard</h1>
-        <p className="text-gray-600 mt-1">Welcome to Associatte PropTech Admin Panel</p>
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Associatte Dashboard</h1>
+        <p className="text-gray-600 mt-1">
+          Welcome to Associatte PropTech Admin Panel{role === 'employee' ? ' — Employee access' : ''}
+        </p>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {stats.map((stat, index) => (
           <div key={index} className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-shadow">
             <div className="flex items-center justify-between mb-4">
@@ -70,7 +76,7 @@ export default async function AdminDashboard() {
       </div>
 
       {/* Recent Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className={`grid grid-cols-1 ${isAdmin ? 'lg:grid-cols-2' : ''} gap-6`}>
         {/* Recent Properties */}
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <h2 className="text-lg font-bold text-gray-900 mb-4">Recent Properties</h2>
@@ -92,7 +98,8 @@ export default async function AdminDashboard() {
           </div>
         </div>
 
-        {/* Recent Blogs */}
+        {/* Recent Blogs — admin only */}
+        {isAdmin && (
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <h2 className="text-lg font-bold text-gray-900 mb-4">Recent Blogs</h2>
           <div className="space-y-3">
@@ -112,6 +119,7 @@ export default async function AdminDashboard() {
             ))}
           </div>
         </div>
+        )}
       </div>
     </div>
   );

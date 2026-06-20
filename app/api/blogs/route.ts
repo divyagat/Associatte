@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAllBlogs, createBlog } from '@/lib/data-store';
+import { getRoleFromRequest } from '@/lib/admin-auth';
 
 export async function GET() {
   try {
@@ -12,6 +13,9 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  if (getRoleFromRequest(request) !== 'admin') {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
   try {
     const body = await request.json();
     const blog = await createBlog(body);

@@ -195,21 +195,8 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
   return (
     <section className="relative w-full overflow-hidden bg-slate-950">
 
-      {/* 📱 MOBILE HERO IMAGE — Fixed sizes prop for better performance */}
-      <div className="md:hidden relative w-full h-[220px] sm:h-[260px] overflow-hidden">
-        <Image
-          src="https://res.cloudinary.com/drdeqd8to/image/upload/f_auto,q_auto/b4_ajb1vz"
-          alt="Hero Background"
-          fill
-          sizes="(max-width: 768px) 100vw, 100vw"
-          className="object-cover object-center"
-          priority
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-transparent to-slate-950/30 pointer-events-none" />
-      </div>
-
-      {/* 💻 DESKTOP HERO IMAGE — Fixed sizes prop */}
-      <div className="hidden md:block absolute inset-0 z-0">
+      {/* 🖼️ HERO BACKGROUND IMAGE — single full-bleed image behind content on all breakpoints */}
+      <div className="absolute inset-0 z-0">
         <Image
           src="https://res.cloudinary.com/drdeqd8to/image/upload/f_auto,q_auto/b4_ajb1vz"
           alt="Hero Background"
@@ -218,13 +205,14 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
           className="object-cover object-center"
           priority
         />
-        <div className="absolute inset-0 bg-slate-950/20" />
+        {/* Dark overlay — heavier on mobile so the overlaid heading & chips stay legible */}
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/75 via-slate-950/55 to-slate-950/75 md:bg-slate-950/20 md:bg-none" />
         <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-slate-950/80 to-transparent pointer-events-none" />
       </div>
 
-      {/* Main Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 pt-4 pb-8 md:py-8 lg:py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start lg:items-end">
+      {/* Main Content — sits on top of the hero image */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-4 lg:px-8 pt-8 pb-6 md:py-8 lg:py-12 flex flex-col justify-center min-h-[480px] md:min-h-0">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-start lg:items-end">
 
           {/* Left Column */}
           <div className="lg:col-span-5 text-center lg:text-left order-1 lg:order-1 w-full">
@@ -237,12 +225,12 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
               </span>
             </div>
 
-            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-white leading-tight sm:leading-[1.15] lg:leading-[1.08] mb-2.5 sm:mb-3 lg:mb-4 drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">
+            <h1 className="text-[1.75rem] sm:text-3xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-white leading-[1.15] lg:leading-[1.08] mb-3 sm:mb-3 lg:mb-4 drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">
               <span className="block">Find Your Dream Home in</span>
               <span className="block" style={{ color: BRAND.yellow }}>{selectedCity}</span>
             </h1>
 
-            <p className="text-[11px] sm:text-xs md:text-sm text-white/95 mb-3 sm:mb-4 lg:mb-6 max-w-full sm:max-w-sm mx-auto lg:mx-0 leading-relaxed px-1 drop-shadow-[0_1px_4px_rgba(0,0,0,0.6)]">
+            <p className="text-[13px] sm:text-sm md:text-sm text-white/95 mb-4 sm:mb-4 lg:mb-6 max-w-full sm:max-w-sm mx-auto lg:mx-0 leading-relaxed drop-shadow-[0_1px_4px_rgba(0,0,0,0.6)]">
               Explore <span className="text-white font-semibold">{currentCity.projects}+ verified properties</span> from trusted builders in {currentCity.localities.slice(0, 3).join(', ')} & more
             </p>
 

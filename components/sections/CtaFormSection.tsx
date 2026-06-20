@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Phone, Mail, MapPin, CheckCircle2, ArrowRight, Shield, Clock, Users } from 'lucide-react';
+import CountryCodeSelect from '@/components/common/CountryCodeSelect';
 
 interface CtaFormSectionProps {
   city: 'Pune' | 'Mumbai' | 'KDMC';
@@ -29,6 +30,7 @@ export default function CtaFormSection({ city, title, subtitle, buttonText, form
     propertyType: '', 
     message: '' 
   });
+  const [countryCode, setCountryCode] = useState('+91');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [clientIp, setClientIp] = useState<string>('');
@@ -87,11 +89,12 @@ export default function CtaFormSection({ city, title, subtitle, buttonText, form
     const fullMessage = `Budget: ${formData.budget || 'Not specified'} | Property Type: ${formData.propertyType || 'Not specified'} | Requirements: ${formData.message || 'None'} | Source: CTA Form - ${city}`;
     
     // Create remark with form name, IP address, and source
-    const remark = `CTA Form - ${city} | IP: ${clientIp} | Budget: ${formData.budget} | Property: ${formData.propertyType}`;
-    
+    const remark = `CTA Form - ${city} | IP: ${clientIp} | Country Code: ${countryCode} | Budget: ${formData.budget} | Property: ${formData.propertyType}`;
+
     // Prepare payload for CRM (matching your EnquiryPopup format)
     const payload = {
       name: formData.name.trim(),
+      countryCode,
       phone: formData.phone.trim(),
       email: '', // Email not collected in this form
       project: title || 'Property Consultation',
@@ -334,18 +337,21 @@ export default function CtaFormSection({ city, title, subtitle, buttonText, form
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number *</label>
-                        <input 
-                          type="tel" 
-                          name="phone" 
-                          value={formData.phone} 
-                          onChange={handleChange} 
-                          required 
-                          placeholder="9876543210" 
-                          maxLength={10}
-                          className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#005E60] focus:border-transparent transition-all bg-gray-50 hover:bg-white ${
-                            errors.phone ? 'border-red-500' : 'border-gray-200'
-                          }`} 
-                        />
+                        <div className="flex gap-2">
+                          <CountryCodeSelect value={countryCode} onChange={setCountryCode} />
+                          <input
+                            type="tel"
+                            name="phone"
+                            value={formData.phone}
+                            onChange={handleChange}
+                            required
+                            placeholder="9876543210"
+                            maxLength={10}
+                            className={`flex-1 w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#005E60] focus:border-transparent transition-all bg-gray-50 hover:bg-white ${
+                              errors.phone ? 'border-red-500' : 'border-gray-200'
+                            }`}
+                          />
+                        </div>
                         {errors.phone && (
                           <p className="text-xs text-red-500 mt-1">{errors.phone}</p>
                         )}

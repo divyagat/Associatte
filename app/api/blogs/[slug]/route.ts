@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getBlogBySlug, updateBlog, deleteBlog } from '@/lib/data-store';
+import { getRoleFromRequest } from '@/lib/admin-auth';
 
 export async function GET(
   request: NextRequest,
@@ -22,6 +23,9 @@ export async function PUT(
   request: NextRequest,
   context: { params: Promise<{ slug: string }> }
 ) {
+  if (getRoleFromRequest(request) !== 'admin') {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
   try {
     const { slug } = await context.params;
     const body = await request.json();
@@ -40,6 +44,9 @@ export async function DELETE(
   request: NextRequest,
   context: { params: Promise<{ slug: string }> }
 ) {
+  if (getRoleFromRequest(request) !== 'admin') {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
   try {
     const { slug } = await context.params;
     const success = await deleteBlog(slug);
