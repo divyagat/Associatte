@@ -2,6 +2,7 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { 
   ArrowLeft, Calendar, Clock, Share2, Copy, 
   Eye, ChevronRight, Mail, MapPin, Building2, 
@@ -260,11 +261,13 @@ export default function BlogDetailPage() {
             </Link>
           </div>
 
-          <img 
-            src={post.image} 
+          <Image
+            src={post.image}
             alt={post.title}
-            className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
-            loading="eager"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20" />
@@ -312,9 +315,11 @@ export default function BlogDetailPage() {
 
               <div className="flex flex-wrap items-center justify-between gap-3 sm:gap-4 pt-2">
                 <div className="flex items-center gap-2 sm:gap-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl sm:rounded-2xl px-3 sm:px-4 py-2 sm:py-2.5">
-                  <img 
-                    src={post.author.avatar} 
+                  <Image
+                    src={post.author.avatar}
                     alt={post.author.name}
+                    width={36}
+                    height={36}
                     className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border-2 border-[var(--color-gold)] object-cover"
                   />
                   <div className="text-left">
@@ -415,9 +420,11 @@ export default function BlogDetailPage() {
                         href={`/blog/${recentPost.slug}`}
                         className="group flex gap-3"
                       >
-                        <img 
-                          src={recentPost.image} 
+                        <Image
+                          src={recentPost.image}
                           alt={recentPost.title}
+                          width={64}
+                          height={64}
                           className="w-16 h-16 rounded-lg object-cover flex-shrink-0 group-hover:scale-105 transition-transform"
                         />
                         <div className="flex-1 min-w-0">
@@ -456,11 +463,13 @@ export default function BlogDetailPage() {
               <div className="p-4 sm:p-6 md:p-10 lg:p-12">
                 {/* SECONDARY IMAGE (Image 2) */}
                 {post.image2 && (
-                  <div className="mb-8 rounded-2xl overflow-hidden shadow-lg border border-gray-100">
-                    <img 
-                      src={post.image2} 
+                  <div className="relative aspect-video mb-8 rounded-2xl overflow-hidden shadow-lg border border-gray-100">
+                    <Image
+                      src={post.image2}
                       alt={`${post.title} - Secondary`}
-                      className="w-full aspect-video object-cover"
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 800px"
+                      className="object-cover"
                     />
                   </div>
                 )}
@@ -521,9 +530,11 @@ export default function BlogDetailPage() {
               <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[var(--color-secondary)]/5 to-transparent rounded-full blur-3xl" />
               <div className="relative flex flex-col md:flex-row items-start gap-4 sm:gap-6">
                 <div className="relative shrink-0">
-                  <img 
-                    src={post.author.avatar} 
+                  <Image
+                    src={post.author.avatar}
                     alt={post.author.name}
+                    width={96}
+                    height={96}
                     className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover shadow-lg ring-4 ring-white"
                   />
                   <div className="absolute -bottom-2 -right-2 w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-[var(--color-gold)] to-[#e6b018] rounded-lg flex items-center justify-center shadow-lg">
@@ -587,9 +598,11 @@ export default function BlogDetailPage() {
                       className="group bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-3 sm:p-4 hover:bg-white/20 transition-all duration-300"
                     >
                       <div className="flex gap-3">
-                        <img 
-                          src={relatedPost.image} 
+                        <Image
+                          src={relatedPost.image}
                           alt={relatedPost.title}
+                          width={80}
+                          height={80}
                           className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl object-cover flex-shrink-0"
                         />
                         <div className="flex-1 min-w-0">
@@ -612,9 +625,11 @@ export default function BlogDetailPage() {
               <div className="relative overflow-hidden bg-white rounded-2xl shadow-sm border border-gray-100/80">
                 <div className="h-24 bg-gradient-to-br from-[var(--color-secondary)] via-[#6d0000] to-[var(--color-primary)] relative"></div>
                 <div className="px-4 sm:px-6 pb-6 -mt-12 relative">
-                  <img 
-                    src={post.author.avatar} 
+                  <Image
+                    src={post.author.avatar}
                     alt={post.author.name}
+                    width={80}
+                    height={80}
                     className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl mx-auto mb-4 object-cover border-4 border-white shadow-xl"
                   />
                   <div className="text-center">

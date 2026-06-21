@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { MapPin, Heart, ChevronRight, ChevronLeft, Star, Phone, Filter, X, TrendingUp, Award } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -436,18 +437,12 @@ export default function TopSellingProjects({
                       {/* Image */}
                       <Link href={`/property/${project.slug}`}>
                         <div className="relative h-48 overflow-hidden bg-gray-100">
-                          <img
+                          <Image
                             src={project.image}
                             alt={project.name}
-                            className="w-full h-full object-cover"
-                            loading="lazy"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              if (!target.dataset.fallback) {
-                                target.dataset.fallback = 'true';
-                                target.src = 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&q=80';
-                              }
-                            }}
+                            fill
+                            sizes="(max-width: 768px) 100vw, 360px"
+                            className="object-cover"
                           />
 
                           {/* Rating */}

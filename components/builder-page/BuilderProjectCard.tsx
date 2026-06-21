@@ -2,6 +2,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { MapPin, ArrowRight } from 'lucide-react';
 
@@ -44,17 +45,12 @@ export default function BuilderProjectCard({ project }: BuilderProjectCardProps)
       >
         {/* Image */}
         <div className="relative h-48 bg-gray-100">
-          <img 
-            src={project.image || '/projects/placeholder.jpg'} 
+          <Image
+            src={project.image || '/projects/placeholder.jpg'}
             alt={project.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            onError={e => {
-              const target = e.target as HTMLImageElement;
-              if (!target.dataset.fallback) {
-                target.dataset.fallback = 'true';
-                target.src = '/projects/placeholder.jpg';
-              }
-            }}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 380px"
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
           />
           {/* Price Badge */}
           <span className="absolute bottom-3 left-3 px-3 py-1 bg-[#005E60] text-white text-sm font-semibold rounded-lg">

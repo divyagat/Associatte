@@ -3,6 +3,7 @@
 
 import { CheckCircle, ChevronRight, Star, ExternalLink } from 'lucide-react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 export type PopupConfig = {
   projectName?: string;
@@ -70,11 +71,12 @@ export default function InvestmentCtaSection({ city, onConsultationClick }: Inve
     <section className="pt-4 md:pt-6 pb-8 md:pb-14 relative overflow-hidden">
       {/* Background Image + Overlay */}
       <div className="absolute inset-0">
-        <img 
-          src={`https://images.unsplash.com/photo-1514565131-fce0801e5785?w=1920&q=80&city=${city.toLowerCase()}`} 
-          alt={`${city} Skyline`} 
-          className="w-full h-full object-cover"
-          loading="lazy"
+        <Image
+          src="https://images.unsplash.com/photo-1514565131-fce0801e5785?w=1920&q=80"
+          alt={`${city} Skyline`}
+          fill
+          sizes="100vw"
+          className="object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-secondary)]/95 to-[var(--color-secondary)]/70" />
       </div>

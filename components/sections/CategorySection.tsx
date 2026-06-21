@@ -1,9 +1,10 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { Building2, Map, Home, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
+import Reveal from '@/components/common/Reveal';
 
 interface CategorySectionProps {
   city?: 'Pune' | 'Mumbai' | 'KDMC';
@@ -44,24 +45,19 @@ export default function CategorySection({ city, featuredLocalities }: CategorySe
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {categories.map((category, index) => (
-            <motion.div
+            <Reveal
               key={category.type}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
+              delay={index * 100}
               className="group cursor-pointer"
             >
               <Link href={buildCategoryLink(category.type)}>
                 <div className="relative overflow-hidden rounded-lg shadow-lg h-56 sm:h-64">
-                  <img
+                  <Image
                     src={category.image}
                     alt={category.title}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&q=80';
-                    }}
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    className="object-cover transition-transform duration-300 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                   <div className="absolute top-4 left-1/2 transform -translate-x-1/2">
@@ -74,7 +70,7 @@ export default function CategorySection({ city, featuredLocalities }: CategorySe
                   </div>
                 </div>
               </Link>
-            </motion.div>
+            </Reveal>
           ))}
         </div>
       </div>

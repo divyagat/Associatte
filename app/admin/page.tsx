@@ -1,17 +1,19 @@
+/* eslint-disable @next/next/no-img-element -- admin previews render arbitrary uploaded image URLs (incl. blob:) that next/image can't optimize */
 import { getAllProperties, getAllBlogs } from '@/lib/data-store';
-import { getAdminRole } from '@/lib/admin-auth';
+import { getAdminRole, getPermissions } from '@/lib/admin-auth';
+import { hasSectionAccess } from '@/lib/admin-permissions';
 import { Building2, FileText, MapPin } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminDashboard() {
-  const role = await getAdminRole();
-  const isAdmin = role === 'admin';
+  const [role, permissions] = await Promise.all([getAdminRole(), getPermissions()]);
+  // Only show blog stats to accounts that can manage blogs.
+  const showBlogs = hasSectionAccess(permissions, 'blogs');
 
-  // Employees don't manage blogs, so skip fetching/showing them.
   const [properties, blogs] = await Promise.all([
     getAllProperties(),
-    isAdmin ? getAllBlogs() : Promise.resolve([]),
+    showBlogs ? getAllBlogs() : Promise.resolve([]),
   ]);
 
   const puneCount = properties.filter(p => p.location === 'pune').length;
@@ -25,7 +27,7 @@ export default async function AdminDashboard() {
       color: 'bg-[#005E60]',
       change: '+12%'
     },
-    ...(isAdmin ? [{
+    ...(showBlogs ? [{
       title: 'Total Blogs',
       value: blogs.length,
       icon: FileText,
@@ -76,7 +78,7 @@ export default async function AdminDashboard() {
       </div>
 
       {/* Recent Activity */}
-      <div className={`grid grid-cols-1 ${isAdmin ? 'lg:grid-cols-2' : ''} gap-6`}>
+      <div className={`grid grid-cols-1 ${showBlogs ? 'lg:grid-cols-2' : ''} gap-6`}>
         {/* Recent Properties */}
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <h2 className="text-lg font-bold text-gray-900 mb-4">Recent Properties</h2>
@@ -98,8 +100,8 @@ export default async function AdminDashboard() {
           </div>
         </div>
 
-        {/* Recent Blogs — admin only */}
-        {isAdmin && (
+        {/* Recent Blogs — only for accounts with blog access */}
+        {showBlogs && (
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <h2 className="text-lg font-bold text-gray-900 mb-4">Recent Blogs</h2>
           <div className="space-y-3">

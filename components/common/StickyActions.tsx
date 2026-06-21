@@ -165,7 +165,7 @@ export default function StickyActions({
             initial={{ y: 100 }}
             animate={{ y: 0 }}
             transition={{ type: "spring", stiffness: 400, damping: 30 }}
-            className="fixed bottom-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-xl border-t border-gray-200 shadow-2xl md:hidden"
+            className="fixed bottom-0 left-0 right-0 z-[100] bg-white border-t border-gray-200 shadow-2xl md:hidden"
             style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
           >
             <div className="flex items-center gap-2 max-w-md mx-auto px-3 py-2.5">

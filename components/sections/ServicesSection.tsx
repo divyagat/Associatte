@@ -1,11 +1,9 @@
-'use client';
-
-import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { 
+import {
   Handshake, FileText, Scale, ClipboardList, TrendingUp,
-  ArrowRight 
+  ArrowRight
 } from 'lucide-react';
+import Reveal from '@/components/common/Reveal';
 
 // ✅ ADD city PROP
 interface ServicesSectionProps {
@@ -30,12 +28,7 @@ export default function ServicesSection({ city }: ServicesSectionProps) {
   return (
     <section className="py-10 md:py-14 bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center max-w-3xl mx-auto mb-12 lg:mb-16"
-        >
+        <Reveal className="text-center max-w-3xl mx-auto mb-12 lg:mb-16">
           <span className="inline-block px-3 py-1 bg-[#005E60]/10 text-[#005E60] text-sm font-semibold rounded-full mb-4">
             What We Offer
           </span>
@@ -45,32 +38,24 @@ export default function ServicesSection({ city }: ServicesSectionProps) {
           <p className="text-lg text-gray-600">
             From finding your dream home to managing investments, we provide comprehensive solutions across Pune, Mumbai & KDMC.
           </p>
-        </motion.div>
+        </Reveal>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-6">
           {services.map((service, index) => {
             const Icon = service.icon;
             return (
-              <motion.div
-                key={service.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ delay: index * 0.1 }}
-                whileHover={{ y: -8 }}
-              >
-                <Link 
+              <Reveal key={service.id} delay={index * 100} className="h-full">
+                <Link
                   href={service.href}
-                  className="group block h-full bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-xl hover:border-[#005E60]/30 transition-all duration-300 overflow-hidden"
+                  className="group relative block h-full bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-xl hover:border-[#005E60]/30 hover:-translate-y-2 transition-all duration-300 overflow-hidden"
                 >
                   <div className={`h-1 bg-gradient-to-r ${service.gradient}`} />
                   <div className="p-5 lg:p-6 flex flex-col h-full">
-                    <motion.div 
-                      whileHover={{ scale: 1.1, rotate: 5 }}
-                      className={`w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-4 bg-gradient-to-br ${service.gradient}`}
+                    <div
+                      className={`w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-4 bg-gradient-to-br ${service.gradient} transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}
                     >
                       <Icon className="w-7 h-7 text-white" />
-                    </motion.div>
+                    </div>
                     <div className="flex-1 text-center">
                       <h3 className="font-bold text-gray-900 group-hover:text-[#005E60] transition-colors mb-2 line-clamp-1">
                         {service.title}
@@ -85,18 +70,12 @@ export default function ServicesSection({ city }: ServicesSectionProps) {
                   </div>
                   <div className={`absolute inset-0 bg-gradient-to-br ${service.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none`} />
                 </Link>
-              </motion.div>
+              </Reveal>
             );
           })}
         </div>
 
-        <motion.div 
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.5 }}
-          className="text-center mt-10 lg:mt-12"
-        >
+        <Reveal delay={200} className="text-center mt-10 lg:mt-12">
           <Link 
             href="/services"
             className="inline-flex items-center gap-2 px-6 py-3 bg-[#005E60] text-white font-semibold rounded-xl hover:bg-[#004a4d] transition-colors shadow-lg shadow-[#005E60]/20"
@@ -106,7 +85,7 @@ export default function ServicesSection({ city }: ServicesSectionProps) {
           <p className="text-sm text-gray-500 mt-3">
             Or <a href="tel:+918668695995" className="text-[#005E60] hover:underline">call us</a> for a free consultation
           </p>
-        </motion.div>
+        </Reveal>
       </div>
     </section>
   );

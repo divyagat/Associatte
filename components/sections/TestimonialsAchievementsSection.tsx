@@ -1,7 +1,5 @@
-'use client';
-
 import { Star, ExternalLink } from 'lucide-react';
-import { motion } from 'framer-motion';
+import Reveal from '@/components/common/Reveal';
 
 interface TestimonialsAchievementsSectionProps {
   city: 'Pune' | 'Mumbai' | 'KDMC';
@@ -41,13 +39,7 @@ export default function TestimonialsAchievementsSection({ city }: TestimonialsAc
       <div className="max-w-7xl mx-auto px-4">
         
         {/* ✅ Premium Google Review Badge */}
-        <motion.div 
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4 }}
-          className="flex flex-col items-center justify-center"
-        >
+        <Reveal className="flex flex-col items-center justify-center">
           {/* Card Container */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 px-6 py-5 sm:px-8 sm:py-6 hover:shadow-md hover:border-[#005E60]/20 transition-all duration-300 group">
             
@@ -105,9 +97,9 @@ export default function TestimonialsAchievementsSection({ city }: TestimonialsAc
             <span className="text-[10px] text-gray-400 uppercase tracking-wider">Trusted by homeowners</span>
             <div className="h-px w-12 bg-gradient-to-l from-transparent to-[#005E60]/20" />
           </div>
-          
-        </motion.div>
-        
+
+        </Reveal>
+
       </div>
     </section>
   );

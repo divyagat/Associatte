@@ -1,22 +1,67 @@
 'use client';
 
 import { useState } from 'react';
-import { UserPlus, Trash2, Mail, User, Lock, Loader2, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import {
+  UserPlus, Trash2, Mail, User, Lock, Loader2, AlertCircle, Eye, EyeOff,
+  ShieldCheck, Pencil, X, Check,
+} from 'lucide-react';
+import PermissionMatrix from './PermissionMatrix';
+import {
+  Permissions,
+  DEFAULT_EMPLOYEE_PERMISSIONS,
+  ADMIN_SECTIONS,
+  ADMIN_ACTIONS,
+  sanitizePermissions,
+} from '@/lib/admin-permissions';
 
 interface SafeEmployee {
   id: string;
   name: string;
   email: string;
+  permissions: Permissions;
   createdAt: string;
+}
+
+const clonePerms = (p: Permissions): Permissions => sanitizePermissions(p);
+
+const SECTION_LABELS: Record<string, string> = { properties: 'Properties', blogs: 'Blogs' };
+
+/** Compact "Properties: Add, Edit · Blogs: —" style summary of an employee's access. */
+function AccessSummary({ permissions }: { permissions: Permissions }) {
+  return (
+    <div className="flex flex-wrap gap-1.5 mt-1.5">
+      {ADMIN_SECTIONS.map((section) => {
+        const granted = ADMIN_ACTIONS.filter((a) => permissions[section][a]);
+        const has = granted.length > 0;
+        return (
+          <span
+            key={section}
+            className={`inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full ${
+              has ? 'bg-[#005E60]/10 text-[#005E60]' : 'bg-gray-100 text-gray-400'
+            }`}
+          >
+            <span className="font-semibold">{SECTION_LABELS[section]}:</span>
+            {has ? granted.map((a) => a[0].toUpperCase() + a.slice(1)).join(', ') : 'No access'}
+          </span>
+        );
+      })}
+    </div>
+  );
 }
 
 export default function EmployeeManager({ initialEmployees }: { initialEmployees: SafeEmployee[] }) {
   const [employees, setEmployees] = useState<SafeEmployee[]>(initialEmployees);
   const [form, setForm] = useState({ name: '', email: '', password: '' });
+  const [permissions, setPermissions] = useState<Permissions>(clonePerms(DEFAULT_EMPLOYEE_PERMISSIONS));
   const [showPassword, setShowPassword] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  // Inline permission editing for an existing employee.
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editPerms, setEditPerms] = useState<Permissions>(clonePerms(DEFAULT_EMPLOYEE_PERMISSIONS));
+  const [savingEdit, setSavingEdit] = useState(false);
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,7 +71,7 @@ export default function EmployeeManager({ initialEmployees }: { initialEmployees
       const res = await fetch('/api/admin/employees', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, permissions }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -35,10 +80,38 @@ export default function EmployeeManager({ initialEmployees }: { initialEmployees
       }
       setEmployees((prev) => [data, ...prev]);
       setForm({ name: '', email: '', password: '' });
+      setPermissions(clonePerms(DEFAULT_EMPLOYEE_PERMISSIONS));
     } catch {
       setError('Something went wrong. Please try again.');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const startEdit = (emp: SafeEmployee) => {
+    setEditingId(emp.id);
+    setEditPerms(clonePerms(emp.permissions));
+  };
+
+  const handleSaveEdit = async (id: string) => {
+    setSavingEdit(true);
+    try {
+      const res = await fetch(`/api/admin/employees/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ permissions: editPerms }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        alert(data.error || 'Failed to update access');
+        return;
+      }
+      setEmployees((prev) => prev.map((e) => (e.id === id ? data : e)));
+      setEditingId(null);
+    } catch {
+      alert('An error occurred while updating access');
+    } finally {
+      setSavingEdit(false);
     }
   };
 
@@ -126,6 +199,19 @@ export default function EmployeeManager({ initialEmployees }: { initialEmployees
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
+
+            <div className="pt-1">
+              <div className="flex items-center gap-1.5 mb-2 text-sm font-semibold text-gray-700">
+                <ShieldCheck size={16} className="text-[#005E60]" />
+                Access rights
+              </div>
+              <PermissionMatrix value={permissions} onChange={setPermissions} />
+              <p className="text-xs text-gray-400 mt-2 leading-relaxed">
+                Grant only what this employee needs — e.g. tick Properties → Add for someone who
+                only adds properties, or Blogs → Add for someone who only writes blogs.
+              </p>
+            </div>
+
             <button
               type="submit"
               disabled={saving}
@@ -135,10 +221,6 @@ export default function EmployeeManager({ initialEmployees }: { initialEmployees
               {saving ? 'Adding...' : 'Add Employee'}
             </button>
           </form>
-
-          <p className="text-xs text-gray-400 mt-4 leading-relaxed">
-            Employees can add &amp; edit properties but cannot delete them or access blogs and employee management.
-          </p>
         </div>
       </div>
 
@@ -157,35 +239,72 @@ export default function EmployeeManager({ initialEmployees }: { initialEmployees
           ) : (
             <ul className="divide-y divide-gray-100">
               {employees.map((emp) => (
-                <li
-                  key={emp.id}
-                  className="flex items-center gap-3 sm:gap-4 px-4 sm:px-6 py-4 hover:bg-gray-50 transition-colors"
-                >
-                  <div className="w-10 h-10 rounded-full bg-[#005E60]/10 flex items-center justify-center flex-shrink-0">
-                    <span className="text-sm font-semibold text-[#005E60]">
-                      {emp.name.charAt(0).toUpperCase()}
-                    </span>
+                <li key={emp.id} className="px-4 sm:px-6 py-4 hover:bg-gray-50 transition-colors">
+                  <div className="flex items-center gap-3 sm:gap-4">
+                    <div className="w-10 h-10 rounded-full bg-[#005E60]/10 flex items-center justify-center flex-shrink-0">
+                      <span className="text-sm font-semibold text-[#005E60]">
+                        {emp.name.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-gray-900 truncate">{emp.name}</p>
+                      <p className="text-sm text-gray-500 truncate">{emp.email}</p>
+                      <AccessSummary permissions={emp.permissions} />
+                    </div>
+                    <div className="flex items-center gap-1 flex-shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => (editingId === emp.id ? setEditingId(null) : startEdit(emp))}
+                        className="p-2 text-[#005E60] hover:bg-[#005E60]/10 rounded-lg transition-colors"
+                        aria-label={`Edit access for ${emp.name}`}
+                      >
+                        {editingId === emp.id ? <X size={18} /> : <Pencil size={18} />}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(emp.id)}
+                        disabled={deletingId === emp.id}
+                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+                        aria-label={`Remove ${emp.name}`}
+                      >
+                        {deletingId === emp.id ? (
+                          <Loader2 size={18} className="animate-spin" />
+                        ) : (
+                          <Trash2 size={18} />
+                        )}
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-gray-900 truncate">{emp.name}</p>
-                    <p className="text-sm text-gray-500 truncate">{emp.email}</p>
-                  </div>
-                  <span className="hidden sm:block text-xs text-gray-400 flex-shrink-0">
-                    {new Date(emp.createdAt).toLocaleDateString()}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => handleDelete(emp.id)}
-                    disabled={deletingId === emp.id}
-                    className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50 flex-shrink-0"
-                    aria-label={`Remove ${emp.name}`}
-                  >
-                    {deletingId === emp.id ? (
-                      <Loader2 size={18} className="animate-spin" />
-                    ) : (
-                      <Trash2 size={18} />
-                    )}
-                  </button>
+
+                  {editingId === emp.id && (
+                    <div className="mt-3 ml-0 sm:ml-14 rounded-lg bg-gray-50 border border-gray-200 p-3">
+                      <p className="text-xs font-semibold text-gray-600 mb-2">Edit access rights</p>
+                      <PermissionMatrix
+                        value={editPerms}
+                        onChange={setEditPerms}
+                        disabled={savingEdit}
+                      />
+                      <div className="flex items-center gap-2 mt-3">
+                        <button
+                          type="button"
+                          onClick={() => handleSaveEdit(emp.id)}
+                          disabled={savingEdit}
+                          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#005E60] text-white text-sm font-medium hover:bg-[#004a4d] transition-colors disabled:opacity-60"
+                        >
+                          {savingEdit ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
+                          Save access
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setEditingId(null)}
+                          disabled={savingEdit}
+                          className="px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </li>
               ))}
             </ul>

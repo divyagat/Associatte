@@ -1,4 +1,5 @@
 'use client';
+/* eslint-disable @next/next/no-img-element -- previews render just-uploaded blob:/data: URLs that next/image can't optimize */
 
 import { useState } from 'react';
 import { Upload, X, Plus, Trash2 } from 'lucide-react';

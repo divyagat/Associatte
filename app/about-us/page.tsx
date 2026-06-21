@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import Image from 'next/image';
 import { motion, useScroll, useInView, type Variants, type EasingFunction } from 'framer-motion';
 import { 
   Users, Building2, MapPin, Star, ShieldCheck, Heart, 
@@ -473,11 +474,13 @@ export default function AboutUs() {
                   <div className="p-5 sm:p-6 lg:p-10">
                     <div className="flex flex-col sm:flex-row items-center gap-5 sm:gap-6 lg:gap-8">
                       <div className="relative flex-shrink-0">
-                        <div className="w-24 h-24 sm:w-32 sm:h-32 lg:w-40 lg:h-40 rounded-full overflow-hidden border-4 shadow-xl" style={{ borderColor: COLORS.green }}>
-                          <img 
-                            src={founder.image} 
-                            alt={founder.name} 
-                            className="w-full h-full object-cover"
+                        <div className="relative w-24 h-24 sm:w-32 sm:h-32 lg:w-40 lg:h-40 rounded-full overflow-hidden border-4 shadow-xl" style={{ borderColor: COLORS.green }}>
+                          <Image
+                            src={founder.image}
+                            alt={founder.name}
+                            fill
+                            sizes="160px"
+                            className="object-cover"
                             onError={handleImageError}
                           />
                         </div>
@@ -566,10 +569,12 @@ export default function AboutUs() {
                       className="group relative bg-white rounded-xl sm:rounded-2xl border border-slate-100 shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300"
                     >
                       <div className="relative aspect-square overflow-hidden bg-slate-50">
-                        <img 
-                          src={member.img} 
+                        <Image
+                          src={member.img}
                           alt={member.name}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          fill
+                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 280px"
+                          className="object-cover transition-transform duration-500 group-hover:scale-105"
                           onError={handleImageError}
                         />
                       </div>

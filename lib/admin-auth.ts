@@ -1,5 +1,12 @@
 import { cookies } from 'next/headers';
 import type { NextRequest } from 'next/server';
+import {
+  Permissions,
+  PERMS_COOKIE,
+  ADMIN_PERMISSIONS,
+  DEFAULT_EMPLOYEE_PERMISSIONS,
+  decodePermissions,
+} from './admin-permissions';
 
 /**
  * Admin session helpers.
@@ -28,4 +35,23 @@ export async function getAdminRole(): Promise<AdminRole | null> {
 /** Read the role from a NextRequest (middleware / API routes). */
 export function getRoleFromRequest(req: NextRequest): AdminRole | null {
   return normalize(req.cookies.get(ADMIN_COOKIE)?.value);
+}
+
+function permissionsFor(role: AdminRole | null, permsCookie: string | undefined): Permissions | null {
+  if (role === 'admin') return ADMIN_PERMISSIONS;
+  if (role === 'employee') return decodePermissions(permsCookie) ?? DEFAULT_EMPLOYEE_PERMISSIONS;
+  return null;
+}
+
+/** Read the current account's permissions inside a Server Component / Route Handler. */
+export async function getPermissions(): Promise<Permissions | null> {
+  const store = await cookies();
+  const role = normalize(store.get(ADMIN_COOKIE)?.value);
+  return permissionsFor(role, store.get(PERMS_COOKIE)?.value);
+}
+
+/** Read the current account's permissions from a NextRequest (middleware / API routes). */
+export function getPermissionsFromRequest(req: NextRequest): Permissions | null {
+  const role = normalize(req.cookies.get(ADMIN_COOKIE)?.value);
+  return permissionsFor(role, req.cookies.get(PERMS_COOKIE)?.value);
 }

@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { MapPin, ArrowRight, Star } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 // ✅ ADD city PROP
 interface PropertyTypesSectionProps {
@@ -104,11 +105,12 @@ export default function PropertyTypesSection({ city }: PropertyTypesSectionProps
                     }
                     ${cityItem.popular ? 'ring-2 ring-[#F8C21C]/50 ring-offset-2' : ''}
                   `}>
-                    <img 
-                      src={cityItem.image} 
+                    <Image
+                      src={cityItem.image}
                       alt={cityItem.name}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      loading="lazy"
+                      fill
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 220px"
+                      className="object-cover transition-transform duration-500 group-hover:scale-110"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                     

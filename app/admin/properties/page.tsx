@@ -1,14 +1,18 @@
+/* eslint-disable @next/next/no-img-element -- admin previews render arbitrary uploaded image URLs (incl. blob:) that next/image can't optimize */
 import Link from 'next/link';
 import { getAllProperties } from '@/lib/data-store';
-import { getAdminRole } from '@/lib/admin-auth';
+import { getPermissions } from '@/lib/admin-auth';
+import { can } from '@/lib/admin-permissions';
 import { Plus, Edit, MapPin } from 'lucide-react';
 import DeleteButton from '@/components/admin/DeleteButton';
 
 export const dynamic = 'force-dynamic';
 
 export default async function PropertiesListPage() {
-  const [properties, role] = await Promise.all([getAllProperties(), getAdminRole()]);
-  const canDelete = role === 'admin';
+  const [properties, permissions] = await Promise.all([getAllProperties(), getPermissions()]);
+  const canAdd = can(permissions, 'properties', 'add');
+  const canEdit = can(permissions, 'properties', 'edit');
+  const canDelete = can(permissions, 'properties', 'delete');
 
   return (
     <div className="space-y-6">
@@ -17,13 +21,15 @@ export default async function PropertiesListPage() {
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Properties</h1>
           <p className="text-gray-600 mt-1">Manage all property listings</p>
         </div>
-        <Link
-          href="/admin/properties/new"
-          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-[#005E60] text-white rounded-lg hover:bg-[#004a4d] transition-colors font-medium"
-        >
-          <Plus size={20} />
-          Add Property
-        </Link>
+        {canAdd && (
+          <Link
+            href="/admin/properties/new"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-[#005E60] text-white rounded-lg hover:bg-[#004a4d] transition-colors font-medium"
+          >
+            <Plus size={20} />
+            Add Property
+          </Link>
+        )}
       </div>
 
       {properties.length === 0 ? (
@@ -69,15 +75,20 @@ export default async function PropertiesListPage() {
                       <td className="px-6 py-4 text-sm text-gray-600">{property.developer?.name}</td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-2">
-                          <Link
-                            href={`/admin/properties/${property.slug}/edit`}
-                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                            aria-label="Edit"
-                          >
-                            <Edit size={18} />
-                          </Link>
+                          {canEdit && (
+                            <Link
+                              href={`/admin/properties/${property.slug}/edit`}
+                              className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                              aria-label="Edit"
+                            >
+                              <Edit size={18} />
+                            </Link>
+                          )}
                           {canDelete && (
                             <DeleteButton slug={property.slug} type="properties" label="this property" />
+                          )}
+                          {!canEdit && !canDelete && (
+                            <span className="text-xs text-gray-400">View only</span>
                           )}
                         </div>
                       </td>
@@ -104,17 +115,21 @@ export default async function PropertiesListPage() {
                     <p className="text-xs text-gray-500 truncate">{property.developer?.name}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-100">
-                  <Link
-                    href={`/admin/properties/${property.slug}/edit`}
-                    className="flex-1 flex items-center justify-center gap-2 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
-                  >
-                    <Edit size={16} /> Edit
-                  </Link>
-                  {canDelete && (
-                    <DeleteButton slug={property.slug} type="properties" label="this property" />
-                  )}
-                </div>
+                {(canEdit || canDelete) && (
+                  <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-100">
+                    {canEdit && (
+                      <Link
+                        href={`/admin/properties/${property.slug}/edit`}
+                        className="flex-1 flex items-center justify-center gap-2 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+                      >
+                        <Edit size={16} /> Edit
+                      </Link>
+                    )}
+                    {canDelete && (
+                      <DeleteButton slug={property.slug} type="properties" label="this property" />
+                    )}
+                  </div>
+                )}
               </div>
             ))}
           </div>

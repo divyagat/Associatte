@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getBlogBySlug, updateBlog, deleteBlog } from '@/lib/data-store';
-import { getRoleFromRequest } from '@/lib/admin-auth';
+import { getPermissionsFromRequest } from '@/lib/admin-auth';
+import { can } from '@/lib/admin-permissions';
 
 export async function GET(
   request: NextRequest,
@@ -23,7 +24,7 @@ export async function PUT(
   request: NextRequest,
   context: { params: Promise<{ slug: string }> }
 ) {
-  if (getRoleFromRequest(request) !== 'admin') {
+  if (!can(getPermissionsFromRequest(request), 'blogs', 'edit')) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
   try {
@@ -44,7 +45,7 @@ export async function DELETE(
   request: NextRequest,
   context: { params: Promise<{ slug: string }> }
 ) {
-  if (getRoleFromRequest(request) !== 'admin') {
+  if (!can(getPermissionsFromRequest(request), 'blogs', 'delete')) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
   try {

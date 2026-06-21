@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { 
   Building2, MapPin, Award, Users, 
   Star, ArrowRight
@@ -96,7 +97,7 @@ export default function BlogListingPage() {
                 <Link href={`/blog/${blog.slug}`} key={blog.id} className="group">
                   <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300">
                     <div className="relative h-64 overflow-hidden">
-                      <img src={blog.image} alt={blog.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                      <Image src={blog.image} alt={blog.title} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover group-hover:scale-105 transition-transform duration-700" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                       <div className="absolute bottom-4 left-4 right-4">
                         <div className="flex items-center gap-2 mb-2">
@@ -141,10 +142,12 @@ export default function BlogListingPage() {
               <Link href={`/blog/${blog.slug}`} key={blog.id} className="group">
                 <article className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 h-full flex flex-col">
                   <div className="relative h-48 overflow-hidden">
-                    <img 
-                      src={blog.image} 
+                    <Image
+                      src={blog.image}
                       alt={blog.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover group-hover:scale-110 transition-transform duration-500"
                     />
                     <div className="absolute top-3 left-3">
                       <span className="bg-[#8B0000] text-white px-2 py-1 rounded text-xs font-semibold">
@@ -182,7 +185,7 @@ export default function BlogListingPage() {
                     
                     <div className="flex items-center justify-between mt-auto pt-3 border-t">
                       <div className="flex items-center gap-2">
-                        <img src={blog.author.avatar} alt={blog.author.name} className="w-6 h-6 rounded-full" />
+                        <Image src={blog.author.avatar} alt={blog.author.name} width={24} height={24} className="w-6 h-6 rounded-full object-cover" />
                         <span className="text-xs text-gray-600">{blog.author.name}</span>
                       </div>
                       <div className="text-xs text-gray-500">

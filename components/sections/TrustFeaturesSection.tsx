@@ -1,8 +1,8 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { Shield, Users, Headphones, Handshake, ArrowRight, CheckCircle2 } from 'lucide-react';
 import Image from 'next/image';
+import Reveal from '@/components/common/Reveal';
 
 interface TrustFeaturesSectionProps {
   city: 'Pune' | 'Mumbai' | 'KDMC';
@@ -37,29 +37,7 @@ const FEATURES: Record<'Pune' | 'Mumbai' | 'KDMC', Array<{
   ],
 };
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.15, delayChildren: 0.2 },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 30, scale: 0.95 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: {
-      type: 'spring' as const,
-      stiffness: 100,
-      damping: 15,
-    },
-  },
-};
-
-export default function TrustFeaturesSection({ 
+export default function TrustFeaturesSection({
   city, 
   onConsultationClick 
 }: TrustFeaturesSectionProps) {
@@ -68,32 +46,24 @@ export default function TrustFeaturesSection({
   return (
     <section className="relative py-10 md:py-14 bg-gradient-to-b from-white via-gray-50 to-white overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-[#005E60]/5 rounded-full blur-3xl" />
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#F8C21C]/10 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-br from-[#8B0000]/3 to-transparent rounded-full blur-3xl" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left Content */}
-          <motion.div
-            initial={{ opacity: 0, x: -40 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-100px' }}
-            transition={{ duration: 0.6, ease: 'easeOut' }}
+          <Reveal
+            direction="right"
             className="order-2 lg:order-1"
           >
             <div className="mb-10">
-              <motion.span 
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+              <span
                 className="inline-flex items-center gap-2 px-4 py-2 bg-[#005E60]/10 text-[#005E60] text-sm font-semibold rounded-full mb-4"
               >
                 <CheckCircle2 className="w-4 h-4" />
                 Trusted by 5000+ Homebuyers
-              </motion.span>
-              
+              </span>
+
               <h2 className="section-title text-gray-900 leading-tight">
                 Why Homebuyers{' '}
                 <span className="relative">
@@ -108,18 +78,11 @@ export default function TrustFeaturesSection({
               </p>
             </div>
 
-            <motion.div 
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '-50px' }}
-              className="grid grid-cols-1 sm:grid-cols-2 gap-4"
-            >
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {features.map((feature, index) => (
-                <motion.div
+                <Reveal
                   key={index}
-                  variants={itemVariants}
-                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                  delay={index * 100}
                   className="group relative p-5 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-[#005E60]/30 transition-all duration-300 cursor-default"
                 >
                   <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`} />
@@ -140,17 +103,11 @@ export default function TrustFeaturesSection({
                   </div>
                   
                   <div className={`absolute bottom-0 left-5 right-5 h-0.5 bg-gradient-to-r ${feature.color} rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
-                </motion.div>
+                </Reveal>
               ))}
-            </motion.div>
+            </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.6 }}
-              className="mt-10"
-            >
+            <Reveal delay={300} className="mt-10">
               {/* ✅ FIXED: Button with onClick handler */}
               <button 
                 onClick={onConsultationClick}
@@ -164,15 +121,13 @@ export default function TrustFeaturesSection({
               <p className="mt-3 text-sm text-gray-500">
                 ✓ No obligation {" "} • {" "} ✓ Response within 2 hours
               </p>
-            </motion.div>
-          </motion.div>
+            </Reveal>
+          </Reveal>
 
           {/* Right Image */}
-          <motion.div 
-            initial={{ opacity: 0, x: 40 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-100px' }}
-            transition={{ duration: 0.6, ease: 'easeOut', delay: 0.2 }}
+          <Reveal
+            direction="left"
+            delay={100}
             className="order-1 lg:order-2 relative"
           >
             <div className="relative rounded-3xl overflow-hidden shadow-2xl">
@@ -188,11 +143,7 @@ export default function TrustFeaturesSection({
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
               </div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.4 }}
+              <div
                 className="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur-sm rounded-2xl p-5 shadow-xl border border-white/20"
               >
                 <div className="flex items-center gap-4">
@@ -208,25 +159,18 @@ export default function TrustFeaturesSection({
                     <div className="text-sm text-gray-600">Success Rate</div>
                   </div>
                 </div>
-              </motion.div>
+              </div>
 
-              <motion.div
-                initial={{ scale: 0 }}
-                whileInView={{ scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.6, type: 'spring', stiffness: 200 }}
-                className="absolute top-6 right-6"
-              >
+              <div className="absolute top-6 right-6">
                 <div className="flex items-center gap-2 px-4 py-2 bg-white/95 backdrop-blur-sm rounded-full shadow-lg border border-gray-100">
                   <div className="w-2 h-2 bg-[#10b981] rounded-full animate-pulse" />
                   <span className="text-sm font-medium text-gray-700">Live Support</span>
                 </div>
-              </motion.div>
+              </div>
             </div>
 
-            <div className="absolute -top-4 -right-4 w-24 h-24 bg-[#F8C21C]/20 rounded-full blur-2xl" />
             <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-[#005E60]/20 rounded-full blur-2xl" />
-          </motion.div>
+          </Reveal>
         </div>
       </div>
     </section>

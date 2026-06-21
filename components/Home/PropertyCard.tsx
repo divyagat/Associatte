@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { Heart, Play, Video } from 'lucide-react';
 
 export interface PropertyConfig {
@@ -29,10 +30,12 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
     <div className="min-w-[320px] w-[320px] bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100 snap-center">
       {/* Image Section */}
       <div className="relative h-48 bg-gradient-to-br from-[#ECF1F8] to-gray-200">
-        <img 
-          src={property.image} 
-          alt={property.name} 
-          className="w-full h-full object-cover"
+        <Image
+          src={property.image}
+          alt={property.name}
+          fill
+          sizes="320px"
+          className="object-cover"
         />
         <div className="absolute inset-0 bg-black/10" />
         

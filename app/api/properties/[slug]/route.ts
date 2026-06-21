@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPropertyBySlug, updateProperty, deleteProperty } from '@/lib/data-store';
-import { getRoleFromRequest } from '@/lib/admin-auth';
+import { getPermissionsFromRequest } from '@/lib/admin-auth';
+import { can } from '@/lib/admin-permissions';
 
 export async function GET(
   request: NextRequest,
@@ -23,6 +24,9 @@ export async function PUT(
   request: NextRequest,
   context: { params: Promise<{ slug: string }> }
 ) {
+  if (!can(getPermissionsFromRequest(request), 'properties', 'edit')) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
   try {
     const { slug } = await context.params;
     const body = await request.json();
@@ -41,8 +45,7 @@ export async function DELETE(
   request: NextRequest,
   context: { params: Promise<{ slug: string }> }
 ) {
-  // Only the main admin may delete properties — employees can add/edit only.
-  if (getRoleFromRequest(request) !== 'admin') {
+  if (!can(getPermissionsFromRequest(request), 'properties', 'delete')) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
   try {

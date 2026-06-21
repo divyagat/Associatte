@@ -4,6 +4,7 @@
 import { motion } from "framer-motion";
 import { MapPin, ArrowRight, Star, Building2, Home, TrendingUp, Search, Phone, Mail } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import EnquiryPopup from "../../components/common/EnquiryPopup";
 
@@ -250,10 +251,12 @@ export default function LocationsPage() {
                     <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
                       {/* Image Section */}
                       <div className="relative h-56 overflow-hidden">
-                        <img
+                        <Image
                           src={location.image}
                           alt={location.name}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                          fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          className="object-cover group-hover:scale-110 transition-transform duration-500"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                         

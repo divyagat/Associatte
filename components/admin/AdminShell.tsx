@@ -10,25 +10,39 @@ import LogoutButton from './LogoutButton';
 
 type Role = 'admin' | 'employee';
 
+/** Which section links to show — for employees this reflects their granted access. */
+export interface NavAccess {
+  properties: boolean;
+  blogs: boolean;
+}
+
 interface NavItem {
   href: string;
   label: string;
   icon: typeof LayoutDashboard;
-  adminOnly?: boolean;
+  show: (role: Role, access: NavAccess) => boolean;
 }
 
 const NAV: NavItem[] = [
-  { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/admin/properties', label: 'Properties', icon: Building2 },
-  { href: '/admin/blogs', label: 'Blogs', icon: FileText, adminOnly: true },
-  { href: '/admin/employees', label: 'Employees', icon: Users, adminOnly: true },
+  { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, show: () => true },
+  { href: '/admin/properties', label: 'Properties', icon: Building2, show: (_r, a) => a.properties },
+  { href: '/admin/blogs', label: 'Blogs', icon: FileText, show: (_r, a) => a.blogs },
+  { href: '/admin/employees', label: 'Employees', icon: Users, show: (role) => role === 'admin' },
 ];
 
-export default function AdminShell({ role, children }: { role: Role; children: ReactNode }) {
+export default function AdminShell({
+  role,
+  access,
+  children,
+}: {
+  role: Role;
+  access: NavAccess;
+  children: ReactNode;
+}) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
-  const items = NAV.filter((item) => !item.adminOnly || role === 'admin');
+  const items = NAV.filter((item) => item.show(role, access));
 
   const isActive = (href: string) =>
     href === '/admin' ? pathname === '/admin' : pathname.startsWith(href);

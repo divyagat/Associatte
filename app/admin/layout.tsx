@@ -1,9 +1,10 @@
 import { ReactNode } from 'react';
-import { getAdminRole } from '@/lib/admin-auth';
+import { getAdminRole, getPermissions } from '@/lib/admin-auth';
+import { hasSectionAccess } from '@/lib/admin-permissions';
 import AdminShell from '@/components/admin/AdminShell';
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
-  const role = await getAdminRole();
+  const [role, permissions] = await Promise.all([getAdminRole(), getPermissions()]);
 
   // When signed out, middleware only allows the /admin/login page through.
   // Render it without the dashboard chrome (sidebar).
@@ -11,5 +12,10 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     return <>{children}</>;
   }
 
-  return <AdminShell role={role}>{children}</AdminShell>;
+  const access = {
+    properties: hasSectionAccess(permissions, 'properties'),
+    blogs: hasSectionAccess(permissions, 'blogs'),
+  };
+
+  return <AdminShell role={role} access={access}>{children}</AdminShell>;
 }

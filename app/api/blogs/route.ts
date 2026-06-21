@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAllBlogs, createBlog } from '@/lib/data-store';
-import { getRoleFromRequest } from '@/lib/admin-auth';
+import { getPermissionsFromRequest } from '@/lib/admin-auth';
+import { can } from '@/lib/admin-permissions';
 
 export async function GET() {
   try {
@@ -13,7 +14,7 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  if (getRoleFromRequest(request) !== 'admin') {
+  if (!can(getPermissionsFromRequest(request), 'blogs', 'add')) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
   try {

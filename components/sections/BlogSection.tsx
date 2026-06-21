@@ -4,6 +4,7 @@
 import { ArrowRight, ChevronRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { getBlogsByCity, type BlogPost } from '@/lib/blog-data';
 
 interface BlogSectionProps {
@@ -59,11 +60,12 @@ export default function BlogSection({ city }: BlogSectionProps) {
               <Link href={`/blog/${post.slug}`} key={post.id}>
                 <article className="group flex-shrink-0 w-[320px] bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer">
                   <div className="relative aspect-[16/10] overflow-hidden">
-                    <img 
-                      src={post.image} 
-                      alt={post.title} 
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-                      loading="lazy" 
+                    <Image
+                      src={post.image}
+                      alt={post.title}
+                      fill
+                      sizes="320px"
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
                     <div className="absolute top-3 right-3">

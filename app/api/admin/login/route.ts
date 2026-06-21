@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { findEmployeeByCredentials } from '@/lib/admin-users';
 import { ADMIN_COOKIE } from '@/lib/admin-auth';
+import {
+  PERMS_COOKIE,
+  ADMIN_PERMISSIONS,
+  encodePermissions,
+} from '@/lib/admin-permissions';
 
 // Main admin credentials. Change these here (or move to env vars) when needed.
 const ADMIN_EMAIL = 'divyagate123@gmail.com';
@@ -27,14 +32,22 @@ export async function POST(request: NextRequest) {
 
     const role = isMainAdmin ? 'admin' : 'employee';
 
-    const response = NextResponse.json({ success: true, role });
-    response.cookies.set(ADMIN_COOKIE, role, {
+    // Snapshot the account's permissions into the session cookie so middleware
+    // (edge — no file access) and API routes can authorize without re-reading
+    // the store. Permission changes take effect on the employee's next login.
+    const permissions = isMainAdmin ? ADMIN_PERMISSIONS : employee!.permissions;
+
+    const cookieOpts = {
       httpOnly: true,
-      sameSite: 'lax',
+      sameSite: 'lax' as const,
       path: '/',
       maxAge: 60 * 60 * 8, // 8 hours
       secure: process.env.NODE_ENV === 'production',
-    });
+    };
+
+    const response = NextResponse.json({ success: true, role });
+    response.cookies.set(ADMIN_COOKIE, role, cookieOpts);
+    response.cookies.set(PERMS_COOKIE, encodePermissions(permissions), cookieOpts);
     return response;
   } catch {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });

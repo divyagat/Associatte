@@ -2,6 +2,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { MapPin, Building2, ArrowRight } from 'lucide-react';
 
@@ -41,12 +42,13 @@ export default function BuilderCard({ builder }: BuilderCardProps) {
         className="block bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-xl hover:border-[#005E60]/30 transition-all duration-300 overflow-hidden"
       >
         <div className="p-5 border-b border-gray-100 flex items-start justify-between">
-          <div className="h-14 w-24 bg-gray-50 rounded-lg flex items-center justify-center p-2 border border-gray-100">
-            <img 
-              src={builder.logo || '/logos/placeholder.png'} 
-              alt={`${builder.name} logo`} 
-              className="max-h-10 w-auto object-contain" 
-              onError={e => (e.target as HTMLImageElement).src = '/logos/placeholder.png'} 
+          <div className="relative h-14 w-24 bg-gray-50 rounded-lg p-2 border border-gray-100">
+            <Image
+              src={builder.logo || '/logos/placeholder.png'}
+              alt={`${builder.name} logo`}
+              fill
+              sizes="96px"
+              className="object-contain p-2"
             />
           </div>
           <span className="px-3 py-1 bg-[#005E60]/10 text-[#005E60] text-xs font-bold rounded-full">
