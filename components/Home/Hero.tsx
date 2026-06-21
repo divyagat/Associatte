@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import {
   Search, MapPin, Home, Building2, Construction, KeyRound,
-  ChevronDown, Sparkles, CheckCircle2, Loader2, X, Filter
+  ChevronDown, Sparkles, CheckCircle2, Loader2, X, Filter, ChevronRight, Shield, Award, TrendingUp
 } from 'lucide-react';
 
 import { SearchBar } from './Hero/SearchBar';
@@ -193,10 +193,12 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
   const currentCity = useMemo(() => CITIES.find(c => c.name === selectedCity) || CITIES[0], [selectedCity]);
 
   return (
-    <section className="relative w-full overflow-hidden bg-slate-950">
+    // FIX 1: Removed 'overflow-hidden' from the section so dropdowns aren't clipped by the fixed mobile height
+    <section className="relative w-full bg-slate-950 h-[200px] sm:h-[220px] md:h-[420px] lg:h-[440px]">
 
-      {/* 🖼️ HERO BACKGROUND IMAGE — single full-bleed image behind content on all breakpoints */}
-      <div className="absolute inset-0 z-0">
+      {/* 🖼️ HERO BACKGROUND IMAGE */}
+      {/* FIX 1 (cont): Added 'overflow-hidden' here to keep the background image contained */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
         <Image
           src="https://res.cloudinary.com/drdeqd8to/image/upload/f_auto,q_auto/b4_ajb1vz"
           alt="Hero Background"
@@ -205,68 +207,200 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
           className="object-cover object-center"
           priority
         />
-        {/* Dark overlay — heavier on mobile so the overlaid heading & chips stay legible */}
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/75 via-slate-950/55 to-slate-950/75 md:bg-slate-950/20 md:bg-none" />
-        <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-slate-950/80 to-transparent pointer-events-none" />
+        {/* Mobile: Very light overlay - image fully visible */}
+        <div className="md:hidden absolute inset-0 bg-gradient-to-b from-slate-950/10 via-transparent to-slate-950/20" />
+        {/* Desktop: subtle left gradient */}
+        <div className="hidden md:block absolute inset-0 bg-gradient-to-r from-slate-950/25 via-slate-950/5 to-transparent" />
       </div>
 
-      {/* Main Content — sits on top of the hero image */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-4 lg:px-8 pt-8 pb-6 md:py-8 lg:py-12 flex flex-col justify-center min-h-[480px] md:min-h-0">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-start lg:items-end">
+      {/* Main Content */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-4 lg:px-8 h-full flex flex-col justify-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 lg:gap-8 items-center w-full">
 
-          {/* Left Column */}
-          <div className="lg:col-span-5 text-center lg:text-left order-1 lg:order-1 w-full">
-            
-            {/* Light black shade (20% opacity) with blur for a soft, premium glass effect */}
-            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 py-1.5 sm:px-3.5 sm:py-2 bg-black/20 backdrop-blur-md rounded-full border border-white/10 mb-3 sm:mb-4 mx-auto lg:mx-0 shadow-sm">
-              <Sparkles className="w-3 h-3 sm:w-4 sm:h-4" style={{ color: BRAND.yellow }} />
-              <span className="text-[10px] sm:text-xs font-semibold text-white tracking-wide drop-shadow-sm">
+          {/* Left Column - Desktop only */}
+          <div className="hidden lg:block lg:col-span-5 text-left order-1 w-full">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-black/25 backdrop-blur-md rounded-full border border-white/15 mb-2 shadow-sm">
+              <Sparkles className="w-4 h-4" style={{ color: BRAND.yellow }} />
+              <span className="text-xs font-semibold text-white tracking-wide drop-shadow-sm">
                 Verified Projects in Pune, Mumbai & KDMC
               </span>
             </div>
-
-            <h1 className="text-[1.75rem] sm:text-3xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-white leading-[1.15] lg:leading-[1.08] mb-3 sm:mb-3 lg:mb-4 drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">
+            <h1 className="text-3xl xl:text-4xl font-bold text-white leading-[1.1] mb-2 drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
               <span className="block">Find Your Dream Home in</span>
               <span className="block" style={{ color: BRAND.yellow }}>{selectedCity}</span>
             </h1>
-
-            <p className="text-[13px] sm:text-sm md:text-sm text-white/95 mb-4 sm:mb-4 lg:mb-6 max-w-full sm:max-w-sm mx-auto lg:mx-0 leading-relaxed drop-shadow-[0_1px_4px_rgba(0,0,0,0.6)]">
+            <p className="text-sm text-white/95 mb-4 max-w-sm leading-relaxed drop-shadow-[0_1px_6px_rgba(0,0,0,0.9)]">
               Explore <span className="text-white font-semibold">{currentCity.projects}+ verified properties</span> from trusted builders in {currentCity.localities.slice(0, 3).join(', ')} & more
             </p>
+            <div className="flex flex-wrap gap-1.5">
+              {currentCity.localities.slice(0, 6).map((loc) => (
+                <button key={loc} onClick={() => handleLocalityClick(loc)} className="px-2.5 py-1 text-[11px] font-medium text-white bg-black/30 hover:bg-black/50 border border-white/20 rounded-full transition-all duration-200 backdrop-blur-md whitespace-nowrap drop-shadow-sm">
+                  {loc}
+                </button>
+              ))}
+            </div>
+          </div>
 
-            <div className="w-full mb-6 lg:mb-0">
-              <div className="lg:hidden relative">
-                <div className="flex gap-1.5 overflow-x-auto pb-2 px-1 scrollbar-hide scroll-smooth" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                  {currentCity.localities.map((loc) => (
-                    <button key={loc} onClick={() => handleLocalityClick(loc)} className="flex-shrink-0 px-3 py-1.5 text-[10px] font-medium text-white bg-white/15 hover:bg-white/25 border border-white/25 rounded-full transition-all duration-200 backdrop-blur-md whitespace-nowrap min-h-[28px] drop-shadow-sm">
-                      {loc}
+          {/* Right Column - Mobile & Desktop */}
+          <div className="lg:col-span-7 w-full order-1">
+            
+            {/* ========== MOBILE VIEW - COMPACT ========== */}
+            <div className="lg:hidden">
+              {/* Minimal heading */}
+              <div className="text-center mb-2">
+                <h1 className="text-[1.75rem] font-extrabold text-white leading-[1.05] drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)]">
+                  <span className="block">Find Your</span>
+                  <span className="block text-[2rem]" style={{ color: BRAND.yellow, textShadow: '0 2px 10px rgba(0,0,0,0.9)' }}>Dream Home</span>
+                  <span className="block text-xs font-medium text-white mt-0.5 drop-shadow-[0_1px_4px_rgba(0,0,0,0.95)]">in {selectedCity}</span>
+                </h1>
+              </div>
+
+              {/* Ultra Compact Search Card */}
+              <div className="w-full bg-white/95 backdrop-blur-2xl rounded-xl shadow-2xl border border-white/30 p-1.5">
+                {/* Search Row - Very Compact */}
+                <div className="flex gap-1">
+                  {/* City Selector */}
+                  <div className="relative flex-shrink-0">
+                    <button
+                      onClick={() => handleCityDropdownOpen(!isCityDropdownOpen)}
+                      className="flex items-center gap-1 px-2 py-1 rounded-lg border-2 transition-all bg-white"
+                      style={{
+                        borderColor: isCityDropdownOpen ? BRAND.green : '#e2e8f0',
+                        boxShadow: isCityDropdownOpen ? `0 0 0 3px ${BRAND.green}20` : 'none'
+                      }}
+                    >
+                      <MapPin className="w-3 h-3" style={{ color: BRAND.green }} />
+                      <span className="text-[11px] font-semibold text-slate-700 truncate max-w-[45px]">{selectedCity}</span>
+                      <ChevronDown className={`w-2.5 h-2.5 text-slate-400 transition-transform ${isCityDropdownOpen ? 'rotate-180' : ''}`} />
                     </button>
-                  ))}
+
+                    {isCityDropdownOpen && (
+                      // FIX 2: Removed 'right-0' and added 'w-max' so the dropdown sizes naturally to its content 
+                      // instead of being constrained to the narrow width of the city button.
+                      <div className="absolute top-full left-0 mt-1 bg-white rounded-xl shadow-2xl border border-slate-100 z-50 overflow-hidden min-w-[140px] w-max">
+                        {CITIES.map((city) => (
+                          <button
+                            key={city.slug}
+                            onClick={() => {
+                              handleCityChange(city.name);
+                              handleCityDropdownOpen(false);
+                            }}
+                            className={`w-full flex items-center justify-between px-3 py-2 text-xs text-left transition-colors ${
+                              selectedCity === city.name
+                                ? 'bg-[#005E60] text-white'
+                                : 'text-slate-700 hover:bg-slate-50'
+                            }`}
+                          >
+                            <span className="font-medium">{city.name}</span>
+                            {selectedCity === city.name && <CheckCircle2 className="w-3.5 h-3.5" />}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Search Input - Compact */}
+                  <div className="flex-1 relative">
+                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                      placeholder="Search..."
+                      className="w-full pl-8 pr-2 py-1 bg-slate-50 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all text-xs placeholder:text-slate-400"
+                      style={{
+                        borderColor: '#e2e8f0',
+                        '--tw-ring-color': `${BRAND.green}30`
+                      } as any}
+                      onFocus={(e) => {
+                        e.target.style.borderColor = BRAND.green;
+                        e.target.style.boxShadow = `0 0 0 3px ${BRAND.green}20`;
+                      }}
+                      onBlur={(e) => {
+                        e.target.style.borderColor = '#e2e8f0';
+                        e.target.style.boxShadow = 'none';
+                      }}
+                    />
+
+                    {searchQuery && filteredSuggestions.length > 0 && (
+                      <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-2xl border border-slate-100 z-40 overflow-hidden max-h-48 overflow-y-auto">
+                        {filteredSuggestions.map((suggestion) => (
+                          <button
+                            key={suggestion}
+                            onClick={() => handleSuggestionClick(suggestion)}
+                            className="w-full flex items-center gap-2 px-3 py-2 text-xs text-left hover:bg-[#F8C21C]/10 transition-colors border-b border-slate-50 last:border-0"
+                          >
+                            <Search className="w-3 h-3 text-slate-400 flex-shrink-0" />
+                            <span className="text-slate-700 truncate">{suggestion}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Search Button - Compact */}
+                  <button
+                    onClick={handleSearch}
+                    disabled={isSearching}
+                    className="flex-shrink-0 w-8 h-8 rounded-lg font-bold text-white transition-all shadow-lg flex items-center justify-center disabled:opacity-60"
+                    style={{
+                      background: `linear-gradient(135deg, ${BRAND.green}, #004a4d)`,
+                      boxShadow: `0 4px 12px ${BRAND.green}40`
+                    }}
+                  >
+                    {isSearching ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    ) : (
+                      <Search className="w-3.5 h-3.5" />
+                    )}
+                  </button>
+                </div>
+
+                {/* Category Tabs - Compact */}
+                <div className="mt-1 overflow-x-auto pb-0.5 scrollbar-hide -mx-0.5 px-0.5">
+                  <div className="flex gap-0.5 min-w-max">
+                    {CATEGORIES.map((category) => {
+                      const Icon = category.icon;
+                      const isActive = activeTab === category.id;
+                      return (
+                        <button
+                          key={category.id}
+                          onClick={() => setActiveTab(category.id as any)}
+                          className={`flex-shrink-0 flex items-center gap-0.5 px-1.5 py-1 rounded-md text-[9px] font-semibold transition-all whitespace-nowrap ${
+                            isActive
+                              ? 'text-white shadow-sm'
+                              : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                          }`}
+                          style={isActive ? {
+                            background: `linear-gradient(135deg, ${category.color}, ${category.color}dd)`,
+                          } : {}}
+                        >
+                          <Icon className={`w-2.5 h-2.5 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                          {category.label}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
 
-              <div className="hidden lg:flex flex-wrap gap-2 justify-center lg:justify-start">
-                {currentCity.localities.map((loc) => (
-                  <button key={loc} onClick={() => handleLocalityClick(loc)} className="px-4 py-2 text-sm font-medium text-white bg-white/15 hover:bg-white/25 border border-white/25 rounded-full transition-all duration-200 backdrop-blur-md whitespace-nowrap drop-shadow-sm">
-                    {loc}
-                  </button>
-                ))}
+              {/* Trust Badges - Minimal */}
+              <div className="flex items-center justify-center gap-2 mt-1.5">
+                <div className="flex items-center gap-1">
+                  <CheckCircle2 className="w-2.5 h-2.5" style={{ color: BRAND.green }} />
+                  <span className="text-[8px] font-medium text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">Verified</span>
+                </div>
+                <div className="w-px h-2 bg-white/30" />
+                <div className="flex items-center gap-1">
+                  <Award className="w-2.5 h-2.5" style={{ color: BRAND.yellow }} />
+                  <span className="text-[8px] font-medium text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">Best Price</span>
+                </div>
               </div>
             </div>
 
-            {currentCity.localities.length > 4 && (
-              <div className="lg:hidden mt-2 flex justify-center">
-                <button onClick={() => setShowAllLocalities(!showAllLocalities)} className="flex items-center gap-1 text-[10px] text-white/90 hover:text-white transition-colors drop-shadow-sm">
-                  {showAllLocalities ? 'Show Less' : `View All ${currentCity.localities.length} Localities`}
-                  <ChevronDown className={`w-3 h-3 transition-transform ${showAllLocalities ? 'rotate-180' : ''}`} />
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Right Column */}
-          <div className="lg:col-span-7 w-full order-2 lg:order-2">
-            <div className="w-full">
+            {/* Desktop Search */}
+            <div className="hidden lg:block">
               <SearchBar {...searchBarProps as any} />
             </div>
           </div>
