@@ -217,7 +217,7 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Tablet & Desktop Grid Layout */}
+
         {/* Reduced gap from gap-8 lg:gap-12 to gap-6 lg:gap-8 */}
         <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
           {/* Column 1 - Brand */}
@@ -264,9 +264,11 @@ export default function Footer() {
           </div>
 
           {/* Column 2 - Quick Links & Locations */}
-          <div className="space-y-6">
+          <div className="space-y-6 ml-17">
             <div>
-              <h3 className="text-white font-semibold mb-3 text-base">Quick Links</h3>
+              <h3 className="text-white font-semibold mb-3 text-base ml-4">
+                Quick Links
+              </h3>
               <ul className="space-y-2">
                 {quickLinks.map((link, idx) => (
                   <li key={idx}>
@@ -282,7 +284,8 @@ export default function Footer() {
               </ul>
             </div>
             <div>
-              <h3 className="text-white font-semibold mb-3 text-base">Top Locations</h3>
+              {/* <h3 className="text-white font-semibold mb-3 text-base">Top Locations</h3> */}
+              <h3 className="text-white font-semibold mb-3 text-base ml-4">Top Locations</h3>
               <ul className="space-y-2">
                 {activeLocations.map((loc) => (
                   <li key={loc.slug}>
@@ -379,5 +382,5 @@ export default function Footer() {
         </div>
       </div>
     </footer>
-  ); 
+  );
 }
