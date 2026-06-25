@@ -128,11 +128,6 @@ export default function TopDevelopersCarousel({ city }: TopDevelopersCarouselPro
           )}
         </div>
 
-        {/* Developer Name */}
-        <h3 className="text-sm md:text-base font-semibold text-[var(--color-foreground)] text-center line-clamp-1 mb-2.5">
-          {dev.name}
-        </h3>
-
         {/* Experience & Projects badges */}
         <div className="mt-auto flex items-center justify-center gap-1.5 flex-wrap">
           {experience && experience > 0 && (

@@ -193,11 +193,9 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
   const currentCity = useMemo(() => CITIES.find(c => c.name === selectedCity) || CITIES[0], [selectedCity]);
 
   return (
-    // FIX 1: Removed 'overflow-hidden' from the section so dropdowns aren't clipped by the fixed mobile height
-    <section className="relative w-full bg-slate-950 h-[200px] sm:h-[220px] md:h-[420px] lg:h-[440px]">
+    <section className="relative w-full bg-slate-950 min-h-[280px] sm:min-h-[320px] md:h-[420px] lg:h-[440px]">
 
       {/* 🖼️ HERO BACKGROUND IMAGE */}
-      {/* FIX 1 (cont): Added 'overflow-hidden' here to keep the background image contained */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <Image
           src="https://res.cloudinary.com/drdeqd8to/image/upload/f_auto,q_auto/b4_ajb1vz"
@@ -214,7 +212,7 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-4 lg:px-8 h-full flex flex-col justify-center">
+      <div className="relative z-10 max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 h-full flex flex-col justify-center py-4 sm:py-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 lg:gap-8 items-center w-full">
 
           {/* Left Column - Desktop only */}
@@ -244,39 +242,37 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
           {/* Right Column - Mobile & Desktop */}
           <div className="lg:col-span-7 w-full order-1">
             
-            {/* ========== MOBILE VIEW - COMPACT ========== */}
-            <div className="lg:hidden">
+            {/* ========== MOBILE VIEW - FULLY RESPONSIVE ========== */}
+            <div className="lg:hidden w-full">
               {/* Minimal heading */}
-              <div className="text-center mb-2">
-                <h1 className="text-[1.75rem] font-extrabold text-white leading-[1.05] drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)]">
+              <div className="text-center mb-3 sm:mb-4">
+                <h1 className="text-xl xs:text-2xl sm:text-3xl font-extrabold text-white leading-[1.1] drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)]">
                   <span className="block">Find Your</span>
-                  <span className="block text-[2rem]" style={{ color: BRAND.yellow, textShadow: '0 2px 10px rgba(0,0,0,0.9)' }}>Dream Home</span>
-                  <span className="block text-xs font-medium text-white mt-0.5 drop-shadow-[0_1px_4px_rgba(0,0,0,0.95)]">in {selectedCity}</span>
+                  <span className="block text-2xl xs:text-3xl sm:text-4xl" style={{ color: BRAND.yellow, textShadow: '0 2px 10px rgba(0,0,0,0.9)' }}>Dream Home</span>
+                  <span className="block text-[11px] xs:text-xs sm:text-sm font-medium text-white mt-1 drop-shadow-[0_1px_4px_rgba(0,0,0,0.95)]">in {selectedCity}</span>
                 </h1>
               </div>
 
               {/* Ultra Compact Search Card */}
-              <div className="w-full bg-white/95 backdrop-blur-2xl rounded-xl shadow-2xl border border-white/30 p-1.5">
+              <div className="w-full bg-white/95 backdrop-blur-2xl rounded-xl sm:rounded-2xl shadow-2xl border border-white/30 p-2 xs:p-2.5 sm:p-3">
                 {/* Search Row - Very Compact */}
-                <div className="flex gap-1">
+                <div className="flex gap-1.5 xs:gap-2 items-center">
                   {/* City Selector */}
                   <div className="relative flex-shrink-0">
                     <button
                       onClick={() => handleCityDropdownOpen(!isCityDropdownOpen)}
-                      className="flex items-center gap-1 px-2 py-1 rounded-lg border-2 transition-all bg-white"
+                      className="flex items-center gap-1 px-2 xs:px-2.5 py-2 xs:py-2.5 rounded-lg border-2 transition-all bg-white"
                       style={{
                         borderColor: isCityDropdownOpen ? BRAND.green : '#e2e8f0',
                         boxShadow: isCityDropdownOpen ? `0 0 0 3px ${BRAND.green}20` : 'none'
                       }}
                     >
-                      <MapPin className="w-3 h-3" style={{ color: BRAND.green }} />
-                      <span className="text-[11px] font-semibold text-slate-700 truncate max-w-[45px]">{selectedCity}</span>
-                      <ChevronDown className={`w-2.5 h-2.5 text-slate-400 transition-transform ${isCityDropdownOpen ? 'rotate-180' : ''}`} />
+                      <MapPin className="w-3 xs:w-3.5 h-3 xs:h-3.5" style={{ color: BRAND.green }} />
+                      <span className="text-[10px] xs:text-xs font-semibold text-slate-700 truncate max-w-[45px] xs:max-w-[50px] sm:max-w-[60px]">{selectedCity}</span>
+                      <ChevronDown className={`w-2.5 xs:w-3 h-2.5 xs:h-3 text-slate-400 transition-transform ${isCityDropdownOpen ? 'rotate-180' : ''}`} />
                     </button>
 
                     {isCityDropdownOpen && (
-                      // FIX 2: Removed 'right-0' and added 'w-max' so the dropdown sizes naturally to its content 
-                      // instead of being constrained to the narrow width of the city button.
                       <div className="absolute top-full left-0 mt-1 bg-white rounded-xl shadow-2xl border border-slate-100 z-50 overflow-hidden min-w-[140px] w-max">
                         {CITIES.map((city) => (
                           <button
@@ -301,14 +297,14 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
 
                   {/* Search Input - Compact */}
                   <div className="flex-1 relative">
-                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                    <Search className="absolute left-2.5 xs:left-3 top-1/2 -translate-y-1/2 w-3.5 xs:w-4 h-3.5 xs:h-4 text-slate-400" />
                     <input
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                       placeholder="Search..."
-                      className="w-full pl-8 pr-2 py-1 bg-slate-50 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all text-xs placeholder:text-slate-400"
+                      className="w-full pl-8 xs:pl-9 pr-2.5 xs:pr-3 py-2 xs:py-2.5 bg-slate-50 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all text-xs xs:text-sm placeholder:text-slate-400"
                       style={{
                         borderColor: '#e2e8f0',
                         '--tw-ring-color': `${BRAND.green}30`
@@ -343,23 +339,23 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
                   <button
                     onClick={handleSearch}
                     disabled={isSearching}
-                    className="flex-shrink-0 w-8 h-8 rounded-lg font-bold text-white transition-all shadow-lg flex items-center justify-center disabled:opacity-60"
+                    className="flex-shrink-0 w-8 xs:w-9 sm:w-10 h-8 xs:h-9 sm:h-10 rounded-lg font-bold text-white transition-all shadow-lg flex items-center justify-center disabled:opacity-60"
                     style={{
                       background: `linear-gradient(135deg, ${BRAND.green}, #004a4d)`,
                       boxShadow: `0 4px 12px ${BRAND.green}40`
                     }}
                   >
                     {isSearching ? (
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <Loader2 className="w-3.5 xs:w-4 h-3.5 xs:h-4 animate-spin" />
                     ) : (
-                      <Search className="w-3.5 h-3.5" />
+                      <Search className="w-3.5 xs:w-4 h-3.5 xs:h-4" />
                     )}
                   </button>
                 </div>
 
                 {/* Category Tabs - Compact */}
-                <div className="mt-1 overflow-x-auto pb-0.5 scrollbar-hide -mx-0.5 px-0.5">
-                  <div className="flex gap-0.5 min-w-max">
+                <div className="mt-2 xs:mt-2.5 overflow-x-auto pb-1 scrollbar-hide -mx-0.5 px-0.5">
+                  <div className="flex gap-1 xs:gap-1.5 min-w-max">
                     {CATEGORIES.map((category) => {
                       const Icon = category.icon;
                       const isActive = activeTab === category.id;
@@ -367,7 +363,7 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
                         <button
                           key={category.id}
                           onClick={() => setActiveTab(category.id as any)}
-                          className={`flex-shrink-0 flex items-center gap-0.5 px-1.5 py-1 rounded-md text-[9px] font-semibold transition-all whitespace-nowrap ${
+                          className={`flex-shrink-0 flex items-center gap-0.5 xs:gap-1 px-2 xs:px-2.5 sm:px-3 py-1 xs:py-1.5 sm:py-2 rounded-md xs:rounded-lg text-[9px] xs:text-[10px] sm:text-xs font-semibold transition-all whitespace-nowrap ${
                             isActive
                               ? 'text-white shadow-sm'
                               : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
@@ -376,7 +372,7 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
                             background: `linear-gradient(135deg, ${category.color}, ${category.color}dd)`,
                           } : {}}
                         >
-                          <Icon className={`w-2.5 h-2.5 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                          <Icon className={`w-2.5 xs:w-3 h-2.5 xs:h-3 ${isActive ? 'text-white' : 'text-slate-400'}`} />
                           {category.label}
                         </button>
                       );
@@ -386,15 +382,15 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
               </div>
 
               {/* Trust Badges - Minimal */}
-              <div className="flex items-center justify-center gap-2 mt-1.5">
+              <div className="flex items-center justify-center gap-2 xs:gap-3 mt-2 xs:mt-2.5">
                 <div className="flex items-center gap-1">
-                  <CheckCircle2 className="w-2.5 h-2.5" style={{ color: BRAND.green }} />
-                  <span className="text-[8px] font-medium text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">Verified</span>
+                  <CheckCircle2 className="w-2.5 xs:w-3 h-2.5 xs:h-3" style={{ color: BRAND.green }} />
+                  <span className="text-[9px] xs:text-[10px] sm:text-xs font-medium text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">Verified</span>
                 </div>
-                <div className="w-px h-2 bg-white/30" />
+                <div className="w-px h-2.5 xs:h-3 bg-white/30" />
                 <div className="flex items-center gap-1">
-                  <Award className="w-2.5 h-2.5" style={{ color: BRAND.yellow }} />
-                  <span className="text-[8px] font-medium text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">Best Price</span>
+                  <Award className="w-2.5 xs:w-3 h-2.5 xs:h-3" style={{ color: BRAND.yellow }} />
+                  <span className="text-[9px] xs:text-[10px] sm:text-xs font-medium text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">Best Price</span>
                 </div>
               </div>
             </div>
