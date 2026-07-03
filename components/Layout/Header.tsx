@@ -4,11 +4,11 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { 
   Building2, Phone, Menu, X, ChevronDown, 
   Home, Building, Construction, KeyRound, Tag, MapPin,
-  Handshake, FileText, Scale, ClipboardList, TrendingUp 
+  Handshake, FileText, Scale, ClipboardList, TrendingUp, RefreshCw 
 } from 'lucide-react';
 
 // ✅ Brand Colors
@@ -25,6 +25,7 @@ export default function Header() {
   const desktopTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   const pathname = usePathname();
+  const searchParams = useSearchParams(); // ✅ Added to properly read query params
 
   // ✅ Close mobile menu when clicking outside
   useEffect(() => {
@@ -56,7 +57,20 @@ export default function Header() {
   const navLinks = [
     { name: 'Home', href: '/' },
     { name: 'Projects', href: '/projects' },
-    { name: 'Properties', href: '/properties' },
+    { 
+      name: 'Properties', 
+      href: '/properties',
+      dropdown: [
+        // ✅ Updated to use query params matching the Properties page tabs exactly
+        { label: 'Residential', href: '/properties?type=residential', icon: Home, color: COLORS.green },
+        { label: 'Commercial', href: '/properties?type=commercial', icon: Building, color: COLORS.red },
+        { label: 'Pre-Launch', href: '/properties?type=pre-launch', icon: Construction, color: COLORS.yellow },
+        { label: 'Ready', href: '/properties?type=ready', icon: KeyRound, color: COLORS.green },
+        { label: 'Rent', href: '/properties?type=rent', icon: Tag, color: COLORS.red },
+        { label: 'Plots', href: '/properties?type=plots', icon: MapPin, color: COLORS.yellow },
+        { label: 'Resale', href: '/properties?type=resale', icon: RefreshCw, color: COLORS.green },
+      ]
+    },
     { name: 'About Us', href: '/about-us' },
     { 
       name: 'Services', 
@@ -187,7 +201,24 @@ export default function Header() {
                           onMouseLeave={handleDesktopDropdownLeave}
                         >
                           {link.dropdown.map((item: any) => {
-                            const isSubActive = pathname === item.href || pathname?.includes(item.href.split('#')[1] || item.href.split('=')[1]);
+                            // ✅ Smart Active State Logic using useSearchParams
+                            const isSubActive = (() => {
+                              if (item.href.includes('?')) {
+                                const [path, query] = item.href.split('?');
+                                const [key, val] = query.split('=');
+                                const currentVal = searchParams.get(key);
+                                // If on Properties page with no type specified, default highlight to Residential
+                                if (path === '/properties' && key === 'type' && !currentVal) {
+                                  return pathname === path && val === 'residential';
+                                }
+                                return pathname === path && currentVal === val;
+                              }
+                              if (item.href.includes('#')) {
+                                return pathname === item.href.split('#')[0];
+                              }
+                              return pathname === item.href;
+                            })();
+
                             const Icon = item.icon;
                             return (
                               <Link
@@ -304,7 +335,23 @@ export default function Header() {
                         {isMobileDropdownOpen && (
                           <div className="ml-4 mb-2 pl-4 border-l-2 border-[#F8C21C]/30 space-y-1 animate-in slide-in-from-left-2 duration-200">
                             {link.dropdown.map((item: any) => {
-                              const isSubActive = pathname === item.href || pathname?.includes(item.href.split('#')[1] || item.href.split('=')[1]);
+                              // ✅ Smart Active State Logic using useSearchParams
+                              const isSubActive = (() => {
+                                if (item.href.includes('?')) {
+                                  const [path, query] = item.href.split('?');
+                                  const [key, val] = query.split('=');
+                                  const currentVal = searchParams.get(key);
+                                  if (path === '/properties' && key === 'type' && !currentVal) {
+                                    return pathname === path && val === 'residential';
+                                  }
+                                  return pathname === path && currentVal === val;
+                                }
+                                if (item.href.includes('#')) {
+                                  return pathname === item.href.split('#')[0];
+                                }
+                                return pathname === item.href;
+                              })();
+
                               const Icon = item.icon;
                               return (
                                 <Link 
