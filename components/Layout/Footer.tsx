@@ -260,7 +260,7 @@ export default function Footer() {
                   </a>
                 );
               })}
-            </div>
+            </div> 
           </div>
 
           {/* Column 2 - Quick Links & Locations */}

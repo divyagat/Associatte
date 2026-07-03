@@ -10,8 +10,8 @@ export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Properties | Residential, Commercial, Plots & More | Associatte PropTech',
-  description: 'Explore Residential, Commercial, Pre-Launch, Ready-to-Move, Rent & Plot properties in Pune, Mumbai & KDMC. Filter by type, location, budget & more.',
-  keywords: ['properties', 'residential', 'commercial', 'plots', 'rent', 'Pune', 'Mumbai', 'KDMC', 'real estate'],
+  description: 'Explore Residential, Commercial, Pre-Launch, Ready-to-Move, Rent, Plot & Resale properties in Pune, Mumbai & KDMC. Filter by type, location, budget & more.',
+  keywords: ['properties', 'residential', 'commercial', 'plots', 'rent', 'resale', 'Pune', 'Mumbai', 'KDMC', 'real estate'],
 };
 
 // ✅ Property Type Configuration (matches your Hero tabs)
@@ -22,6 +22,7 @@ const PROPERTY_TYPES = [
   { id: 'ready', label: 'Ready', color: '#005E60' },
   { id: 'rent', label: 'Rent', color: '#8B0000' },
   { id: 'plots', label: 'Plots', color: '#F8C21C' },
+  { id: 'resale', label: 'Resale', color: '#005E60' }, // ✅ Added Resale
 ] as const;
 
 export type PropertyType = typeof PROPERTY_TYPES[number]['id'];
@@ -29,6 +30,16 @@ export type PropertyType = typeof PROPERTY_TYPES[number]['id'];
 // ✅ Helper: Determine property type from project data
 const getPropertyType = (project: any): PropertyType => {
   if (project.propertyType) return project.propertyType;
+  
+  // ✅ Fallback check for Resale properties
+  if (
+    project.category?.toLowerCase() === 'resale' || 
+    project.isResale === true || 
+    project.tags?.some((t: string) => t.toLowerCase() === 'resale')
+  ) {
+    return 'resale';
+  }
+
   const configs = project.priceDetails?.configurations || [];
   const hasPlot = configs.some((c: any) => c.type?.toLowerCase().includes('plot'));
   const hasCommercial = configs.some((c: any) =>
