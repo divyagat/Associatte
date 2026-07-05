@@ -10,6 +10,8 @@ import type { IBlog } from './models/Blog';
  * pages (/projects, /properties, property detail, locations, builders, etc.)
  * already read. So anything added through the admin panel shows up on the site.
  *
+ * Projects are persisted to `data/projects.json`.
+ *
  * Blogs are persisted to `data/blogs.json`. The blog listing/detail pages merge
  * these on top of the static blogs in `lib/blog-data.ts`, so existing blogs are
  * untouched and admin blogs appear alongside them.
@@ -20,6 +22,7 @@ import type { IBlog } from './models/Blog';
 
 const DATA_DIR = path.join(process.cwd(), 'data');
 const PROPERTIES_FILE = path.join(DATA_DIR, 'properties.json');
+const PROJECTS_FILE = path.join(DATA_DIR, 'projects.json'); // 👈 ADDED
 const BLOGS_FILE = path.join(DATA_DIR, 'blogs.json');
 
 // ==================== LOW-LEVEL FILE HELPERS ====================
@@ -98,6 +101,62 @@ export async function deleteProperty(slug: string): Promise<boolean> {
   const next = properties.filter((p: any) => p.slug !== slug);
   if (next.length === properties.length) return false;
   await writeArray(PROPERTIES_FILE, next);
+  return true;
+}
+
+// ==================== PROJECTS ==================== 👈 ADDED ENTIRE SECTION
+export async function getAllProjects(): Promise<any[]> {
+  const projects = await readArray(PROJECTS_FILE);
+  return projects.map(withId) as any;
+}
+
+export async function getProjectBySlug(slug: string): Promise<any | null> {
+  const projects = await readArray(PROJECTS_FILE);
+  const project = projects.find((p: any) => p.slug === slug);
+  return project ? (withId(project) as any) : null;
+}
+
+export async function createProject(projectData: any): Promise<any> {
+  const projects = await readArray(PROJECTS_FILE);
+
+  if (projects.some((p: any) => p.slug === projectData.slug)) {
+    throw new Error('Project with this slug already exists');
+  }
+
+  const now = new Date().toISOString();
+  const project = withId({
+    ...projectData,
+    createdAt: now,
+    updatedAt: now,
+  } as any);
+
+  // Newest first
+  projects.unshift(project);
+  await writeArray(PROJECTS_FILE, projects);
+  return project as any;
+}
+
+export async function updateProject(slug: string, updates: any): Promise<any | null> {
+  const projects = await readArray(PROJECTS_FILE);
+  const index = projects.findIndex((p: any) => p.slug === slug);
+  if (index === -1) return null;
+
+  const updated = withId({
+    ...projects[index],
+    ...updates,
+    slug: projects[index].slug, // slug is the identifier, keep it stable
+    updatedAt: new Date().toISOString(),
+  });
+  projects[index] = updated;
+  await writeArray(PROJECTS_FILE, projects);
+  return updated as any;
+}
+
+export async function deleteProject(slug: string): Promise<boolean> {
+  const projects = await readArray(PROJECTS_FILE);
+  const next = projects.filter((p: any) => p.slug !== slug);
+  if (next.length === projects.length) return false;
+  await writeArray(PROJECTS_FILE, next);
   return true;
 }
 

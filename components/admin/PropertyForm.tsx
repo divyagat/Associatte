@@ -1,7 +1,7 @@
 'use client';
 /* eslint-disable @next/next/no-img-element -- previews render just-uploaded blob:/data: URLs that next/image can't optimize */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Upload, X, Plus, Trash2 } from 'lucide-react';
 
 interface PropertyFormProps {
@@ -14,6 +14,9 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
   const [formData, setFormData] = useState(initialData || {
     slug: '',
     name: '',
+    category: 'residential',
+    project: '',
+    projectSlug: '',
     location: 'pune',
     price: '',
     image: '',
@@ -44,10 +47,20 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
       downPayment: '',
       interestRate: '',
       tenure: ''
-    }
+    },
+    soldOut: false
   });
 
   const [currentAmenity, setCurrentAmenity] = useState('');
+  const [projects, setProjects] = useState<any[]>([]);
+
+  // Fetch projects to populate the dropdown
+  useEffect(() => {
+    fetch('/api/projects')
+      .then(res => res.json())
+      .then(data => setProjects(data))
+      .catch(err => console.error('Failed to fetch projects:', err));
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -166,6 +179,24 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
             />
           </div>
           <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Category *</label>
+            <select
+              name="category"
+              value={formData.category}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]"
+            >
+              <option value="residential">Residential</option>
+              <option value="commercial">Commercial</option>
+              <option value="pre-launch">Pre-Launch</option>
+              <option value="ready">Ready</option>
+              <option value="rent">Rent</option>
+              <option value="plots">Plots</option>
+              <option value="resale">Resale</option>
+            </select>
+          </div>
+          <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Location *</label>
             <select
               name="location"
@@ -213,6 +244,42 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
               required
               className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]"
             />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Assign to Project</label>
+            <select
+              name="projectSlug"
+              value={formData.projectSlug || ''}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]"
+            >
+              <option value="">-- Select a Project (Optional) --</option>
+              {projects.map((p) => (
+                <option key={p.slug} value={p.slug}>{p.name}</option>
+              ))}
+            </select>
+            <p className="text-xs text-gray-500 mt-1">Link this property to an existing project.</p>
+          </div>
+          <div className="md:col-span-2">
+            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Mark as Sold Out</label>
+                <p className="text-xs text-gray-500">This property will be marked as unavailable on the website.</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setFormData((prev: any) => ({ ...prev, soldOut: !prev.soldOut }))}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#005E60] focus:ring-offset-2 ${
+                  formData.soldOut ? 'bg-red-600' : 'bg-gray-300'
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    formData.soldOut ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+            </div>
           </div>
         </div>
       </div>

@@ -1,18 +1,42 @@
 import { Metadata } from 'next';
-import ProjectCard from '@/components/builder-page/ProjectCard';
-import { getAllProperties } from '@/lib/data-store';
+import BuilderProjectCard from '@/components/builder-page/BuilderProjectCard';
+import { getAllProperties, getAllProjects } from '@/lib/data-store';
 
-// Read fresh from the data store on every request so projects added in the
-// admin panel show up immediately.
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'All Projects | Associatte PropTech',
-  description: 'Explore all premium residential & commercial projects in Pune, Mumbai & KDMC. Filter by builder, location, budget & more.',
+  description: 'Explore all premium residential & commercial projects in Pune, Mumbai & KDMC.',
   keywords: ['projects', 'Pune', 'Mumbai', 'KDMC', 'real estate', 'properties'],
 };
 
-// ✅ FIX: Added 'async' keyword for Next.js 15+ Promise searchParams
+// ✅ Helper function to normalize developer field
+const normalizeDeveloper = (developer: any) => {
+  if (!developer) return { name: '', established: '', projectsCount: 0, description: '' };
+  if (typeof developer === 'string') {
+    return { name: developer, established: '', projectsCount: 0, description: '' };
+  }
+  return developer;
+};
+
+// ✅ Helper function to normalize project data
+const normalizeProject = (p: any) => ({
+  ...p,
+  developer: normalizeDeveloper(p.developer),
+  soldOut: p.soldOut || false,
+  amenities: p.amenities || [],
+  floorPlans: p.floorPlans || [],
+  nearbyPlaces: p.nearbyPlaces || [],
+  emi: p.emi || {},
+  masterPlan: p.masterPlan || '',
+  locationMap: p.locationMap || '',
+  priceDetails: p.priceDetails || {
+    range: '',
+    perSqft: '',
+    configurations: []
+  }
+});
+
 export default async function ProjectsPage({
   searchParams
 }: {
@@ -25,18 +49,37 @@ export default async function ProjectsPage({
     maxPrice?: string;
   }>
 }) {
-  // ✅ Now await works because function is async
   const params = await searchParams;
 
-  // Load all properties (static seed data + anything added via the admin panel)
-  const properties = await getAllProperties();
+  const [properties, projects] = await Promise.all([
+    getAllProperties(),
+    getAllProjects()
+  ]);
 
-  // ✅ Get unique values for filters - FIXED with Array.from
-  const getAllLocations = () => Array.from(new Set(properties.map((p: any) => p.location).filter(Boolean)));
-  const getAllBuilders = () => Array.from(new Set(properties.map((p: any) => p.developer?.name).filter(Boolean)));
+  const allProjects = [
+    ...projects.map(normalizeProject),
+    ...properties.map(normalizeProject)
+  ];
+
+  // Remove duplicates based on slug
+  const uniqueProjects = Array.from(
+    new Map(allProjects.map(p => [p.slug, p])).values()
+  );
+
+  // ✅ Get unique values for filters
+  const getAllLocations = () => Array.from(new Set(uniqueProjects.map((p: any) => p.location).filter(Boolean)));
+  
+  const getAllBuilders = () => Array.from(
+    new Set(
+      uniqueProjects
+        .map((p: any) => p.developer?.name)
+        .filter(Boolean)
+    )
+  );
+  
   const getAllBHKs = () => {
     const bhks = new Set<string>();
-    properties.forEach((p: any) => {
+    uniqueProjects.forEach((p: any) => {
       p.priceDetails?.configurations?.forEach((c: any) => {
         if (c.type) bhks.add(c.type.split(' ')[0] + ' BHK');
       });
@@ -45,14 +88,16 @@ export default async function ProjectsPage({
   };
 
   // 🔍 Filter projects
-  const filteredProjects = properties.filter((project: any) => {
+  const filteredProjects = uniqueProjects.filter((project: any) => {
+    const builderName = project.developer?.name || '';
+
     // Search query
     if (params.q) {
       const query = params.q.toLowerCase();
       const matchesName = project.name?.toLowerCase().includes(query);
       const matchesLocation = project.fullLocation?.area?.toLowerCase().includes(query) ||
         project.location?.toLowerCase().includes(query);
-      const matchesBuilder = project.developer?.name?.toLowerCase().includes(query);
+      const matchesBuilder = builderName.toLowerCase().includes(query);
       if (!matchesName && !matchesLocation && !matchesBuilder) return false;
     }
 
@@ -64,8 +109,7 @@ export default async function ProjectsPage({
     // Builder filter
     if (params.builder) {
       const builderPattern = params.builder.toLowerCase();
-      const projectName = project.developer?.name?.toLowerCase() || '';
-      if (!projectName.includes(builderPattern) && !builderPattern.includes(projectName)) {
+      if (!builderName.toLowerCase().includes(builderPattern) && !builderPattern.includes(builderName.toLowerCase())) {
         return false;
       }
     }
@@ -79,7 +123,7 @@ export default async function ProjectsPage({
       if (!hasBHK) return false;
     }
 
-    // Price filter (basic numeric comparison)
+    // Price filter
     if (params.minPrice || params.maxPrice) {
       const priceText = project.priceDetails?.range || project.price || '';
       const priceNum = parseInt(priceText.replace(/[^0-9]/g, '')) * 100000;
@@ -106,7 +150,6 @@ export default async function ProjectsPage({
 
           {/* 🔍 Search & Filters Form */}
           <form className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-            {/* Search */}
             <div className="lg:col-span-2 relative">
               <input
                 type="text"
@@ -120,28 +163,24 @@ export default async function ProjectsPage({
               </svg>
             </div>
 
-            {/* Location */}
             <select name="location" defaultValue={params.location}
               className="px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-[#F8C21C]">
               <option value="">All Locations</option>
               {locations.map(loc => <option key={loc} value={loc} className="text-gray-900">{loc}</option>)}
             </select>
 
-            {/* Builder */}
             <select name="builder" defaultValue={params.builder}
               className="px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-[#F8C21C]">
               <option value="">All Builders</option>
               {builders.map(b => <option key={b} value={b} className="text-gray-900">{b}</option>)}
             </select>
 
-            {/* BHK */}
             <select name="bhk" defaultValue={params.bhk}
               className="px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-[#F8C21C]">
               <option value="">All Configurations</option>
               {bhks.map(b => <option key={b} value={b} className="text-gray-900">{b}</option>)}
             </select>
 
-            {/* Submit */}
             <button type="submit" className="lg:col-span-5 w-full btn-primary">
               Filter Projects
             </button>
@@ -179,7 +218,7 @@ export default async function ProjectsPage({
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredProjects.map((project: any) => (
-                <ProjectCard key={project.slug} project={project} />
+                <BuilderProjectCard key={project.slug} project={project} />
               ))}
             </div>
           )}

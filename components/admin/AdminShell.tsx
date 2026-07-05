@@ -26,7 +26,8 @@ interface NavItem {
 const NAV: NavItem[] = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, show: () => true },
   { href: '/admin/properties', label: 'Properties', icon: Building2, show: (_r, a) => a.properties },
-  { href: '/admin/blogs', label: 'Blogs', icon: FileText, show: (_r, a) => a.blogs },
+   { href: '/admin/projects', label: 'Projects', icon: Building2, show: (_r, a) => a.properties },
+  // { href: '/admin/blogs', label: 'Blogs', icon: FileText, show: (_r, a) => a.blogs },
   { href: '/admin/employees', label: 'Employees', icon: Users, show: (role) => role === 'admin' },
 ];
 

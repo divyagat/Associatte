@@ -1,0 +1,57 @@
+[
+  {
+    "slug": "asdadad",
+    "name": "Divya Gate",
+    "location": "mumbai",
+    "price": "",
+    "image": "/uploads/1783252528450-Screenshot-2026-05-18-235417.png",
+    "masterPlan": "",
+    "locationMap": "",
+    "fullLocation": {
+      "area": "Magarpatta",
+      "city": "Pune (CB)",
+      "state": "Maharashtra",
+      "pincode": "413624",
+      "landmark": ""
+    },
+    "priceDetails": {
+      "range": "₹ 2.4 Cr* Onwards",
+      "perSqft": "",
+      "configurations": [
+        {
+          "type": "",
+          "area": "",
+          "price": "",
+          "description": ""
+        }
+      ]
+    },
+    "developer": {
+      "name": "Mantra Developers",
+      "established": "",
+      "projectsCount": "-1",
+      "description": ""
+    },
+    "about": "ghfjhgkj",
+    "amenities": [],
+    "floorPlans": [],
+    "possessionDate": "Dec 2029",
+    "reraNumber": "P52100066482",
+    "gallery": [],
+    "mapCoords": {
+      "lat": 0,
+      "lng": 0
+    },
+    "nearbyPlaces": [],
+    "emi": {
+      "startingFrom": "",
+      "downPayment": "",
+      "interestRate": "",
+      "tenure": ""
+    },
+    "soldOut": true,
+    "createdAt": "2026-07-05T11:55:54.118Z",
+    "updatedAt": "2026-07-05T11:55:54.118Z",
+    "_id": "asdadad"
+  }
+]

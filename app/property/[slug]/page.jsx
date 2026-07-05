@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Head from 'next/head';
 import Link from 'next/link';
-import properties from '../../../data/properties.json';
 import EnquiryPopup from '@/components/common/EnquiryPopup';
 import { getBuilderLogo, getBuilderSlug } from '../../../lib/builder-slugs';
 
@@ -385,41 +384,66 @@ export default function PropertyPage() {
       return;
     }
 
-    const project = properties.find((p) => p.slug === slug);
+    const fetchProjectData = async () => {
+      try {
+        // ✅ Fetch from BOTH API routes to get Properties AND Admin Projects
+        const [propsRes, projectsRes] = await Promise.all([
+          fetch('/api/properties'),
+          fetch('/api/projects')
+        ]);
+        
+        const propsData = await propsRes.json();
+        const projectsData = await projectsRes.json();
+        
+        // ✅ Merge both arrays so admin-added projects work here too
+        const allItems = [
+          ...(Array.isArray(propsData) ? propsData : []),
+          ...(Array.isArray(projectsData) ? projectsData : [])
+        ];
 
-    if (project) {
-      const transformed = transformProject(project);
-      setPropertyData(transformed);
+        const project = allItems.find((p) => p.slug === slug);
 
-      const cityName = project.fullLocation?.city?.toLowerCase() ||
-        (project.location === 'pune' ? 'pune' :
-          project.location === 'mumbai' ? 'navi mumbai' : 'kalyan');
+        if (project) {
+          const transformed = transformProject(project);
+          setPropertyData(transformed);
 
-      const similar = properties
-        .filter(p => p.slug !== slug)
-        .filter(p => {
-          const pCity = p.fullLocation?.city?.toLowerCase() ||
-            (p.location === 'pune' ? 'pune' :
-              p.location === 'mumbai' ? 'navi mumbai' : 'kalyan');
-          return pCity === cityName;
-        })
-        .slice(0, 3)
-        .map(p => ({
-          slug: p.slug,
-          title: p.name,
-          location: `${p.fullLocation?.area || p.location}, ${p.fullLocation?.city || ''}`,
-          bhk: p.priceDetails?.configurations?.map(c => c.type).join(', ') || 'TBA',
-          area: p.priceDetails?.configurations?.[0]?.area || 'TBA',
-          price: p.priceDetails?.range?.split(' - ')[0] || p.price,
-          image: p.image
-        }));
+          const cityName = project.fullLocation?.city?.toLowerCase() ||
+            (project.location === 'pune' ? 'pune' :
+              project.location === 'mumbai' ? 'navi mumbai' : 'kalyan');
 
-      setSimilarProjects(similar);
-    } else {
-      console.error('❌ Project not found for slug:', slug);
-    }
+          // ✅ Use the merged allItems array for similar projects too
+          const similar = allItems
+            .filter(p => p.slug !== slug)
+            .filter(p => {
+              const pCity = p.fullLocation?.city?.toLowerCase() ||
+                (p.location === 'pune' ? 'pune' :
+                  p.location === 'mumbai' ? 'navi mumbai' : 'kalyan');
+              return pCity === cityName;
+            })
+            .slice(0, 3)
+            .map(p => ({
+              slug: p.slug,
+              title: p.name,
+              location: `${p.fullLocation?.area || p.location}, ${p.fullLocation?.city || ''}`,
+              bhk: p.priceDetails?.configurations?.map(c => c.type).join(', ') || 'TBA',
+              area: p.priceDetails?.configurations?.[0]?.area || 'TBA',
+              price: p.priceDetails?.range?.split(' - ')[0] || p.price,
+              image: p.image
+            }));
 
-    setLoading(false);
+          setSimilarProjects(similar);
+        } else {
+          // ✅ Changed to console.warn - it's normal for invalid URLs
+          console.warn(`ℹ️ Project not found for slug: "${slug}". Showing 404 UI.`);
+        }
+      } catch (error) {
+        console.error("Error fetching project data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjectData();
   }, [slug]);
 
   const getIcon = (iconName) => {
