@@ -33,21 +33,55 @@ export default function CtaFormSection({ city, title, subtitle, buttonText, form
   const [countryCode, setCountryCode] = useState('+91');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [clientIp, setClientIp] = useState<string>('');
+  const [clientIp, setClientIp] = useState<string>('Unknown');
   const [errors, setErrors] = useState<{ name?: string; phone?: string }>({});
 
-  // Fetch client IP
+  // ✅ Robust IP fetching with timeout and fallback
   useEffect(() => {
     const fetchIp = async () => {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+
       try {
-        const ipResponse = await fetch('https://api.ipify.org?format=json');
-        const ipData = await ipResponse.json();
-        setClientIp(ipData.ip);
+        // Try primary IP service
+        const ipResponse = await fetch('https://api.ipify.org?format=json', {
+          signal: controller.signal,
+          headers: {
+            'Accept': 'application/json',
+          },
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (ipResponse.ok) {
+          const ipData = await ipResponse.json();
+          setClientIp(ipData.ip || 'Unknown');
+        } else {
+          throw new Error('IP fetch failed');
+        }
       } catch (error) {
-        console.error('Failed to fetch IP:', error);
-        setClientIp('Unknown');
+        clearTimeout(timeoutId);
+        console.warn('⚠️ Failed to fetch IP (non-critical):', error instanceof Error ? error.message : 'Unknown error');
+        
+        // Try fallback IP service
+        try {
+          const fallbackResponse = await fetch('https://api.ip.sb/geoip', {
+            signal: controller.signal,
+          });
+          
+          if (fallbackResponse.ok) {
+            const fallbackData = await fallbackResponse.json();
+            setClientIp(fallbackData.ip || 'Unknown');
+          } else {
+            setClientIp('Unknown');
+          }
+        } catch (fallbackError) {
+          console.warn('⚠️ Fallback IP fetch also failed');
+          setClientIp('Unknown');
+        }
       }
     };
+
     fetchIp();
   }, []);
 

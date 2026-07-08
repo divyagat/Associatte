@@ -140,14 +140,12 @@
           "price": "₹1.96 Cr* Onwards",
           "description": "IT-friendly 3 BHK with work-from-home space"
         },
-        
         {
           "type": "4 BHK",
           "area": "1628 - 1747 sq.ft",
           "price": "₹2.40 Cr* Onwards",
           "description": "Premium 4 BHK with study room"
         }
-       
       ]
     },
     "developer": {
@@ -239,8 +237,7 @@
           "area": "1043 sq.ft - 1171 sq.ft",
           "price": "₹1.65 Cr* Onwards",
           "description": "Luxury 3 BHK with panoramic views"
-        }
-        ,
+        },
         {
           "type": "4 BHK",
           "area": "1724 sq.ft ",
@@ -731,7 +728,8 @@
           "area": "1451 - 1465 sq.ft",
           "price": "₹3.39 Cr* Onwards",
           "description": "Spacious 3 BHK with premium fittings"
-        }, {
+        },
+        {
           "type": "4 BHK",
           "area": "1805 sq.ft",
           "price": "₹4.35 Cr* Onwards",
@@ -1112,8 +1110,7 @@
           "area": "1910 sq.ft",
           "price": "₹2.45 Cr* Onwards",
           "description": "Premium 4 BHK with study room"
-        }
-        ,
+        },
         {
           "type": "The Elite Villament",
           "area": "3463 SqFt - 3812 SqFt",
@@ -1220,8 +1217,7 @@
           "area": "3000 sq.ft",
           "price": "₹1.50 Cr* Onwards",
           "description": "Spacious 3 BHK with premium fittings"
-        }
-        ,
+        },
         {
           "type": "Phase 6 - Premium Bungalow Plots",
           "area": "2000 sq.ft",
@@ -1407,7 +1403,6 @@
           "price": "₹1.85 Cr* Onwards",
           "description": "Value 3 BHK with modern amenities"
         },
-        
         {
           "type": "4 BHK",
           "area": "1808 sq.ft",
@@ -1600,7 +1595,7 @@
           "price": "₹On Request",
           "description": "Luxury 3 BHK in prime Koregaon Park"
         },
-         {
+        {
           "type": "3.5 BHK",
           "area": "1803.27 Sq. ft",
           "price": "₹On Request",
@@ -1792,7 +1787,7 @@
           "price": "₹3.46 Cr* Onwards",
           "description": "Premium 3 BHK with Italian marble"
         },
-          {
+        {
           "type": "4 BHK",
           "area": "2225 - 2439 sq.ft",
           "price": "₹4.77 Cr* Onwards",
@@ -1833,8 +1828,7 @@
         "type": "4 BHK",
         "area": "2225 - 2439 sq.ft",
         "image": "/floorplans/Onrequest-unit-plan.webp"
-      }
-      ,
+      },
       {
         "type": "5 BHK",
         "area": "2828 - 3314 sq.ft",
@@ -3225,7 +3219,4 @@
       "tenure": "25 Years"
     }
   }
-
-
-  
-] 
+]
