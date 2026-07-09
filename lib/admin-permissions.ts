@@ -1,15 +1,11 @@
 /**
  * Per-employee permission model.
  *
- * Each employee can be granted, per section (`properties`, `blogs`), the right
+ * Each employee can be granted, per section (`properties`, `projects`), the right
  * to Add, Edit and/or Delete. The main admin always has every permission.
- *
- * This module is intentionally dependency-free (no `next/headers`, no `fs`) so
- * it is safe to import from edge middleware as well as server components and
- * route handlers. `btoa`/`atob` are available in both the Node and edge runtimes.
  */
 
-export type AdminSection = 'properties' | 'blogs';
+export type AdminSection = 'properties' | 'projects'; // 'blogs' commented out
 export type AdminAction = 'add' | 'edit' | 'delete';
 
 export interface SectionPermissions {
@@ -20,13 +16,14 @@ export interface SectionPermissions {
 
 export interface Permissions {
   properties: SectionPermissions;
-  blogs: SectionPermissions;
+  projects: SectionPermissions;
+  // blogs: SectionPermissions;
 }
 
 /** Cookie holding the signed-in employee's encoded permissions. */
 export const PERMS_COOKIE = 'associatte_perms';
 
-export const ADMIN_SECTIONS: AdminSection[] = ['properties', 'blogs'];
+export const ADMIN_SECTIONS: AdminSection[] = ['properties', 'projects'];
 export const ADMIN_ACTIONS: AdminAction[] = ['add', 'edit', 'delete'];
 
 const NONE: SectionPermissions = { add: false, edit: false, delete: false };
@@ -35,21 +32,22 @@ const ALL: SectionPermissions = { add: true, edit: true, delete: true };
 /** The main admin has full access to everything. */
 export const ADMIN_PERMISSIONS: Permissions = {
   properties: { ...ALL },
-  blogs: { ...ALL },
+  projects: { ...ALL },
+  // blogs: { ...ALL },
 };
 
-/**
- * Fallback for employees created before per-section permissions existed (and
- * the default pre-checked state for a brand new employee): add & edit
- * properties, nothing else. Matches the app's previous fixed employee role.
- */
+/** Default pre-checked state for a brand new employee */
 export const DEFAULT_EMPLOYEE_PERMISSIONS: Permissions = {
   properties: { add: true, edit: true, delete: false },
-  blogs: { ...NONE },
+  projects: { ...NONE },
+  // blogs: { ...NONE },
 };
 
 export function emptyPermissions(): Permissions {
-  return { properties: { ...NONE }, blogs: { ...NONE } };
+  return { 
+    properties: { ...NONE }, 
+    projects: { ...NONE }
+  };
 }
 
 /** Coerce arbitrary/untrusted input into a valid Permissions object (booleans only). */
@@ -59,7 +57,10 @@ export function sanitizePermissions(input: unknown): Permissions {
     const s = (raw ?? {}) as Record<string, unknown>;
     return { add: !!s.add, edit: !!s.edit, delete: !!s.delete };
   };
-  return { properties: section(obj.properties), blogs: section(obj.blogs) };
+  return { 
+    properties: section(obj.properties), 
+    projects: section(obj.projects)
+  };
 }
 
 /** Whether `perms` allows `action` in `section`. */

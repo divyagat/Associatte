@@ -24,14 +24,18 @@ interface SafeEmployee {
 
 const clonePerms = (p: Permissions): Permissions => sanitizePermissions(p);
 
-const SECTION_LABELS: Record<string, string> = { properties: 'Properties', blogs: 'Blogs' };
+const SECTION_LABELS: Record<string, string> = { 
+  properties: 'Properties', 
+  projects: 'Projects',
+  // blogs: 'Blogs' 
+};
 
-/** Compact "Properties: Add, Edit · Blogs: —" style summary of an employee's access. */
+/** Compact summary of an employee's access. */
 function AccessSummary({ permissions }: { permissions: Permissions }) {
   return (
     <div className="flex flex-wrap gap-1.5 mt-1.5">
       {ADMIN_SECTIONS.map((section) => {
-        const granted = ADMIN_ACTIONS.filter((a) => permissions[section][a]);
+        const granted = ADMIN_ACTIONS.filter((a) => permissions[section]?.[a]);
         const has = granted.length > 0;
         return (
           <span
@@ -40,7 +44,7 @@ function AccessSummary({ permissions }: { permissions: Permissions }) {
               has ? 'bg-[#005E60]/10 text-[#005E60]' : 'bg-gray-100 text-gray-400'
             }`}
           >
-            <span className="font-semibold">{SECTION_LABELS[section]}:</span>
+            <span className="font-semibold">{SECTION_LABELS[section] || section}:</span>
             {has ? granted.map((a) => a[0].toUpperCase() + a.slice(1)).join(', ') : 'No access'}
           </span>
         );
@@ -50,7 +54,11 @@ function AccessSummary({ permissions }: { permissions: Permissions }) {
 }
 
 export default function EmployeeManager({ initialEmployees }: { initialEmployees: SafeEmployee[] }) {
-  const [employees, setEmployees] = useState<SafeEmployee[]>(initialEmployees);
+  // ✅ Sanitize initial data to ensure no missing keys from the database
+  const [employees, setEmployees] = useState<SafeEmployee[]>(
+    initialEmployees.map(emp => ({ ...emp, permissions: clonePerms(emp.permissions) }))
+  );
+  
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [permissions, setPermissions] = useState<Permissions>(clonePerms(DEFAULT_EMPLOYEE_PERMISSIONS));
   const [showPassword, setShowPassword] = useState(false);
@@ -58,7 +66,6 @@ export default function EmployeeManager({ initialEmployees }: { initialEmployees
   const [error, setError] = useState('');
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  // Inline permission editing for an existing employee.
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editPerms, setEditPerms] = useState<Permissions>(clonePerms(DEFAULT_EMPLOYEE_PERMISSIONS));
   const [savingEdit, setSavingEdit] = useState(false);
@@ -78,7 +85,7 @@ export default function EmployeeManager({ initialEmployees }: { initialEmployees
         setError(data.error || 'Failed to add employee');
         return;
       }
-      setEmployees((prev) => [data, ...prev]);
+      setEmployees((prev) => [{ ...data, permissions: clonePerms(data.permissions) }, ...prev]);
       setForm({ name: '', email: '', password: '' });
       setPermissions(clonePerms(DEFAULT_EMPLOYEE_PERMISSIONS));
     } catch {
@@ -106,7 +113,7 @@ export default function EmployeeManager({ initialEmployees }: { initialEmployees
         alert(data.error || 'Failed to update access');
         return;
       }
-      setEmployees((prev) => prev.map((e) => (e.id === id ? data : e)));
+      setEmployees((prev) => prev.map((e) => (e.id === id ? { ...data, permissions: clonePerms(data.permissions) } : e)));
       setEditingId(null);
     } catch {
       alert('An error occurred while updating access');
@@ -208,7 +215,7 @@ export default function EmployeeManager({ initialEmployees }: { initialEmployees
               <PermissionMatrix value={permissions} onChange={setPermissions} />
               <p className="text-xs text-gray-400 mt-2 leading-relaxed">
                 Grant only what this employee needs — e.g. tick Properties → Add for someone who
-                only adds properties, or Blogs → Add for someone who only writes blogs.
+                only adds properties, or Projects → Edit for someone who manages projects.
               </p>
             </div>
 

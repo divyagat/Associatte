@@ -1,15 +1,64 @@
-// app/blog/page.tsx
 'use client';
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { 
   Building2, MapPin, Award, Users, 
-  Star, ArrowRight
+  Star
 } from 'lucide-react';
 import { getAllBlogs, type BlogPost } from '@/lib/blog-data';
-import EnquiryPopup from '../../components/common/EnquiryPopup';  // Changed to relative path
+import EnquiryPopup from '../../components/common/EnquiryPopup';
+
+// ✅ BULLETPROOF IMAGE COMPONENT
+const SafeImage = ({ src, alt, fill, sizes, className, width, height }: any) => {
+  const [imgError, setImgError] = useState(false);
+
+  if (!src || typeof src !== 'string' || imgError) {
+    return (
+      <div className={`bg-gradient-to-br from-[#005E60] to-[#101C2E] flex items-center justify-center ${fill ? 'absolute inset-0' : ''} ${className || ''}`}>
+        <Building2 className="text-white/40" size={fill ? 48 : 32} />
+      </div>
+    );
+  }
+
+  return (
+    <img 
+      src={src} 
+      alt={alt} 
+      sizes={sizes}
+      width={width}
+      height={height}
+      className={`${fill ? 'absolute inset-0 w-full h-full' : ''} object-cover ${className || ''}`}
+      onError={() => setImgError(true)}
+    />
+  );
+};
+
+// ✅ BULLETPROOF AVATAR COMPONENT
+const AuthorAvatar = ({ author }: { author: any }) => {
+  const [imgError, setImgError] = useState(false);
+  const name = typeof author === 'string' ? author : (author?.name || 'Admin');
+  const avatar = typeof author === 'object' && author !== null ? author?.avatar : null;
+
+  if (!avatar || typeof avatar !== 'string' || imgError) {
+    return (
+      <div className="w-6 h-6 rounded-full bg-[#005E60] text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
+        {name.charAt(0).toUpperCase()}
+      </div>
+    );
+  }
+
+  return (
+    <img 
+      src={avatar} 
+      alt={name} 
+      width={24} 
+      height={24} 
+      className="w-6 h-6 rounded-full object-cover flex-shrink-0"
+      onError={() => setImgError(true)}
+    />
+  );
+};
 
 export default function BlogListingPage() {
   const [allBlogs, setAllBlogs] = useState<BlogPost[]>([]);
@@ -17,7 +66,6 @@ export default function BlogListingPage() {
 
   useEffect(() => {
     const staticBlogs = getAllBlogs();
-    // Show static blogs immediately, then merge in DB blogs from the admin panel.
     setAllBlogs(staticBlogs);
 
     fetch('/api/blogs')
@@ -30,18 +78,17 @@ export default function BlogListingPage() {
           tags: b.tags || [],
           relatedSlugs: b.relatedSlugs || [],
         }));
-        // Merge by slug; DB blogs take precedence over static ones.
+        
         const bySlug = new Map<string, BlogPost>();
         staticBlogs.forEach((b) => bySlug.set(b.slug, b));
         mapped.forEach((b) => bySlug.set(b.slug, b));
         setAllBlogs(Array.from(bySlug.values()));
       })
-      .catch(() => {
-        // Keep static blogs if the API/DB is unavailable.
-      });
+      .catch(() => {});
   }, []);
 
   const featuredBlogs = allBlogs.slice(0, 2);
+  const authorName = (author: any) => typeof author === 'string' ? author : (author?.name || 'Admin');
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
@@ -97,26 +144,30 @@ export default function BlogListingPage() {
                 <Link href={`/blog/${blog.slug}`} key={blog.id} className="group">
                   <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300">
                     <div className="relative h-64 overflow-hidden">
-                      <Image src={blog.image} alt={blog.title} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                      <SafeImage src={blog.image} alt={blog.title} fill sizes="(max-width: 768px) 100vw, 50vw" className="group-hover:scale-105 transition-transform duration-700" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                       <div className="absolute bottom-4 left-4 right-4">
                         <div className="flex items-center gap-2 mb-2">
                           <span className="bg-[#F8C21C] text-[#8B0000] px-3 py-1 rounded-full text-xs font-semibold">
                             <Star size={12} className="inline mr-1" /> Featured
                           </span>
-                          <span className="bg-[#005E60]/80 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs">
-                            {blog.category}
-                          </span>
+                          {blog.category && (
+                            <span className="bg-[#005E60]/80 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs">
+                              {blog.category}
+                            </span>
+                          )}
                         </div>
                         <h3 className="text-xl font-bold text-white group-hover:text-[#F8C21C] transition-colors">
                           {blog.title}
                         </h3>
                         <div className="flex items-center gap-4 text-white/80 text-sm mt-2">
-                          <div className="flex items-center gap-1">
-                            <MapPin size={14} />
-                            <span>{blog.city}</span>
-                          </div>
-                          <div>{blog.readTime}</div>
+                          {blog.city && (
+                            <div className="flex items-center gap-1">
+                              <MapPin size={14} />
+                              <span>{blog.city}</span>
+                            </div>
+                          )}
+                          {blog.readTime && <div>{blog.readTime}</div>}
                         </div>
                       </div>
                     </div>
@@ -142,27 +193,33 @@ export default function BlogListingPage() {
               <Link href={`/blog/${blog.slug}`} key={blog.id} className="group">
                 <article className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 h-full flex flex-col">
                   <div className="relative h-48 overflow-hidden">
-                    <Image
+                    <SafeImage
                       src={blog.image}
                       alt={blog.title}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-cover group-hover:scale-110 transition-transform duration-500"
+                      className="group-hover:scale-110 transition-transform duration-500"
                     />
                     <div className="absolute top-3 left-3">
-                      <span className="bg-[#8B0000] text-white px-2 py-1 rounded text-xs font-semibold">
-                        {blog.category}
-                      </span>
+                      {blog.category && (
+                        <span className="bg-[#8B0000] text-white px-2 py-1 rounded text-xs font-semibold">
+                          {blog.category}
+                        </span>
+                      )}
                     </div>
                     <div className="absolute top-3 right-3">
-                      <span className="bg-[#005E60]/90 backdrop-blur-sm text-white px-2 py-1 rounded text-xs">
-                        {blog.city}
-                      </span>
+                      {blog.city && (
+                        <span className="bg-[#005E60]/90 backdrop-blur-sm text-white px-2 py-1 rounded text-xs">
+                          {blog.city}
+                        </span>
+                      )}
                     </div>
                     <div className="absolute bottom-3 left-3">
-                      <span className="bg-[#F8C21C] text-[#8B0000] px-2 py-1 rounded text-xs font-semibold">
-                        {blog.readTime}
-                      </span>
+                      {blog.readTime && (
+                        <span className="bg-[#F8C21C] text-[#8B0000] px-2 py-1 rounded text-xs font-semibold">
+                          {blog.readTime}
+                        </span>
+                      )}
                     </div>
                   </div>
                   
@@ -176,7 +233,7 @@ export default function BlogListingPage() {
                     </p>
                     
                     <div className="flex flex-wrap gap-2 mb-3">
-                      {blog.tags.slice(0, 2).map((tag) => (
+                      {(blog.tags || []).slice(0, 2).map((tag) => (
                         <span key={tag} className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
                           {tag}
                         </span>
@@ -185,8 +242,8 @@ export default function BlogListingPage() {
                     
                     <div className="flex items-center justify-between mt-auto pt-3 border-t">
                       <div className="flex items-center gap-2">
-                        <Image src={blog.author.avatar} alt={blog.author.name} width={24} height={24} className="w-6 h-6 rounded-full object-cover" />
-                        <span className="text-xs text-gray-600">{blog.author.name}</span>
+                        <AuthorAvatar author={blog.author} />
+                        <span className="text-xs text-gray-600">{authorName(blog.author)}</span>
                       </div>
                       <div className="text-xs text-gray-500">
                         {blog.date}

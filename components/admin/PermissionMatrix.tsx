@@ -1,63 +1,68 @@
 'use client';
 
-import { Building2, FileText } from 'lucide-react';
-import type { Permissions, AdminSection, AdminAction } from '@/lib/admin-permissions';
+import { 
+  ADMIN_SECTIONS, 
+  ADMIN_ACTIONS, 
+  Permissions, 
+  AdminSection, 
+  AdminAction 
+} from '@/lib/admin-permissions';
 
-const SECTIONS: { key: AdminSection; label: string; icon: typeof Building2 }[] = [
-  { key: 'properties', label: 'Properties', icon: Building2 },
-  { key: 'blogs', label: 'Blogs', icon: FileText },
-];
+const SECTION_LABELS: Record<string, string> = {
+  properties: 'Properties',
+  projects: 'Projects',
+  // blogs: 'Blogs',
+};
 
-const ACTIONS: { key: AdminAction; label: string }[] = [
-  { key: 'add', label: 'Add' },
-  { key: 'edit', label: 'Edit' },
-  { key: 'delete', label: 'Delete' },
-];
+// Maps string actions to objects to match your original code structure (action.key)
+const ACTIONS = ADMIN_ACTIONS.map((a) => ({ 
+  key: a, 
+  label: a.charAt(0).toUpperCase() + a.slice(1) 
+}));
 
-/**
- * Checkbox grid for granting an employee per-section access. Controlled —
- * `value` is the current permissions, `onChange` receives the next ones.
- */
-export default function PermissionMatrix({
-  value,
-  onChange,
-  disabled,
-}: {
+interface PermissionMatrixProps {
   value: Permissions;
-  onChange: (next: Permissions) => void;
+  onChange: (permissions: Permissions) => void;
   disabled?: boolean;
-}) {
-  const toggle = (section: AdminSection, action: AdminAction) => {
+}
+
+export default function PermissionMatrix({ value, onChange, disabled }: PermissionMatrixProps) {
+  const toggle = (sectionKey: string, actionKey: string) => {
     onChange({
       ...value,
-      [section]: { ...value[section], [action]: !value[section][action] },
+      [sectionKey]: {
+        // Fallback to empty permissions if the section is missing from the object
+        ...(value[sectionKey as AdminSection] || { add: false, edit: false, delete: false }),
+        [actionKey]: !value[sectionKey as AdminSection]?.[actionKey as AdminAction],
+      },
     });
   };
 
   return (
-    <div className="rounded-lg border border-gray-200 divide-y divide-gray-100">
-      {SECTIONS.map(({ key, label, icon: Icon }) => (
-        <div key={key} className="p-3">
-          <div className="flex items-center gap-2 mb-2.5">
-            <Icon size={16} className="text-[#005E60]" />
-            <span className="text-sm font-semibold text-gray-900">{label}</span>
-          </div>
-          <div className="flex flex-wrap gap-x-5 gap-y-2 pl-1">
+    <div className="space-y-4">
+      {ADMIN_SECTIONS.map((key) => (
+        <div key={key} className="border border-gray-200 rounded-lg p-4 bg-white">
+          <h4 className="text-sm font-semibold text-gray-800 mb-3">
+            {SECTION_LABELS[key] || key}
+          </h4>
+          <div className="flex flex-wrap gap-4">
             {ACTIONS.map((action) => (
               <label
                 key={action.key}
-                className={`flex items-center gap-2 text-sm ${
-                  disabled ? 'text-gray-400' : 'text-gray-700 cursor-pointer'
+                className={`inline-flex items-center gap-2 text-sm cursor-pointer ${
+                  disabled ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
               >
                 <input
                   type="checkbox"
                   disabled={disabled}
-                  checked={value[key][action.key]}
+                  // ✅ FIX: Added optional chaining (?.) and nullish coalescing (??) 
+                  // This prevents the "Cannot read properties of undefined" crash
+                  checked={value[key]?.[action.key as AdminAction] ?? false}
                   onChange={() => toggle(key, action.key)}
                   className="w-4 h-4 rounded border-gray-300 text-[#005E60] focus:ring-[#005E60]"
                 />
-                {action.label}
+                <span className="capitalize text-gray-700">{action.label}</span>
               </label>
             ))}
           </div>

@@ -1,3 +1,5 @@
+// lib/data-store.ts
+
 import { promises as fs } from 'fs';
 import path from 'path';
 import type { IProperty } from './models/Property';
@@ -22,7 +24,7 @@ import type { IBlog } from './models/Blog';
 
 const DATA_DIR = path.join(process.cwd(), 'data');
 const PROPERTIES_FILE = path.join(DATA_DIR, 'properties.json');
-const PROJECTS_FILE = path.join(DATA_DIR, 'projects.json'); // 👈 ADDED
+const PROJECTS_FILE = path.join(DATA_DIR, 'projects.json');
 const BLOGS_FILE = path.join(DATA_DIR, 'blogs.json');
 
 // ==================== LOW-LEVEL FILE HELPERS ====================
@@ -104,19 +106,102 @@ export async function deleteProperty(slug: string): Promise<boolean> {
   return true;
 }
 
-// ==================== PROJECTS ==================== 👈 ADDED ENTIRE SECTION
+// ==================== PROJECTS ====================
 export async function getAllProjects(): Promise<any[]> {
   const projects = await readArray(PROJECTS_FILE);
+  console.log(`📊 getAllProjects: Found ${projects.length} projects`);
   return projects.map(withId) as any;
 }
 
 export async function getProjectBySlug(slug: string): Promise<any | null> {
+  console.log('🔍 getProjectBySlug called with slug:', slug);
+  console.log('🔍 Slug type:', typeof slug);
+  console.log('🔍 Slug length:', slug?.length);
+  
+  // Decode the slug (handles URL encoding)
+  const decodedSlug = decodeURIComponent(slug).trim();
+  console.log('📝 Decoded slug:', decodedSlug);
+  
   const projects = await readArray(PROJECTS_FILE);
-  const project = projects.find((p: any) => p.slug === slug);
-  return project ? (withId(project) as any) : null;
+  console.log(`📦 Total projects in file: ${projects.length}`);
+  
+  if (projects.length === 0) {
+    console.log('⚠️ No projects found in the file');
+    return null;
+  }
+  
+  console.log('📋 Available projects:', projects.map((p: any) => ({ 
+    slug: p.slug, 
+    name: p.name,
+    id: p._id || p.id 
+  })));
+  
+  // Try multiple matching strategies
+  let project = null;
+  
+  // 1. Direct match (exact)
+  project = projects.find((p: any) => p.slug === decodedSlug);
+  if (project) {
+    console.log('✅ Found project with direct match');
+  }
+  
+  // 2. Case-insensitive match
+  if (!project) {
+    project = projects.find((p: any) => 
+      p.slug?.toLowerCase() === decodedSlug.toLowerCase()
+    );
+    if (project) {
+      console.log('✅ Found project with case-insensitive match');
+    }
+  }
+  
+  // 3. Try matching by ID (if slug looks like an ID)
+  if (!project) {
+    project = projects.find((p: any) => 
+      p._id === decodedSlug || p.id === decodedSlug
+    );
+    if (project) {
+      console.log('✅ Found project by ID');
+    }
+  }
+  
+  // 4. Try matching by name (if slug is actually a name)
+  if (!project) {
+    project = projects.find((p: any) => 
+      p.name?.toLowerCase() === decodedSlug.toLowerCase()
+    );
+    if (project) {
+      console.log('✅ Found project by name');
+    }
+  }
+  
+  // 5. Try partial match (if slug contains part of the name)
+  if (!project) {
+    project = projects.find((p: any) => 
+      p.name?.toLowerCase().includes(decodedSlug.toLowerCase()) ||
+      decodedSlug.toLowerCase().includes(p.name?.toLowerCase())
+    );
+    if (project) {
+      console.log('✅ Found project by partial name match');
+    }
+  }
+  
+  if (project) {
+    console.log('✅ Project found:', project.name, 'with slug:', project.slug);
+    return withId(project) as any;
+  } else {
+    console.log('❌ No project found with slug:', decodedSlug);
+    console.log('💡 Available slugs:', projects.map((p: any) => p.slug).join(', '));
+    return null;
+  }
 }
 
 export async function createProject(projectData: any): Promise<any> {
+  // ✅ FIX: Clean the slug before saving to ensure consistency with getProjectBySlug
+  if (projectData.slug) {
+    projectData.slug = decodeURIComponent(projectData.slug).trim();
+  }
+
   const projects = await readArray(PROJECTS_FILE);
 
   if (projects.some((p: any) => p.slug === projectData.slug)) {
@@ -133,13 +218,27 @@ export async function createProject(projectData: any): Promise<any> {
   // Newest first
   projects.unshift(project);
   await writeArray(PROJECTS_FILE, projects);
+  console.log('✅ Created new project:', project.name, 'with slug:', project.slug);
   return project as any;
 }
 
 export async function updateProject(slug: string, updates: any): Promise<any | null> {
+  // ✅ FIX: Decode and trim the slug to match getProjectBySlug behavior
+  const decodedSlug = decodeURIComponent(slug).trim();
+  console.log('🔄 updateProject called with slug:', decodedSlug);
+  
   const projects = await readArray(PROJECTS_FILE);
-  const index = projects.findIndex((p: any) => p.slug === slug);
-  if (index === -1) return null;
+  
+  // ✅ FIX: Use case-insensitive match just in case
+  const index = projects.findIndex((p: any) => 
+    p.slug === decodedSlug || p.slug?.toLowerCase() === decodedSlug.toLowerCase()
+  );
+  
+  if (index === -1) {
+    console.log('❌ Project not found for update with slug:', decodedSlug);
+    console.log('💡 Available slugs:', projects.map((p: any) => p.slug).join(', '));
+    return null;
+  }
 
   const updated = withId({
     ...projects[index],
@@ -149,14 +248,29 @@ export async function updateProject(slug: string, updates: any): Promise<any | n
   });
   projects[index] = updated;
   await writeArray(PROJECTS_FILE, projects);
+  console.log('✅ Updated project:', updated.name);
   return updated as any;
 }
 
 export async function deleteProject(slug: string): Promise<boolean> {
+  // ✅ FIX: Decode and trim the slug to match getProjectBySlug behavior
+  const decodedSlug = decodeURIComponent(slug).trim();
+  console.log('🗑️ deleteProject called with slug:', decodedSlug);
+  
   const projects = await readArray(PROJECTS_FILE);
-  const next = projects.filter((p: any) => p.slug !== slug);
-  if (next.length === projects.length) return false;
+  
+  // ✅ FIX: Use case-insensitive match to ensure it actually deletes
+  const next = projects.filter((p: any) => 
+    p.slug !== decodedSlug && p.slug?.toLowerCase() !== decodedSlug.toLowerCase()
+  );
+  
+  if (next.length === projects.length) {
+    console.log('❌ Project not found for deletion with slug:', decodedSlug);
+    console.log('💡 Available slugs:', projects.map((p: any) => p.slug).join(', '));
+    return false;
+  }
   await writeArray(PROJECTS_FILE, next);
+  console.log('✅ Deleted project with slug:', decodedSlug);
   return true;
 }
 

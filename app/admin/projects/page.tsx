@@ -16,16 +16,41 @@ export default function ProjectsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/projects')
+    // ✅ Added cache: 'no-store' to ensure fresh data is always fetched
+    fetch('/api/projects', { cache: 'no-store' })
       .then(res => res.json())
-      .then(data => { setProjects(data); setLoading(false); })
-      .catch(err => { console.error(err); setLoading(false); });
+      .then(data => { 
+        setProjects(data); 
+        setLoading(false); 
+      })
+      .catch(err => { 
+        console.error('❌ Error fetching projects:', err); 
+        setLoading(false); 
+      });
   }, []);
 
   const handleDelete = async (slug: string) => {
     if (!confirm('Are you sure you want to delete this project?')) return;
-    await fetch(`/api/projects/${slug}`, { method: 'DELETE' });
-    setProjects(projects.filter(p => p.slug !== slug));
+    
+    try {
+      // ✅ Use encodeURIComponent to handle special characters in slug
+      const response = await fetch(`/api/projects/${encodeURIComponent(slug)}`, { 
+        method: 'DELETE' 
+      });
+      
+      // ✅ CRITICAL: Check if the backend actually succeeded before updating UI
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        throw new Error(errorData.error || `Failed to delete project (Status: ${response.status})`);
+      }
+      
+      // Only update UI if deletion was successful
+      setProjects(projects.filter(p => p.slug !== slug));
+    } catch (error) {
+      console.error('❌ Error deleting project:', error);
+      // ✅ This will now show you an alert with the EXACT reason the backend failed
+      alert(error instanceof Error ? error.message : 'Failed to delete project. Please check the console for details.');
+    }
   };
 
   if (loading) return <div className="text-center py-12">Loading projects...</div>;
@@ -80,7 +105,8 @@ export default function ProjectsPage() {
                   
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex items-center justify-end gap-2">
-                      <Link href={`/admin/projects/${project.slug}/edit`} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                      {/* ✅ Added encodeURIComponent to Link href as well */}
+                      <Link href={`/admin/projects/${encodeURIComponent(project.slug)}/edit`} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
                         <Edit size={16} />
                       </Link>
                       <button onClick={() => handleDelete(project.slug)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors">

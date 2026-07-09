@@ -1,6 +1,8 @@
+// components/admin/AdminShell.tsx (Alternative without suppressHydrationWarning)
+
 'use client';
 
-import { ReactNode, useState } from 'react';
+import { ReactNode, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -10,7 +12,6 @@ import LogoutButton from './LogoutButton';
 
 type Role = 'admin' | 'employee';
 
-/** Which section links to show — for employees this reflects their granted access. */
 export interface NavAccess {
   properties: boolean;
   blogs: boolean;
@@ -26,8 +27,7 @@ interface NavItem {
 const NAV: NavItem[] = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, show: () => true },
   { href: '/admin/properties', label: 'Properties', icon: Building2, show: (_r, a) => a.properties },
-   { href: '/admin/projects', label: 'Projects', icon: Building2, show: (_r, a) => a.properties },
-  // { href: '/admin/blogs', label: 'Blogs', icon: FileText, show: (_r, a) => a.blogs },
+  { href: '/admin/projects', label: 'Projects', icon: Building2, show: (_r, a) => a.properties },
   { href: '/admin/employees', label: 'Employees', icon: Users, show: (role) => role === 'admin' },
 ];
 
@@ -42,11 +42,32 @@ export default function AdminShell({
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const items = NAV.filter((item) => item.show(role, access));
 
-  const isActive = (href: string) =>
-    href === '/admin' ? pathname === '/admin' : pathname.startsWith(href);
+  // ✅ This function is only called on the client after mount
+  const isActive = (href: string) => {
+    if (!isClient) return false;
+    if (href === '/admin') {
+      return pathname === '/admin';
+    }
+    return pathname?.startsWith(href) || false;
+  };
+
+  // ✅ Render the active class based on client-side state
+  const getNavItemClasses = (href: string) => {
+    const active = isActive(href);
+    const baseClasses = "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors";
+    const activeClasses = "bg-[#005E60]/10 text-[#005E60] font-semibold";
+    const inactiveClasses = "text-gray-700 hover:bg-[#005E60]/5 hover:text-[#005E60] font-medium";
+    
+    return `${baseClasses} ${active ? activeClasses : inactiveClasses}`;
+  };
 
   const SidebarContent = (
     <>
@@ -70,14 +91,14 @@ export default function AdminShell({
             key={href}
             href={href}
             onClick={() => setOpen(false)}
-            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-              isActive(href)
-                ? 'bg-[#005E60]/10 text-[#005E60] font-semibold'
-                : 'text-gray-700 hover:bg-[#005E60]/5 hover:text-[#005E60] font-medium'
-            }`}
+            className={getNavItemClasses(href)}
           >
             <Icon size={20} />
             <span>{label}</span>
+            {/* ✅ Only render the indicator on the client */}
+            {isClient && isActive(href) && (
+              <span className="ml-auto w-1.5 h-6 bg-[#005E60] rounded-full" />
+            )}
           </Link>
         ))}
 

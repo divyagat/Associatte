@@ -1,18 +1,13 @@
-/* eslint-disable @next/next/no-img-element -- admin previews render arbitrary uploaded image URLs (incl. blob:) that next/image can't optimize */
+/* eslint-disable @next/next/no-img-element */
 import Link from 'next/link';
 import { getAllBlogs } from '@/lib/data-store';
-import { getPermissions } from '@/lib/admin-auth';
-import { can } from '@/lib/admin-permissions';
 import { Plus, Edit } from 'lucide-react';
 import DeleteButton from '@/components/admin/DeleteButton';
 
 export const dynamic = 'force-dynamic';
 
 export default async function BlogsListPage() {
-  const [blogs, permissions] = await Promise.all([getAllBlogs(), getPermissions()]);
-  const canAdd = can(permissions, 'blogs', 'add');
-  const canEdit = can(permissions, 'blogs', 'edit');
-  const canDelete = can(permissions, 'blogs', 'delete');
+  const blogs = await getAllBlogs();
 
   return (
     <div className="space-y-6">
@@ -21,15 +16,13 @@ export default async function BlogsListPage() {
           <h1 className="text-3xl font-bold text-gray-900">Blogs</h1>
           <p className="text-gray-600 mt-1">Manage all blog articles</p>
         </div>
-        {canAdd && (
-          <Link
-            href="/admin/blogs/new"
-            className="flex items-center gap-2 px-4 py-2 bg-[#005E60] text-white rounded-lg hover:bg-[#004a4d] transition-colors"
-          >
-            <Plus size={20} />
-            Add Blog
-          </Link>
-        )}
+        <Link
+          href="/admin/blogs/new"
+          className="flex items-center gap-2 px-4 py-2 bg-[#005E60] text-white rounded-lg hover:bg-[#004a4d] transition-colors"
+        >
+          <Plus size={20} />
+          Add Blog
+        </Link>
       </div>
 
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
@@ -68,18 +61,13 @@ export default async function BlogsListPage() {
                 <td className="px-6 py-4 text-sm text-gray-600">{blog.date}</td>
                 <td className="px-6 py-4 text-right">
                   <div className="flex items-center justify-end gap-2">
-                    {canEdit && (
-                      <Link
-                        href={`/admin/blogs/${blog.slug}/edit`}
-                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                      >
-                        <Edit size={18} />
-                      </Link>
-                    )}
-                    {canDelete && <DeleteButton slug={blog.slug} type="blogs" label="this blog" />}
-                    {!canEdit && !canDelete && (
-                      <span className="text-xs text-gray-400">View only</span>
-                    )}
+                    <Link
+                      href={`/admin/blogs/${blog.slug}/edit`}
+                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                    >
+                      <Edit size={18} />
+                    </Link>
+                    <DeleteButton slug={blog.slug} type="blogs" label="this blog" />
                   </div>
                 </td>
               </tr>

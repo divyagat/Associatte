@@ -53,13 +53,59 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
 
   const [currentAmenity, setCurrentAmenity] = useState('');
   const [projects, setProjects] = useState<any[]>([]);
+  const [loadingProjects, setLoadingProjects] = useState(false);
+  const [errorProjects, setErrorProjects] = useState<string | null>(null);
 
   // Fetch projects to populate the dropdown
   useEffect(() => {
-    fetch('/api/projects')
-      .then(res => res.json())
-      .then(data => setProjects(data))
-      .catch(err => console.error('Failed to fetch projects:', err));
+    const fetchProjects = async () => {
+      try {
+        setLoadingProjects(true);
+        setErrorProjects(null);
+        
+        const response = await fetch('/api/projects');
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch projects: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('📋 PropertyForm: Projects data received:', data);
+        console.log('📋 PropertyForm: Data type:', typeof data);
+        console.log('📋 PropertyForm: Is array?', Array.isArray(data));
+        
+        // ✅ Ensure we always have an array
+        let projectsArray: any[] = [];
+        
+        if (Array.isArray(data)) {
+          projectsArray = data;
+        } else if (data && typeof data === 'object') {
+          // If it's an object with a projects property
+          if (data.projects && Array.isArray(data.projects)) {
+            projectsArray = data.projects;
+          } else {
+            // If it's a single project object, wrap it in an array
+            console.warn('⚠️ PropertyForm: Data is a single object, wrapping in array');
+            projectsArray = [data];
+          }
+        } else {
+          console.warn('⚠️ PropertyForm: No valid projects data received');
+          projectsArray = [];
+        }
+        
+        console.log('📋 PropertyForm: Final projects array:', projectsArray);
+        setProjects(projectsArray);
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to load projects';
+        console.error('❌ PropertyForm: Error fetching projects:', errorMessage);
+        setErrorProjects(errorMessage);
+        setProjects([]); // Set to empty array on error
+      } finally {
+        setLoadingProjects(false);
+      }
+    };
+
+    fetchProjects();
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -71,7 +117,9 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
       let current: any = updated;
       
       for (let i = 0; i < keys.length - 1; i++) {
-        current[keys[i]] = { ...current[keys[i]] };
+        if (!current[keys[i]] || typeof current[keys[i]] !== 'object') {
+          current[keys[i]] = {};
+        }
         current = current[keys[i]];
       }
       
@@ -147,6 +195,27 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await onSubmit(formData);
+  };
+
+  // ✅ Helper function to render project options safely
+  const renderProjectOptions = () => {
+    if (loadingProjects) {
+      return <option value="" disabled>Loading projects...</option>;
+    }
+    
+    if (errorProjects) {
+      return <option value="" disabled>Error loading projects</option>;
+    }
+    
+    if (!projects || projects.length === 0) {
+      return <option value="" disabled>No projects available</option>;
+    }
+    
+    return projects.map((p) => (
+      <option key={p.slug || p._id || p.id || Math.random().toString()} value={p.slug || p._id || p.id || ''}>
+        {p.name || 'Unnamed Project'}
+      </option>
+    ));
   };
 
   return (
@@ -251,13 +320,18 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
               name="projectSlug"
               value={formData.projectSlug || ''}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]"
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60] disabled:bg-gray-100"
+              disabled={loadingProjects}
             >
               <option value="">-- Select a Project (Optional) --</option>
-              {projects.map((p) => (
-                <option key={p.slug} value={p.slug}>{p.name}</option>
-              ))}
+              {renderProjectOptions()}
             </select>
+            {errorProjects && (
+              <p className="text-xs text-red-600 mt-1">{errorProjects}</p>
+            )}
+            {!errorProjects && !loadingProjects && projects.length === 0 && (
+              <p className="text-xs text-gray-500 mt-1">No projects available. Create a project first.</p>
+            )}
             <p className="text-xs text-gray-500 mt-1">Link this property to an existing project.</p>
           </div>
           <div className="md:col-span-2">

@@ -60,7 +60,8 @@ export default function EditProjectPage() {
     const fetchProject = async () => {
       try {
         setError(null);
-        const response = await fetch(`/api/projects/${params.slug}`);
+        // ✅ Use encodeURIComponent for the slug
+        const response = await fetch(`/api/projects/${encodeURIComponent(params.slug as string)}`);
         
         if (!response.ok) {
           if (response.status === 404) {
@@ -111,7 +112,8 @@ export default function EditProjectPage() {
         throw new Error('Location is required');
       }
 
-      const response = await fetch(`/api/projects/${params.slug}`, {
+      // ✅ Use encodeURIComponent for the slug
+      const response = await fetch(`/api/projects/${encodeURIComponent(params.slug as string)}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),

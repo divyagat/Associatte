@@ -2,7 +2,6 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
 import { 
   ArrowLeft, Calendar, Clock, Share2, Copy, 
   Eye, ChevronRight, Mail, MapPin, Building2, 
@@ -12,6 +11,59 @@ import {
 import { useState, useEffect, useRef } from 'react';
 import EnquiryPopup from '../../../components/common/EnquiryPopup';
 import { getBlogBySlug, getRelatedPosts, getRecentPosts, type BlogPost } from '@/lib/blog-data';
+
+// ✅ BULLETPROOF IMAGE: Uses native <img> to prevent Next.js "Invalid URL" render crashes
+const SafeImage = ({ src, alt, fill, sizes, className, width, height, priority }: any) => {
+  const [imgError, setImgError] = useState(false);
+
+  if (!src || typeof src !== 'string' || imgError) {
+    return (
+      <div className={`bg-gradient-to-br from-[var(--color-secondary)] to-[var(--color-primary)] flex items-center justify-center ${fill ? 'absolute inset-0' : ''} ${className || ''}`}>
+        <Building2 className="text-white/40" size={fill ? 64 : 48} />
+      </div>
+    );
+  }
+
+  return (
+    <img 
+      src={src} 
+      alt={alt} 
+      sizes={sizes}
+      width={width}
+      height={height}
+      className={`${fill ? 'absolute inset-0 w-full h-full' : ''} object-cover ${className || ''}`}
+      onError={() => setImgError(true)}
+    />
+  );
+};
+
+// ✅ BULLETPROOF AVATAR: Uses native <img> to prevent crashes on missing/invalid author avatars
+const SafeAvatar = ({ src, alt, width, height, className, size = 36 }: any) => {
+  const [imgError, setImgError] = useState(false);
+  const name = alt || 'Author';
+
+  if (!src || typeof src !== 'string' || imgError) {
+    return (
+      <div 
+        className={`bg-gradient-to-br from-[var(--color-secondary)] to-[#6d0000] text-white flex items-center justify-center font-bold rounded-2xl flex-shrink-0 ${className || ''}`}
+        style={{ width: size, height: size, fontSize: size * 0.4 }}
+      >
+        {name.charAt(0).toUpperCase()}
+      </div>
+    );
+  }
+
+  return (
+    <img 
+      src={src} 
+      alt={alt} 
+      width={width} 
+      height={height} 
+      className={`object-cover ${className || ''}`}
+      onError={() => setImgError(true)}
+    />
+  );
+};
 
 // Social Media Icons
 const FacebookIcon = () => (
@@ -135,7 +187,6 @@ export default function BlogDetailPage() {
     };
 
     const load = async () => {
-      // Static blogs first (instant), then fall back to DB blogs from the admin panel.
       const staticPost = getBlogBySlug(slug);
       if (staticPost) {
         applyPost(staticPost);
@@ -186,7 +237,6 @@ export default function BlogDetailPage() {
     setShowShare(false);
   };
 
-  // ✅ SHARE FUNCTIONS
   const shareToFacebook = () => {
     const url = encodeURIComponent(window.location.href);
     window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'width=600,height=400');
@@ -223,6 +273,12 @@ export default function BlogDetailPage() {
     }
   };
 
+  // ✅ Safe author data extraction
+  const authorName = post?.author && typeof post.author === 'object' ? (post.author.name || 'Admin') : (post?.author || 'Admin');
+  const authorRole = post?.author && typeof post.author === 'object' ? (post.author.role || 'Real Estate Expert') : '';
+  const authorBio = post?.author && typeof post.author === 'object' ? (post.author.bio || '') : '';
+  const authorAvatar = post?.author && typeof post.author === 'object' ? post.author.avatar : null;
+
   if (!post) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
@@ -254,14 +310,14 @@ export default function BlogDetailPage() {
       <section className="relative w-full max-w-7xl mx-auto px-4 md:px-6 pt-8 md:pt-12 pb-8">
         <div className="relative w-full h-[350px] sm:h-[400px] md:h-[450px] lg:h-[480px] rounded-3xl overflow-hidden shadow-2xl ring-1 ring-black/5 group bg-gray-900">
           
-          {/* Backward Arrow Button */}
           <div className="absolute top-4 left-4 md:top-6 md:left-6 z-20">
             <Link href="/blog" className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 bg-black/40 backdrop-blur-md text-white rounded-full border border-white/30 hover:bg-black/60 transition-all shadow-lg">
               <ArrowLeft size={18} className="md:w-5 md:h-5" />
             </Link>
           </div>
 
-          <Image
+          {/* ✅ REPLACED <Image> WITH <SafeImage> */}
+          <SafeImage
             src={post.image}
             alt={post.title}
             fill
@@ -275,18 +331,24 @@ export default function BlogDetailPage() {
           <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 md:p-10 lg:p-12">
             <div className="max-w-4xl mx-auto md:mx-0 space-y-3 sm:space-y-4 animate-fade-in-up">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 bg-[var(--color-gold)] text-[var(--color-secondary)] px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider shadow-lg">
-                  <Sparkles size={12} />
-                  {post.category}
-                </span>
-                <span className="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-md text-white px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-medium border border-white/20">
-                  <Clock size={12} />
-                  {post.readTime}
-                </span>
-                <span className="hidden sm:inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-md text-white px-3.5 py-1.5 rounded-full text-xs font-medium border border-white/20">
-                  <Calendar size={12} />
-                  {post.date}
-                </span>
+                {post.category && (
+                  <span className="inline-flex items-center gap-1.5 bg-[var(--color-gold)] text-[var(--color-secondary)] px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider shadow-lg">
+                    <Sparkles size={12} />
+                    {post.category}
+                  </span>
+                )}
+                {post.readTime && (
+                  <span className="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-md text-white px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-medium border border-white/20">
+                    <Clock size={12} />
+                    {post.readTime}
+                  </span>
+                )}
+                {post.date && (
+                  <span className="hidden sm:inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-md text-white px-3.5 py-1.5 rounded-full text-xs font-medium border border-white/20">
+                    <Calendar size={12} />
+                    {post.date}
+                  </span>
+                )}
               </div>
 
               <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-[1.15] tracking-tight drop-shadow-lg">
@@ -298,10 +360,12 @@ export default function BlogDetailPage() {
               </p>
 
               <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-2 text-white/90 text-xs sm:text-sm">
-                <div className="flex items-center gap-1.5 sm:gap-2">
-                  <Calendar size={14} />
-                  <span>{post.date}</span>
-                </div>
+                {post.date && (
+                  <div className="flex items-center gap-1.5 sm:gap-2">
+                    <Calendar size={14} />
+                    <span>{post.date}</span>
+                  </div>
+                )}
                 {post.courtesy && (
                   <div className="flex items-center gap-1.5 sm:gap-2">
                     <Building2 size={14} />
@@ -309,22 +373,24 @@ export default function BlogDetailPage() {
                   </div>
                 )}
                 <div className="flex items-center gap-1.5 sm:gap-2">
-                  <span>By {post.author.name}</span>
+                  <span>By {authorName}</span>
                 </div>
               </div>
 
               <div className="flex flex-wrap items-center justify-between gap-3 sm:gap-4 pt-2">
                 <div className="flex items-center gap-2 sm:gap-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl sm:rounded-2xl px-3 sm:px-4 py-2 sm:py-2.5">
-                  <Image
-                    src={post.author.avatar}
-                    alt={post.author.name}
+                  {/* ✅ REPLACED <Image> WITH <SafeAvatar> */}
+                  <SafeAvatar
+                    src={authorAvatar}
+                    alt={authorName}
                     width={36}
                     height={36}
-                    className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border-2 border-[var(--color-gold)] object-cover"
+                    size={36}
+                    className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border-2 border-[var(--color-gold)]"
                   />
                   <div className="text-left">
-                    <p className="font-semibold text-white text-xs sm:text-sm leading-tight">{post.author.name}</p>
-                    <p className="text-[10px] sm:text-[11px] text-white/70 leading-tight">{post.author.role}</p>
+                    <p className="font-semibold text-white text-xs sm:text-sm leading-tight">{authorName}</p>
+                    <p className="text-[10px] sm:text-[11px] text-white/70 leading-tight">{authorRole}</p>
                   </div>
                 </div>
               </div>
@@ -375,35 +441,20 @@ export default function BlogDetailPage() {
                   Share
                 </h3>
                 <div className="grid grid-cols-2 gap-2">
-                  <button 
-                    onClick={shareToFacebook}
-                    className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-[#1877F2]/10 text-[#1877F2] hover:bg-[#1877F2] hover:text-white transition-all duration-300 text-xs font-medium cursor-pointer"
-                  >
+                  <button onClick={shareToFacebook} className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-[#1877F2]/10 text-[#1877F2] hover:bg-[#1877F2] hover:text-white transition-all duration-300 text-xs font-medium cursor-pointer">
                     <FacebookIcon /> Facebook
                   </button>
-                  <button 
-                    onClick={shareToTwitter}
-                    className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-black/5 text-black hover:bg-black hover:text-white transition-all duration-300 text-xs font-medium cursor-pointer"
-                  >
+                  <button onClick={shareToTwitter} className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-black/5 text-black hover:bg-black hover:text-white transition-all duration-300 text-xs font-medium cursor-pointer">
                     <TwitterIcon /> Twitter
                   </button>
-                  <button 
-                    onClick={shareToLinkedIn}
-                    className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-[#0077b5]/10 text-[#0077b5] hover:bg-[#0077b5] hover:text-white transition-all duration-300 text-xs font-medium cursor-pointer"
-                  >
+                  <button onClick={shareToLinkedIn} className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-[#0077b5]/10 text-[#0077b5] hover:bg-[#0077b5] hover:text-white transition-all duration-300 text-xs font-medium cursor-pointer">
                     <LinkedInIcon /> LinkedIn
                   </button>
-                  <button 
-                    onClick={shareToWhatsApp}
-                    className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white transition-all duration-300 text-xs font-medium cursor-pointer"
-                  >
+                  <button onClick={shareToWhatsApp} className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white transition-all duration-300 text-xs font-medium cursor-pointer">
                     <WhatsAppIcon /> WhatsApp
                   </button>
                 </div>
-                <button 
-                  onClick={handleCopyLink}
-                  className="mt-3 w-full flex items-center justify-center gap-2 p-2.5 rounded-xl bg-gray-50 hover:bg-gray-100 transition-all text-xs font-medium text-gray-700 cursor-pointer"
-                >
+                <button onClick={handleCopyLink} className="mt-3 w-full flex items-center justify-center gap-2 p-2.5 rounded-xl bg-gray-50 hover:bg-gray-100 transition-all text-xs font-medium text-gray-700 cursor-pointer">
                   <LinkIcon />
                   {copied ? 'Copied!' : 'Copy Link'}
                 </button>
@@ -415,17 +466,14 @@ export default function BlogDetailPage() {
                   <h3 className="font-bold text-[var(--color-text)] text-sm uppercase tracking-wider mb-4">Recent Posts</h3>
                   <div className="space-y-4">
                     {recentPosts.map((recentPost) => (
-                      <Link 
-                        key={recentPost.slug} 
-                        href={`/blog/${recentPost.slug}`}
-                        className="group flex gap-3"
-                      >
-                        <Image
+                      <Link key={recentPost.slug} href={`/blog/${recentPost.slug}`} className="group flex gap-3">
+                        {/* ✅ REPLACED <Image> WITH <SafeImage> */}
+                        <SafeImage
                           src={recentPost.image}
                           alt={recentPost.title}
                           width={64}
                           height={64}
-                          className="w-16 h-16 rounded-lg object-cover flex-shrink-0 group-hover:scale-105 transition-transform"
+                          className="w-16 h-16 rounded-lg flex-shrink-0 group-hover:scale-105 transition-transform"
                         />
                         <div className="flex-1 min-w-0">
                           <h4 className="text-sm font-semibold text-[var(--color-text)] group-hover:text-[var(--color-secondary)] transition-colors line-clamp-2">
@@ -464,7 +512,8 @@ export default function BlogDetailPage() {
                 {/* SECONDARY IMAGE (Image 2) */}
                 {post.image2 && (
                   <div className="relative aspect-video mb-8 rounded-2xl overflow-hidden shadow-lg border border-gray-100">
-                    <Image
+                    {/* ✅ REPLACED <Image> WITH <SafeImage> */}
+                    <SafeImage
                       src={post.image2}
                       alt={`${post.title} - Secondary`}
                       fill
@@ -476,27 +525,29 @@ export default function BlogDetailPage() {
 
                 <div 
                   className="prose prose-lg max-w-none"
-                  dangerouslySetInnerHTML={{ __html: post.content }}
+                  dangerouslySetInnerHTML={{ __html: post.content || '' }}
                 />
 
                 {/* Tags */}
-                <div className="mt-10 sm:mt-12 pt-6 sm:pt-8 border-t border-gray-100">
-                  <div className="flex items-center gap-3 mb-4">
-                    <Tag size={16} className="text-[var(--color-secondary)]" />
-                    <h4 className="font-bold text-[var(--color-text)] text-sm uppercase tracking-wider">Topics</h4>
+                {(post.tags || []).length > 0 && (
+                  <div className="mt-10 sm:mt-12 pt-6 sm:pt-8 border-t border-gray-100">
+                    <div className="flex items-center gap-3 mb-4">
+                      <Tag size={16} className="text-[var(--color-secondary)]" />
+                      <h4 className="font-bold text-[var(--color-text)] text-sm uppercase tracking-wider">Topics</h4>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {(post.tags || []).map((tag) => (
+                        <Link 
+                          key={tag} 
+                          href={`/blog?tag=${tag}`}
+                          className="group bg-gray-50 hover:bg-gradient-to-r hover:from-[var(--color-secondary)] hover:to-[#6d0000] text-[var(--color-text)] hover:text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm transition-all duration-300 font-medium border border-gray-200 hover:border-transparent hover:shadow-lg hover:shadow-red-900/20 hover:-translate-y-0.5"
+                        >
+                          #{tag}
+                        </Link>
+                      ))}
+                    </div>
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    {post.tags.map((tag) => (
-                      <Link 
-                        key={tag} 
-                        href={`/blog?tag=${tag}`}
-                        className="group bg-gray-50 hover:bg-gradient-to-r hover:from-[var(--color-secondary)] hover:to-[#6d0000] text-[var(--color-text)] hover:text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm transition-all duration-300 font-medium border border-gray-200 hover:border-transparent hover:shadow-lg hover:shadow-red-900/20 hover:-translate-y-0.5"
-                      >
-                        #{tag}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
+                )}
               </div>
 
               {/* Stats Section */}
@@ -514,10 +565,7 @@ export default function BlogDetailPage() {
                     </div>
                   </div>
                   
-                  <button 
-                    onClick={() => setIsPopupOpen(true)}
-                    className="btn-primary w-full sm:w-auto"
-                  >
+                  <button onClick={() => setIsPopupOpen(true)} className="btn-primary w-full sm:w-auto">
                     <Sparkles size={16} />
                     <span>Get Expert Advice</span>
                   </button>
@@ -530,12 +578,14 @@ export default function BlogDetailPage() {
               <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[var(--color-secondary)]/5 to-transparent rounded-full blur-3xl" />
               <div className="relative flex flex-col md:flex-row items-start gap-4 sm:gap-6">
                 <div className="relative shrink-0">
-                  <Image
-                    src={post.author.avatar}
-                    alt={post.author.name}
+                  {/* ✅ REPLACED <Image> WITH <SafeAvatar> */}
+                  <SafeAvatar
+                    src={authorAvatar}
+                    alt={authorName}
                     width={96}
                     height={96}
-                    className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover shadow-lg ring-4 ring-white"
+                    size={96}
+                    className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl shadow-lg ring-4 ring-white"
                   />
                   <div className="absolute -bottom-2 -right-2 w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-[var(--color-gold)] to-[#e6b018] rounded-lg flex items-center justify-center shadow-lg">
                     <Award size={12} className="sm:w-[14px] sm:h-[14px] text-[var(--color-secondary)]" />
@@ -548,14 +598,11 @@ export default function BlogDetailPage() {
                       {[1,2,3,4,5].map((i) => <Star key={i} size={10} className="text-[var(--color-gold)] fill-[var(--color-gold)]" />)}
                     </div>
                   </div>
-                  <h4 className="font-bold text-xl sm:text-2xl text-[var(--color-text)] mb-1">{post.author.name}</h4>
-                  <p className="text-[var(--color-primary)] font-medium text-xs sm:text-sm mb-3">{post.author.role}</p>
-                  <p className="text-[var(--color-text-light)] mb-4 leading-relaxed text-sm sm:text-base">{post.author.bio}</p>
+                  <h4 className="font-bold text-xl sm:text-2xl text-[var(--color-text)] mb-1">{authorName}</h4>
+                  <p className="text-[var(--color-primary)] font-medium text-xs sm:text-sm mb-3">{authorRole}</p>
+                  <p className="text-[var(--color-text-light)] mb-4 leading-relaxed text-sm sm:text-base">{authorBio}</p>
                   <div className="flex flex-wrap gap-3">
-                    <button 
-                      onClick={() => setIsPopupOpen(true)}
-                      className="inline-flex items-center gap-2 bg-[var(--color-primary)] text-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold hover:bg-[var(--color-primary-dark)] transition-all duration-300 hover:shadow-lg"
-                    >
+                    <button onClick={() => setIsPopupOpen(true)} className="inline-flex items-center gap-2 bg-[var(--color-primary)] text-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold hover:bg-[var(--color-primary-dark)] transition-all duration-300 hover:shadow-lg">
                       <Sparkles size={14} /> Connect Now
                     </button>
                     <Link href="/blog" className="btn-outline inline-flex items-center gap-2">
@@ -592,18 +639,15 @@ export default function BlogDetailPage() {
                 </div>
                 <div className="grid md:grid-cols-2 gap-4">
                   {relatedPosts.map((relatedPost) => (
-                    <Link 
-                      key={relatedPost.slug}
-                      href={`/blog/${relatedPost.slug}`}
-                      className="group bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-3 sm:p-4 hover:bg-white/20 transition-all duration-300"
-                    >
+                    <Link key={relatedPost.slug} href={`/blog/${relatedPost.slug}`} className="group bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-3 sm:p-4 hover:bg-white/20 transition-all duration-300">
                       <div className="flex gap-3">
-                        <Image
+                        {/* ✅ REPLACED <Image> WITH <SafeImage> */}
+                        <SafeImage
                           src={relatedPost.image}
                           alt={relatedPost.title}
                           width={80}
                           height={80}
-                          className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl object-cover flex-shrink-0"
+                          className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl flex-shrink-0"
                         />
                         <div className="flex-1 min-w-0">
                           <h3 className="font-semibold text-white group-hover:text-[var(--color-gold)] transition-colors line-clamp-2 text-xs sm:text-sm">
@@ -625,17 +669,19 @@ export default function BlogDetailPage() {
               <div className="relative overflow-hidden bg-white rounded-2xl shadow-sm border border-gray-100/80">
                 <div className="h-24 bg-gradient-to-br from-[var(--color-secondary)] via-[#6d0000] to-[var(--color-primary)] relative"></div>
                 <div className="px-4 sm:px-6 pb-6 -mt-12 relative">
-                  <Image
-                    src={post.author.avatar}
-                    alt={post.author.name}
+                  {/* ✅ REPLACED <Image> WITH <SafeAvatar> */}
+                  <SafeAvatar
+                    src={authorAvatar}
+                    alt={authorName}
                     width={80}
                     height={80}
-                    className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl mx-auto mb-4 object-cover border-4 border-white shadow-xl"
+                    size={80}
+                    className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl mx-auto mb-4 border-4 border-white shadow-xl"
                   />
                   <div className="text-center">
-                    <h3 className="font-bold text-base sm:text-lg text-[var(--color-text)] mb-1">{post.author.name}</h3>
-                    <p className="text-[10px] sm:text-xs text-[var(--color-primary)] font-semibold mb-3">{post.author.role}</p>
-                    <p className="text-[11px] sm:text-xs text-[var(--color-text-light)] mb-4 leading-relaxed">{post.author.bio}</p>
+                    <h3 className="font-bold text-base sm:text-lg text-[var(--color-text)] mb-1">{authorName}</h3>
+                    <p className="text-[10px] sm:text-xs text-[var(--color-primary)] font-semibold mb-3">{authorRole}</p>
+                    <p className="text-[11px] sm:text-xs text-[var(--color-text-light)] mb-4 leading-relaxed">{authorBio}</p>
                     
                     <div className="grid grid-cols-3 gap-2 mb-4 py-3 border-y border-gray-100">
                       <div>
@@ -652,10 +698,7 @@ export default function BlogDetailPage() {
                       </div>
                     </div>
                     
-                    <button 
-                      onClick={() => setIsPopupOpen(true)}
-                      className="btn-primary w-full"
-                    >
+                    <button onClick={() => setIsPopupOpen(true)} className="btn-primary w-full">
                       <Sparkles size={14} /> Connect Now
                     </button>
                   </div>
@@ -672,10 +715,7 @@ export default function BlogDetailPage() {
                   </div>
                   <h4 className="font-bold text-lg sm:text-xl mb-2">Free Consultation</h4>
                   <p className="text-white/80 text-xs sm:text-sm mb-5 leading-relaxed">Speak with our expert consultants for personalized property guidance.</p>
-                  <button 
-                    onClick={() => setIsPopupOpen(true)}
-                    className="w-full bg-[var(--color-gold)] text-[var(--color-secondary)] py-3 sm:py-3.5 rounded-xl font-bold hover:bg-[#e6b018] transition-all duration-300 hover:shadow-xl hover:shadow-yellow-500/30 hover:-translate-y-0.5 flex items-center justify-center gap-2 text-xs sm:text-sm"
-                  >
+                  <button onClick={() => setIsPopupOpen(true)} className="w-full bg-[var(--color-gold)] text-[var(--color-secondary)] py-3 sm:py-3.5 rounded-xl font-bold hover:bg-[#e6b018] transition-all duration-300 hover:shadow-xl hover:shadow-yellow-500/30 hover:-translate-y-0.5 flex items-center justify-center gap-2 text-xs sm:text-sm">
                     Request Callback
                     <ArrowLeft size={14} className="rotate-180" />
                   </button>
@@ -720,16 +760,10 @@ export default function BlogDetailPage() {
       {/* Mobile Bottom Bar */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-gray-200 p-3 z-40">
         <div className="flex gap-2">
-          <button 
-            onClick={() => setShowShare(!showShare)}
-            className="p-3 rounded-xl bg-gray-100 text-gray-700"
-          >
+          <button onClick={() => setShowShare(!showShare)} className="p-3 rounded-xl bg-gray-100 text-gray-700">
             <Share2 size={20} />
           </button>
-          <button 
-            onClick={() => setIsPopupOpen(true)}
-            className="btn-primary flex-1"
-          >
+          <button onClick={() => setIsPopupOpen(true)} className="btn-primary flex-1">
             <PhoneCall size={16} />
             Get Expert Advice
           </button>
@@ -755,7 +789,6 @@ export default function BlogDetailPage() {
           animation: fade-in-up 0.8s ease-out forwards;
         }
 
-        /* 🌟 PREMIUM BLOCKQUOTE STYLING 🌟 */
         .prose blockquote {
           position: relative;
           background: linear-gradient(135deg, rgba(139, 0, 0, 0.04), rgba(248, 194, 28, 0.04));
@@ -806,7 +839,6 @@ export default function BlogDetailPage() {
           content: '— ';
         }
 
-        /* Mobile adjustments for blockquote */
         @media (max-width: 640px) {
           .prose blockquote {
             padding: 1.5rem 1.5rem 1.5rem 2.5rem;
