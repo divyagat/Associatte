@@ -11,7 +11,8 @@ interface PropertyFormProps {
 }
 
 export default function PropertyForm({ initialData, onSubmit, loading }: PropertyFormProps) {
-  const [formData, setFormData] = useState(initialData || {
+  // ✅ 1. Define default empty structure
+  const defaultFormData = {
     slug: '',
     name: '',
     category: 'residential',
@@ -49,6 +50,27 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
       tenure: ''
     },
     soldOut: false
+  };
+
+  // ✅ 2. Safely merge initialData with defaults to prevent "Cannot read properties of undefined"
+  const [formData, setFormData] = useState({
+    ...defaultFormData,
+    ...initialData,
+    fullLocation: { ...defaultFormData.fullLocation, ...(initialData?.fullLocation || {}) },
+    priceDetails: {
+      ...defaultFormData.priceDetails,
+      ...(initialData?.priceDetails || {}),
+      configurations: initialData?.priceDetails?.configurations?.length 
+        ? initialData.priceDetails.configurations 
+        : defaultFormData.priceDetails.configurations
+    },
+    developer: { ...defaultFormData.developer, ...(initialData?.developer || {}) },
+    emi: { ...defaultFormData.emi, ...(initialData?.emi || {}) },
+    mapCoords: { ...defaultFormData.mapCoords, ...(initialData?.mapCoords || {}) },
+    amenities: initialData?.amenities || [],
+    floorPlans: initialData?.floorPlans || [],
+    gallery: initialData?.gallery || [],
+    nearbyPlaces: initialData?.nearbyPlaces || []
   });
 
   const [currentAmenity, setCurrentAmenity] = useState('');

@@ -14,6 +14,7 @@ interface Project {
   image: string;
   developer?: { name: string };
   bhk?: readonly string[];
+  soldOut?: boolean; // ✅ 1. Added soldOut property to interface
   [key: string]: unknown;
 }
 
@@ -28,6 +29,7 @@ export default function BuilderProjectCard({ project }: BuilderProjectCardProps)
   }
 
   const bhkList = project.bhk ?? [];
+  const isSoldOut = project.soldOut === true; // ✅ 2. Check if project is marked as sold out
 
   return (
     <motion.div
@@ -56,6 +58,13 @@ export default function BuilderProjectCard({ project }: BuilderProjectCardProps)
           <span className="absolute bottom-3 left-3 px-3 py-1 bg-[#005E60] text-white text-sm font-semibold rounded-lg">
             {project.price}
           </span>
+
+          {/* ✅ 3. SOLD OUT BADGE (Only displays when isSoldOut is true) */}
+          {isSoldOut && (
+            <span className="absolute top-3 right-3 px-3 py-1 bg-red-600 text-white text-xs font-bold rounded-lg uppercase shadow-md">
+              Sold Out
+            </span>
+          )}
         </div>
 
         {/* Content */}

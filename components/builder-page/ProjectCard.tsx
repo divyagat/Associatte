@@ -16,6 +16,7 @@ interface Project {
   sqft?: string;
   propertyType?: string;
   configurations?: Array<{ type: string; area?: string }>;
+  soldOut?: boolean | string; // ✅ Added to handle Sold Out status
   [key: string]: any;
 }
 
@@ -31,6 +32,9 @@ export default function BuilderProjectCard({ project }: BuilderProjectCardProps)
     console.warn('BuilderProjectCard: Missing required props', project);
     return null;
   }
+
+  // ✅ Check for sold out status (handles both boolean true and string "true")
+  const isSoldOut = project.soldOut === true || project.soldOut === 'true';
 
   // ✅ Safe data extraction with fallbacks
   const displayName = project.name;
@@ -104,6 +108,13 @@ export default function BuilderProjectCard({ project }: BuilderProjectCardProps)
               style={{ backgroundColor: badgeColors.bg, color: badgeColors.text }}
             >
               {displayType}
+            </span>
+          )}
+
+          {/* ✅ SOLD OUT BADGE (Top Right) */}
+          {isSoldOut && (
+            <span className="absolute top-3 right-3 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide rounded-md shadow-sm whitespace-nowrap bg-red-600 text-white z-10">
+              Sold Out
             </span>
           )}
           
