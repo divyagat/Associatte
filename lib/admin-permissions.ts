@@ -1,11 +1,11 @@
 /**
  * Per-employee permission model.
  *
- * Each employee can be granted, per section (`properties`, `projects`), the right
+ * Each employee can be granted, per section (`properties`, `projects`, `blogs`), the right
  * to Add, Edit and/or Delete. The main admin always has every permission.
  */
 
-export type AdminSection = 'properties' | 'projects'; // 'blogs' commented out
+export type AdminSection = 'properties' | 'projects' | 'blogs';
 export type AdminAction = 'add' | 'edit' | 'delete';
 
 export interface SectionPermissions {
@@ -17,13 +17,13 @@ export interface SectionPermissions {
 export interface Permissions {
   properties: SectionPermissions;
   projects: SectionPermissions;
-  // blogs: SectionPermissions;
+  blogs: SectionPermissions;
 }
 
 /** Cookie holding the signed-in employee's encoded permissions. */
 export const PERMS_COOKIE = 'associatte_perms';
 
-export const ADMIN_SECTIONS: AdminSection[] = ['properties', 'projects'];
+export const ADMIN_SECTIONS: AdminSection[] = ['properties', 'projects', 'blogs'];
 export const ADMIN_ACTIONS: AdminAction[] = ['add', 'edit', 'delete'];
 
 const NONE: SectionPermissions = { add: false, edit: false, delete: false };
@@ -33,20 +33,21 @@ const ALL: SectionPermissions = { add: true, edit: true, delete: true };
 export const ADMIN_PERMISSIONS: Permissions = {
   properties: { ...ALL },
   projects: { ...ALL },
-  // blogs: { ...ALL },
+  blogs: { ...ALL },
 };
 
 /** Default pre-checked state for a brand new employee */
 export const DEFAULT_EMPLOYEE_PERMISSIONS: Permissions = {
   properties: { add: true, edit: true, delete: false },
   projects: { ...NONE },
-  // blogs: { ...NONE },
+  blogs: { ...NONE },
 };
 
 export function emptyPermissions(): Permissions {
   return { 
     properties: { ...NONE }, 
-    projects: { ...NONE }
+    projects: { ...NONE },
+    blogs: { ...NONE }
   };
 }
 
@@ -59,7 +60,8 @@ export function sanitizePermissions(input: unknown): Permissions {
   };
   return { 
     properties: section(obj.properties), 
-    projects: section(obj.projects)
+    projects: section(obj.projects),
+    blogs: section(obj.blogs)
   };
 }
 

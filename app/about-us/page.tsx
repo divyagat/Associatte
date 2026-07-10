@@ -79,41 +79,38 @@ export default function AboutUs() {
     social: { linkedin: '#', twitter: '#', email: 'info@associatte.com' },
   };
 
-  const teams = [
-    {
-      location: 'Pune',
-      description: 'Serving Magarpatta, surrounding areas',
-      color: COLORS.green,
-      members: [
-        { name: 'Sonal Gaikwad', role: 'General Manager', img: '/Team/Pune/Sonal.webp', social: { linkedin: '#', twitter: '#' } },
-        { name: 'Neha Bhattacharya', role: 'Sales Executive', img: '/Team/Pune/Neha .webp', social: { linkedin: '#', twitter: '#' } },
-        { name: 'Rekha Rathod', role: 'Sales Executive', img: '/Team/Pune/Rekha.webp', social: { linkedin: '#', twitter: '#' } },
-        // { name: 'Pallavi Khomane', role: 'Pre-Sales', img: '/Team/Pune/Pallavi.webp', social: { linkedin: '#', twitter: '#' } },
-      ],
-    },
-    {
-      location: 'Mumbai',
-      description: 'Serving Mumbai',
-      color: COLORS.red,
-      members: [
-        { name: 'Pratiksha Pandey', role: 'Area Manager', img: '/Team/Mumbai/Pratiksha.webp', social: { linkedin: '#', twitter: '#' } },
-        { name: 'Simran Das', role: 'Sales Manager', img: '/Team/Mumbai/SImranDas.webp', social: { linkedin: '#', twitter: '#' } },
-        { name: 'Sanjay Mane', role: 'Team Leader', img: '/Team/Mumbai/Sanjay.webp', social: { linkedin: '#', twitter: '#' } },
-        { name: 'Sharvari Ambre', role: 'Sales Executive KDMC', img: '/Team/Mumbai/Sharvari.webp', social: { linkedin: '#', twitter: '#' } },
-        
-      ],
-    },
-    {
-      location: 'Digital & Tech',
-      description: 'Building the future of Associatte innovation',
-      color: COLORS.green,
-      members: [
-        // { name: 'Neha Uparkar', role: 'Digital Marketing Manager', img: '/Team/Digital/Neha Uparkar.webp', social: { linkedin: '#', twitter: '#' } },
-        { name: 'Divya Gate', role: 'Web Developer', img: '/Team/Digital/Divya Gate.webp', social: { linkedin: '#', twitter: '#' } },
-        { name: 'Krima Kothari', role: 'Social Media Manager', img: '/Team/Digital/Krima.webp', social: { linkedin: '#', twitter: '#' } },
-      ],
-    },
-  ];
+const teams = [
+  {
+    location: 'Pune',
+    description: 'Serving Magarpatta, surrounding areas',
+    color: COLORS.green,
+    members: [
+      { name: 'Sonal Gaikwad', role: 'General Manager', img: '/Team/Pune/Sonal.webp', social: { linkedin: '#', twitter: '#' } },
+      { name: 'Neha Bhattacharya', role: 'Sales Executive', img: '/Team/Pune/Neha.webp', social: { linkedin: '#', twitter: '#' } },// ← Removed space
+      { name: 'Rekha Rathod', role: 'Sales Executive', img: '/Team/Pune/Rekha.webp', social: { linkedin: '#', twitter: '#' } },
+    ],
+  },
+  {
+    location: 'Mumbai',
+    description: 'Serving Mumbai',
+    color: COLORS.red,
+    members: [
+      { name: 'Pratiksha Pandey', role: 'Area Manager', img: '/Team/Mumbai/Pratiksha.webp', social: { linkedin: '#', twitter: '#' } },
+     { name: 'Simran Das', role: 'Sales Manager', img: '/Team/Mumbai/SimranDas.webp', social: { linkedin: '#', twitter: '#' } }, // ← Fixed capitalization
+      { name: 'Sanjay Mane', role: 'Team Leader', img: '/Team/Mumbai/Sanjay.webp', social: { linkedin: '#', twitter: '#' } },
+      { name: 'Sharvari Ambre', role: 'Sales Executive KDMC', img: '/Team/Mumbai/Sharvari.webp', social: { linkedin: '#', twitter: '#' } },
+    ],
+  },
+  {
+    location: 'Digital & Tech',
+    description: 'Building the future of Associatte innovation',
+    color: COLORS.green,
+    members: [
+      { name: 'Divya Gate', role: 'Web Developer', img: '/Team/Digital/DivyaGate.webp', social: { linkedin: '#', twitter: '#' } }, // ← Removed space
+      { name: 'Krima Kothari', role: 'Social Media Manager', img: '/Team/Digital/Krima.webp', social: { linkedin: '#', twitter: '#' } },
+    ],
+  },
+];
 
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     const target = e.target as HTMLImageElement;

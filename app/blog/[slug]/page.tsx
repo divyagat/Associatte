@@ -273,11 +273,33 @@ export default function BlogDetailPage() {
     }
   };
 
-  // ✅ Safe author data extraction
-  const authorName = post?.author && typeof post.author === 'object' ? (post.author.name || 'Admin') : (post?.author || 'Admin');
-  const authorRole = post?.author && typeof post.author === 'object' ? (post.author.role || 'Real Estate Expert') : '';
-  const authorBio = post?.author && typeof post.author === 'object' ? (post.author.bio || '') : '';
-  const authorAvatar = post?.author && typeof post.author === 'object' ? post.author.avatar : null;
+  // ✅ FIXED: Safe author data extraction - ensures all values are strings
+  const getAuthorName = (): string => {
+    if (!post?.author) return 'Admin';
+    if (typeof post.author === 'string') return post.author;
+    if (typeof post.author === 'object' && post.author.name) return String(post.author.name);
+    return 'Admin';
+  };
+
+  const getAuthorRole = (): string => {
+    if (!post?.author || typeof post.author !== 'object') return 'Real Estate Expert';
+    return post.author.role || 'Real Estate Expert';
+  };
+
+  const getAuthorBio = (): string => {
+    if (!post?.author || typeof post.author !== 'object') return '';
+    return post.author.bio || '';
+  };
+
+  const getAuthorAvatar = (): string | null => {
+    if (!post?.author || typeof post.author !== 'object') return null;
+    return post.author.avatar || null;
+  };
+
+  const authorName = getAuthorName();
+  const authorRole = getAuthorRole();
+  const authorBio = getAuthorBio();
+  const authorAvatar = getAuthorAvatar();
 
   if (!post) {
     return (

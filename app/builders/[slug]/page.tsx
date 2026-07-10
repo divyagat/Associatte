@@ -1,20 +1,19 @@
-// app/builders/[slug]/page.tsx
+import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import BuilderHeader from '@/components/builder-page/BuilderHeader';
 import BuilderProjectsList from '@/components/builder-page/BuilderProjectsList';
 import properties from '../../../data/properties.json';
 import { BUILDER_SLUG_MAP, getBuilderYears, getBuilderLogo, getBuilderBanner } from '@/lib/builder-slugs';
 
+// ✅ ADD THIS: Forces dynamic rendering to bypass useSearchParams() prerender errors
+export const dynamic = 'force-dynamic';
+
 const LOCATION_SLUGS = ['pune', 'mumbai', 'kdmc'];
 
 const normalize = (str: string) => 
   str.toLowerCase().replace(/[^a-z0-9]/g, '').replace(/\s+/g, '');
 
-export function generateStaticParams() {
-  const builderSlugs = Object.keys(BUILDER_SLUG_MAP);
-  const allSlugs = Array.from(new Set([...builderSlugs, ...LOCATION_SLUGS]));
-  return allSlugs.map((slug) => ({ slug }));
-}
+// ❌ REMOVED generateStaticParams() - conflicts with force-dynamic
 
 export default async function BuilderPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -52,15 +51,20 @@ export default async function BuilderPage({ params }: { params: Promise<{ slug: 
 
   return (
     <main className="min-h-screen bg-gray-50">
-      <BuilderHeader 
-        slug={decodedSlug}
-        projects={initialProjects}
-        builderName={builderName}
-        logo={logo}
-        banner={banner}
-        years={years}
-      />
-      <BuilderProjectsList initialSlug={decodedSlug} initialProjects={initialProjects} />
+      <Suspense fallback={<div className="h-64 flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#005E60]"></div></div>}>
+        <BuilderHeader 
+          slug={decodedSlug}
+          projects={initialProjects}
+          builderName={builderName}
+          logo={logo}
+          banner={banner}
+          years={years}
+        />
+      </Suspense>
+      
+      <Suspense fallback={<div className="h-96 flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#005E60]"></div></div>}>
+        <BuilderProjectsList initialSlug={decodedSlug} initialProjects={initialProjects} />
+      </Suspense>
     </main>
   );
 }

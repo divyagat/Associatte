@@ -1,7 +1,7 @@
 // components/Layout/Header.tsx
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useSearchParams } from 'next/navigation';
@@ -18,7 +18,8 @@ const COLORS = {
   yellow: '#F8C21C',
 };
 
-export default function Header() {
+// ✅ STEP 1: Renamed from Header to HeaderContent (removed 'export default')
+function HeaderContent() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openMobileDropdown, setOpenMobileDropdown] = useState<string | null>(null);
   const [desktopDropdown, setDesktopDropdown] = useState<string | null>(null);
@@ -61,7 +62,6 @@ export default function Header() {
       name: 'Properties', 
       href: '/properties',
       dropdown: [
-        // ✅ Updated to use query params matching the Properties page tabs exactly
         { label: 'Residential', href: '/properties?type=residential', icon: Home, color: COLORS.green },
         { label: 'Commercial', href: '/properties?type=commercial', icon: Building, color: COLORS.red },
         { label: 'Pre-Launch', href: '/properties?type=pre-launch', icon: Construction, color: COLORS.yellow },
@@ -201,13 +201,11 @@ export default function Header() {
                           onMouseLeave={handleDesktopDropdownLeave}
                         >
                           {link.dropdown.map((item: any) => {
-                            // ✅ Smart Active State Logic using useSearchParams
                             const isSubActive = (() => {
                               if (item.href.includes('?')) {
                                 const [path, query] = item.href.split('?');
                                 const [key, val] = query.split('=');
                                 const currentVal = searchParams.get(key);
-                                // If on Properties page with no type specified, default highlight to Residential
                                 if (path === '/properties' && key === 'type' && !currentVal) {
                                   return pathname === path && val === 'residential';
                                 }
@@ -335,7 +333,6 @@ export default function Header() {
                         {isMobileDropdownOpen && (
                           <div className="ml-4 mb-2 pl-4 border-l-2 border-[#F8C21C]/30 space-y-1 animate-in slide-in-from-left-2 duration-200">
                             {link.dropdown.map((item: any) => {
-                              // ✅ Smart Active State Logic using useSearchParams
                               const isSubActive = (() => {
                                 if (item.href.includes('?')) {
                                   const [path, query] = item.href.split('?');
@@ -415,5 +412,14 @@ export default function Header() {
         </div>
       )}
     </>
+  );
+}
+
+// ✅ STEP 2: New default export wraps HeaderContent in Suspense
+export default function Header() {
+  return (
+    <Suspense fallback={null}>
+      <HeaderContent />
+    </Suspense>
   );
 }

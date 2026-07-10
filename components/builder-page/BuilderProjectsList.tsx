@@ -1,6 +1,7 @@
 // client/components/builder-page/BuilderProjectsList.tsx
 'use client';
 
+import { Suspense } from 'react';
 import BuilderProjects from './BuilderProjects';
 
 interface BuilderProjectsListProps {
@@ -8,7 +9,8 @@ interface BuilderProjectsListProps {
   initialProjects?: any[];
 }
 
-export default function BuilderProjectsList({ 
+// ✅ Renamed to Content component
+function BuilderProjectsListContent({ 
   initialSlug, 
   initialProjects = [] 
 }: BuilderProjectsListProps) {
@@ -26,4 +28,20 @@ export default function BuilderProjectsList({
   
   // ✅ Just show the projects - BuilderHeader already handles the hero section
   return <BuilderProjects slug={initialSlug} projects={projects} />;
+}
+
+// ✅ Default export wraps in Suspense to handle useSearchParams()
+export default function BuilderProjectsList(props: BuilderProjectsListProps) {
+  return (
+    <Suspense 
+      fallback={
+        <div className="max-w-7xl mx-auto px-4 py-16 text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#005E60]"></div>
+          <p className="text-gray-500 text-lg mt-4">Loading projects...</p>
+        </div>
+      }
+    >
+      <BuilderProjectsListContent {...props} />
+    </Suspense>
+  );
 }

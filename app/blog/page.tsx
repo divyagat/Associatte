@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { 
   Building2, MapPin, Award, Users, 
@@ -60,7 +60,8 @@ const AuthorAvatar = ({ author }: { author: any }) => {
   );
 };
 
-export default function BlogListingPage() {
+// ✅ MAIN CONTENT - All your existing code
+function BlogListingContent() {
   const [allBlogs, setAllBlogs] = useState<BlogPost[]>([]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
@@ -293,5 +294,14 @@ export default function BlogListingPage() {
         formName="Blog Listing Enquiry"
       />
     </div>
+  );
+}
+
+// ✅ DEFAULT EXPORT - Wraps everything in Suspense
+export default function BlogListingClient() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#005E60]"></div></div>}>
+      <BlogListingContent />
+    </Suspense>
   );
 }
