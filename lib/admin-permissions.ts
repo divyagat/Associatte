@@ -38,7 +38,7 @@ export const ADMIN_PERMISSIONS: Permissions = {
 
 /** Default pre-checked state for a brand new employee */
 export const DEFAULT_EMPLOYEE_PERMISSIONS: Permissions = {
-  properties: { add: true, edit: true, delete: false },
+  properties: { add: true, edit: true, delete: true },
   projects: { ...NONE },
   blogs: { ...NONE },
 };
