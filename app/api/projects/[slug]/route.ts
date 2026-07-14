@@ -1,7 +1,9 @@
 // app/api/projects/[slug]/route.ts
 
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getProjectBySlug, updateProject, deleteProject } from '@/lib/data-store';
+import { getPermissionsFromRequest } from '@/lib/admin-auth';
+import { can } from '@/lib/admin-permissions';
 
 // ✅ GET - Fixed for Next.js 15/16
 export async function GET(
@@ -35,9 +37,12 @@ export async function GET(
 
 // ✅ PUT - Fixed for Next.js 15/16
 export async function PUT(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ slug: string }> } // ← Changed to Promise
 ) {
+  if (!can(getPermissionsFromRequest(request), 'projects', 'edit')) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
   const { slug } = await params; // ← Await the params
   console.log('📥 PUT /api/projects/[slug] - Slug:', slug);
   
@@ -73,9 +78,12 @@ export async function PUT(
 
 // ✅ DELETE - Fixed for Next.js 15/16
 export async function DELETE(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ slug: string }> } // ← Changed to Promise
 ) {
+  if (!can(getPermissionsFromRequest(request), 'projects', 'delete')) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
   const { slug } = await params; // ← Await the params
   console.log('📥 DELETE /api/projects/[slug] - Slug:', slug);
   

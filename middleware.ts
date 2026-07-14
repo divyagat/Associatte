@@ -34,6 +34,7 @@ function requirementFor(
 ): { section: AdminSection; action: AdminAction | null } | null {
   const map: { prefix: string; section: AdminSection }[] = [
     { prefix: '/admin/properties', section: 'properties' },
+    { prefix: '/admin/projects', section: 'projects' },
     { prefix: '/admin/blogs', section: 'blogs' },
   ];
   for (const { prefix, section } of map) {

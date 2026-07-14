@@ -14,6 +14,7 @@ type Role = 'admin' | 'employee';
 
 export interface NavAccess {
   properties: boolean;
+  projects: boolean;
   blogs: boolean;
 }
 
@@ -27,7 +28,7 @@ interface NavItem {
 const NAV: NavItem[] = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, show: () => true },
   { href: '/admin/properties', label: 'Properties', icon: Building2, show: (_r, a) => a.properties },
-  { href: '/admin/projects', label: 'Projects', icon: Building2, show: (_r, a) => a.properties },
+  { href: '/admin/projects', label: 'Projects', icon: Building2, show: (_r, a) => a.projects },
   { href: '/admin/employees', label: 'Employees', icon: Users, show: (role) => role === 'admin' },
 ];
 

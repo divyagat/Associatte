@@ -1,7 +1,9 @@
 // app/api/projects/route.ts
 
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getAllProjects } from '@/lib/data-store';
+import { getPermissionsFromRequest } from '@/lib/admin-auth';
+import { can } from '@/lib/admin-permissions';
 
 export async function GET() {
   try {
@@ -20,7 +22,10 @@ export async function GET() {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  if (!can(getPermissionsFromRequest(request), 'projects', 'add')) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
   try {
     const data = await request.json();
     console.log('📦 POST /api/projects - Creating project:', data);

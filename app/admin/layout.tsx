@@ -14,6 +14,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
 
   const access = {
     properties: hasSectionAccess(permissions, 'properties'),
+    projects: hasSectionAccess(permissions, 'projects'),
     blogs: hasSectionAccess(permissions, 'blogs'),
   };
 
