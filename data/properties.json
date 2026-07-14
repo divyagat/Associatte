@@ -1,5 +1,63 @@
 [
   {
+    "slug": "asdadad",
+    "name": "Villa / Bungalow",
+    "category": "residential",
+    "project": "",
+    "projectSlug": "",
+    "location": "mumbai",
+    "price": "",
+    "image": "/uploads/1784012806615-Screenshot-2026-05-20-165600.png",
+    "masterPlan": "",
+    "locationMap": "",
+    "fullLocation": {
+      "area": "Magarpatta",
+      "city": "Pune (CB)",
+      "state": "Maharashtra",
+      "pincode": "",
+      "landmark": ""
+    },
+    "priceDetails": {
+      "range": "₹ 2.4 Cr* Onwards",
+      "perSqft": "",
+      "configurations": [
+        {
+          "type": "asdadad",
+          "area": "Magarpatta",
+          "price": "",
+          "description": ""
+        }
+      ]
+    },
+    "developer": {
+      "name": "Mantra Developers",
+      "established": "",
+      "projectsCount": 0,
+      "description": ""
+    },
+    "about": "ashjkj",
+    "amenities": [],
+    "floorPlans": [],
+    "possessionDate": "Dec 2029",
+    "reraNumber": "P52100066482",
+    "gallery": [],
+    "mapCoords": {
+      "lat": 0,
+      "lng": 0
+    },
+    "nearbyPlaces": [],
+    "emi": {
+      "startingFrom": "",
+      "downPayment": "",
+      "interestRate": "",
+      "tenure": ""
+    },
+    "soldOut": false,
+    "createdAt": "2026-07-14T07:06:54.439Z",
+    "updatedAt": "2026-07-14T07:06:54.439Z",
+    "_id": "asdadad"
+  },
+  {
     "slug": "mantra-one-residency",
     "name": "Mantra One Residency",
     "location": "pune",
