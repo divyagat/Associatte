@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getBlogBySlug, updateBlog, deleteBlog, getAllBlogs } from '@/lib/data-store';
+import { getPermissionsFromRequest } from '@/lib/admin-auth';
+import { can } from '@/lib/admin-permissions';
 
 export async function GET(
   request: NextRequest,
@@ -56,6 +58,9 @@ export async function PUT(
   request: NextRequest,
   context: { params: Promise<{ slug: string }> }
 ) {
+  if (!can(getPermissionsFromRequest(request), 'blogs', 'edit')) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
   try {
     const { slug } = await context.params;
     const body = await request.json();
@@ -97,9 +102,12 @@ export async function DELETE(
   request: NextRequest,
   context: { params: Promise<{ slug: string }> }
 ) {
+  if (!can(getPermissionsFromRequest(request), 'blogs', 'delete')) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
   try {
     const { slug } = await context.params;
-    
+
     console.log(`\n🗑️ ========== DELETE /api/blogs/${slug} ==========`);
     console.log(`🗑️ Deleting blog: "${slug}"`);
     

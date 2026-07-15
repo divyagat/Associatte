@@ -47,8 +47,10 @@ export const StickySearchBar = memo(({
 
   return (
     <div
-      // ✅ Sticky positioning to sit exactly below the Header — hidden on mobile
-      className="hidden md:block sticky top-[80px] lg:top-[96px] left-0 right-0 z-40 bg-white shadow-lg border-b"
+      // ✅ Fixed positioning so it stays pinned below the Header across the whole
+      // page (position:sticky only worked within the bounded hero section, which is
+      // why it appeared to "not stick"). Hidden on mobile.
+      className="hidden md:block fixed top-[80px] lg:top-[96px] left-0 right-0 z-40 bg-white shadow-lg border-b animate-in fade-in slide-in-from-top-2 duration-300"
       style={{ borderColor: `${BRAND_GREEN}20` }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5">

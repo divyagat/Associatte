@@ -39,6 +39,8 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
     amenities: [] as string[],
     floorPlans: [] as any[],
     possessionDate: '',
+    isNewLaunch: false,
+    launchDate: '',
     reraNumber: '',
     gallery: [] as string[],
     mapCoords: { lat: 0, lng: 0 },
@@ -355,6 +357,39 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
               <p className="text-xs text-gray-500 mt-1">No projects available. Create a project first.</p>
             )}
             <p className="text-xs text-gray-500 mt-1">Link this property to an existing project.</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Launch Date</label>
+            <input
+              type="text"
+              name="launchDate"
+              value={formData.launchDate || ''}
+              onChange={handleChange}
+              placeholder="e.g., Jun 2026 or 2026-06-15"
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]"
+            />
+            <p className="text-xs text-gray-500 mt-1">Used to order &amp; auto-expire the &quot;Newly Launched&quot; home section.</p>
+          </div>
+          <div className="md:col-span-2">
+            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Feature in &quot;Newly Launched&quot;</label>
+                <p className="text-xs text-gray-500">Show this property in the Newly Launched Projects section on the home page.</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setFormData((prev: any) => ({ ...prev, isNewLaunch: !prev.isNewLaunch }))}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#005E60] focus:ring-offset-2 ${
+                  formData.isNewLaunch ? 'bg-[#005E60]' : 'bg-gray-300'
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    formData.isNewLaunch ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+            </div>
           </div>
           <div className="md:col-span-2">
             <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">

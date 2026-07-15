@@ -12,6 +12,8 @@ export const metadata: Metadata = {
   title: 'Properties | Residential, Commercial, Plots & More | Associatte PropTech',
   description: 'Explore Residential, Commercial, Pre-Launch, Ready-to-Move, Rent, Plot & Resale properties in Pune, Mumbai & KDMC. Filter by type, location, budget & more.',
   keywords: ['properties', 'residential', 'commercial', 'plots', 'rent', 'resale', 'Pune', 'Mumbai', 'KDMC', 'real estate'],
+  // Consolidate all ?type=/?location= filter permutations onto one canonical URL.
+  alternates: { canonical: '/properties' },
 };
 
 // ✅ Property Type Configuration (matches your Hero tabs)
@@ -27,30 +29,47 @@ const PROPERTY_TYPES = [
 
 export type PropertyType = typeof PROPERTY_TYPES[number]['id'];
 
-// ✅ Helper: Determine property type from project data
+const VALID_PROPERTY_TYPES = PROPERTY_TYPES.map((t) => t.id) as readonly PropertyType[];
+
+// ✅ Helper: Determine property type from project data.
+// The admin form saves an explicit `category` (residential/commercial/pre-launch/
+// ready/rent/plots/resale) — that is authoritative. Only when it's missing (e.g.
+// older seed records) do we fall back to deriving a sensible bucket, so every nav
+// option lands on the properties that actually belong to it.
 const getPropertyType = (project: any): PropertyType => {
-  if (project.propertyType) return project.propertyType;
-  
-  // ✅ Fallback check for Resale properties
+  // 1️⃣ Explicit category set in the admin panel wins.
+  const explicit = String(project.category || project.propertyType || '').toLowerCase().trim();
+  if ((VALID_PROPERTY_TYPES as readonly string[]).includes(explicit)) {
+    return explicit as PropertyType;
+  }
+
+  // 2️⃣ Resale hints.
   if (
-    project.category?.toLowerCase() === 'resale' || 
-    project.isResale === true || 
+    project.isResale === true ||
     project.tags?.some((t: string) => t.toLowerCase() === 'resale')
   ) {
     return 'resale';
   }
 
+  // 3️⃣ Derive from configurations + possession date.
   const configs = project.priceDetails?.configurations || [];
   const hasPlot = configs.some((c: any) => c.type?.toLowerCase().includes('plot'));
-  const hasCommercial = configs.some((c: any) =>
-    c.type?.toLowerCase().includes('office') || c.type?.toLowerCase().includes('shop')
-  );
-  const isReady = project.possessionDate?.toLowerCase().includes('ready');
-  const isPreLaunch = project.possessionDate && new Date(project.possessionDate) > new Date('2027-12-31');
+  const hasCommercial = configs.some((c: any) => {
+    const t = c.type?.toLowerCase() || '';
+    return t.includes('office') || t.includes('shop') || t.includes('commercial');
+  });
+  const possession = String(project.possessionDate || '').toLowerCase();
+  const isReady = possession.includes('ready') || possession.includes('register');
+
   if (hasPlot) return 'plots';
   if (hasCommercial) return 'commercial';
   if (isReady) return 'ready';
-  if (isPreLaunch) return 'pre-launch';
+
+  // Robustly pull a 4-digit year (handles messy values like "Dec 2029-30").
+  const yearMatch = possession.match(/20\d{2}/);
+  const year = yearMatch ? parseInt(yearMatch[0], 10) : null;
+  if (year && year >= 2029) return 'pre-launch';
+
   return 'residential';
 };
 

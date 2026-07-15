@@ -123,7 +123,9 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
   const dropdownCloseTimer = useRef<NodeJS.Timeout | null>(null);
   const debouncedSearchQuery = useDebounce(searchQuery, 250);
 
-  useScrollPosition((scrollY) => setShowStickySearch(scrollY > 120), 120);
+  // Reveal the fixed sticky search only after the hero (and its own search bar)
+  // has scrolled out of view, so the two search bars don't overlap.
+  useScrollPosition((scrollY) => setShowStickySearch(scrollY > 420), 420);
   useEffect(() => { return () => { if (dropdownCloseTimer.current) clearTimeout(dropdownCloseTimer.current); }; }, []);
   useEffect(() => { onFilterChange?.({ city: selectedCity.toLowerCase(), filters }); }, [selectedCity, filters, onFilterChange]);
 

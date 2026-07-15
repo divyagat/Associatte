@@ -3,11 +3,9 @@
 
 import { useState, useCallback, useMemo, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Home, KeyRound, Building } from 'lucide-react';
 
 // 🧩 Component Imports
 import Hero, { SearchFilters } from '@/components/Home/Hero';
-import { StickySearchBar } from '@/components/Home/Hero/StickySearchBar';
 import NewlyLaunchedProjects from '@/components/sections/NewlyLaunchedProjects';
 import TopSellingProjects from '@/components/sections/TopSellingProjects';
 import TrustFeaturesSection from '@/components/sections/TrustFeaturesSection';
@@ -111,36 +109,6 @@ function HomePageContent() {
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
-  // ✅ Scroll visibility state for SearchBar
-  const [isSearchVisible, setIsSearchVisible] = useState(false);
-
-  // ✅ State required for StickySearchBar
-  const [activeTab, setActiveTab] = useState('residential');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isSearching, setIsSearching] = useState(false);
-
-  const categories = [
-    { id: 'residential', label: 'Buy', icon: Home, gradient: '' },
-    { id: 'rent', label: 'Rent', icon: KeyRound, gradient: '' },
-    { id: 'commercial', label: 'Commercial', icon: Building, gradient: '' },
-  ];
-
-  // ✅ Scroll detection logic
-  useEffect(() => {
-    const handleScroll = () => {
-      // 🔑 INCREASED THRESHOLD: Set to 800px to prevent showing on a slight scroll after the hero banner.
-      // If your hero section is taller, increase this number (e.g., 900 or 1000).
-      // If it's shorter, decrease it (e.g., 600).
-      setIsSearchVisible(window.scrollY > 800);
-    };
-    
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    // Run once on mount to set initial state
-    handleScroll();
-    
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   const handleFilterChange = useCallback((data: { city: string; filters: SearchFilters }) => {
     setHeroFilters(data);
   }, []);
@@ -208,22 +176,6 @@ function HomePageContent() {
           onFilterChange={handleFilterChange}
           onSearch={handleSearch}
         />
-
-        {/* ✅ Scroll-Triggered Sticky Search Bar */}
-        {isSearchVisible && (
-          <div className="fixed top-[80px] lg:top-[96px] left-0 right-0 z-40 animate-in fade-in slide-in-from-top-2 duration-300">
-            <StickySearchBar
-              activeTab={activeTab}
-              selectedCity={config.name}
-              searchQuery={searchQuery}
-              categories={categories}
-              isSearching={isSearching}
-              onTabChange={setActiveTab}
-              onSearchQueryChange={setSearchQuery}
-              onSearch={() => handleSearch({ city: config.slug, query: searchQuery })}
-            />
-          </div>
-        )}
 
         <section aria-labelledby="newly-launched-heading">
           <NewlyLaunchedProjects

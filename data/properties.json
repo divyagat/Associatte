@@ -113,7 +113,10 @@
       "downPayment": "30%",
       "interestRate": "8.35%",
       "tenure": "25 Years"
-    }
+    },
+    "category": "pre-launch",
+    "isNewLaunch": true,
+    "launchDate": "2026-06-15"
   },
   {
     "slug": "mantra-mayfair",
@@ -205,7 +208,10 @@
       "downPayment": "30%",
       "interestRate": "8.35%",
       "tenure": "25 Years"
-    }
+    },
+    "category": "pre-launch",
+    "isNewLaunch": true,
+    "launchDate": "2026-05-10"
   },
   {
     "slug": "mantra-meridian",
@@ -305,7 +311,10 @@
       "downPayment": "30%",
       "interestRate": "8.35%",
       "tenure": "25 Years"
-    }
+    },
+    "category": "pre-launch",
+    "isNewLaunch": false,
+    "launchDate": ""
   },
   {
     "slug": "mantra-magnus",
@@ -397,7 +406,10 @@
       "downPayment": "30%",
       "interestRate": "8.35%",
       "tenure": "25 Years"
-    }
+    },
+    "category": "pre-launch",
+    "isNewLaunch": false,
+    "launchDate": ""
   },
   {
     "slug": "mantra-milange",
@@ -490,7 +502,10 @@
       "downPayment": "30%",
       "interestRate": "8.35%",
       "tenure": "25 Years"
-    }
+    },
+    "category": "pre-launch",
+    "isNewLaunch": false,
+    "launchDate": ""
   },
   {
     "slug": "mantra-codename-paradise",
@@ -594,7 +609,10 @@
       "downPayment": "30%",
       "interestRate": "8.35%",
       "tenure": "25 Years"
-    }
+    },
+    "category": "pre-launch",
+    "isNewLaunch": false,
+    "launchDate": ""
   },
   {
     "slug": "lodha-mundhwa",
@@ -696,7 +714,10 @@
       "downPayment": "25%",
       "interestRate": "8.25%",
       "tenure": "30 Years"
-    }
+    },
+    "category": "residential",
+    "isNewLaunch": false,
+    "launchDate": ""
   },
   {
     "slug": "birla-punya",
@@ -796,7 +817,10 @@
       "downPayment": "30%",
       "interestRate": "8.35%",
       "tenure": "25 Years"
-    }
+    },
+    "category": "pre-launch",
+    "isNewLaunch": true,
+    "launchDate": "2026-04-20"
   },
   {
     "slug": "birla-evem",
@@ -889,7 +913,10 @@
       "downPayment": "30%",
       "interestRate": "8.35%",
       "tenure": "25 Years"
-    }
+    },
+    "category": "pre-launch",
+    "isNewLaunch": false,
+    "launchDate": ""
   },
   {
     "slug": "shapoorji-tree-cloud",
@@ -985,7 +1012,10 @@
       "downPayment": "25%",
       "interestRate": "8.25%",
       "tenure": "30 Years"
-    }
+    },
+    "category": "pre-launch",
+    "isNewLaunch": false,
+    "launchDate": ""
   },
   {
     "slug": "shapoorji-celestia",
@@ -1078,7 +1108,10 @@
       "downPayment": "25%",
       "interestRate": "8.25%",
       "tenure": "30 Years"
-    }
+    },
+    "category": "pre-launch",
+    "isNewLaunch": true,
+    "launchDate": "2026-03-12"
   },
   {
     "slug": "shapoorji-wildernest",
@@ -1185,7 +1218,10 @@
       "downPayment": "30%",
       "interestRate": "8.35%",
       "tenure": "25 Years"
-    }
+    },
+    "category": "residential",
+    "isNewLaunch": false,
+    "launchDate": ""
   },
   {
     "slug": "shapoorji-tree-topia",
@@ -1284,7 +1320,10 @@
       "downPayment": "30%",
       "interestRate": "8.35%",
       "tenure": "25 Years"
-    }
+    },
+    "category": "plots",
+    "isNewLaunch": false,
+    "launchDate": ""
   },
   {
     "slug": "shapoorji-villa",
@@ -1376,7 +1415,10 @@
       "downPayment": "25%",
       "interestRate": "8.25%",
       "tenure": "30 Years"
-    }
+    },
+    "category": "residential",
+    "isNewLaunch": false,
+    "launchDate": ""
   },
   {
     "slug": "jhamtani-ace-abundance",
@@ -1474,7 +1516,10 @@
       "downPayment": "30%",
       "interestRate": "8.35%",
       "tenure": "25 Years"
-    }
+    },
+    "category": "residential",
+    "isNewLaunch": false,
+    "launchDate": ""
   },
   {
     "slug": "kumar-prism",
@@ -1568,7 +1613,10 @@
       "downPayment": "30%",
       "interestRate": "8.35%",
       "tenure": "25 Years"
-    }
+    },
+    "category": "residential",
+    "isNewLaunch": false,
+    "launchDate": ""
   },
   {
     "slug": "panchshil-57avenue",
@@ -1667,7 +1715,10 @@
       "downPayment": "25%",
       "interestRate": "8.25%",
       "tenure": "30 Years"
-    }
+    },
+    "category": "pre-launch",
+    "isNewLaunch": true,
+    "launchDate": "2026-06-01"
   },
   {
     "slug": "panchshil-lohegaon-plotting",
@@ -1760,7 +1811,10 @@
       "downPayment": "30%",
       "interestRate": "8.35%",
       "tenure": "25 Years"
-    }
+    },
+    "category": "plots",
+    "isNewLaunch": false,
+    "launchDate": ""
   },
   {
     "slug": "tribeca-lulla-nagar",
@@ -1865,7 +1919,10 @@
       "downPayment": "25%",
       "interestRate": "8.25%",
       "tenure": "30 Years"
-    }
+    },
+    "category": "residential",
+    "isNewLaunch": false,
+    "launchDate": ""
   },
   {
     "slug": "tribeca-trump-tower",
@@ -1955,7 +2012,10 @@
       "downPayment": "25%",
       "interestRate": "8.25%",
       "tenure": "30 Years"
-    }
+    },
+    "category": "commercial",
+    "isNewLaunch": false,
+    "launchDate": ""
   },
   {
     "slug": "magarpatta-city-nova-residency",
@@ -2053,7 +2113,10 @@
       "downPayment": "30%",
       "interestRate": "8.35%",
       "tenure": "25 Years"
-    }
+    },
+    "category": "ready",
+    "isNewLaunch": false,
+    "launchDate": ""
   },
   {
     "slug": "magarpatta-city-nova-elegance",
@@ -2135,7 +2198,10 @@
       "downPayment": "30%",
       "interestRate": "8.35%",
       "tenure": "25 Years"
-    }
+    },
+    "category": "ready",
+    "isNewLaunch": false,
+    "launchDate": ""
   },
   {
     "slug": "magarpatta-city-rvc-hornbill",
@@ -2218,7 +2284,10 @@
       "downPayment": "30%",
       "interestRate": "8.35%",
       "tenure": "25 Years"
-    }
+    },
+    "category": "ready",
+    "isNewLaunch": false,
+    "launchDate": ""
   },
   {
     "slug": "magarpatta-city-rvc-flamingo",
@@ -2313,7 +2382,10 @@
       "downPayment": "30%",
       "interestRate": "8.35%",
       "tenure": "25 Years"
-    }
+    },
+    "category": "ready",
+    "isNewLaunch": false,
+    "launchDate": ""
   },
   {
     "slug": "sai-world-one",
@@ -2408,7 +2480,10 @@
       "downPayment": "25%",
       "interestRate": "8.50%",
       "tenure": "30 Years"
-    }
+    },
+    "category": "residential",
+    "isNewLaunch": true,
+    "launchDate": "2026-05-25"
   },
   {
     "slug": "sai-world-empire",
@@ -2527,7 +2602,10 @@
       "downPayment": "25%",
       "interestRate": "8.50%",
       "tenure": "30 Years"
-    }
+    },
+    "category": "residential",
+    "isNewLaunch": false,
+    "launchDate": ""
   },
   {
     "slug": "sai-world-dreams",
@@ -2624,7 +2702,10 @@
       "downPayment": "25%",
       "interestRate": "8.50%",
       "tenure": "30 Years"
-    }
+    },
+    "category": "residential",
+    "isNewLaunch": false,
+    "launchDate": ""
   },
   {
     "slug": "today-nova-vista-nerul",
@@ -2719,7 +2800,10 @@
       "downPayment": "25%",
       "interestRate": "8.50%",
       "tenure": "30 Years"
-    }
+    },
+    "category": "pre-launch",
+    "isNewLaunch": true,
+    "launchDate": "2026-04-05"
   },
   {
     "slug": "today-airoli",
@@ -2820,7 +2904,10 @@
       "downPayment": "25%",
       "interestRate": "8.50%",
       "tenure": "30 Years"
-    }
+    },
+    "category": "pre-launch",
+    "isNewLaunch": true,
+    "launchDate": "2026-06-08"
   },
   {
     "slug": "today-kharghar",
@@ -2914,7 +3001,10 @@
       "downPayment": "25%",
       "interestRate": "8.50%",
       "tenure": "30 Years"
-    }
+    },
+    "category": "residential",
+    "isNewLaunch": false,
+    "launchDate": ""
   },
   {
     "slug": "runwal-gardens",
@@ -3019,7 +3109,10 @@
       "downPayment": "30%",
       "interestRate": "8.35%",
       "tenure": "25 Years"
-    }
+    },
+    "category": "ready",
+    "isNewLaunch": true,
+    "launchDate": "2026-04-15"
   },
   {
     "slug": "lodha-premier",
@@ -3124,7 +3217,10 @@
       "downPayment": "25%",
       "interestRate": "8.25%",
       "tenure": "30 Years"
-    }
+    },
+    "category": "residential",
+    "isNewLaunch": false,
+    "launchDate": ""
   },
   {
     "slug": "lodha-opulis",
@@ -3217,6 +3313,9 @@
       "downPayment": "30%",
       "interestRate": "8.35%",
       "tenure": "25 Years"
-    }
+    },
+    "category": "pre-launch",
+    "isNewLaunch": true,
+    "launchDate": "2026-05-30"
   }
 ]

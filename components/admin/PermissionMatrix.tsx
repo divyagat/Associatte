@@ -11,7 +11,7 @@ import {
 const SECTION_LABELS: Record<string, string> = {
   properties: 'Properties',
   projects: 'Projects',
-  // blogs: 'Blogs',
+  blogs: 'Blogs',
 };
 
 // Maps string actions to objects to match your original code structure (action.key)

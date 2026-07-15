@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { MapPin, Heart, ChevronRight, ChevronLeft, Star, Phone, Filter, X, TrendingUp, Award } from 'lucide-react';
+import { MapPin, ChevronRight, ChevronLeft, Phone, Filter, X, TrendingUp, Award } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import type { SearchFilters } from '../Home/Hero';
@@ -123,7 +123,6 @@ export default function TopSellingProjects({
   limit = DEFAULT_PROJECT_LIMIT,
   className = ''
 }: TopSellingProjectsProps) {
-  const [favorites, setFavorites] = useState<string[]>([]);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [viewportWidth, setViewportWidth] = useState(1280);
   const carouselRef = useRef<HTMLDivElement>(null);
@@ -246,31 +245,6 @@ export default function TopSellingProjects({
     if (orderedProjects.length <= itemsPerView) return 0;
     return Math.max(0, Math.ceil(orderedProjects.length / itemsPerView) - 1);
   }, [orderedProjects.length, itemsPerView]);
-
-  const toggleFavorite = useCallback((slug: string) => {
-    setFavorites(prev => {
-      const newFavorites = prev.includes(slug)
-        ? prev.filter(f => f !== slug)
-        : [...prev, slug];
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('propfinder_favorites', JSON.stringify(newFavorites));
-      }
-      return newFavorites;
-    });
-  }, []);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('propfinder_favorites');
-      if (saved) {
-        try {
-          setFavorites(JSON.parse(saved));
-        } catch (e) {
-          console.warn('Failed to parse favorites');
-        }
-      }
-    }
-  }, []);
 
   const goToSlide = useCallback((index: number) => {
     setCurrentSlide(Math.max(0, Math.min(index, maxSlide)));
@@ -444,26 +418,6 @@ export default function TopSellingProjects({
                             sizes="(max-width: 768px) 100vw, 360px"
                             className="object-cover"
                           />
-
-                          {/* Rating */}
-                          <div className="absolute top-3 left-3 flex items-center gap-1 px-2 py-1 bg-white/90 rounded-full text-xs">
-                            <Star size={10} className="fill-yellow-400 text-yellow-400" />
-                            <span className="font-medium">{project.rating.toFixed(1)}</span>
-                          </div>
-
-                          {/* Favorite */}
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              toggleFavorite(project.slug);
-                            }}
-                            className="absolute top-3 right-3 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center"
-                          >
-                            <Heart
-                              size={14}
-                              className={favorites.includes(project.slug) ? 'fill-red-500 text-red-500' : 'text-gray-600'}
-                            />
-                          </button>
 
                           {/* Top Seller Badge */}
                           {project.isTopSelling && (

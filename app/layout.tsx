@@ -81,12 +81,21 @@ export const metadata: Metadata = {
       "Find verified RERA-registered homes across Pune, Mumbai and KDMC with expert guidance and free consultation.",
     locale: "en_IN",
     url: SITE_URL,
+    images: [
+      {
+        url: "/Home/b4.webp",
+        width: 1200,
+        height: 630,
+        alt: "Associatte PropTech — verified properties in Pune, Mumbai & KDMC",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Associatte PropTech | Verified Properties in Pune, Mumbai & KDMC",
     description:
       "Find verified RERA-registered homes across Pune, Mumbai and KDMC with expert guidance and free consultation.",
+    images: ["/Home/b4.webp"],
   },
 };
 

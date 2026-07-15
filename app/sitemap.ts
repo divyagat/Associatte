@@ -1,94 +1,85 @@
 import { MetadataRoute } from 'next'
+import { getAllProperties, getAllProjects, getAllBlogs } from '@/lib/data-store'
+
+// Regenerate the sitemap periodically so newly added properties/blogs get indexed.
+export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.associatte.com';
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
-  // Fetch dynamic content (with fallbacks).
-  // Coerce to an array: the API may be down (rejects), or may return an
-  // object/error payload instead of an array — either way we must not .map() it.
-  const toArray = (value: unknown): any[] => {
-    if (Array.isArray(value)) return value;
-    if (value && typeof value === 'object') {
-      const obj = value as Record<string, unknown>;
-      if (Array.isArray(obj.data)) return obj.data;
-      if (Array.isArray(obj.properties)) return obj.properties;
-      if (Array.isArray(obj.projects)) return obj.projects;
-    }
-    return [];
-  };
-
-  const [propertiesRaw, projectsRaw] = await Promise.all([
-    fetch(`${apiUrl}/properties`).then(res => res.json()).catch(() => []),
-    fetch(`${apiUrl}/projects`).then(res => res.json()).catch(() => [])
+  // Read straight from the local JSON data store (the real source of truth) rather
+  // than an external API. The previous version fetched http://localhost:4000, which
+  // never resolves in production — so every property/project/blog page was silently
+  // dropped from the sitemap.
+  const [properties, projects, blogs] = await Promise.all([
+    getAllProperties().catch(() => []),
+    getAllProjects().catch(() => []),
+    getAllBlogs().catch(() => []),
   ]);
 
-  const properties = toArray(propertiesRaw);
-  const projects = toArray(projectsRaw);
+  const lastModified = (value: unknown): Date => {
+    if (typeof value === 'string' || typeof value === 'number') {
+      const d = new Date(value);
+      if (!isNaN(d.getTime())) return d;
+    }
+    return new Date();
+  };
 
-  const locations = ['mumbai', 'pune', 'kharghar', 'navi-mumbai', 'sus-pune'];
+  // Only the cities the /locations/[city] route actually supports.
+  const locations = ['pune', 'mumbai', 'kdmc'];
+
+  const staticPages: MetadataRoute.Sitemap = [
+    { url: `${baseUrl}`, lastModified: new Date(), changeFrequency: 'daily', priority: 1 },
+    { url: `${baseUrl}/properties`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
+    { url: `${baseUrl}/projects`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
+    { url: `${baseUrl}/buy`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
+    { url: `${baseUrl}/builders`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${baseUrl}/services`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.65 },
+    { url: `${baseUrl}/blog`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
+    { url: `${baseUrl}/about-us`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
+    { url: `${baseUrl}/contact-us`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
+  ];
+
+  const propertyPages: MetadataRoute.Sitemap = properties
+    .filter((p: any) => p?.slug)
+    .map((p: any) => ({
+      url: `${baseUrl}/property/${p.slug}`,
+      lastModified: lastModified(p.updatedAt),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    }));
+
+  const projectPages: MetadataRoute.Sitemap = projects
+    .filter((p: any) => p?.slug)
+    .map((p: any) => ({
+      // Route is /projects/[slug] (plural) — the old sitemap used /project/ and 404'd.
+      url: `${baseUrl}/projects/${p.slug}`,
+      lastModified: lastModified(p.updatedAt),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    }));
+
+  const blogPages: MetadataRoute.Sitemap = blogs
+    .filter((b: any) => b?.slug)
+    .map((b: any) => ({
+      url: `${baseUrl}/blog/${b.slug}`,
+      lastModified: lastModified(b.updatedAt || b.date || b.publishedAt),
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    }));
+
+  const locationPages: MetadataRoute.Sitemap = locations.map((location) => ({
+    url: `${baseUrl}/locations/${location}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly',
+    priority: 0.75,
+  }));
 
   return [
-    // 🏠 Static pages
-    {
-      url: `${baseUrl}`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 1,
-    },
-    {
-      url: `${baseUrl}/properties`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/projects`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.85,
-    },
-    {
-      url: `${baseUrl}/builders`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/about-us`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/contact-us`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    
-    // 🏢 Dynamic property pages (your core SEO pages!)
-    ...properties.map((property: any) => ({
-      url: `${baseUrl}/property/${property.slug}`,
-      lastModified: property.updatedAt || new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.8,
-    })),
-    
-    // 🏗️ Dynamic project pages
-    ...projects.map((project: any) => ({
-      url: `${baseUrl}/project/${project.slug}`,
-      lastModified: project.updatedAt || new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.8,
-    })),
-    
-    // 📍 Location landing pages
-    ...locations.map((location) => ({
-      url: `${baseUrl}/locations/${location}`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.75,
-    })),
+    ...staticPages,
+    ...propertyPages,
+    ...projectPages,
+    ...blogPages,
+    ...locationPages,
   ];
 }
