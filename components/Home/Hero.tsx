@@ -11,6 +11,7 @@ import {
 import { SearchBar } from './Hero/SearchBar';
 import { FilterPanel, type FilterPanelProps } from './Hero/FilterPanel';
 import { StickySearchBar } from './Hero/StickySearchBar';
+import cloudinaryLoader from '@/lib/cloudinary-loader';
 
 export interface SearchFilters {
   bhk?: string[];
@@ -53,6 +54,16 @@ export const CATEGORIES = [
   { id: 'underConstruction', label: 'Pre-Launch', icon: Construction, color: BRAND.yellow, gradient: `from-[${BRAND.yellow}] to-[#d4a017]` },
   { id: 'readyToMove', label: 'Ready', icon: KeyRound, color: BRAND.green, gradient: `from-[${BRAND.green}] to-[#004a4d]` },
 ] as const;
+
+// Maps the hero/sticky category tab ids to the `category` values actually stored
+// on each property (see data/properties.json) so a category tab filters the
+// on-page project sections and the /properties search to the matching bucket.
+export const CATEGORY_TO_PROPERTY_TYPE: Record<string, string> = {
+  residential: 'residential',
+  commercial: 'commercial',
+  underConstruction: 'pre-launch',
+  readyToMove: 'ready',
+};
 
 export const BHK_OPTIONS = ['1 RK', '1 BHK', '2 BHK', '3 BHK', '4 BHK', '4+ BHK'] as const;
 export const BUILDER_OPTIONS = ['Mantra Developers', 'Lodha Group', 'Shapoorji Pallonji', 'Paradise Group', 'Today Global', 'Birla Estates', 'Panchshil Realty'] as const;
@@ -156,6 +167,21 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
     finally { setTimeout(() => setIsSearching(false), 200); }
   }, [selectedCity, searchQuery, filters, onSearch, navigateToProperties, isSearching, router]);
 
+  // Category tab click: highlight the tab AND drive the on-page project sections
+  // (Newly Launched / Top Selling filter by filters.propertyType). Clicking the
+  // already-active category again clears it, returning to "all categories".
+  const handleCategorySelect = useCallback((tab: 'residential' | 'commercial' | 'underConstruction' | 'readyToMove') => {
+    const mapped = CATEGORY_TO_PROPERTY_TYPE[tab];
+    setFilters(f => {
+      const alreadyActive = f.propertyType?.length === 1 && f.propertyType[0] === mapped;
+      const next = { ...f };
+      if (alreadyActive || !mapped) delete next.propertyType;
+      else next.propertyType = [mapped];
+      return next;
+    });
+    setActiveTab(tab);
+  }, []);
+
   const handleFilterSelect = useCallback((filterType: keyof SearchFilters, value: unknown) => {
     const newFilters = { ...filters };
     if (filterType === 'bhk' && typeof value === 'string') newFilters.bhk = newFilters.bhk?.includes(value) ? newFilters.bhk.filter(v => v !== value) : [...(newFilters.bhk || []), value];
@@ -189,8 +215,9 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
   const handleApplyFilters = useCallback(() => { handleSearch(); }, [handleSearch]);
   const handleLocalityClick = useCallback((locality: string) => { setSearchQuery(locality); const targetCitySlug = LOCALITY_CITY_MAP[locality]; if (targetCitySlug) { const targetCity = CITIES.find(c => c.slug === targetCitySlug); if (targetCity) { navigateToLocation(targetCity.name); return; } } handleSearch(); }, [handleSearch, navigateToLocation]);
 
-  const searchBarProps = useMemo(() => ({ activeTab, selectedCity, searchQuery, filters, isCityDropdownOpen, showSuggestions: !!searchQuery && filteredSuggestions.length > 0, filteredSuggestions: [...filteredSuggestions], categories: CATEGORIES as unknown as readonly Category[], cities: CITIES as unknown as readonly City[], isSearching, onTabChange: (tab: 'residential' | 'commercial' | 'underConstruction' | 'readyToMove') => setActiveTab(tab), onCityChange: handleCityChange, onSearchQueryChange: setSearchQuery, onCityDropdownToggle: handleCityDropdownOpen, onSuggestionClick: handleSuggestionClick, onFilterToggle: () => setShowFilters(true), onSearch: handleSearch }), [activeTab, selectedCity, searchQuery, filters, isCityDropdownOpen, filteredSuggestions, isSearching, handleCityDropdownOpen, handleSuggestionClick, handleSearch, handleCityChange]);
-  const stickySearchProps = useMemo(() => ({ activeTab, selectedCity, searchQuery, categories: CATEGORIES as unknown as readonly Category[], isSearching, onTabChange: (tab: 'residential' | 'commercial' | 'underConstruction' | 'readyToMove') => setActiveTab(tab), onSearchQueryChange: setSearchQuery, onSearch: handleSearch }), [activeTab, selectedCity, searchQuery, isSearching, handleSearch]);
+  const searchBarProps = useMemo(() => ({ activeTab, selectedCity, searchQuery, filters, isCityDropdownOpen, showSuggestions: !!searchQuery && filteredSuggestions.length > 0, filteredSuggestions: [...filteredSuggestions], categories: CATEGORIES as unknown as readonly Category[], cities: CITIES as unknown as readonly City[], isSearching, onTabChange: handleCategorySelect, onCityChange: handleCityChange, onSearchQueryChange: setSearchQuery, onCityDropdownToggle: handleCityDropdownOpen, onSuggestionClick: handleSuggestionClick, onFilterToggle: () => setShowFilters(true), onSearch: handleSearch }), [activeTab, selectedCity, searchQuery, filters, isCityDropdownOpen, filteredSuggestions, isSearching, handleCityDropdownOpen, handleSuggestionClick, handleSearch, handleCityChange, handleCategorySelect]);
+  const cityLocationOptions = useMemo(() => CITIES.map(c => ({ label: c.name, value: c.name })), []);
+  const stickySearchProps = useMemo(() => ({ activeTab, selectedCity, searchQuery, categories: CATEGORIES as unknown as readonly Category[], isSearching, bhkOptions: BHK_OPTIONS, selectedBhk: filters.bhk?.[0] || '', onBhkChange: (bhk: string) => setFilters(f => ({ ...f, bhk: bhk ? [bhk] : undefined })), locationOptions: cityLocationOptions, selectedLocation: selectedCity, onLocationChange: (city: string) => handleCityChange(city as CityName), onTabChange: handleCategorySelect, onSearchQueryChange: setSearchQuery, onSearch: handleSearch }), [activeTab, selectedCity, searchQuery, isSearching, handleSearch, filters.bhk, handleCategorySelect, cityLocationOptions, handleCityChange]);
   const filterPanelProps: FilterPanelProps = useMemo(() => ({ filters, bhkOptions: BHK_OPTIONS, builderOptions: BUILDER_OPTIONS, propertyTypes: PROPERTY_TYPES, priceRanges: PRICE_RANGES, onFilterChange: handleFilterSelect, onClear: handleClearFilters, onApply: handleApplyFilters, onClose: () => setShowFilters(false), isNavigating: true }), [filters, handleFilterSelect, handleClearFilters, handleApplyFilters]);
   const currentCity = useMemo(() => CITIES.find(c => c.name === selectedCity) || CITIES[0], [selectedCity]);
 
@@ -200,6 +227,7 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
       {/* 🖼️ HERO BACKGROUND IMAGE */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <Image
+          loader={cloudinaryLoader}
           src="https://res.cloudinary.com/drdeqd8to/image/upload/f_auto,q_auto/b4_ajb1vz"
           alt="Hero Background"
           fill
@@ -364,7 +392,7 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
                       return (
                         <button
                           key={category.id}
-                          onClick={() => setActiveTab(category.id as any)}
+                          onClick={() => handleCategorySelect(category.id as any)}
                           className={`flex-shrink-0 flex items-center gap-0.5 xs:gap-1 px-2 xs:px-2.5 sm:px-3 py-1 xs:py-1.5 sm:py-2 rounded-md xs:rounded-lg text-[9px] xs:text-[10px] sm:text-xs font-semibold transition-all whitespace-nowrap ${
                             isActive
                               ? 'text-white shadow-sm'

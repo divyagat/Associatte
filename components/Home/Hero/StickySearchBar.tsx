@@ -2,7 +2,7 @@
 'use client';
 
 import { memo } from 'react';
-import { Search, MapPin, Loader2 } from 'lucide-react';
+import { Search, MapPin, Loader2, Home } from 'lucide-react';
 
 // 🎨 Associatte Brand Colors
 const BRAND_GREEN = '#005E60';
@@ -25,6 +25,17 @@ interface StickySearchBarProps {
   onTabChange: (tab: string) => void;
   onSearchQueryChange: (query: string) => void;
   onSearch: () => void;
+  // 🏠 Optional BHK-wise search. When `bhkOptions` is supplied the bar renders a
+  // configuration dropdown next to the city so users can filter property-wise by
+  // BHK straight from the sticky bar.
+  bhkOptions?: readonly string[];
+  selectedBhk?: string;
+  onBhkChange?: (bhk: string) => void;
+  // 📍 Optional location dropdown. When `locationOptions` is supplied the static
+  // city pill becomes a working <select> that filters property-wise by location.
+  locationOptions?: readonly { label: string; value: string }[];
+  selectedLocation?: string;
+  onLocationChange?: (value: string) => void;
 }
 
 export const StickySearchBar = memo(({
@@ -36,6 +47,12 @@ export const StickySearchBar = memo(({
   onTabChange,
   onSearchQueryChange,
   onSearch,
+  bhkOptions,
+  selectedBhk = '',
+  onBhkChange,
+  locationOptions,
+  selectedLocation = '',
+  onLocationChange,
 }: StickySearchBarProps) => {
   
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -82,14 +99,65 @@ export const StickySearchBar = memo(({
           
           {/* Search Row */}
           <div className="flex-1 flex gap-2 min-w-0">
-            {/* City Display */}
-            <div className="flex items-center gap-2 px-3 py-2 rounded-lg flex-1 min-w-0 border flex-shrink-0"
-              style={{ backgroundColor: `${BRAND_GREEN}08`, borderColor: `${BRAND_GREEN}30` }}
-            >
-              <MapPin className="w-3.5 h-3.5 flex-shrink-0" style={{ color: BRAND_GREEN }} />
-              <span className="text-xs truncate font-medium" style={{ color: BRAND_GREEN }}>{selectedCity}</span>
-            </div>
-            
+            {/* Location: working dropdown when options are supplied, else a
+                read-only pill showing the current city. */}
+            {locationOptions && locationOptions.length > 0 && onLocationChange ? (
+              <div className="relative flex items-center flex-1 min-w-0 flex-shrink-0">
+                <MapPin className="absolute left-3 w-3.5 h-3.5 pointer-events-none flex-shrink-0" style={{ color: BRAND_GREEN }} />
+                <select
+                  value={selectedLocation}
+                  onChange={(e) => onLocationChange(e.target.value)}
+                  aria-label="Filter by location"
+                  className="appearance-none w-full pl-8 pr-7 py-2 rounded-lg outline-none text-xs font-medium border cursor-pointer transition-colors truncate"
+                  style={{ backgroundColor: `${BRAND_GREEN}08`, borderColor: `${BRAND_GREEN}30`, color: BRAND_GREEN }}
+                >
+                  {locationOptions.map((opt) => (
+                    <option key={opt.value} value={opt.value} className="text-slate-700">{opt.label}</option>
+                  ))}
+                </select>
+                <svg
+                  className="absolute right-2.5 w-3 h-3 pointer-events-none"
+                  style={{ color: BRAND_GREEN }}
+                  fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg flex-1 min-w-0 border flex-shrink-0"
+                style={{ backgroundColor: `${BRAND_GREEN}08`, borderColor: `${BRAND_GREEN}30` }}
+              >
+                <MapPin className="w-3.5 h-3.5 flex-shrink-0" style={{ color: BRAND_GREEN }} />
+                <span className="text-xs truncate font-medium" style={{ color: BRAND_GREEN }}>{selectedCity}</span>
+              </div>
+            )}
+
+            {/* BHK-wise dropdown (only when options are supplied) */}
+            {bhkOptions && bhkOptions.length > 0 && (
+              <div className="relative flex items-center flex-shrink-0">
+                <Home className="absolute left-3 w-3.5 h-3.5 pointer-events-none" style={{ color: BRAND_GREEN }} />
+                <select
+                  value={selectedBhk}
+                  onChange={(e) => onBhkChange?.(e.target.value)}
+                  aria-label="Filter by BHK configuration"
+                  className="appearance-none pl-8 pr-7 py-2 rounded-lg outline-none text-xs font-medium border cursor-pointer transition-colors"
+                  style={{ backgroundColor: `${BRAND_GREEN}08`, borderColor: `${BRAND_GREEN}30`, color: BRAND_GREEN }}
+                >
+                  <option value="">All BHK</option>
+                  {bhkOptions.map((bhk) => (
+                    <option key={bhk} value={bhk} className="text-slate-700">{bhk}</option>
+                  ))}
+                </select>
+                <svg
+                  className="absolute right-2.5 w-3 h-3 pointer-events-none"
+                  style={{ color: BRAND_GREEN }}
+                  fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            )}
+
             {/* Search Input */}
             <div className="flex-1 relative min-w-0">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 flex-shrink-0" style={{ color: '#94a3b8' }} />

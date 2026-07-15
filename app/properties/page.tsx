@@ -265,7 +265,7 @@ export default async function PropertiesPage({
 
       {/* 🔹 Sticky search/filter bar — sits under the site header on scroll (desktop) */}
       <Suspense fallback={null}>
-        <PropertiesStickySearch />
+        <PropertiesStickySearch locations={locations} />
       </Suspense>
 
       {/* 🔹 Stats Bar */}
