@@ -74,7 +74,7 @@ export default function AdminShell({
   const SidebarContent = (
     <>
       <div className="p-6 border-b border-gray-200">
-        <h1 className="text-xl font-bold text-[#005E60]">Associate Admin</h1>
+        <h1 className="text-xl font-bold text-[#005E60]">Associatte Admin</h1>
         <p className="text-xs text-gray-500 mt-1">Associatte PropTech Pvt Ltd</p>
         <span
           className={`inline-block mt-3 text-[11px] font-semibold px-2.5 py-1 rounded-full ${
