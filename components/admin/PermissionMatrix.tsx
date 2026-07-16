@@ -1,7 +1,7 @@
 'use client';
 
 import { 
-  ADMIN_SECTIONS, 
+  VISIBLE_ADMIN_SECTIONS, // <-- Changed from ADMIN_SECTIONS
   ADMIN_ACTIONS, 
   Permissions, 
   AdminSection, 
@@ -11,7 +11,7 @@ import {
 const SECTION_LABELS: Record<string, string> = {
   properties: 'Properties',
   projects: 'Projects',
-  blogs: 'Blogs',
+  blogs: 'Blogs', // Kept for type safety, but won't render
 };
 
 // Maps string actions to objects to match your original code structure (action.key)
@@ -40,7 +40,8 @@ export default function PermissionMatrix({ value, onChange, disabled }: Permissi
 
   return (
     <div className="space-y-4">
-      {ADMIN_SECTIONS.map((key) => (
+      {/* Use VISIBLE_ADMIN_SECTIONS here to hide Blogs from the UI */}
+      {VISIBLE_ADMIN_SECTIONS.map((key) => (
         <div key={key} className="border border-gray-200 rounded-lg p-4 bg-white">
           <h4 className="text-sm font-semibold text-gray-800 mb-3">
             {SECTION_LABELS[key] || key}

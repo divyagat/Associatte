@@ -9,7 +9,7 @@ import PermissionMatrix from './PermissionMatrix';
 import {
   Permissions,
   DEFAULT_EMPLOYEE_PERMISSIONS,
-  ADMIN_SECTIONS,
+  VISIBLE_ADMIN_SECTIONS, // <-- Changed from ADMIN_SECTIONS
   ADMIN_ACTIONS,
   sanitizePermissions,
 } from '@/lib/admin-permissions';
@@ -27,14 +27,15 @@ const clonePerms = (p: Permissions): Permissions => sanitizePermissions(p);
 const SECTION_LABELS: Record<string, string> = { 
   properties: 'Properties', 
   projects: 'Projects',
-  // blogs: 'Blogs' 
+  blogs: 'Blogs' // Kept for type safety, but won't render
 };
 
 /** Compact summary of an employee's access. */
 function AccessSummary({ permissions }: { permissions: Permissions }) {
   return (
     <div className="flex flex-wrap gap-1.5 mt-1.5">
-      {ADMIN_SECTIONS.map((section) => {
+      {/* Use VISIBLE_ADMIN_SECTIONS here to hide Blogs from the UI summary */}
+      {VISIBLE_ADMIN_SECTIONS.map((section) => {
         const granted = ADMIN_ACTIONS.filter((a) => permissions[section]?.[a]);
         const has = granted.length > 0;
         return (

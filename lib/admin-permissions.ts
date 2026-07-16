@@ -17,13 +17,14 @@ export interface SectionPermissions {
 export interface Permissions {
   properties: SectionPermissions;
   projects: SectionPermissions;
-  blogs: SectionPermissions;
+  blogs: SectionPermissions; // Kept intact for data safety
 }
 
 /** Cookie holding the signed-in employee's encoded permissions. */
 export const PERMS_COOKIE = 'associatte_perms';
 
 export const ADMIN_SECTIONS: AdminSection[] = ['properties', 'projects', 'blogs'];
+export const VISIBLE_ADMIN_SECTIONS: AdminSection[] = ['properties', 'projects']; // <-- ADDED THIS
 export const ADMIN_ACTIONS: AdminAction[] = ['add', 'edit', 'delete'];
 
 const NONE: SectionPermissions = { add: false, edit: false, delete: false };
