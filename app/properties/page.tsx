@@ -124,9 +124,10 @@ export default async function PropertiesPage({
     ? properties.filter((p) => getProjectType(p) === typeFilter)
     : properties;
   const dealCounts = computeDealCounts(dealCountBase);
-  const availableDeals = DEAL_TYPES.filter(
-    (d) => dealCounts[d.id] > 0 && !siteConfig.hiddenDeals.includes(d.id)
-  );
+  // Sale and Rent are the two core options — always show both tabs (matching the
+  // navbar); only an admin hiding one via site-config removes it. Counts still
+  // drive the badge numbers.
+  const availableDeals = DEAL_TYPES.filter((d) => !siteConfig.hiddenDeals.includes(d.id));
 
   // Carry active filters across deal-tab switches (city normalised to `location`).
   const preserved = new URLSearchParams();
@@ -236,7 +237,7 @@ export default async function PropertiesPage({
 
       {/* 🔹 Sticky search/filter bar — sits under the site header on scroll (desktop) */}
       <Suspense fallback={null}>
-        <PropertiesStickySearch locations={locations} />
+        <PropertiesStickySearch locations={locations} hiddenDeals={siteConfig.hiddenDeals} />
       </Suspense>
 
       {/* 🔹 Stats Bar */}

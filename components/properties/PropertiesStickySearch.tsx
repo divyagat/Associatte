@@ -29,9 +29,11 @@ const prettyLocation = (slug: string) =>
 interface PropertiesStickySearchProps {
   /** Distinct `location` slugs (pune/mumbai/kdmc…) available in the data store. */
   locations?: string[];
+  /** Deal ids an admin has hidden from the public site (site-config). */
+  hiddenDeals?: string[];
 }
 
-export default function PropertiesStickySearch({ locations = [] }: PropertiesStickySearchProps) {
+export default function PropertiesStickySearch({ locations = [], hiddenDeals = [] }: PropertiesStickySearchProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
@@ -72,7 +74,7 @@ export default function PropertiesStickySearch({ locations = [] }: PropertiesSti
       activeTab={activeTab}
       selectedCity="All Cities"
       searchQuery={query}
-      categories={DEAL_TABS}
+      categories={DEAL_TABS.filter((t) => !hiddenDeals.includes(t.id))}
       isSearching={isPending}
       bhkOptions={BHK_OPTIONS}
       selectedBhk={activeBhk}

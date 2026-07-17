@@ -6,16 +6,18 @@ import { Edit, MapPin, LayoutGrid, Search } from 'lucide-react';
 import DeleteButton from '@/components/admin/DeleteButton';
 import ApprovalControls from '@/components/admin/ApprovalControls';
 
-// Categories matching your frontend Header
+// Category (property TYPE) filter — matches the values the PropertyForm can set
+// plus the legacy launch-status values (pre-launch / ready) still in the data.
+// Sale/Rent are a separate `dealType` dimension, not categories.
 const CATEGORIES = [
   { value: 'all', label: 'All' },
   { value: 'residential', label: 'Residential' },
   { value: 'commercial', label: 'Commercial' },
+  { value: 'plots', label: 'Plots' },
+  { value: 'warehouse', label: 'Warehouse' },
+  { value: 'industry', label: 'Industry' },
   { value: 'pre-launch', label: 'Pre-Launch' },
   { value: 'ready', label: 'Ready' },
-  { value: 'rent', label: 'Rent' },
-  { value: 'plots', label: 'Plots' },
-  { value: 'resale', label: 'Resale' },
 ];
 
 export default function PropertiesListClient({ properties, projects, canEdit, canDelete, isAdmin }: any) {
@@ -47,11 +49,11 @@ export default function PropertiesListClient({ properties, projects, canEdit, ca
     switch (category) {
       case 'residential': return 'bg-green-100 text-green-800';
       case 'commercial': return 'bg-blue-100 text-blue-800';
+      case 'plots': return 'bg-orange-100 text-orange-800';
+      case 'warehouse': return 'bg-cyan-100 text-cyan-800';
+      case 'industry': return 'bg-indigo-100 text-indigo-800';
       case 'pre-launch': return 'bg-yellow-100 text-yellow-800';
       case 'ready': return 'bg-emerald-100 text-emerald-800';
-      case 'rent': return 'bg-purple-100 text-purple-800';
-      case 'plots': return 'bg-orange-100 text-orange-800';
-      case 'resale': return 'bg-pink-100 text-pink-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
