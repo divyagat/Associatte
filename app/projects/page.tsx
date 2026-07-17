@@ -1,6 +1,11 @@
 import { Metadata } from 'next';
 import BuilderProjectCard from '@/components/builder-page/BuilderProjectCard';
-import { getAllProperties, getAllProjects } from '@/lib/data-store';
+import { getAllProperties, getAllProjects, getSiteConfig } from '@/lib/data-store';
+import { isPubliclyVisible } from '@/lib/visibility';
+import {
+  PROJECT_TYPES, PROJECT_TYPE_IDS, getProjectType, computeTypeCounts,
+  type ProjectTypeId,
+} from '@/lib/categories';
 
 export const dynamic = 'force-dynamic';
 
@@ -41,6 +46,7 @@ export default async function ProjectsPage({
   searchParams
 }: {
   searchParams: Promise<{
+    type?: string;
     q?: string;
     location?: string;
     builder?: string;
@@ -50,20 +56,32 @@ export default async function ProjectsPage({
   }>
 }) {
   const params = await searchParams;
+  // Active property-type tab (Residential / Commercial / Plots / Warehouse / Industry).
+  const activeType = (
+    PROJECT_TYPE_IDS.includes(params.type as ProjectTypeId) ? params.type : 'residential'
+  ) as ProjectTypeId;
 
-  const [properties, projects] = await Promise.all([
+  const [properties, projects, siteConfig] = await Promise.all([
     getAllProperties(),
-    getAllProjects()
+    getAllProjects(),
+    getSiteConfig(),
   ]);
 
+  // Only published listings are public; drop pending/hidden ones.
   const allProjects = [
-    ...projects.map(normalizeProject),
-    ...properties.map(normalizeProject)
+    ...projects.filter(isPubliclyVisible).map(normalizeProject),
+    ...properties.filter(isPubliclyVisible).map(normalizeProject),
   ];
 
   // Remove duplicates based on slug
   const uniqueProjects = Array.from(
     new Map(allProjects.map(p => [p.slug, p])).values()
+  );
+
+  // Only show tabs for property types that actually have listings.
+  const typeCounts = computeTypeCounts(uniqueProjects);
+  const availableTypes = PROJECT_TYPES.filter(
+    (t) => typeCounts[t.id] > 0 && !siteConfig.hiddenTypes.includes(t.id)
   );
 
   // ✅ Get unique values for filters
@@ -90,6 +108,9 @@ export default async function ProjectsPage({
   // 🔍 Filter projects
   const filteredProjects = uniqueProjects.filter((project: any) => {
     const builderName = project.developer?.name || '';
+
+    // Property type (tab)
+    if (getProjectType(project) !== activeType) return false;
 
     // Search query
     if (params.q) {
@@ -138,6 +159,14 @@ export default async function ProjectsPage({
   const builders = getAllBuilders();
   const bhks = getAllBHKs();
 
+  // Carry active filters across type-tab switches.
+  const preserved = new URLSearchParams();
+  if (params.location) preserved.set('location', params.location);
+  if (params.builder) preserved.set('builder', params.builder);
+  if (params.q) preserved.set('q', params.q);
+  if (params.bhk) preserved.set('bhk', params.bhk);
+  const preservedStr = preserved.toString();
+
   return (
     <main className="min-h-screen bg-gray-50">
       {/* 🔹 Hero Section */}
@@ -148,8 +177,34 @@ export default async function ProjectsPage({
             Discover {filteredProjects.length} premium projects across Pune, Mumbai & KDMC
           </p>
 
+          {/* 🔹 Property Type Tabs — only types that have listings are shown */}
+          {availableTypes.length > 0 && (
+            <div className="-mx-4 px-4 sm:mx-0 sm:px-0 mb-5 sm:mb-6">
+              <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+                {availableTypes.map((type) => {
+                  const isActive = activeType === type.id;
+                  return (
+                    <a
+                      key={type.id}
+                      href={`/projects?type=${type.id}${preservedStr ? `&${preservedStr}` : ''}`}
+                      className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 whitespace-nowrap ${
+                        isActive ? 'bg-white text-[#005E60] shadow-lg' : 'bg-white/10 text-white hover:bg-white/20'
+                      }`}
+                    >
+                      {type.label}
+                      <span className={`px-2 py-0.5 rounded-full text-xs ${isActive ? 'bg-[#005E60]/10 text-[#005E60]' : 'bg-white/20'}`}>
+                        {typeCounts[type.id]}
+                      </span>
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {/* 🔍 Search & Filters Form */}
           <form className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+            <input type="hidden" name="type" value={activeType} />
             <div className="lg:col-span-2 relative">
               <input
                 type="text"
@@ -189,10 +244,10 @@ export default async function ProjectsPage({
           {/* Active Filters */}
           {(params.q || params.location || params.builder || params.bhk) && (
             <div className="flex flex-wrap gap-2 mt-4">
-              {params.q && <span className="px-3 py-1 bg-white/10 rounded-full text-sm">Search: "{params.q}" <a href="/projects" className="hover:text-[#F8C21C]">×</a></span>}
-              {params.location && <span className="px-3 py-1 bg-white/10 rounded-full text-sm">Location: {params.location} <a href="/projects" className="hover:text-[#F8C21C]">×</a></span>}
-              {params.builder && <span className="px-3 py-1 bg-white/10 rounded-full text-sm">Builder: {params.builder} <a href="/projects" className="hover:text-[#F8C21C]">×</a></span>}
-              {params.bhk && <span className="px-3 py-1 bg-white/10 rounded-full text-sm">BHK: {params.bhk} <a href="/projects" className="hover:text-[#F8C21C]">×</a></span>}
+              {params.q && <span className="px-3 py-1 bg-white/10 rounded-full text-sm">Search: "{params.q}" <a href={`/projects?type=${activeType}`} className="hover:text-[#F8C21C]">×</a></span>}
+              {params.location && <span className="px-3 py-1 bg-white/10 rounded-full text-sm">Location: {params.location} <a href={`/projects?type=${activeType}`} className="hover:text-[#F8C21C]">×</a></span>}
+              {params.builder && <span className="px-3 py-1 bg-white/10 rounded-full text-sm">Builder: {params.builder} <a href={`/projects?type=${activeType}`} className="hover:text-[#F8C21C]">×</a></span>}
+              {params.bhk && <span className="px-3 py-1 bg-white/10 rounded-full text-sm">BHK: {params.bhk} <a href={`/projects?type=${activeType}`} className="hover:text-[#F8C21C]">×</a></span>}
             </div>
           )}
         </div>
@@ -213,7 +268,7 @@ export default async function ProjectsPage({
           {filteredProjects.length === 0 ? (
             <div className="text-center py-16">
               <p className="text-gray-500 text-lg mb-4">No projects match your filters.</p>
-              <a href="/projects" className="text-[#005E60] hover:underline">Clear all filters</a>
+              <a href={`/projects?type=${activeType}`} className="text-[#005E60] hover:underline">Clear all filters</a>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

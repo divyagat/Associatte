@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next'
 import { getAllProperties, getAllProjects, getAllBlogs } from '@/lib/data-store'
+import { isPubliclyVisible } from '@/lib/visibility'
 
 // Regenerate the sitemap periodically so newly added properties/blogs get indexed.
 export const revalidate = 3600;
@@ -41,7 +42,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   const propertyPages: MetadataRoute.Sitemap = properties
-    .filter((p: any) => p?.slug)
+    .filter((p: any) => p?.slug && isPubliclyVisible(p))
     .map((p: any) => ({
       url: `${baseUrl}/property/${p.slug}`,
       lastModified: lastModified(p.updatedAt),
@@ -50,7 +51,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }));
 
   const projectPages: MetadataRoute.Sitemap = projects
-    .filter((p: any) => p?.slug)
+    .filter((p: any) => p?.slug && isPubliclyVisible(p))
     .map((p: any) => ({
       // Route is /projects/[slug] (plural) — the old sitemap used /project/ and 404'd.
       url: `${baseUrl}/projects/${p.slug}`,

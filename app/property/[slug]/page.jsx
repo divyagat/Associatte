@@ -101,6 +101,11 @@ function transformProject(project) {
       slug: developerSlug
     },
     reraNumber: project.reraNumber,
+    // Rental/Sale facts (shown in the highlights sidebar when provided)
+    dealType: project.dealType || null,
+    ageOfConstruction: project.ageOfConstruction || null,
+    builtUpArea: project.builtUpArea || null,
+    expectedPrice: project.expectedPrice || null,
     _originalProject: project
   };
 }
@@ -859,8 +864,12 @@ export default function PropertyPage() {
                       { icon: Icons.Location, label: "Location", value: propertyData.projectDetails.location },
                       { icon: Icons.Calendar, label: "Possession", value: propertyData.projectDetails.possessionDate },
                       { icon: Icons.Building, label: "Builder", value: propertyData.projectDetails.developer },
-                      { icon: Icons.Home, label: "Configurations", value: propertyData.projectDetails.products }
-                    ].map((item, index) => (
+                      { icon: Icons.Home, label: "Configurations", value: propertyData.projectDetails.products },
+                      // Rental/Sale facts — only rendered when the admin provided them.
+                      propertyData.builtUpArea && { icon: Icons.Home, label: "Built-up Area", value: propertyData.builtUpArea },
+                      propertyData.ageOfConstruction && { icon: Icons.Calendar, label: "Age of Construction", value: propertyData.ageOfConstruction },
+                      propertyData.expectedPrice && { icon: Icons.Building, label: propertyData.dealType === 'rent' ? "Expected Rent" : "Expected Price", value: propertyData.expectedPrice },
+                    ].filter(Boolean).map((item, index) => (
                       <div key={index} className="flex items-start gap-3">
                         <div className="w-8 h-8 bg-[#005E60]/10 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={{ color: COLORS.primary }}><item.icon /></div>
                         <div>

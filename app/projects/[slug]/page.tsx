@@ -1,6 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
 import { notFound } from 'next/navigation';
 import { getProjectBySlug, getAllProperties } from '@/lib/data-store';
+import { isPubliclyVisible } from '@/lib/visibility';
+import { getAdminRole } from '@/lib/admin-auth';
 import { MapPin, Building2, Calendar, IndianRupee, Ruler, Sparkles, Phone, CheckCircle2, Navigation } from 'lucide-react';
 import Link from 'next/link';
 
@@ -31,6 +33,12 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   }
 
   if (!project) notFound();
+
+  // Pending/hidden listings 404 for the public; signed-in admins can still
+  // preview them (e.g. to review before approving).
+  if (!isPubliclyVisible(project) && (await getAdminRole()) !== 'admin') {
+    notFound();
+  }
 
   // ✅ Normalize all fields
   const normalizedProject = {

@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element -- admin previews render arbitrary uploaded image URLs (incl. blob:) that next/image can't optimize */
 import Link from 'next/link';
 import { getAllProperties, getAllProjects } from '@/lib/data-store';
-import { getPermissions } from '@/lib/admin-auth';
+import { getPermissions, getAdminRole } from '@/lib/admin-auth';
 import { can } from '@/lib/admin-permissions';
 import { Plus } from 'lucide-react';
 import PropertiesListClient from '@/components/admin/PropertiesListClient';
@@ -10,15 +10,17 @@ export const dynamic = 'force-dynamic';
 
 export default async function PropertiesListPage() {
   // Fetch projects alongside properties to map project names
-  const [properties, projects, permissions] = await Promise.all([
-    getAllProperties(), 
+  const [properties, projects, permissions, role] = await Promise.all([
+    getAllProperties(),
     getAllProjects(),
-    getPermissions()
+    getPermissions(),
+    getAdminRole(),
   ]);
-  
+
   const canAdd = can(permissions, 'properties', 'add');
   const canEdit = can(permissions, 'properties', 'edit');
   const canDelete = can(permissions, 'properties', 'delete');
+  const isAdmin = role === 'admin';
 
   return (
     <div className="space-y-6">
@@ -39,11 +41,12 @@ export default async function PropertiesListPage() {
       </div>
 
       {/* Pass data to the Client Component for interactive filtering */}
-      <PropertiesListClient 
-        properties={properties} 
-        projects={projects} 
-        canEdit={canEdit} 
-        canDelete={canDelete} 
+      <PropertiesListClient
+        properties={properties}
+        projects={projects}
+        canEdit={canEdit}
+        canDelete={canDelete}
+        isAdmin={isAdmin}
       />
     </div>
   );

@@ -1,21 +1,23 @@
 import Link from 'next/link';
 import { Plus } from 'lucide-react';
 import { getAllProjects } from '@/lib/data-store';
-import { getPermissions } from '@/lib/admin-auth';
+import { getPermissions, getAdminRole } from '@/lib/admin-auth';
 import { can } from '@/lib/admin-permissions';
 import ProjectsListClient from '@/components/admin/ProjectsListClient';
 
 export const dynamic = 'force-dynamic';
 
 export default async function ProjectsListPage() {
-  const [projects, permissions] = await Promise.all([
+  const [projects, permissions, role] = await Promise.all([
     getAllProjects(),
     getPermissions(),
+    getAdminRole(),
   ]);
 
   const canAdd = can(permissions, 'projects', 'add');
   const canEdit = can(permissions, 'projects', 'edit');
   const canDelete = can(permissions, 'projects', 'delete');
+  const isAdmin = role === 'admin';
 
   return (
     <div className="space-y-6">
@@ -38,6 +40,7 @@ export default async function ProjectsListPage() {
         initialProjects={projects}
         canEdit={canEdit}
         canDelete={canDelete}
+        isAdmin={isAdmin}
       />
     </div>
   );

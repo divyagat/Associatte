@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { MapPin, Bed, Square, Tag, ArrowRight, Building2 } from 'lucide-react';
+import { MapPin, Bed, Square, Tag, ArrowRight, Building2, Clock, KeyRound } from 'lucide-react';
+import { PROJECT_TYPES, getProjectType, getDealType } from '@/lib/categories';
 
 interface Project {
   slug: string;
@@ -60,15 +61,24 @@ export default function BuilderProjectCard({ project }: BuilderProjectCardProps)
     : project.sqft || project.priceDetails?.configurations?.[0]?.area || null;
 
   const displayBuilder = project.developer?.name || null;
-  // ✅ FIX: Change null to undefined to match getBadgeColors parameter type
-  const displayType = project.propertyType || undefined;
+
+  // ✅ Resolve the normalized project type + deal type for badges / facts.
+  const projectTypeId = getProjectType(project);
+  const dealTypeId = getDealType(project);
+  const typeLabel = PROJECT_TYPES.find((t) => t.id === projectTypeId)?.label;
+  const displayType = project.propertyType || typeLabel || undefined;
+  const isRental = dealTypeId === 'rent';
+
+  // ✅ Rental/Sale facts (age of construction, expected price) when provided.
+  const ageOfConstruction = project.ageOfConstruction || null;
+  const expectedPrice = project.expectedPrice || null;
 
   // ✅ Badge colors based on property type
   const getBadgeColors = (type?: string) => {
     if (!type) return { bg: '#005E60', text: 'white' };
     const t = type.toLowerCase();
-    if (t.includes('commercial') || t.includes('office')) return { bg: '#8B0000', text: 'white' };
-    if (t.includes('plot') || t.includes('land') || t.includes('pre-launch')) return { bg: '#F8C21C', text: '#8B0000' };
+    if (t.includes('commercial') || t.includes('office') || t.includes('industr')) return { bg: '#8B0000', text: 'white' };
+    if (t.includes('plot') || t.includes('land') || t.includes('warehouse')) return { bg: '#F8C21C', text: '#8B0000' };
     return { bg: '#005E60', text: 'white' };
   };
   const badgeColors = getBadgeColors(displayType);
@@ -111,12 +121,16 @@ export default function BuilderProjectCard({ project }: BuilderProjectCardProps)
             </span>
           )}
 
-          {/* ✅ SOLD OUT BADGE (Top Right) */}
-          {isSoldOut && (
+          {/* ✅ SOLD OUT / FOR RENT BADGE (Top Right) */}
+          {isSoldOut ? (
             <span className="absolute top-3 right-3 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide rounded-md shadow-sm whitespace-nowrap bg-red-600 text-white z-10">
               Sold Out
             </span>
-          )}
+          ) : isRental ? (
+            <span className="absolute top-3 right-3 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide rounded-md shadow-sm whitespace-nowrap bg-[#8B0000] text-white z-10">
+              For Rent
+            </span>
+          ) : null}
           
           {/* Price Badge */}
           <span className="absolute bottom-3 left-3 px-3 py-1.5 bg-[#005E60] text-white text-sm font-semibold rounded-lg shadow-md whitespace-nowrap">
@@ -158,6 +172,22 @@ export default function BuilderProjectCard({ project }: BuilderProjectCardProps)
             <div className="flex items-center gap-1.5 text-sm text-gray-600 mb-3">
               <Square className="w-4 h-4 text-[#8B0000] flex-shrink-0" />
               <span className="break-words">{displaySqft}</span>
+            </div>
+          )}
+
+          {/* ✅ Age of construction (Rental/Sale facts) */}
+          {ageOfConstruction && (
+            <div className="flex items-center gap-1.5 text-sm text-gray-600 mb-3">
+              <Clock className="w-4 h-4 text-[#005E60] flex-shrink-0" />
+              <span className="break-words">{ageOfConstruction}</span>
+            </div>
+          )}
+
+          {/* ✅ Expected price / rent */}
+          {expectedPrice && (
+            <div className="flex items-center gap-1.5 text-sm text-gray-600 mb-3">
+              <KeyRound className="w-4 h-4 text-[#F8C21C] flex-shrink-0" />
+              <span className="break-words">Expected: <span className="font-medium text-gray-800">{expectedPrice}</span></span>
             </div>
           )}
 

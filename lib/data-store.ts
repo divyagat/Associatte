@@ -26,6 +26,7 @@ const DATA_DIR = path.join(process.cwd(), 'data');
 const PROPERTIES_FILE = path.join(DATA_DIR, 'properties.json');
 const PROJECTS_FILE = path.join(DATA_DIR, 'projects.json');
 const BLOGS_FILE = path.join(DATA_DIR, 'blogs.json');
+const SITE_CONFIG_FILE = path.join(DATA_DIR, 'site-config.json');
 
 // ==================== LOW-LEVEL FILE HELPERS ====================
 async function readArray<T = any>(file: string): Promise<T[]> {
@@ -329,6 +330,44 @@ export async function deleteBlog(slug: string): Promise<boolean> {
   if (next.length === blogs.length) return false;
   await writeArray(BLOGS_FILE, next);
   return true;
+}
+
+// ==================== SITE CONFIG ====================
+// Admin-controlled visibility of whole nav categories. `hiddenTypes` are
+// PROJECT_TYPE ids (residential/commercial/…) hidden from the Projects nav;
+// `hiddenDeals` are DEAL_TYPE ids (rental/resale) hidden from the Properties nav.
+export interface SiteConfig {
+  hiddenTypes: string[];
+  hiddenDeals: string[];
+}
+
+const DEFAULT_SITE_CONFIG: SiteConfig = { hiddenTypes: [], hiddenDeals: [] };
+
+export async function getSiteConfig(): Promise<SiteConfig> {
+  try {
+    const raw = await fs.readFile(SITE_CONFIG_FILE, 'utf-8');
+    const data = JSON.parse(raw);
+    return {
+      hiddenTypes: Array.isArray(data?.hiddenTypes) ? data.hiddenTypes.map(String) : [],
+      hiddenDeals: Array.isArray(data?.hiddenDeals) ? data.hiddenDeals.map(String) : [],
+    };
+  } catch (error: any) {
+    if (error?.code !== 'ENOENT') {
+      console.error('❌ Failed to read site-config.json:', error.message);
+    }
+    return { ...DEFAULT_SITE_CONFIG };
+  }
+}
+
+export async function updateSiteConfig(patch: Partial<SiteConfig>): Promise<SiteConfig> {
+  const current = await getSiteConfig();
+  const next: SiteConfig = {
+    hiddenTypes: Array.isArray(patch.hiddenTypes) ? patch.hiddenTypes.map(String) : current.hiddenTypes,
+    hiddenDeals: Array.isArray(patch.hiddenDeals) ? patch.hiddenDeals.map(String) : current.hiddenDeals,
+  };
+  await fs.mkdir(DATA_DIR, { recursive: true });
+  await fs.writeFile(SITE_CONFIG_FILE, JSON.stringify(next, null, 2), 'utf-8');
+  return next;
 }
 
 // ==================== HELPER FUNCTIONS ====================

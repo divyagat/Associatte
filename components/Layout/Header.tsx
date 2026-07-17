@@ -5,11 +5,16 @@ import { useState, useEffect, useRef, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { 
-  Building2, Phone, Menu, X, ChevronDown, 
-  Home, Building, Construction, KeyRound, Tag, MapPin,
-  Handshake, FileText, Scale, ClipboardList, TrendingUp, RefreshCw 
+import {
+  Building2, Phone, Menu, X, ChevronDown,
+  Home, Building, KeyRound, Tag, MapPin, Warehouse, Factory,
+  Handshake, FileText, Scale, ClipboardList, TrendingUp
 } from 'lucide-react';
+
+import {
+  PROJECT_TYPES, DEAL_TYPES, getProjectType, getDealType,
+  type ProjectTypeId, type DealTypeId,
+} from '@/lib/categories';
 
 // ✅ Brand Colors
 const COLORS = {
@@ -18,15 +23,95 @@ const COLORS = {
   yellow: '#F8C21C',
 };
 
+// Icon per project-type / deal-type id (nav dropdowns)
+const TYPE_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  residential: Home,
+  commercial: Building,
+  plots: MapPin,
+  warehouse: Warehouse,
+  industry: Factory,
+  rental: KeyRound,
+  sale: Tag,
+};
+
 // ✅ STEP 1: Renamed from Header to HeaderContent (removed 'export default')
 function HeaderContent() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openMobileDropdown, setOpenMobileDropdown] = useState<string | null>(null);
   const [desktopDropdown, setDesktopDropdown] = useState<string | null>(null);
   const desktopTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  
+
+  // Which project-types / deal-types actually have listings. `null` = not loaded
+  // yet, in which case we optimistically show every category (avoids an empty nav
+  // flash). Once loaded, categories with zero listings are hidden.
+  const [availableTypes, setAvailableTypes] = useState<Set<ProjectTypeId> | null>(null);
+  // Which property TYPES exist under each DEAL — drives the Sale / Rent dropdowns.
+  const [typesByDeal, setTypesByDeal] = useState<Record<DealTypeId, Set<ProjectTypeId>> | null>(null);
+
+  // Categories an admin has explicitly hidden from the public nav (site-config).
+  const [hiddenTypes, setHiddenTypes] = useState<Set<string>>(new Set());
+  const [hiddenDeals, setHiddenDeals] = useState<Set<string>>(new Set());
+
   const pathname = usePathname();
   const searchParams = useSearchParams(); // ✅ Added to properly read query params
+
+  // Highlight a nav link / sub-link from the current path + query params, applying
+  // each page's default tab when the relevant param is absent from the URL.
+  const isHrefActive = (href: string): boolean => {
+    if (href.includes('#')) return pathname === href.split('#')[0];
+    const [path, query] = href.split('?');
+    if (!query) return pathname === path || (pathname?.startsWith(path + '/') ?? false);
+    if (pathname !== path) return false;
+    for (const [key, val] of Array.from(new URLSearchParams(query).entries())) {
+      const current = searchParams.get(key);
+      if (current === null) {
+        // No param in the URL → treat the page's default tab as active.
+        if (path === '/properties' && key === 'deal' && val === 'sale') continue;
+        if (path === '/projects' && key === 'type' && val === 'residential') continue;
+        return false;
+      }
+      if (current !== val) return false;
+    }
+    return true;
+  };
+
+  // Fetch listings once to determine which categories are non-empty.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const [propsRes, projectsRes, configRes] = await Promise.all([
+          fetch('/api/properties'),
+          fetch('/api/projects'),
+          fetch('/api/site-config'),
+        ]);
+        const props = await propsRes.json().catch(() => []);
+        const projects = await projectsRes.json().catch(() => []);
+        const config = await configRes.json().catch(() => ({}));
+        const all = [
+          ...(Array.isArray(props) ? props : []),
+          ...(Array.isArray(projects) ? projects : []),
+        ];
+        if (cancelled) return;
+        setAvailableTypes(new Set(all.map(getProjectType)));
+        // Group the property types present under each deal (Sale / Rent).
+        const byDeal = {
+          sale: new Set<ProjectTypeId>(),
+          rent: new Set<ProjectTypeId>(),
+        } as Record<DealTypeId, Set<ProjectTypeId>>;
+        all.forEach((item) => {
+          const deal = getDealType(item);
+          (byDeal[deal] ?? (byDeal[deal] = new Set())).add(getProjectType(item));
+        });
+        setTypesByDeal(byDeal);
+        setHiddenTypes(new Set(Array.isArray(config?.hiddenTypes) ? config.hiddenTypes : []));
+        setHiddenDeals(new Set(Array.isArray(config?.hiddenDeals) ? config.hiddenDeals : []));
+      } catch {
+        // On failure leave both null so all categories remain visible.
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   // ✅ Close mobile menu when clicking outside
   useEffect(() => {
@@ -55,22 +140,47 @@ function HeaderContent() {
     };
   }, [mobileMenuOpen]);
 
+  // Projects dropdown → by property TYPE; Properties dropdown → by DEAL type.
+  // Empty categories are hidden once the listing data has loaded.
+  const projectsDropdown = PROJECT_TYPES
+    .filter((t) => (!availableTypes || availableTypes.has(t.id)) && !hiddenTypes.has(t.id))
+    .map((t) => ({
+      label: t.label,
+      href: `/projects?type=${t.id}`,
+      icon: TYPE_ICONS[t.id],
+      color: t.color,
+    }));
+
+  // Sale and Rent each get their own nav dropdown, listing the property types
+  // available under that deal. Types with no listing (once loaded) or hidden by
+  // an admin are dropped; a deal whose dropdown ends up empty is hidden entirely.
+  const buildDealDropdown = (dealId: DealTypeId) =>
+    PROJECT_TYPES
+      .filter((t) => (!typesByDeal || typesByDeal[dealId]?.has(t.id)) && !hiddenTypes.has(t.id))
+      .map((t) => ({
+        label: t.label,
+        href: `/properties?deal=${dealId}&type=${t.id}`,
+        icon: TYPE_ICONS[t.id],
+        color: t.color,
+      }));
+
+  const dealNavItems = DEAL_TYPES
+    .filter((d) => !hiddenDeals.has(d.id))
+    .map((d) => ({
+      name: d.label,
+      href: `/properties?deal=${d.id}`,
+      dropdown: buildDealDropdown(d.id),
+    }))
+    .filter((item) => item.dropdown.length > 0);
+
   const navLinks = [
     { name: 'Home', href: '/' },
-    { name: 'Projects', href: '/projects' },
-    { 
-      name: 'Properties', 
-      href: '/properties',
-      dropdown: [
-        { label: 'Residential', href: '/properties?type=residential', icon: Home, color: COLORS.green },
-        { label: 'Commercial', href: '/properties?type=commercial', icon: Building, color: COLORS.red },
-        { label: 'Pre-Launch', href: '/properties?type=pre-launch', icon: Construction, color: COLORS.yellow },
-        { label: 'Ready', href: '/properties?type=ready', icon: KeyRound, color: COLORS.green },
-        { label: 'Rent', href: '/properties?type=rent', icon: Tag, color: COLORS.red },
-        { label: 'Plots', href: '/properties?type=plots', icon: MapPin, color: COLORS.yellow },
-        { label: 'Resale', href: '/properties?type=resale', icon: RefreshCw, color: COLORS.green },
-      ]
+    {
+      name: 'Projects',
+      href: '/projects',
+      ...(projectsDropdown.length ? { dropdown: projectsDropdown } : {}),
     },
+    ...dealNavItems,
     { name: 'About Us', href: '/about-us' },
     { 
       name: 'Services', 
@@ -157,7 +267,7 @@ function HeaderContent() {
             {/* Desktop Menu */}
             <div className="hidden lg:flex items-center space-x-1">
               {navLinks.map((link: any) => {
-                const isActive = pathname === link.href || pathname?.startsWith(link.href + '?') || pathname?.startsWith(link.href + '/');
+                const isActive = isHrefActive(link.href);
                 const hasDropdown = link.dropdown?.length > 0;
                 const isDropdownOpen = desktopDropdown === link.name;
                 
@@ -201,21 +311,7 @@ function HeaderContent() {
                           onMouseLeave={handleDesktopDropdownLeave}
                         >
                           {link.dropdown.map((item: any) => {
-                            const isSubActive = (() => {
-                              if (item.href.includes('?')) {
-                                const [path, query] = item.href.split('?');
-                                const [key, val] = query.split('=');
-                                const currentVal = searchParams.get(key);
-                                if (path === '/properties' && key === 'type' && !currentVal) {
-                                  return pathname === path && val === 'residential';
-                                }
-                                return pathname === path && currentVal === val;
-                              }
-                              if (item.href.includes('#')) {
-                                return pathname === item.href.split('#')[0];
-                              }
-                              return pathname === item.href;
-                            })();
+                            const isSubActive = isHrefActive(item.href);
 
                             const Icon = item.icon;
                             return (
@@ -300,7 +396,7 @@ function HeaderContent() {
           >
             <div className="px-4 py-3 space-y-1">
               {navLinks.map((link: any) => {
-                const isActive = pathname === link.href || pathname?.startsWith(link.href + '?') || pathname?.startsWith(link.href + '/');
+                const isActive = isHrefActive(link.href);
                 const hasDropdown = link.dropdown?.length > 0;
                 const isMobileDropdownOpen = openMobileDropdown === link.name;
                 
@@ -333,21 +429,7 @@ function HeaderContent() {
                         {isMobileDropdownOpen && (
                           <div className="ml-4 mb-2 pl-4 border-l-2 border-[#F8C21C]/30 space-y-1 animate-in slide-in-from-left-2 duration-200">
                             {link.dropdown.map((item: any) => {
-                              const isSubActive = (() => {
-                                if (item.href.includes('?')) {
-                                  const [path, query] = item.href.split('?');
-                                  const [key, val] = query.split('=');
-                                  const currentVal = searchParams.get(key);
-                                  if (path === '/properties' && key === 'type' && !currentVal) {
-                                    return pathname === path && val === 'residential';
-                                  }
-                                  return pathname === path && currentVal === val;
-                                }
-                                if (item.href.includes('#')) {
-                                  return pathname === item.href.split('#')[0];
-                                }
-                                return pathname === item.href;
-                              })();
+                              const isSubActive = isHrefActive(item.href);
 
                               const Icon = item.icon;
                               return (

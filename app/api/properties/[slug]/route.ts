@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPropertyBySlug, updateProperty, deleteProperty } from '@/lib/data-store';
-import { getPermissionsFromRequest } from '@/lib/admin-auth';
+import { getPermissionsFromRequest, getRoleFromRequest } from '@/lib/admin-auth';
 import { can } from '@/lib/admin-permissions';
+import { sanitizeStatus } from '@/lib/visibility';
 
 export async function GET(
   request: NextRequest,
@@ -30,6 +31,14 @@ export async function PUT(
   try {
     const { slug } = await context.params;
     const body = await request.json();
+    // Any employee edit re-enters the approval queue. For admins we only touch
+    // `status` when it's explicitly sent (approve / show / hide actions) so a
+    // normal form save doesn't accidentally change visibility.
+    if (getRoleFromRequest(request) === 'employee') {
+      body.status = 'pending';
+    } else if ('status' in body) {
+      body.status = sanitizeStatus(body.status, 'published');
+    }
     const property = await updateProperty(slug, body);
     if (!property) {
       return NextResponse.json({ error: 'Property not found' }, { status: 404 });

@@ -2,8 +2,9 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getProjectBySlug, updateProject, deleteProject } from '@/lib/data-store';
-import { getPermissionsFromRequest } from '@/lib/admin-auth';
+import { getPermissionsFromRequest, getRoleFromRequest } from '@/lib/admin-auth';
 import { can } from '@/lib/admin-permissions';
+import { sanitizeStatus } from '@/lib/visibility';
 
 // ✅ GET - Fixed for Next.js 15/16
 export async function GET(
@@ -50,12 +51,24 @@ export async function PUT(
     const data = await request.json();
     console.log('📦 Update data:', data);
     
-    // Ensure soldOut is preserved
-    const projectData = {
-      ...data,
-      soldOut: data.soldOut !== undefined ? data.soldOut : false
-    };
-    
+    // Merge only the keys that were actually sent so partial updates (e.g. a
+    // status-only approve/hide action) don't clobber existing fields.
+    const projectData: any = { ...data };
+    // Full form saves send `soldOut`; default it there. Absent = leave as-is.
+    if ('soldOut' in data) {
+      projectData.soldOut = data.soldOut !== undefined ? data.soldOut : false;
+    }
+
+    // Employee edits re-enter the approval queue; admins only change visibility
+    // when `status` is explicitly sent (approve / show / hide actions).
+    if (getRoleFromRequest(request) === 'employee') {
+      projectData.status = 'pending';
+    } else if ('status' in data) {
+      projectData.status = sanitizeStatus(data.status, 'published');
+    } else {
+      delete projectData.status;
+    }
+
     const project = await updateProject(slug, projectData);
     
     if (!project) {

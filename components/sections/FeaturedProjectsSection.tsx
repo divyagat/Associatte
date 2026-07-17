@@ -6,6 +6,7 @@ import { ArrowRight, ChevronLeft, ChevronRight, MapPin, Home } from 'lucide-reac
 import Link from 'next/link';
 import Image from 'next/image';
 import properties from '@/data/properties.json';
+import { isPubliclyVisible } from '@/lib/visibility';
 
 // ✅ ADD city PROP
 interface FeaturedProjectsSectionProps {
@@ -66,7 +67,7 @@ export default function FeaturedProjectsSection({ city }: FeaturedProjectsSectio
 
   const featuredProjects = useMemo(() => {
     return properties
-      .filter((p: any) => p.image && p.priceDetails?.range)
+      .filter((p: any) => p.image && p.priceDetails?.range && isPubliclyVisible(p))
       .slice(0, MAX_FEATURED_PROJECTS)
       .map(mapProjectToFeatured);
   }, []);

@@ -16,6 +16,10 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
     slug: '',
     name: '',
     category: 'residential',
+    dealType: 'sale',
+    ageOfConstruction: '',
+    builtUpArea: '',
+    expectedPrice: '',
     project: '',
     projectSlug: '',
     location: 'pune',
@@ -272,7 +276,7 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Category *</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Category (Type) *</label>
             <select
               name="category"
               value={formData.category}
@@ -282,12 +286,25 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
             >
               <option value="residential">Residential</option>
               <option value="commercial">Commercial</option>
-              <option value="pre-launch">Pre-Launch</option>
-              <option value="ready">Ready</option>
-              <option value="rent">Rent</option>
               <option value="plots">Plots</option>
-              <option value="resale">Resale</option>
+              <option value="warehouse">Warehouse</option>
+              <option value="industry">Industry</option>
             </select>
+            <p className="text-xs text-gray-500 mt-1">Drives the Projects menu &amp; type tabs.</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Deal Type *</label>
+            <select
+              name="dealType"
+              value={formData.dealType}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]"
+            >
+              <option value="sale">Sale</option>
+              <option value="rent">Rent</option>
+            </select>
+            <p className="text-xs text-gray-500 mt-1">Drives the Properties menu (Sale / Rent).</p>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Location *</label>
@@ -310,8 +327,44 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
               name="priceDetails.range"
               value={formData.priceDetails.range}
               onChange={handleChange}
-              placeholder="₹80 Lakh - ₹1.15 Cr"
+              placeholder={formData.dealType === 'rent' ? '₹25,000 - ₹40,000 / month' : '₹80 Lakh - ₹1.15 Cr'}
               required
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {formData.dealType === 'rent' ? 'Expected Rent' : 'Expected Price'}
+            </label>
+            <input
+              type="text"
+              name="expectedPrice"
+              value={formData.expectedPrice}
+              onChange={handleChange}
+              placeholder={formData.dealType === 'rent' ? '₹32,000 / month' : '₹1 Cr (negotiable)'}
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]"
+            />
+            <p className="text-xs text-gray-500 mt-1">Owner&apos;s expectation shown on Sale/Rent listings.</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Built-up Area (sq. ft)</label>
+            <input
+              type="text"
+              name="builtUpArea"
+              value={formData.builtUpArea}
+              onChange={handleChange}
+              placeholder="e.g., 1250 sq.ft"
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Age of Construction</label>
+            <input
+              type="text"
+              name="ageOfConstruction"
+              value={formData.ageOfConstruction}
+              onChange={handleChange}
+              placeholder="e.g., 5 years / New / Under Construction"
               className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]"
             />
           </div>

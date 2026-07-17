@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Edit, Trash2, LayoutGrid, Loader2 } from 'lucide-react';
+import ApprovalControls from '@/components/admin/ApprovalControls';
 
 // ✅ Helper to safely extract developer name
 const getDeveloperName = (developer: any): string => {
@@ -12,7 +13,7 @@ const getDeveloperName = (developer: any): string => {
   return '';
 };
 
-export default function ProjectsListClient({ initialProjects, canEdit, canDelete }: any) {
+export default function ProjectsListClient({ initialProjects, canEdit, canDelete, isAdmin }: any) {
   const [projects, setProjects] = useState<any[]>(initialProjects || []);
   const [deletingSlug, setDeletingSlug] = useState<string | null>(null);
 
@@ -50,13 +51,14 @@ export default function ProjectsListClient({ initialProjects, canEdit, canDelete
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Project Name</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Developer</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Approval</th>
             <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">
           {projects.length === 0 ? (
             <tr>
-              <td colSpan={4} className="px-6 py-12 text-center text-gray-500">No projects yet. Create your first project!</td>
+              <td colSpan={5} className="px-6 py-12 text-center text-gray-500">No projects yet. Create your first project!</td>
             </tr>
           ) : (
             projects.map((project) => (
@@ -77,6 +79,10 @@ export default function ProjectsListClient({ initialProjects, canEdit, canDelete
                 {/* ✅ Extract developer name safely */}
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {getDeveloperName(project.developer)}
+                </td>
+
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <ApprovalControls slug={project.slug} type="projects" status={project.status} isAdmin={isAdmin} />
                 </td>
 
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

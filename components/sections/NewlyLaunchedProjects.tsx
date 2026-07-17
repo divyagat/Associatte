@@ -7,6 +7,7 @@ import Image from 'next/image';
 
 import type { SearchFilters } from '../Home/Hero';
 import rawProperties from '@/data/properties.json';
+import { isPubliclyVisible } from '@/lib/visibility';
 
 // How recent a launch must be to still count as "Newly Launched" when it carries a
 // launchDate. Flagged properties without a parseable launchDate are always shown.
@@ -95,7 +96,7 @@ export default function NewlyLaunchedProjects({
   const newLaunchCards = useMemo(() => {
     const cutoff = Date.now() - RECENT_LAUNCH_MONTHS * 30 * 24 * 60 * 60 * 1000;
     return (rawProperties as any[])
-      .filter((p) => p.isNewLaunch === true)
+      .filter((p) => p.isNewLaunch === true && isPubliclyVisible(p))
       .map(mapToCard)
       .filter((p) => p.launchTime === null || p.launchTime >= cutoff)
       .sort((a, b) => (b.launchTime || 0) - (a.launchTime || 0));

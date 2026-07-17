@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { Edit, MapPin, LayoutGrid, Search } from 'lucide-react';
 import DeleteButton from '@/components/admin/DeleteButton';
+import ApprovalControls from '@/components/admin/ApprovalControls';
 
 // Categories matching your frontend Header
 const CATEGORIES = [
@@ -17,7 +18,7 @@ const CATEGORIES = [
   { value: 'resale', label: 'Resale' },
 ];
 
-export default function PropertiesListClient({ properties, projects, canEdit, canDelete }: any) {
+export default function PropertiesListClient({ properties, projects, canEdit, canDelete, isAdmin }: any) {
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -113,6 +114,7 @@ export default function PropertiesListClient({ properties, projects, canEdit, ca
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Approval</th>
                     <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
@@ -160,6 +162,9 @@ export default function PropertiesListClient({ properties, projects, canEdit, ca
                               Available
                             </span>
                           )}
+                        </td>
+                        <td className="px-6 py-4">
+                          <ApprovalControls slug={property.slug} type="properties" status={property.status} isAdmin={isAdmin} />
                         </td>
                         <td className="px-6 py-4 text-right">
                           <div className="flex items-center justify-end gap-2">
@@ -219,6 +224,9 @@ export default function PropertiesListClient({ properties, projects, canEdit, ca
                         </span>
                       </div>
                     </div>
+                  </div>
+                  <div className="mt-3 pt-3 border-t border-gray-100">
+                    <ApprovalControls slug={property.slug} type="properties" status={property.status} isAdmin={isAdmin} />
                   </div>
                   {(canEdit || canDelete) && (
                     <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-100">

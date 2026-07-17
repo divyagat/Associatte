@@ -2,19 +2,22 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getAllProjects } from '@/lib/data-store';
-import { getPermissionsFromRequest } from '@/lib/admin-auth';
+import { getPermissionsFromRequest, getRoleFromRequest } from '@/lib/admin-auth';
 import { can } from '@/lib/admin-permissions';
+import { isPubliclyVisible, sanitizeStatus } from '@/lib/visibility';
 
+// Public GET returns only published projects. Admin pages read the data store
+// directly, so they still see pending/hidden ones.
 export async function GET() {
   try {
     console.log('📡 GET /api/projects - Fetching all projects');
     const projects = await getAllProjects();
-    
+
     // ✅ Ensure we always return an array
-    const projectsArray = Array.isArray(projects) ? projects : [];
-    
+    const projectsArray = (Array.isArray(projects) ? projects : []).filter(isPubliclyVisible);
+
     console.log(`📡 Returning ${projectsArray.length} projects`);
-    
+
     return NextResponse.json(projectsArray);
   } catch (error) {
     console.error('❌ Error in GET /api/projects:', error);
@@ -45,6 +48,10 @@ export async function POST(request: NextRequest) {
       );
     }
     
+    // Employee submissions require admin approval; admins publish immediately.
+    const role = getRoleFromRequest(request);
+    data.status = role === 'employee' ? 'pending' : sanitizeStatus(data.status, 'published');
+
     // Add the project
     const { createProject } = await import('@/lib/data-store');
     const newProject = await createProject(data);
