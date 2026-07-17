@@ -30,8 +30,8 @@ const TYPE_ICONS: Record<string, React.ComponentType<{ className?: string }>> = 
   plots: MapPin,
   warehouse: Warehouse,
   industry: Factory,
-  rental: KeyRound,
   sale: Tag,
+  rent: KeyRound,
 };
 
 // ✅ STEP 1: Renamed from Header to HeaderContent (removed 'export default')
@@ -45,8 +45,7 @@ function HeaderContent() {
   // yet, in which case we optimistically show every category (avoids an empty nav
   // flash). Once loaded, categories with zero listings are hidden.
   const [availableTypes, setAvailableTypes] = useState<Set<ProjectTypeId> | null>(null);
-  // Which property TYPES exist under each DEAL — drives the Sale / Rent dropdowns.
-  const [typesByDeal, setTypesByDeal] = useState<Record<DealTypeId, Set<ProjectTypeId>> | null>(null);
+  const [availableDeals, setAvailableDeals] = useState<Set<DealTypeId> | null>(null);
 
   // Categories an admin has explicitly hidden from the public nav (site-config).
   const [hiddenTypes, setHiddenTypes] = useState<Set<string>>(new Set());
@@ -94,16 +93,7 @@ function HeaderContent() {
         ];
         if (cancelled) return;
         setAvailableTypes(new Set(all.map(getProjectType)));
-        // Group the property types present under each deal (Sale / Rent).
-        const byDeal = {
-          sale: new Set<ProjectTypeId>(),
-          rent: new Set<ProjectTypeId>(),
-        } as Record<DealTypeId, Set<ProjectTypeId>>;
-        all.forEach((item) => {
-          const deal = getDealType(item);
-          (byDeal[deal] ?? (byDeal[deal] = new Set())).add(getProjectType(item));
-        });
-        setTypesByDeal(byDeal);
+        setAvailableDeals(new Set(all.map(getDealType)));
         setHiddenTypes(new Set(Array.isArray(config?.hiddenTypes) ? config.hiddenTypes : []));
         setHiddenDeals(new Set(Array.isArray(config?.hiddenDeals) ? config.hiddenDeals : []));
       } catch {
@@ -151,27 +141,16 @@ function HeaderContent() {
       color: t.color,
     }));
 
-  // Sale and Rent each get their own nav dropdown, listing the property types
-  // available under that deal. Types with no listing (once loaded) or hidden by
-  // an admin are dropped; a deal whose dropdown ends up empty is hidden entirely.
-  const buildDealDropdown = (dealId: DealTypeId) =>
-    PROJECT_TYPES
-      .filter((t) => (!typesByDeal || typesByDeal[dealId]?.has(t.id)) && !hiddenTypes.has(t.id))
-      .map((t) => ({
-        label: t.label,
-        href: `/properties?deal=${dealId}&type=${t.id}`,
-        icon: TYPE_ICONS[t.id],
-        color: t.color,
-      }));
-
-  const dealNavItems = DEAL_TYPES
-    .filter((d) => !hiddenDeals.has(d.id))
+  // Properties dropdown → by DEAL type (Sale / Rent). Deals with no listings (once
+  // loaded) or hidden by an admin are dropped.
+  const propertiesDropdown = DEAL_TYPES
+    .filter((d) => (!availableDeals || availableDeals.has(d.id)) && !hiddenDeals.has(d.id))
     .map((d) => ({
-      name: d.label,
+      label: d.label,
       href: `/properties?deal=${d.id}`,
-      dropdown: buildDealDropdown(d.id),
-    }))
-    .filter((item) => item.dropdown.length > 0);
+      icon: TYPE_ICONS[d.id],
+      color: d.color,
+    }));
 
   const navLinks = [
     { name: 'Home', href: '/' },
@@ -180,7 +159,11 @@ function HeaderContent() {
       href: '/projects',
       ...(projectsDropdown.length ? { dropdown: projectsDropdown } : {}),
     },
-    ...dealNavItems,
+    {
+      name: 'Properties',
+      href: '/properties',
+      ...(propertiesDropdown.length ? { dropdown: propertiesDropdown } : {}),
+    },
     { name: 'About Us', href: '/about-us' },
     { 
       name: 'Services', 
