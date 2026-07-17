@@ -12,8 +12,8 @@ import {
 } from 'lucide-react';
 
 import {
-  PROJECT_TYPES, DEAL_TYPES, getProjectType, getDealType,
-  type ProjectTypeId, type DealTypeId,
+  PROJECT_TYPES, DEAL_TYPES, getProjectType,
+  type ProjectTypeId,
 } from '@/lib/categories';
 
 // ✅ Brand Colors
@@ -45,7 +45,6 @@ function HeaderContent() {
   // yet, in which case we optimistically show every category (avoids an empty nav
   // flash). Once loaded, categories with zero listings are hidden.
   const [availableTypes, setAvailableTypes] = useState<Set<ProjectTypeId> | null>(null);
-  const [availableDeals, setAvailableDeals] = useState<Set<DealTypeId> | null>(null);
 
   // Categories an admin has explicitly hidden from the public nav (site-config).
   const [hiddenTypes, setHiddenTypes] = useState<Set<string>>(new Set());
@@ -93,7 +92,6 @@ function HeaderContent() {
         ];
         if (cancelled) return;
         setAvailableTypes(new Set(all.map(getProjectType)));
-        setAvailableDeals(new Set(all.map(getDealType)));
         setHiddenTypes(new Set(Array.isArray(config?.hiddenTypes) ? config.hiddenTypes : []));
         setHiddenDeals(new Set(Array.isArray(config?.hiddenDeals) ? config.hiddenDeals : []));
       } catch {
@@ -141,10 +139,10 @@ function HeaderContent() {
       color: t.color,
     }));
 
-  // Properties dropdown → by DEAL type (Sale / Rent). Deals with no listings (once
-  // loaded) or hidden by an admin are dropped.
+  // Properties dropdown → by DEAL type. Sale and Rent always appear (they're the
+  // two core options); only an admin hiding one via site-config removes it.
   const propertiesDropdown = DEAL_TYPES
-    .filter((d) => (!availableDeals || availableDeals.has(d.id)) && !hiddenDeals.has(d.id))
+    .filter((d) => !hiddenDeals.has(d.id))
     .map((d) => ({
       label: d.label,
       href: `/properties?deal=${d.id}`,
