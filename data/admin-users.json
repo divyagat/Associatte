@@ -1,1 +1,50 @@
-[]
+[
+  {
+    "id": "e87daa7d-ac59-47cc-8e7d-1ce28949abad",
+    "name": "Narayan",
+    "email": "narayan@gmail.com",
+    "password": "Narayan@123",
+    "permissions": {
+      "properties": {
+        "add": false,
+        "edit": false,
+        "delete": false
+      },
+      "projects": {
+        "add": false,
+        "edit": false,
+        "delete": false
+      },
+      "blogs": {
+        "add": true,
+        "edit": true,
+        "delete": true
+      }
+    },
+    "createdAt": "2026-07-29T10:06:46.026Z"
+  },
+  {
+    "id": "26d13cb7-07ce-451c-9480-37c248dcbd29",
+    "name": "Krima",
+    "email": "krima@gmail.com",
+    "password": "Krima@123",
+    "permissions": {
+      "properties": {
+        "add": false,
+        "edit": false,
+        "delete": false
+      },
+      "projects": {
+        "add": false,
+        "edit": false,
+        "delete": false
+      },
+      "blogs": {
+        "add": true,
+        "edit": true,
+        "delete": true
+      }
+    },
+    "createdAt": "2026-07-29T10:05:29.333Z"
+  }
+]
