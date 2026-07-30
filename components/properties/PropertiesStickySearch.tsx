@@ -8,7 +8,7 @@ import { StickySearchBar } from '@/components/Home/Hero/StickySearchBar';
 // Mirrors DEAL_TYPES in lib/categories.ts, with an icon per deal for the sticky
 // bar's tab row. The /properties page filters by the `deal` query param.
 const DEAL_TABS = [
-  { id: 'sale', label: 'Sale', icon: Tag, gradient: '' },
+  { id: 'sale', label: 'Resale', icon: Tag, gradient: '' },
   { id: 'rent', label: 'Rent', icon: KeyRound, gradient: '' },
 ] as const;
 

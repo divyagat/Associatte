@@ -73,9 +73,13 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
         
-        {normalizedProject.soldOut && (
+        {normalizedProject.soldOut ? (
           <div className="absolute top-6 right-6 bg-red-600 text-white text-sm font-bold px-4 py-2 rounded-lg shadow-lg uppercase tracking-wide z-10">
             Sold Out
+          </div>
+        ) : (
+          <div className="absolute top-6 right-6 bg-green-600 text-white text-sm font-bold px-4 py-2 rounded-lg shadow-lg uppercase tracking-wide z-10">
+            Available
           </div>
         )}
 

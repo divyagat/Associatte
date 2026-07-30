@@ -1,11 +1,11 @@
 'use client';
 
-import { 
+import {
   VISIBLE_ADMIN_SECTIONS, // <-- Changed from ADMIN_SECTIONS
-  ADMIN_ACTIONS, 
-  Permissions, 
-  AdminSection, 
-  AdminAction 
+  actionsForSection,
+  Permissions,
+  AdminSection,
+  AdminAction
 } from '@/lib/admin-permissions';
 
 const SECTION_LABELS: Record<string, string> = {
@@ -14,11 +14,13 @@ const SECTION_LABELS: Record<string, string> = {
   blogs: 'Blogs', // Kept for type safety, but won't render
 };
 
-// Maps string actions to objects to match your original code structure (action.key)
-const ACTIONS = ADMIN_ACTIONS.map((a) => ({ 
-  key: a, 
-  label: a.charAt(0).toUpperCase() + a.slice(1) 
-}));
+// Human-friendly labels + hints per action.
+const ACTION_LABELS: Record<AdminAction, string> = {
+  add: 'Add',
+  edit: 'Edit',
+  delete: 'Delete',
+  approve: 'Approve (Manager)',
+};
 
 interface PermissionMatrixProps {
   value: Permissions;
@@ -32,7 +34,7 @@ export default function PermissionMatrix({ value, onChange, disabled }: Permissi
       ...value,
       [sectionKey]: {
         // Fallback to empty permissions if the section is missing from the object
-        ...(value[sectionKey as AdminSection] || { add: false, edit: false, delete: false }),
+        ...(value[sectionKey as AdminSection] || { add: false, edit: false, delete: false, approve: false }),
         [actionKey]: !value[sectionKey as AdminSection]?.[actionKey as AdminAction],
       },
     });
@@ -47,9 +49,9 @@ export default function PermissionMatrix({ value, onChange, disabled }: Permissi
             {SECTION_LABELS[key] || key}
           </h4>
           <div className="flex flex-wrap gap-4">
-            {ACTIONS.map((action) => (
+            {actionsForSection(key).map((action) => (
               <label
-                key={action.key}
+                key={action}
                 className={`inline-flex items-center gap-2 text-sm cursor-pointer ${
                   disabled ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
@@ -57,13 +59,13 @@ export default function PermissionMatrix({ value, onChange, disabled }: Permissi
                 <input
                   type="checkbox"
                   disabled={disabled}
-                  // ✅ FIX: Added optional chaining (?.) and nullish coalescing (??) 
+                  // ✅ FIX: Added optional chaining (?.) and nullish coalescing (??)
                   // This prevents the "Cannot read properties of undefined" crash
-                  checked={value[key]?.[action.key as AdminAction] ?? false}
-                  onChange={() => toggle(key, action.key)}
+                  checked={value[key]?.[action] ?? false}
+                  onChange={() => toggle(key, action)}
                   className="w-4 h-4 rounded border-gray-300 text-[#005E60] focus:ring-[#005E60]"
                 />
-                <span className="capitalize text-gray-700">{action.label}</span>
+                <span className="text-gray-700">{ACTION_LABELS[action]}</span>
               </label>
             ))}
           </div>

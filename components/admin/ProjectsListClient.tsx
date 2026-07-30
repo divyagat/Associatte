@@ -13,7 +13,7 @@ const getDeveloperName = (developer: any): string => {
   return '';
 };
 
-export default function ProjectsListClient({ initialProjects, canEdit, canDelete, isAdmin }: any) {
+export default function ProjectsListClient({ initialProjects, canEdit, canDelete, canApprove, isAdmin }: any) {
   const [projects, setProjects] = useState<any[]>(initialProjects || []);
   const [deletingSlug, setDeletingSlug] = useState<string | null>(null);
 
@@ -82,7 +82,7 @@ export default function ProjectsListClient({ initialProjects, canEdit, canDelete
                 </td>
 
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <ApprovalControls slug={project.slug} type="projects" status={project.status} isAdmin={isAdmin} />
+                  <ApprovalControls slug={project.slug} type="projects" status={project.status} canApprove={canApprove} isAdmin={isAdmin} />
                 </td>
 
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

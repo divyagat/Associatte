@@ -83,6 +83,7 @@ export default function StickyActions({
   const [showButtons, setShowButtons] = useState(false);
   const [showScrollTopBtn, setShowScrollTopBtn] = useState(false);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [desktopOpen, setDesktopOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   
@@ -276,9 +277,13 @@ export default function StickyActions({
       {/* Desktop Version - Unified Brand Design */}
       {!isMobile && (
         <>
-          <div className="fixed right-0 bottom-24 z-[100] flex flex-col gap-3 items-end pr-0 hidden md:flex">
+          <div
+            className="fixed right-0 bottom-24 z-[100] hidden md:flex flex-col gap-3 items-end pr-0"
+            onMouseEnter={() => setDesktopOpen(true)}
+            onMouseLeave={() => { setDesktopOpen(false); setHoveredId(null); }}
+          >
             <AnimatePresence>
-              {showButtons && ACTIONS.map((action, index) => {
+              {showButtons && desktopOpen && ACTIONS.map((action, index) => {
                 const Icon = action.icon;
                 const isHovered = hoveredId === action.id;
                 const isHighPriority = action.priority === 'high';
@@ -370,6 +375,30 @@ export default function StickyActions({
                 );
               })}
             </AnimatePresence>
+
+            {/* Launcher — the only thing shown at rest; hovering (or tapping) it
+                reveals the action icons above. */}
+            {showButtons && (
+              <motion.button
+                initial={{ scale: 0, x: 50, opacity: 0 }}
+                animate={{ scale: 1, x: 0, opacity: 1 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                onClick={() => setDesktopOpen((v) => !v)}
+                aria-label={desktopOpen ? 'Hide quick actions' : 'Show quick actions'}
+                aria-expanded={desktopOpen}
+                className="w-12 h-12 flex items-center justify-center flex-shrink-0 text-white shadow-lg"
+                style={{
+                  backgroundColor: desktopOpen ? BRAND_SECONDARY : BRAND_PRIMARY,
+                  borderRadius: '999px 0 0 999px',
+                  boxShadow: `0 6px 18px -4px ${BRAND_PRIMARY}80`,
+                }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <motion.div animate={{ rotate: desktopOpen ? 90 : 0 }} transition={{ duration: 0.25 }}>
+                  {desktopOpen ? <MdClose className="w-5 h-5" /> : <BsGrid3X3GapFill className="w-5 h-5" />}
+                </motion.div>
+              </motion.button>
+            )}
           </div>
 
           {/* Scroll to Top - Brand themed */}

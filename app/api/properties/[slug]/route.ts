@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getPropertyBySlug, updateProperty, deleteProperty } from '@/lib/data-store';
 import { getPermissionsFromRequest, getRoleFromRequest } from '@/lib/admin-auth';
 import { can } from '@/lib/admin-permissions';
-import { sanitizeStatus } from '@/lib/visibility';
+import { sanitizeStatus, allowedStatusTargets } from '@/lib/visibility';
 
 export async function GET(
   request: NextRequest,
@@ -31,13 +31,27 @@ export async function PUT(
   try {
     const { slug } = await context.params;
     const body = await request.json();
-    // Any employee edit re-enters the approval queue. For admins we only touch
-    // `status` when it's explicitly sent (approve / show / hide actions) so a
-    // normal form save doesn't accidentally change visibility.
-    if (getRoleFromRequest(request) === 'employee') {
+    // Two-stage approval. A main admin may set any status. A manager may only
+    // advance a submission to `manager_approved` (stage-1 approval) or hide it —
+    // publishing is the admin's exclusive final gate. A non-approver's content
+    // edit re-enters the pending queue and any `status` they send is ignored.
+    const isAdmin = getRoleFromRequest(request) === 'admin';
+    const isManager = !isAdmin && can(getPermissionsFromRequest(request), 'properties', 'approve');
+    const canApprove = isAdmin || isManager;
+    const isStatusOnly = 'status' in body && Object.keys(body).length === 1;
+    if ('status' in body) {
+      if (isAdmin) {
+        body.status = sanitizeStatus(body.status, 'published');
+      } else if (isManager) {
+        const requested = sanitizeStatus(body.status, 'manager_approved');
+        if (allowedStatusTargets('manager').includes(requested)) body.status = requested;
+        else delete body.status; // manager attempted to publish → ignored
+      } else {
+        delete body.status;
+      }
+    }
+    if (!canApprove && !isStatusOnly) {
       body.status = 'pending';
-    } else if ('status' in body) {
-      body.status = sanitizeStatus(body.status, 'published');
     }
     const property = await updateProperty(slug, body);
     if (!property) {

@@ -11,7 +11,7 @@ interface BlogFormProps {
 }
 
 export default function BlogForm({ initialData, onSubmit, loading }: BlogFormProps) {
-  const [formData, setFormData] = useState(initialData || {
+  const [formData, setFormData] = useState({
     slug: '',
     title: '',
     excerpt: '',
@@ -34,7 +34,15 @@ export default function BlogForm({ initialData, onSubmit, loading }: BlogFormPro
     faqs: [] as any[],
     relatedSlugs: [] as string[],
     recentPostSlugs: [] as string[],
-    overlayText: ''
+    overlayText: '',
+    // SEO & social — drive <title>, meta description, Open Graph / Twitter cards
+    // and JSON-LD schema on the public blog page (see app/blog/[slug]/layout.tsx).
+    metaTitle: '',
+    metaDescription: '',
+    metaKeywords: '',
+    socialImage: '',
+    canonicalUrl: '',
+    ...(initialData || {}),
   });
 
   const [currentTag, setCurrentTag] = useState('');
@@ -429,6 +437,88 @@ export default function BlogForm({ initialData, onSubmit, loading }: BlogFormPro
               </div>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* SEO & Social */}
+      <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <h2 className="text-lg font-bold text-gray-900 mb-1">SEO &amp; Social</h2>
+        <p className="text-xs text-gray-500 mb-4">
+          Controls the browser tab title, Google snippet, and the preview card shown when the
+          post is shared on WhatsApp / Facebook / LinkedIn / Twitter. Leave blank to fall back
+          to the title, excerpt and main image.
+        </p>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Meta Title</label>
+            <input
+              type="text"
+              name="metaTitle"
+              value={formData.metaTitle || ''}
+              onChange={handleChange}
+              maxLength={70}
+              placeholder="Falls back to the post title (aim for ≤ 60 characters)"
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]"
+            />
+            <p className="text-xs text-gray-400 mt-1">{(formData.metaTitle || '').length}/70 characters</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Meta Description</label>
+            <textarea
+              name="metaDescription"
+              value={formData.metaDescription || ''}
+              onChange={handleChange}
+              rows={3}
+              maxLength={180}
+              placeholder="Falls back to the excerpt (aim for 150–160 characters)"
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]"
+            />
+            <p className="text-xs text-gray-400 mt-1">{(formData.metaDescription || '').length}/180 characters</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Meta Keywords</label>
+            <input
+              type="text"
+              name="metaKeywords"
+              value={formData.metaKeywords || ''}
+              onChange={handleChange}
+              placeholder="Comma separated, e.g. Pune real estate, property investment, RERA"
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]"
+            />
+            <p className="text-xs text-gray-400 mt-1">Falls back to the Tags above when empty.</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Canonical URL</label>
+            <input
+              type="text"
+              name="canonicalUrl"
+              value={formData.canonicalUrl || ''}
+              onChange={handleChange}
+              placeholder="Optional — defaults to /blog/{slug}"
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Social Share Image (Open Graph)
+            </label>
+            {formData.socialImage && (
+              <img src={formData.socialImage} alt="Social preview" className="w-full max-w-md h-48 object-cover rounded-lg mb-3" />
+            )}
+            <label className="cursor-pointer block max-w-md">
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-[#005E60] transition-colors">
+                <Upload className="mx-auto mb-2 text-gray-400" size={32} />
+                <p className="text-sm text-gray-600">Upload social image (1200×630 recommended)</p>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageUpload(e, 'socialImage')}
+                  className="hidden"
+                />
+              </div>
+            </label>
+            <p className="text-xs text-gray-400 mt-1">Falls back to the secondary, then the main image.</p>
+          </div>
         </div>
       </div>
 

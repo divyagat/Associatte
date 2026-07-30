@@ -27,7 +27,8 @@ export interface Project {
   category?: 'residential' | 'commercial' | 'plots' | 'warehouse' | 'industry' | string;
   dealType?: 'sale' | 'rent';
   // Approval / visibility state. Absent = published (legacy records).
-  status?: 'published' | 'pending' | 'hidden';
+  // Two-stage approval: pending → manager_approved → published (see lib/visibility.ts).
+  status?: 'published' | 'manager_approved' | 'pending' | 'hidden';
   // Sale/Rent listing facts.
   ageOfConstruction?: string;
   builtUpArea?: string;

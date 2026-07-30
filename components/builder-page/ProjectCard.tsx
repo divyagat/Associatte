@@ -121,16 +121,23 @@ export default function BuilderProjectCard({ project }: BuilderProjectCardProps)
             </span>
           )}
 
-          {/* ✅ SOLD OUT / FOR RENT BADGE (Top Right) */}
-          {isSoldOut ? (
-            <span className="absolute top-3 right-3 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide rounded-md shadow-sm whitespace-nowrap bg-red-600 text-white z-10">
-              Sold Out
-            </span>
-          ) : isRental ? (
-            <span className="absolute top-3 right-3 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide rounded-md shadow-sm whitespace-nowrap bg-[#8B0000] text-white z-10">
-              For Rent
-            </span>
-          ) : null}
+          {/* ✅ AVAILABILITY + FOR RENT BADGES (Top Right, stacked) */}
+          <div className="absolute top-3 right-3 z-10 flex flex-col items-end gap-1.5">
+            {isSoldOut ? (
+              <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide rounded-md shadow-sm whitespace-nowrap bg-red-600 text-white">
+                Sold Out
+              </span>
+            ) : (
+              <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide rounded-md shadow-sm whitespace-nowrap bg-green-600 text-white">
+                Available
+              </span>
+            )}
+            {isRental && (
+              <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide rounded-md shadow-sm whitespace-nowrap bg-[#8B0000] text-white">
+                For Rent
+              </span>
+            )}
+          </div>
           
           {/* Price Badge */}
           <span className="absolute bottom-3 left-3 px-3 py-1.5 bg-[#005E60] text-white text-sm font-semibold rounded-lg shadow-md whitespace-nowrap">

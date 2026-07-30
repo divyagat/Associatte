@@ -59,10 +59,14 @@ export default function BuilderProjectCard({ project }: BuilderProjectCardProps)
             {project.price}
           </span>
 
-          {/* ✅ 3. SOLD OUT BADGE (Only displays when isSoldOut is true) */}
-          {isSoldOut && (
+          {/* ✅ 3. AVAILABILITY BADGE (Sold Out when marked, otherwise Available) */}
+          {isSoldOut ? (
             <span className="absolute top-3 right-3 px-3 py-1 bg-red-600 text-white text-xs font-bold rounded-lg uppercase shadow-md">
               Sold Out
+            </span>
+          ) : (
+            <span className="absolute top-3 right-3 px-3 py-1 bg-green-600 text-white text-xs font-bold rounded-lg uppercase shadow-md">
+              Available
             </span>
           )}
         </div>

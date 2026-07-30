@@ -128,10 +128,17 @@ function HeaderContent() {
     };
   }, [mobileMenuOpen]);
 
-  // Projects dropdown → by property TYPE; Properties dropdown → by DEAL type.
-  // Empty categories are hidden once the listing data has loaded.
+  // Projects dropdown → Residential / Commercial / Plots (property TYPE).
+  // Restricted to these three types; empty categories are hidden once the
+  // listing data has loaded.
+  const PROJECTS_DROPDOWN_TYPES: ProjectTypeId[] = ['residential', 'commercial', 'plots'];
   const projectsDropdown = PROJECT_TYPES
-    .filter((t) => (!availableTypes || availableTypes.has(t.id)) && !hiddenTypes.has(t.id))
+    .filter(
+      (t) =>
+        PROJECTS_DROPDOWN_TYPES.includes(t.id) &&
+        (!availableTypes || availableTypes.has(t.id)) &&
+        !hiddenTypes.has(t.id)
+    )
     .map((t) => ({
       label: t.label,
       href: `/projects?type=${t.id}`,
@@ -139,8 +146,8 @@ function HeaderContent() {
       color: t.color,
     }));
 
-  // Properties dropdown → by DEAL type. Sale and Rent always appear (they're the
-  // two core options); only an admin hiding one via site-config removes it.
+  // Properties dropdown → Sale / Rent (deal types). Both always appear as core
+  // options, only removed if an admin explicitly hides one.
   const propertiesDropdown = DEAL_TYPES
     .filter((d) => !hiddenDeals.has(d.id))
     .map((d) => ({

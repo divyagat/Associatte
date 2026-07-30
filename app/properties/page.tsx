@@ -8,6 +8,7 @@ import {
   DEAL_TYPES, DEAL_TYPE_IDS, getDealType, computeDealCounts, getProjectType,
   PROJECT_TYPE_IDS, type DealTypeId, type ProjectTypeId,
 } from '@/lib/categories';
+import { matchesSearch } from '@/lib/search';
 
 // Read live from the file-based data store so anything added/edited in the admin
 // panel shows up here immediately (no rebuild required).
@@ -19,6 +20,19 @@ export const metadata: Metadata = {
   keywords: ['properties', 'residential', 'commercial', 'plots', 'rent', 'resale', 'Pune', 'Mumbai', 'KDMC', 'real estate'],
   // Consolidate all ?type=/?location= filter permutations onto one canonical URL.
   alternates: { canonical: '/properties' },
+};
+
+// Category-specific hero copy shown on the Properties page. Keyed by deal type
+// so /properties?deal=sale and ?deal=rent each display relevant info.
+const DEAL_INFO: Record<DealTypeId, { title: string; description: string }> = {
+  sale: {
+    title: 'Resale Properties',
+    description: 'Buy resale residential and commercial properties — apartments, offices, shops and plots — from verified sellers across Pune, Mumbai & KDMC.',
+  },
+  rent: {
+    title: 'Properties for Rent',
+    description: 'Find rental homes, offices and commercial spaces on lease with flexible terms across Pune, Mumbai & KDMC.',
+  },
 };
 
 // ✅ Get unique filter values from the supplied list
@@ -75,14 +89,9 @@ export default async function PropertiesPage({
     if (getDealType(project) !== activeDeal) return false;
     if (typeFilter && getProjectType(project) !== typeFilter) return false;
 
-    if (params.q) {
-      const query = params.q.toLowerCase();
-      const matchesName = project.name?.toLowerCase().includes(query);
-      const matchesLocation = project.fullLocation?.area?.toLowerCase().includes(query) ||
-        project.location?.toLowerCase().includes(query);
-      const matchesBuilder = project.developer?.name?.toLowerCase().includes(query);
-      if (!matchesName && !matchesLocation && !matchesBuilder) return false;
-    }
+    // Free-text search across all listing fields (name, location, builder,
+    // type, BHK, amenities, price, RERA, synonyms, …).
+    if (params.q && !matchesSearch(project, params.q)) return false;
 
     if (cityFilter && project.location?.toLowerCase() !== cityFilter.toLowerCase()) {
       return false;
@@ -147,11 +156,14 @@ export default async function PropertiesPage({
       {/* 🔹 Hero Section with Type Tabs */}
       <section className="bg-[#101C2E] text-white py-8 sm:py-12 lg:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 sm:mb-4">
-            <span className="text-[#F8C21C]">Properties</span>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 sm:mb-3">
+            <span className="text-[#F8C21C]">{DEAL_INFO[activeDeal].title}</span>
           </h1>
-          <p className="text-sm sm:text-lg text-white/90 mb-5 sm:mb-6">
-            Discover {filteredProjects.length} properties across Pune, Mumbai &amp; KDMC
+          <p className="text-sm sm:text-lg text-white/90 mb-2 max-w-3xl">
+            {DEAL_INFO[activeDeal].description}
+          </p>
+          <p className="text-xs sm:text-sm text-white/70 mb-5 sm:mb-6">
+            {filteredProjects.length} {activeDealLabel.toLowerCase()} properties across Pune, Mumbai &amp; KDMC
           </p>
 
           {/* 🔹 Deal Tabs (Sale / Rent) — only deals with listings are shown */}

@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getProjectBySlug, updateProject, deleteProject } from '@/lib/data-store';
 import { getPermissionsFromRequest, getRoleFromRequest } from '@/lib/admin-auth';
 import { can } from '@/lib/admin-permissions';
-import { sanitizeStatus } from '@/lib/visibility';
+import { sanitizeStatus, allowedStatusTargets } from '@/lib/visibility';
 
 // ✅ GET - Fixed for Next.js 15/16
 export async function GET(
@@ -59,14 +59,29 @@ export async function PUT(
       projectData.soldOut = data.soldOut !== undefined ? data.soldOut : false;
     }
 
-    // Employee edits re-enter the approval queue; admins only change visibility
-    // when `status` is explicitly sent (approve / show / hide actions).
-    if (getRoleFromRequest(request) === 'employee') {
-      projectData.status = 'pending';
-    } else if ('status' in data) {
-      projectData.status = sanitizeStatus(data.status, 'published');
+    // Two-stage approval. A main admin may set any status. A manager may only
+    // advance a submission to `manager_approved` (stage-1 approval) or hide it —
+    // publishing is the admin's exclusive final gate. A non-approver's content
+    // edit re-enters the pending queue and any `status` they send is ignored.
+    const isAdmin = getRoleFromRequest(request) === 'admin';
+    const isManager = !isAdmin && can(getPermissionsFromRequest(request), 'projects', 'approve');
+    const canApprove = isAdmin || isManager;
+    const isStatusOnly = 'status' in data && Object.keys(data).length === 1;
+    if ('status' in data) {
+      if (isAdmin) {
+        projectData.status = sanitizeStatus(data.status, 'published');
+      } else if (isManager) {
+        const requested = sanitizeStatus(data.status, 'manager_approved');
+        if (allowedStatusTargets('manager').includes(requested)) projectData.status = requested;
+        else delete projectData.status; // manager attempted to publish → ignored
+      } else {
+        delete projectData.status;
+      }
     } else {
       delete projectData.status;
+    }
+    if (!canApprove && !isStatusOnly) {
+      projectData.status = 'pending';
     }
 
     const project = await updateProject(slug, projectData);

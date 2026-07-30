@@ -6,6 +6,7 @@ import {
   PROJECT_TYPES, PROJECT_TYPE_IDS, getProjectType, computeTypeCounts,
   type ProjectTypeId,
 } from '@/lib/categories';
+import { matchesSearch } from '@/lib/search';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,6 +14,31 @@ export const metadata: Metadata = {
   title: 'All Projects | Associatte PropTech',
   description: 'Explore all premium residential & commercial projects in Pune, Mumbai & KDMC.',
   keywords: ['projects', 'Pune', 'Mumbai', 'KDMC', 'real estate', 'properties'],
+};
+
+// Category-specific hero copy shown on the Projects page. Keyed by project type
+// so /projects?type=residential (etc.) displays info relevant to that category.
+const TYPE_INFO: Record<ProjectTypeId, { title: string; description: string }> = {
+  residential: {
+    title: 'Residential Projects',
+    description: 'Premium apartments, flats and villas from trusted developers — ready-to-move and under-construction homes across Pune, Mumbai & KDMC.',
+  },
+  commercial: {
+    title: 'Commercial Projects',
+    description: 'Offices, shops, showrooms and retail spaces in prime business hubs — ideal for investment and end-use.',
+  },
+  plots: {
+    title: 'Plots & Land',
+    description: 'NA-approved plots and residential land parcels in fast-growing corridors — build your dream home or invest for appreciation.',
+  },
+  warehouse: {
+    title: 'Warehousing',
+    description: 'Warehouses and godowns with excellent connectivity for storage, logistics and distribution needs.',
+  },
+  industry: {
+    title: 'Industrial Projects',
+    description: 'Factories and manufacturing units in established industrial zones with ready infrastructure.',
+  },
 };
 
 // ✅ Helper function to normalize developer field
@@ -112,15 +138,9 @@ export default async function ProjectsPage({
     // Property type (tab)
     if (getProjectType(project) !== activeType) return false;
 
-    // Search query
-    if (params.q) {
-      const query = params.q.toLowerCase();
-      const matchesName = project.name?.toLowerCase().includes(query);
-      const matchesLocation = project.fullLocation?.area?.toLowerCase().includes(query) ||
-        project.location?.toLowerCase().includes(query);
-      const matchesBuilder = builderName.toLowerCase().includes(query);
-      if (!matchesName && !matchesLocation && !matchesBuilder) return false;
-    }
+    // Free-text search across all listing fields (name, location, builder,
+    // type, BHK, amenities, price, RERA, synonyms, …).
+    if (params.q && !matchesSearch(project, params.q)) return false;
 
     // Location filter
     if (params.location && project.location?.toLowerCase() !== params.location.toLowerCase()) {
@@ -172,9 +192,14 @@ export default async function ProjectsPage({
       {/* 🔹 Hero Section */}
       <section className="bg-[#101C2E] text-white py-12 lg:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="page-title mb-4">All <span className="accent">Projects</span></h1>
-          <p className="text-lg text-white/90 mb-6">
-            Discover {filteredProjects.length} premium projects across Pune, Mumbai & KDMC
+          <h1 className="page-title mb-3">
+            <span className="accent">{TYPE_INFO[activeType].title}</span>
+          </h1>
+          <p className="text-lg text-white/90 mb-2 max-w-3xl">
+            {TYPE_INFO[activeType].description}
+          </p>
+          <p className="text-sm text-white/70 mb-6">
+            {filteredProjects.length} {TYPE_INFO[activeType].title.toLowerCase()} across Pune, Mumbai &amp; KDMC
           </p>
 
           {/* 🔹 Property Type Tabs — only types that have listings are shown */}

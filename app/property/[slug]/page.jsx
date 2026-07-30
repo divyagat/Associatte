@@ -35,6 +35,7 @@ function transformProject(project) {
     title: project.name,
     slug: project.slug,
     rera: !!project.reraNumber,
+    soldOut: project.soldOut === true || project.soldOut === 'true',
     priceRange: project.priceDetails?.range || project.price,
     pricePerSqft: project.priceDetails?.perSqft,
     developer: project.developer?.name,
@@ -636,6 +637,11 @@ export default function PropertyPage() {
                   <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">{propertyData.title}</h1>
                   {propertyData.rera && (
                     <span className="px-2.5 py-1 text-xs font-semibold bg-[#005E60] text-white rounded-full">RERA Verified</span>
+                  )}
+                  {propertyData.soldOut ? (
+                    <span className="px-2.5 py-1 text-xs font-semibold bg-red-600 text-white rounded-full uppercase tracking-wide">Sold Out</span>
+                  ) : (
+                    <span className="px-2.5 py-1 text-xs font-semibold bg-green-600 text-white rounded-full uppercase tracking-wide">Available</span>
                   )}
                 </div>
                 <p className="text-gray-600 mt-1">

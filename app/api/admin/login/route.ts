@@ -7,9 +7,20 @@ import {
   encodePermissions,
 } from '@/lib/admin-permissions';
 
-// Main admin credentials. Change these here (or move to env vars) when needed.
-const ADMIN_EMAIL = 'divyagate123@gmail.com';
-const ADMIN_PASSWORD = 'divya123';
+// Main admins (full access). Both accounts get identical, complete rights.
+// Change credentials here, or override any of them via env vars in `.env`.
+const MAIN_ADMINS: { email: string; password: string }[] = [
+  // Divya Gate
+  {
+    email: (process.env.ADMIN_DIVYA_EMAIL || 'divyagate123@gmail.com').toLowerCase(),
+    password: process.env.ADMIN_DIVYA_PASSWORD || 'divya123',
+  },
+  // Vikram sir  — TODO: confirm/change these to Vikram's real credentials.
+  {
+    email: (process.env.ADMIN_VIKRAM_EMAIL || 'vikram@associatte.com').toLowerCase(),
+    password: process.env.ADMIN_VIKRAM_PASSWORD || 'vikram123',
+  },
+];
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,9 +30,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
     }
 
-    // 1) Main admin (full access).
-    const isMainAdmin =
-      email.trim().toLowerCase() === ADMIN_EMAIL && password === ADMIN_PASSWORD;
+    // 1) Main admin (full access) — matches any account in MAIN_ADMINS.
+    const normalizedEmail = email.trim().toLowerCase();
+    const isMainAdmin = MAIN_ADMINS.some(
+      (a) => a.email === normalizedEmail && a.password === password,
+    );
 
     // 2) Otherwise, an employee account (limited access).
     const employee = isMainAdmin ? null : await findEmployeeByCredentials(email, password);

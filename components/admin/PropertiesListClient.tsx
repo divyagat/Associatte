@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Edit, MapPin, LayoutGrid, Search } from 'lucide-react';
 import DeleteButton from '@/components/admin/DeleteButton';
 import ApprovalControls from '@/components/admin/ApprovalControls';
+import { matchesSearch } from '@/lib/search';
 
 // Category (property TYPE) filter — matches the values the PropertyForm can set
 // plus the legacy launch-status values (pre-launch / ready) still in the data.
@@ -20,7 +21,7 @@ const CATEGORIES = [
   { value: 'ready', label: 'Ready' },
 ];
 
-export default function PropertiesListClient({ properties, projects, canEdit, canDelete, isAdmin }: any) {
+export default function PropertiesListClient({ properties, projects, canEdit, canDelete, canApprove, isAdmin }: any) {
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -36,11 +37,9 @@ export default function PropertiesListClient({ properties, projects, canEdit, ca
     return properties.filter((p: any) => {
       const matchesCategory = activeCategory === 'all' || p.category === activeCategory;
       const projectName = p.project || projectMap[p.projectSlug] || '';
-      const matchesSearch = 
-        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        projectName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.fullLocation?.area?.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesCategory && matchesSearch;
+      // Broad free-text match across all fields, plus the linked project's name.
+      const matches = matchesSearch({ ...p, tags: [...(p.tags || []), projectName] }, searchQuery);
+      return matchesCategory && matches;
     });
   }, [properties, activeCategory, searchQuery, projectMap]);
 
@@ -166,7 +165,7 @@ export default function PropertiesListClient({ properties, projects, canEdit, ca
                           )}
                         </td>
                         <td className="px-6 py-4">
-                          <ApprovalControls slug={property.slug} type="properties" status={property.status} isAdmin={isAdmin} />
+                          <ApprovalControls slug={property.slug} type="properties" status={property.status} canApprove={canApprove} isAdmin={isAdmin} />
                         </td>
                         <td className="px-6 py-4 text-right">
                           <div className="flex items-center justify-end gap-2">
@@ -228,7 +227,7 @@ export default function PropertiesListClient({ properties, projects, canEdit, ca
                     </div>
                   </div>
                   <div className="mt-3 pt-3 border-t border-gray-100">
-                    <ApprovalControls slug={property.slug} type="properties" status={property.status} isAdmin={isAdmin} />
+                    <ApprovalControls slug={property.slug} type="properties" status={property.status} canApprove={canApprove} isAdmin={isAdmin} />
                   </div>
                   {(canEdit || canDelete) && (
                     <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-100">

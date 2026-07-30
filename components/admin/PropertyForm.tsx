@@ -301,10 +301,10 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
               required
               className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]"
             >
-              <option value="sale">Sale</option>
+              <option value="sale">Resale</option>
               <option value="rent">Rent</option>
             </select>
-            <p className="text-xs text-gray-500 mt-1">Drives the Properties menu (Sale / Rent).</p>
+            <p className="text-xs text-gray-500 mt-1">Drives the Properties menu (Resale / Rent).</p>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Location *</label>

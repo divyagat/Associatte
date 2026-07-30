@@ -17,7 +17,9 @@ export default async function ProjectsListPage() {
   const canAdd = can(permissions, 'projects', 'add');
   const canEdit = can(permissions, 'projects', 'edit');
   const canDelete = can(permissions, 'projects', 'delete');
+  // Main admin OR a manager granted the `approve` right may act on approvals.
   const isAdmin = role === 'admin';
+  const canApprove = isAdmin || can(permissions, 'projects', 'approve');
 
   return (
     <div className="space-y-6">
@@ -40,6 +42,7 @@ export default async function ProjectsListPage() {
         initialProjects={projects}
         canEdit={canEdit}
         canDelete={canDelete}
+        canApprove={canApprove}
         isAdmin={isAdmin}
       />
     </div>

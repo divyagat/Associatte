@@ -34,8 +34,10 @@ export type ProjectTypeId = (typeof PROJECT_TYPES)[number]['id'];
 export const PROJECT_TYPE_IDS = PROJECT_TYPES.map((t) => t.id) as readonly ProjectTypeId[];
 
 // ── Deal type dimension (Header → Properties) ──────────────────────────────
+// `sale` id is kept as the internal bucket (URLs, saved data, getDealType all
+// rely on it); the label is "Resale" because that's what Sale means on this site.
 export const DEAL_TYPES = [
-  { id: 'sale', label: 'Sale', color: BRAND.green },
+  { id: 'sale', label: 'Resale', color: BRAND.green },
   { id: 'rent', label: 'Rent', color: BRAND.red },
 ] as const;
 

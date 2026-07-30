@@ -6,12 +6,21 @@
  */
 
 export type AdminSection = 'properties' | 'projects' | 'blogs';
-export type AdminAction = 'add' | 'edit' | 'delete';
+// `approve` = a "manager" right: publish/hide listings & approve pending
+// submissions from other employees. Only meaningful for properties & projects
+// (blogs have no approval queue).
+export type AdminAction = 'add' | 'edit' | 'delete' | 'approve';
 
 export interface SectionPermissions {
   add: boolean;
   edit: boolean;
   delete: boolean;
+  approve: boolean;
+}
+
+/** Actions offered per section in the permission matrix. Blogs skip `approve`. */
+export function actionsForSection(section: AdminSection): AdminAction[] {
+  return section === 'blogs' ? ['add', 'edit', 'delete'] : ['add', 'edit', 'delete', 'approve'];
 }
 
 export interface Permissions {
@@ -28,10 +37,10 @@ export const ADMIN_SECTIONS: AdminSection[] = ['properties', 'projects', 'blogs'
 // ✅ UPDATED: Added 'blogs' back so it renders in the UI and navigation
 export const VISIBLE_ADMIN_SECTIONS: AdminSection[] = ['properties', 'projects', 'blogs'];
 
-export const ADMIN_ACTIONS: AdminAction[] = ['add', 'edit', 'delete'];
+export const ADMIN_ACTIONS: AdminAction[] = ['add', 'edit', 'delete', 'approve'];
 
-const NONE: SectionPermissions = { add: false, edit: false, delete: false };
-const ALL: SectionPermissions = { add: true, edit: true, delete: true };
+const NONE: SectionPermissions = { add: false, edit: false, delete: false, approve: false };
+const ALL: SectionPermissions = { add: true, edit: true, delete: true, approve: true };
 
 /** The main admin has full access to everything. */
 export const ADMIN_PERMISSIONS: Permissions = {
@@ -40,9 +49,9 @@ export const ADMIN_PERMISSIONS: Permissions = {
   blogs: { ...ALL },
 };
 
-/** Default pre-checked state for a brand new employee */
+/** Default pre-checked state for a brand new employee (submits, but can't approve). */
 export const DEFAULT_EMPLOYEE_PERMISSIONS: Permissions = {
-  properties: { add: true, edit: true, delete: true },
+  properties: { add: true, edit: true, delete: true, approve: false },
   projects: { ...NONE },
   blogs: { ...NONE }, // Starts with no access, admin can grant it
 };
@@ -60,7 +69,7 @@ export function sanitizePermissions(input: unknown): Permissions {
   const obj = (input ?? {}) as Record<string, unknown>;
   const section = (raw: unknown): SectionPermissions => {
     const s = (raw ?? {}) as Record<string, unknown>;
-    return { add: !!s.add, edit: !!s.edit, delete: !!s.delete };
+    return { add: !!s.add, edit: !!s.edit, delete: !!s.delete, approve: !!s.approve };
   };
   return { 
     properties: section(obj.properties), 
@@ -84,7 +93,7 @@ export function hasSectionAccess(
   section: AdminSection,
 ): boolean {
   const s = perms?.[section];
-  return !!s && (s.add || s.edit || s.delete);
+  return !!s && (s.add || s.edit || s.delete || s.approve);
 }
 
 /** Encode permissions for storage in a cookie. */

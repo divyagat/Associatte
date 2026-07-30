@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getAllProjects } from '@/lib/data-store';
 import { getPermissionsFromRequest, getRoleFromRequest } from '@/lib/admin-auth';
 import { can } from '@/lib/admin-permissions';
-import { isPubliclyVisible, sanitizeStatus } from '@/lib/visibility';
+import { isPubliclyVisible, initialStatusForRole } from '@/lib/visibility';
 
 // Public GET returns only published projects. Admin pages read the data store
 // directly, so they still see pending/hidden ones.
@@ -48,9 +48,12 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // Employee submissions require admin approval; admins publish immediately.
-    const role = getRoleFromRequest(request);
-    data.status = role === 'employee' ? 'pending' : sanitizeStatus(data.status, 'published');
+    // Two-stage approval: a main admin publishes directly, a manager's submission
+    // clears stage 1 (awaits admin), and an employee's submission starts pending
+    // (awaits manager, then admin).
+    const isAdmin = getRoleFromRequest(request) === 'admin';
+    const isManager = !isAdmin && can(getPermissionsFromRequest(request), 'projects', 'approve');
+    data.status = initialStatusForRole(isAdmin ? 'admin' : isManager ? 'manager' : 'employee');
 
     // Add the project
     const { createProject } = await import('@/lib/data-store');

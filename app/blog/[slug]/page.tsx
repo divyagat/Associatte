@@ -1,6 +1,6 @@
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { 
   ArrowLeft, Calendar, Clock, Share2, Copy, 
@@ -125,9 +125,10 @@ const FAQItem = ({ question, answer }: { question: string; answer: string }) => 
 
 export default function BlogDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const slug = params.slug as string;
   const [post, setPost] = useState<BlogPost | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
   const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>([]);
   const [recentPosts, setRecentPosts] = useState<BlogPost[]>([]);
   const [isBookmarked, setIsBookmarked] = useState(false);
@@ -175,6 +176,8 @@ export default function BlogDetailPage() {
     const applyPost = (blogPost: BlogPost) => {
       if (!active) return;
       setPost(blogPost);
+      setNotFound(false);
+      setLoading(false);
       setLikesCount(Math.floor(Math.random() * 200) + 50);
 
       if (blogPost.relatedSlugs && blogPost.relatedSlugs.length > 0) {
@@ -187,6 +190,11 @@ export default function BlogDetailPage() {
     };
 
     const load = async () => {
+      if (active) {
+        setLoading(true);
+        setNotFound(false);
+      }
+
       const staticPost = getBlogBySlug(slug);
       if (staticPost) {
         applyPost(staticPost);
@@ -206,17 +214,21 @@ export default function BlogDetailPage() {
           return;
         }
       } catch {
-        // ignore and fall through to 404
+        // ignore and fall through to not-found
       }
 
-      if (active) router.push('/404');
+      // Only reached when the blog genuinely doesn't exist.
+      if (active) {
+        setNotFound(true);
+        setLoading(false);
+      }
     };
 
     load();
     return () => {
       active = false;
     };
-  }, [slug, router]);
+  }, [slug]);
 
   useEffect(() => {
     if (contentRef.current) {
@@ -301,7 +313,21 @@ export default function BlogDetailPage() {
   const authorBio = getAuthorBio();
   const authorAvatar = getAuthorAvatar();
 
-  if (!post) {
+  // While the post is still being fetched, show a loader instead of the 404
+  // screen so a valid blog never flashes "Article not found" before it loads.
+  if (loading || (!post && !notFound)) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+        <div className="text-center px-4">
+          <div className="w-16 h-16 mx-auto mb-6 rounded-full border-4 border-[var(--color-secondary)]/20 border-t-[var(--color-secondary)] animate-spin" />
+          <p className="text-[var(--color-text-light)] text-lg">Loading article…</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Only shown once the fetch has completed and the blog genuinely doesn't exist.
+  if (notFound || !post) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
         <div className="text-center px-4">
