@@ -173,6 +173,7 @@ export default function BlogForm({ initialData, onSubmit, loading }: BlogFormPro
                 value={formData.city}
                 onChange={handleChange}
                 required
+                placeholder="e.g., Pune, Mumbai"
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]"
               />
             </div>
