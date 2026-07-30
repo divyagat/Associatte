@@ -20,7 +20,7 @@ export default function BlogForm({ initialData, onSubmit, loading }: BlogFormPro
     image2: '',
     category: '',
     city: '',
-    location: '',
+    Locality: '',
     date: new Date().toISOString().split('T')[0],
     readTime: '',
     tags: [] as string[],
@@ -42,16 +42,16 @@ export default function BlogForm({ initialData, onSubmit, loading }: BlogFormPro
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     const keys = name.split('.');
-    
+
     setFormData((prev: any) => {
       const updated = { ...prev };
       let current: any = updated;
-      
+
       for (let i = 0; i < keys.length - 1; i++) {
         current[keys[i]] = { ...current[keys[i]] };
         current = current[keys[i]];
       }
-      
+
       current[keys[keys.length - 1]] = value;
       return updated;
     });
@@ -161,6 +161,7 @@ export default function BlogForm({ initialData, onSubmit, loading }: BlogFormPro
                 value={formData.category}
                 onChange={handleChange}
                 required
+                placeholder="e.g., Penthouse, Villa, Apartment, Flats, 2BHK, 3BHK"
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]"
               />
             </div>
@@ -176,27 +177,26 @@ export default function BlogForm({ initialData, onSubmit, loading }: BlogFormPro
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Location *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Locality </label>
               <input
                 type="text"
-                name="location"
-                value={formData.location}
+                name="Locality"
+                value={formData.Locality}
                 onChange={handleChange}
-                required
+
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]"
               />
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Read Time *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Read Time </label>
               <input
                 type="text"
                 name="readTime"
                 value={formData.readTime}
                 onChange={handleChange}
                 placeholder="5 min read"
-                required
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]"
               />
             </div>
@@ -284,13 +284,13 @@ export default function BlogForm({ initialData, onSubmit, loading }: BlogFormPro
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Role *</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
             <input
               type="text"
               name="author.role"
               value={formData.author.role}
               onChange={handleChange}
-              required
+
               className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]"
             />
           </div>
@@ -350,7 +350,7 @@ export default function BlogForm({ initialData, onSubmit, loading }: BlogFormPro
             value={currentTag}
             onChange={(e) => setCurrentTag(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
-            placeholder="Add tag"
+            placeholder="Add SEO keywords separated by commas (e.g., Pune, Baner, Luxury Homes, RERA Approved)"
             className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]"
           />
           <button
