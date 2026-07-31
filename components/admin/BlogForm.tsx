@@ -442,7 +442,7 @@ export default function BlogForm({ initialData, onSubmit, loading }: BlogFormPro
 
       {/* SEO & Social */}
       <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <h2 className="text-lg font-bold text-gray-900 mb-1">SEO &amp; Soci</h2>
+        <h2 className="text-lg font-bold text-gray-900 mb-1">SEO &amp; Social</h2>
         <p className="text-xs text-gray-500 mb-4">
           Controls the browser tab title, Google snippet, and the preview card shown when the
           post is shared on WhatsApp / Facebook / LinkedIn / Twitter. Leave blank to fall back
