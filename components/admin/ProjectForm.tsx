@@ -3,6 +3,7 @@
 
 import { useState } from 'react';
 import { Upload, X, Plus, Trash2 } from 'lucide-react';
+import { uploadImage } from '@/lib/upload-image';
 
 interface ProjectFormProps {
   initialData?: any;
@@ -72,26 +73,20 @@ export default function ProjectForm({ initialData, onSubmit, loading }: ProjectF
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const formDataUpload = new FormData();
-    formDataUpload.append('file', file);
-
     try {
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formDataUpload,
-      });
-      const data = await response.json();
+      const url = await uploadImage(file);
 
       if (field === 'gallery') {
         setFormData((prev: any) => ({
           ...prev,
-          gallery: [...prev.gallery, data.url]
+          gallery: [...prev.gallery, url]
         }));
       } else {
-        setFormData((prev: any) => ({ ...prev, [field]: data.url }));
+        setFormData((prev: any) => ({ ...prev, [field]: url }));
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Upload failed:', error);
+      alert(error?.message || 'Image upload failed. Please try again.');
     }
   };
 
@@ -385,7 +380,7 @@ export default function ProjectForm({ initialData, onSubmit, loading }: ProjectF
               <label className="cursor-pointer">
                 <div className="border border-gray-200 rounded-lg px-3 py-2 text-center hover:border-[#005E60] transition-colors text-sm">
                   {plan.image ? 'Change Image' : 'Upload Image'}
-                  <input type="file" accept="image/*" onChange={async (e) => { const file = e.target.files?.[0]; if (!file) return; const fd = new FormData(); fd.append('file', file); const res = await fetch('/api/upload', { method: 'POST', body: fd }); const data = await res.json(); const updated = [...formData.floorPlans]; updated[index].image = data.url; setFormData((prev: any) => ({ ...prev, floorPlans: updated })); }} className="hidden" />
+                  <input type="file" accept="image/*" onChange={async (e) => { const file = e.target.files?.[0]; if (!file) return; try { const url = await uploadImage(file); const updated = [...formData.floorPlans]; updated[index].image = url; setFormData((prev: any) => ({ ...prev, floorPlans: updated })); } catch (err: any) { console.error('Upload failed:', err); alert(err?.message || 'Image upload failed. Please try again.'); } }} className="hidden" />
                 </div>
               </label>
               <button type="button" onClick={() => removeFloorPlan(index)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors">

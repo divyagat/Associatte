@@ -3,6 +3,7 @@
 
 import { useState } from 'react';
 import { Upload, X, Plus, Trash2 } from 'lucide-react';
+import { uploadImage } from '@/lib/upload-image';
 
 interface BlogFormProps {
   initialData?: any;
@@ -69,18 +70,12 @@ export default function BlogForm({ initialData, onSubmit, loading }: BlogFormPro
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const formDataUpload = new FormData();
-    formDataUpload.append('file', file);
-
     try {
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formDataUpload,
-      });
-      const data = await response.json();
-      setFormData((prev: any) => ({ ...prev, [field]: data.url }));
-    } catch (error) {
+      const url = await uploadImage(file);
+      setFormData((prev: any) => ({ ...prev, [field]: url }));
+    } catch (error: any) {
       console.error('Upload failed:', error);
+      alert(error?.message || 'Image upload failed. Please try again.');
     }
   };
 

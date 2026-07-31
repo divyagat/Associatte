@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { Upload, X, Plus, Trash2 } from 'lucide-react';
+import { uploadImage } from '@/lib/upload-image';
 
 interface PropertyFormProps {
   initialData?: any;
@@ -160,26 +161,20 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const formDataUpload = new FormData();
-    formDataUpload.append('file', file);
-
     try {
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formDataUpload,
-      });
-      const data = await response.json();
-      
+      const url = await uploadImage(file);
+
       if (field === 'gallery') {
         setFormData((prev: any) => ({
           ...prev,
-          gallery: [...prev.gallery, data.url]
+          gallery: [...prev.gallery, url]
         }));
       } else {
-        setFormData((prev: any) => ({ ...prev, [field]: data.url }));
+        setFormData((prev: any) => ({ ...prev, [field]: url }));
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Upload failed:', error);
+      alert(error?.message || 'Image upload failed. Please try again.');
     }
   };
 
