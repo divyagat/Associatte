@@ -1,5 +1,32 @@
 [
   {
+    "id": "97bedc5c-759d-4320-8b67-7ae8bc54ef92",
+    "name": "Krima",
+    "email": "krima@gmail.com",
+    "password": "Krima@123",
+    "permissions": {
+      "properties": {
+        "add": false,
+        "edit": false,
+        "delete": false,
+        "approve": false
+      },
+      "projects": {
+        "add": false,
+        "edit": false,
+        "delete": false,
+        "approve": false
+      },
+      "blogs": {
+        "add": true,
+        "edit": true,
+        "delete": true,
+        "approve": false
+      }
+    },
+    "createdAt": "2026-07-31T07:24:15.327Z"
+  },
+  {
     "id": "e87daa7d-ac59-47cc-8e7d-1ce28949abad",
     "name": "Narayan",
     "email": "narayan@gmail.com",
@@ -8,43 +35,22 @@
       "properties": {
         "add": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "approve": false
       },
       "projects": {
         "add": false,
         "edit": false,
-        "delete": false
+        "delete": false,
+        "approve": false
       },
       "blogs": {
         "add": true,
         "edit": true,
-        "delete": true
+        "delete": true,
+        "approve": false
       }
     },
     "createdAt": "2026-07-29T10:06:46.026Z"
-  },
-  {
-    "id": "26d13cb7-07ce-451c-9480-37c248dcbd29",
-    "name": "Krima",
-    "email": "krima@gmail.com",
-    "password": "Krima@123",
-    "permissions": {
-      "properties": {
-        "add": false,
-        "edit": false,
-        "delete": false
-      },
-      "projects": {
-        "add": false,
-        "edit": false,
-        "delete": false
-      },
-      "blogs": {
-        "add": true,
-        "edit": true,
-        "delete": true
-      }
-    },
-    "createdAt": "2026-07-29T10:05:29.333Z"
   }
 ]
