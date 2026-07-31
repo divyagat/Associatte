@@ -1,10 +1,9 @@
-import { promises as fs } from 'fs';
-import path from 'path';
 import {
   Permissions,
   sanitizePermissions,
   DEFAULT_EMPLOYEE_PERMISSIONS,
 } from './admin-permissions';
+import { readJson, writeJson, usingBlob } from './blob-store';
 
 /**
  * Employee account store.
@@ -27,31 +26,32 @@ export interface Employee {
 /** Employee shape that is safe to send to the client (no password). */
 export type SafeEmployee = Omit<Employee, 'password'>;
 
-const DATA_DIR = path.join(process.cwd(), 'data');
-const USERS_FILE = path.join(DATA_DIR, 'admin-users.json');
+// Storage key for the employee file. This file contains plaintext passwords and
+// Vercel Blob objects are publicly readable, so in production we obfuscate the
+// pathname with BLOB_DATA_SECRET — without the secret the URL cannot be guessed
+// even if the Blob store id leaks (e.g. via a public image URL). Set
+// BLOB_DATA_SECRET in the Vercel project env to a long random string.
+// Locally (filesystem), the plain key is used so existing data/admin-users.json
+// keeps working.
+const USERS_FILE =
+  usingBlob() && process.env.BLOB_DATA_SECRET
+    ? `data/admin-users-${process.env.BLOB_DATA_SECRET}.json`
+    : 'data/admin-users.json';
 
 async function readUsers(): Promise<Employee[]> {
-  try {
-    const raw = await fs.readFile(USERS_FILE, 'utf-8');
-    const data = JSON.parse(raw);
-    if (!Array.isArray(data)) return [];
-    // Backfill permissions for records saved before per-section access existed.
-    return data.map((u: any) => ({
-      ...u,
-      permissions: u.permissions
-        ? sanitizePermissions(u.permissions)
-        : DEFAULT_EMPLOYEE_PERMISSIONS,
-    }));
-  } catch (error: any) {
-    if (error?.code === 'ENOENT') return [];
-    console.error('❌ Failed to read admin-users.json:', error.message);
-    return [];
-  }
+  const data = await readJson<any[]>(USERS_FILE, []);
+  if (!Array.isArray(data)) return [];
+  // Backfill permissions for records saved before per-section access existed.
+  return data.map((u: any) => ({
+    ...u,
+    permissions: u.permissions
+      ? sanitizePermissions(u.permissions)
+      : DEFAULT_EMPLOYEE_PERMISSIONS,
+  }));
 }
 
 async function writeUsers(users: Employee[]): Promise<void> {
-  await fs.mkdir(DATA_DIR, { recursive: true });
-  await fs.writeFile(USERS_FILE, JSON.stringify(users, null, 2), 'utf-8');
+  await writeJson(USERS_FILE, users);
 }
 
 const strip = ({ password, ...rest }: Employee): SafeEmployee => rest;

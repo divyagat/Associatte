@@ -1,9 +1,8 @@
 // lib/data-store.ts
 
-import { promises as fs } from 'fs';
-import path from 'path';
 import type { IProperty } from './models/Property';
 import type { IBlog } from './models/Blog';
+import { readJson, writeJson } from './blob-store';
 
 /**
  * File-based data store.
@@ -22,28 +21,21 @@ import type { IBlog } from './models/Blog';
  * MongoDB Atlas connection that was failing (IP whitelist / placeholder URI).
  */
 
-const DATA_DIR = path.join(process.cwd(), 'data');
-const PROPERTIES_FILE = path.join(DATA_DIR, 'properties.json');
-const PROJECTS_FILE = path.join(DATA_DIR, 'projects.json');
-const BLOGS_FILE = path.join(DATA_DIR, 'blogs.json');
-const SITE_CONFIG_FILE = path.join(DATA_DIR, 'site-config.json');
+// Storage keys (relative to the project root). These map to committed seed
+// files locally and to Vercel Blob objects in production — see lib/blob-store.
+const PROPERTIES_FILE = 'data/properties.json';
+const PROJECTS_FILE = 'data/projects.json';
+const BLOGS_FILE = 'data/blogs.json';
+const SITE_CONFIG_FILE = 'data/site-config.json';
 
 // ==================== LOW-LEVEL FILE HELPERS ====================
 async function readArray<T = any>(file: string): Promise<T[]> {
-  try {
-    const raw = await fs.readFile(file, 'utf-8');
-    const data = JSON.parse(raw);
-    return Array.isArray(data) ? data : [];
-  } catch (error: any) {
-    if (error?.code === 'ENOENT') return []; // file doesn't exist yet
-    console.error(`❌ Failed to read ${path.basename(file)}:`, error.message);
-    return [];
-  }
+  const data = await readJson<T[]>(file, []);
+  return Array.isArray(data) ? data : [];
 }
 
 async function writeArray<T = any>(file: string, data: T[]): Promise<void> {
-  await fs.mkdir(path.dirname(file), { recursive: true });
-  await fs.writeFile(file, JSON.stringify(data, null, 2), 'utf-8');
+  await writeJson(file, data);
 }
 
 // Ensure every record has a stable id (admin/blog UIs use `_id`).
@@ -344,19 +336,11 @@ export interface SiteConfig {
 const DEFAULT_SITE_CONFIG: SiteConfig = { hiddenTypes: [], hiddenDeals: [] };
 
 export async function getSiteConfig(): Promise<SiteConfig> {
-  try {
-    const raw = await fs.readFile(SITE_CONFIG_FILE, 'utf-8');
-    const data = JSON.parse(raw);
-    return {
-      hiddenTypes: Array.isArray(data?.hiddenTypes) ? data.hiddenTypes.map(String) : [],
-      hiddenDeals: Array.isArray(data?.hiddenDeals) ? data.hiddenDeals.map(String) : [],
-    };
-  } catch (error: any) {
-    if (error?.code !== 'ENOENT') {
-      console.error('❌ Failed to read site-config.json:', error.message);
-    }
-    return { ...DEFAULT_SITE_CONFIG };
-  }
+  const data = await readJson<any>(SITE_CONFIG_FILE, { ...DEFAULT_SITE_CONFIG });
+  return {
+    hiddenTypes: Array.isArray(data?.hiddenTypes) ? data.hiddenTypes.map(String) : [],
+    hiddenDeals: Array.isArray(data?.hiddenDeals) ? data.hiddenDeals.map(String) : [],
+  };
 }
 
 export async function updateSiteConfig(patch: Partial<SiteConfig>): Promise<SiteConfig> {
@@ -365,8 +349,7 @@ export async function updateSiteConfig(patch: Partial<SiteConfig>): Promise<Site
     hiddenTypes: Array.isArray(patch.hiddenTypes) ? patch.hiddenTypes.map(String) : current.hiddenTypes,
     hiddenDeals: Array.isArray(patch.hiddenDeals) ? patch.hiddenDeals.map(String) : current.hiddenDeals,
   };
-  await fs.mkdir(DATA_DIR, { recursive: true });
-  await fs.writeFile(SITE_CONFIG_FILE, JSON.stringify(next, null, 2), 'utf-8');
+  await writeJson(SITE_CONFIG_FILE, next);
   return next;
 }
 
