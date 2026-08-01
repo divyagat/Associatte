@@ -32,11 +32,15 @@ export async function GET(
         ? Buffer.from(raw.buffer)
         : Buffer.from(raw);
 
-    return new NextResponse(buffer, {
+    // NextResponse's body type accepts a Uint8Array (BufferSource) but not a
+    // Node Buffer directly, so hand it a plain Uint8Array view of the bytes.
+    const body = new Uint8Array(buffer);
+
+    return new NextResponse(body, {
       status: 200,
       headers: {
         'Content-Type': (image as any).contentType || 'application/octet-stream',
-        'Content-Length': String(buffer.length),
+        'Content-Length': String(body.length),
         // Images are immutable once uploaded, so cache aggressively.
         'Cache-Control': 'public, max-age=31536000, immutable',
       },
