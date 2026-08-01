@@ -17,8 +17,9 @@ import { readJson, writeJson } from './blob-store';
  * these on top of the static blogs in `lib/blog-data.ts`, so existing blogs are
  * untouched and admin blogs appear alongside them.
  *
- * No database / network is required — this works fully offline and removes the
- * MongoDB Atlas connection that was failing (IP whitelist / placeholder URI).
+ * Persistence is handled by lib/blob-store, which stores each of these JSON
+ * documents in MongoDB. This works on any host (Vercel, VPS, etc.) — only the
+ * MongoDB connection is required, no writable filesystem or host-specific store.
  */
 
 // Storage keys (relative to the project root). These map to committed seed

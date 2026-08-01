@@ -1,7 +1,14 @@
 import mongoose from 'mongoose';
 
-// Standard Connection String (no SRV lookup)
-const MONGODB_URI = 'mongodb+srv://pushkargharate7_db_user:xiJLA62jsjF1d2wW@cluster0.wxn2vix.mongodb.net/mydatabase?retryWrites=true&w=majority';
+// Connection string comes from the MONGODB_URI environment variable.
+// Set it locally in `.env` and on your host (Vercel/VPS/etc.) env settings.
+const MONGODB_URI = process.env.MONGODB_URI as string;
+
+if (!MONGODB_URI) {
+  throw new Error(
+    'MONGODB_URI is not set. Add it to your .env file and to your hosting provider\'s environment variables.',
+  );
+}
 
 interface MongooseCache {
   conn: typeof mongoose | null;
