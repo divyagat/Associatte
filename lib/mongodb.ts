@@ -2,13 +2,11 @@ import mongoose from 'mongoose';
 
 // Connection string comes from the MONGODB_URI environment variable.
 // Set it locally in `.env` and on your host (Vercel/VPS/etc.) env settings.
-const MONGODB_URI = process.env.MONGODB_URI as string;
-
-if (!MONGODB_URI) {
-  throw new Error(
-    'MONGODB_URI is not set. Add it to your .env file and to your hosting provider\'s environment variables.',
-  );
-}
+//
+// NOTE: the check lives inside dbConnect(), NOT at module top level. A top-level
+// throw would crash this module during import, which makes every route that
+// imports it fail to load and return 404. Throwing at call time keeps the module
+// loadable and lets callers (e.g. readJson) handle the error gracefully.
 
 interface MongooseCache {
   conn: typeof mongoose | null;
@@ -28,6 +26,13 @@ if (!global.mongoose) {
 async function dbConnect() {
   if (cached.conn) {
     return cached.conn;
+  }
+
+  const MONGODB_URI = process.env.MONGODB_URI;
+  if (!MONGODB_URI) {
+    throw new Error(
+      'MONGODB_URI is not set. Add it to your .env file and to your hosting provider\'s environment variables.',
+    );
   }
 
   if (!cached.promise) {
