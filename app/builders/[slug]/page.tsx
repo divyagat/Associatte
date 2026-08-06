@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import BuilderHeader from '@/components/builder-page/BuilderHeader';
 import BuilderProjectsList from '@/components/builder-page/BuilderProjectsList';
-import properties from '../../../data/properties.json';
+import properties from '../../../data/projects.json';
 import { BUILDER_SLUG_MAP, getBuilderYears, getBuilderLogo, getBuilderBanner } from '@/lib/builder-slugs';
 
 // ✅ ADD THIS: Forces dynamic rendering to bypass useSearchParams() prerender errors

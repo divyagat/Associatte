@@ -2,15 +2,22 @@
 
 import { useEffect, useState, useTransition } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { KeyRound, Tag } from 'lucide-react';
+import { KeyRound, Tag, Warehouse, Factory } from 'lucide-react';
 import { StickySearchBar } from '@/components/Home/Hero/StickySearchBar';
 
-// Mirrors DEAL_TYPES in lib/categories.ts, with an icon per deal for the sticky
-// bar's tab row. The /properties page filters by the `deal` query param.
-const DEAL_TABS = [
-  { id: 'sale', label: 'Resale', icon: Tag, gradient: '' },
-  { id: 'rent', label: 'Rent', icon: KeyRound, gradient: '' },
-] as const;
+// Icon per known tab id; unknown (admin-added) categories fall back to a tag.
+const TAB_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  sale: Tag,
+  rent: KeyRound,
+  warehouse: Warehouse,
+  industry: Factory,
+};
+
+// Built-in default tabs, used when the parent doesn't supply a dynamic list.
+const DEFAULT_TABS = [
+  { id: 'sale', label: 'Resale' },
+  { id: 'rent', label: 'Rent' },
+];
 
 // BHK options for the sticky bar's BHK-wise dropdown. The properties page matches
 // these against each project's configurations via the `bhk` query param.
@@ -29,11 +36,13 @@ const prettyLocation = (slug: string) =>
 interface PropertiesStickySearchProps {
   /** Distinct `location` slugs (pune/mumbai/kdmc…) available in the data store. */
   locations?: string[];
-  /** Deal ids an admin has hidden from the public site (site-config). */
+  /** Tab ids an admin has hidden from the public site (site-config). */
   hiddenDeals?: string[];
+  /** Dynamic Properties tabs (Resale/Rent + admin-added types). */
+  tabs?: { id: string; label: string }[];
 }
 
-export default function PropertiesStickySearch({ locations = [], hiddenDeals = [] }: PropertiesStickySearchProps) {
+export default function PropertiesStickySearch({ locations = [], hiddenDeals = [], tabs }: PropertiesStickySearchProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
@@ -74,7 +83,9 @@ export default function PropertiesStickySearch({ locations = [], hiddenDeals = [
       activeTab={activeTab}
       selectedCity="All Cities"
       searchQuery={query}
-      categories={DEAL_TABS.filter((t) => !hiddenDeals.includes(t.id))}
+      categories={(tabs && tabs.length ? tabs : DEFAULT_TABS)
+        .filter((t) => !hiddenDeals.includes(t.id))
+        .map((t) => ({ id: t.id, label: t.label, icon: TAB_ICONS[t.id] || Tag, gradient: '' }))}
       isSearching={isPending}
       bhkOptions={BHK_OPTIONS}
       selectedBhk={activeBhk}

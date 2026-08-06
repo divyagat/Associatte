@@ -3,7 +3,7 @@
 import { ArrowRight, Building2, CalendarClock, LayoutGrid } from 'lucide-react';
 import { useMemo } from 'react';
 import Image from 'next/image';
-import properties from '../../data/properties.json';
+import properties from '../../data/projects.json';
 import { getBuilderSlug, getBuilderLogo } from '@/lib/builder-slugs';
 
 const toSlug = (str: string) =>

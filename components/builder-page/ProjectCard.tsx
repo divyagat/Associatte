@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { MapPin, Bed, Square, Tag, ArrowRight, Building2, Clock, KeyRound } from 'lucide-react';
-import { PROJECT_TYPES, getProjectType, getDealType } from '@/lib/categories';
+import { typeLabel as resolveTypeLabel, getProjectType, getDealType } from '@/lib/categories';
 
 interface Project {
   slug: string;
@@ -65,8 +65,7 @@ export default function BuilderProjectCard({ project }: BuilderProjectCardProps)
   // ✅ Resolve the normalized project type + deal type for badges / facts.
   const projectTypeId = getProjectType(project);
   const dealTypeId = getDealType(project);
-  const typeLabel = PROJECT_TYPES.find((t) => t.id === projectTypeId)?.label;
-  const displayType = project.propertyType || typeLabel || undefined;
+  const displayType = project.propertyType || resolveTypeLabel(projectTypeId) || undefined;
   const isRental = dealTypeId === 'rent';
 
   // ✅ Rental/Sale facts (age of construction, expected price) when provided.

@@ -1,20 +1,23 @@
 /* eslint-disable @next/next/no-img-element -- admin previews render arbitrary uploaded image URLs (incl. blob:) that next/image can't optimize */
 import Link from 'next/link';
-import { getAllProperties, getAllProjects } from '@/lib/data-store';
+import { getAllProperties, getAllProjects, getSiteConfig } from '@/lib/data-store';
 import { getPermissions, getAdminRole } from '@/lib/admin-auth';
 import { can } from '@/lib/admin-permissions';
 import { Plus } from 'lucide-react';
+import { propertyTabsOf } from '@/lib/categories';
 import PropertiesListClient from '@/components/admin/PropertiesListClient';
+import AddCategoryInline from '@/components/admin/AddCategoryInline';
 
 export const dynamic = 'force-dynamic';
 
 export default async function PropertiesListPage() {
   // Fetch projects alongside properties to map project names
-  const [properties, projects, permissions, role] = await Promise.all([
+  const [properties, projects, permissions, role, siteConfig] = await Promise.all([
     getAllProperties(),
     getAllProjects(),
     getPermissions(),
     getAdminRole(),
+    getSiteConfig(),
   ]);
 
   const canAdd = can(permissions, 'properties', 'add');
@@ -32,20 +35,26 @@ export default async function PropertiesListPage() {
           <p className="text-gray-600 mt-1">Manage all property listings</p>
         </div>
         {canAdd && (
-          <Link
-            href="/admin/properties/new"
-            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-[#005E60] text-white rounded-lg hover:bg-[#004a4d] transition-colors font-medium"
-          >
-            <Plus size={20} />
-            Add Property
-          </Link>
+          <div className="flex flex-wrap items-center gap-2">
+            {isAdmin && <AddCategoryInline allTypes={siteConfig.propertyTypes} section="properties" />}
+            <Link
+              href="/admin/properties/new"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-[#005E60] text-white rounded-lg hover:bg-[#004a4d] transition-colors font-medium"
+            >
+              <Plus size={20} />
+              Add Property
+            </Link>
+          </div>
         )}
       </div>
 
-      {/* Pass data to the Client Component for interactive filtering */}
+      {/* Pass data to the Client Component for interactive filtering. Tabs mirror
+          the public Properties page: Resale / Rent (deal) + Warehouse / Industry
+          (+ any admin-added property types). Project types are NOT shown here. */}
       <PropertiesListClient
         properties={properties}
         projects={projects}
+        tabs={propertyTabsOf(siteConfig.propertyTypes)}
         canEdit={canEdit}
         canDelete={canDelete}
         canApprove={canApprove}

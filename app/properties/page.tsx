@@ -5,8 +5,8 @@ import PropertiesStickySearch from '@/components/properties/PropertiesStickySear
 import { getAllProperties, getSiteConfig } from '@/lib/data-store';
 import { isPubliclyVisible } from '@/lib/visibility';
 import {
-  DEAL_TYPES, DEAL_TYPE_IDS, getDealType, computeDealCounts, getProjectType,
-  PROJECT_TYPE_IDS, type DealTypeId, type ProjectTypeId,
+  propertyTabsOf, projectTypesOf, typeIdsOf, matchesPropertyTab, countByTab,
+  getProjectType, typeLabel,
 } from '@/lib/categories';
 import { matchesSearch } from '@/lib/search';
 
@@ -22,9 +22,9 @@ export const metadata: Metadata = {
   alternates: { canonical: '/properties' },
 };
 
-// Category-specific hero copy shown on the Properties page. Keyed by deal type
-// so /properties?deal=sale and ?deal=rent each display relevant info.
-const DEAL_INFO: Record<DealTypeId, { title: string; description: string }> = {
+// Tab-specific hero copy shown on the Properties page. Keyed by tab id so each
+// of /properties?deal=sale|rent|warehouse|industry displays relevant info.
+const TAB_INFO: Record<string, { title: string; description: string }> = {
   sale: {
     title: 'Resale Properties',
     description: 'Buy resale residential and commercial properties — apartments, offices, shops and plots — from verified sellers across Pune, Mumbai & KDMC.',
@@ -32,6 +32,14 @@ const DEAL_INFO: Record<DealTypeId, { title: string; description: string }> = {
   rent: {
     title: 'Properties for Rent',
     description: 'Find rental homes, offices and commercial spaces on lease with flexible terms across Pune, Mumbai & KDMC.',
+  },
+  warehouse: {
+    title: 'Warehousing & Godowns',
+    description: 'Warehouses and godowns with excellent connectivity for storage, logistics and distribution needs across Pune, Mumbai & KDMC.',
+  },
+  industry: {
+    title: 'Industrial Properties',
+    description: 'Factories and manufacturing units in established industrial zones with ready infrastructure across Pune, Mumbai & KDMC.',
   },
 };
 
@@ -67,14 +75,6 @@ export default async function PropertiesPage({
   }>
 }) {
   const params = await searchParams;
-  // Active deal tab (Sale / Rent) — Sale is the default.
-  const activeDeal = (
-    DEAL_TYPE_IDS.includes(params.deal as DealTypeId) ? params.deal : 'sale'
-  ) as DealTypeId;
-  // Optional property-type filter carried in from the Hero / other links.
-  const typeFilter = PROJECT_TYPE_IDS.includes(params.type as ProjectTypeId)
-    ? (params.type as ProjectTypeId)
-    : undefined;
   // The Hero / StickySearchBar sends `city` (pune/mumbai/kdmc); treat it as a
   // location filter so global searches land on the right results.
   const cityFilter = params.city || params.location;
@@ -84,10 +84,31 @@ export default async function PropertiesPage({
   const [allProperties, siteConfig] = await Promise.all([getAllProperties(), getSiteConfig()]);
   const properties = allProperties.filter(isPubliclyVisible);
 
-  // 🔍 Filter projects by deal type + other params
+  // Dynamic (admin-managed) category lists.
+  const allTypeIds = typeIdsOf(siteConfig.propertyTypes);
+  const propertyTabs = propertyTabsOf(siteConfig.propertyTypes);
+  const projectTypeIds = projectTypesOf(siteConfig.propertyTypes).map((t) => t.id);
+  // Resale / Rent + admin-added property types; only an admin hiding one removes it.
+  const availableTabs = propertyTabs.filter((t) => !siteConfig.hiddenDeals.includes(t.id));
+
+  // Active tab — its id travels in the `deal` param for back-compat. The
+  // requested tab if it's real & visible, else the first available one.
+  const activeTab =
+    availableTabs.find((t) => t.id === params.deal)?.id ??
+    availableTabs[0]?.id ??
+    'sale';
+  const activeTabDef = propertyTabs.find((t) => t.id === activeTab);
+
+  // Optional secondary property-type filter (project-section types) from the
+  // Hero / other deep links.
+  const typeFilter = projectTypeIds.includes(params.type as string)
+    ? (params.type as string)
+    : undefined;
+
+  // 🔍 Filter properties by the active tab + other params
   const filteredProjects = properties.filter((project: any) => {
-    if (getDealType(project) !== activeDeal) return false;
-    if (typeFilter && getProjectType(project) !== typeFilter) return false;
+    if (!activeTabDef || !matchesPropertyTab(project, activeTabDef, allTypeIds)) return false;
+    if (typeFilter && getProjectType(project, allTypeIds) !== typeFilter) return false;
 
     // Free-text search across all listing fields (name, location, builder,
     // type, BHK, amenities, price, RERA, synonyms, …).
@@ -127,16 +148,12 @@ export default async function PropertiesPage({
   const builders = getAllBuilders(properties);
   const bhks = getAllBHKs(properties);
 
-  // Deal-type counts respect the active property-type filter so the tab badges
-  // reflect what the user is actually looking at.
-  const dealCountBase = typeFilter
-    ? properties.filter((p) => getProjectType(p) === typeFilter)
+  // Tab counts respect the active property-type filter so the badges reflect
+  // what the user is actually looking at.
+  const countBase = typeFilter
+    ? properties.filter((p) => getProjectType(p, allTypeIds) === typeFilter)
     : properties;
-  const dealCounts = computeDealCounts(dealCountBase);
-  // Sale and Rent are the two core options — always show both tabs (matching the
-  // navbar); only an admin hiding one via site-config removes it. Counts still
-  // drive the badge numbers.
-  const availableDeals = DEAL_TYPES.filter((d) => !siteConfig.hiddenDeals.includes(d.id));
+  const tabCounts = countByTab(countBase, propertyTabs, allTypeIds);
 
   // Carry active filters across deal-tab switches (city normalised to `location`).
   const preserved = new URLSearchParams();
@@ -147,9 +164,13 @@ export default async function PropertiesPage({
   if (params.bhk) preserved.set('bhk', params.bhk);
   const preservedStr = preserved.toString();
 
-  // Base URL used by the "clear filter" × links (keeps the active deal + type).
-  const clearBase = `/properties?deal=${activeDeal}${typeFilter ? `&type=${typeFilter}` : ''}`;
-  const activeDealLabel = DEAL_TYPES.find((d) => d.id === activeDeal)?.label ?? 'Sale';
+  // Base URL used by the "clear filter" × links (keeps the active tab + type).
+  const clearBase = `/properties?deal=${activeTab}${typeFilter ? `&type=${typeFilter}` : ''}`;
+  const activeTabLabel = activeTabDef?.label ?? 'Resale';
+  const activeTabInfo = TAB_INFO[activeTab] ?? {
+    title: `${typeLabel(activeTab, siteConfig.propertyTypes)} Properties`,
+    description: `Explore ${typeLabel(activeTab, siteConfig.propertyTypes).toLowerCase()} properties across Pune, Mumbai & KDMC.`,
+  };
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -157,36 +178,36 @@ export default async function PropertiesPage({
       <section className="bg-[#101C2E] text-white py-8 sm:py-12 lg:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 sm:mb-3">
-            <span className="text-[#F8C21C]">{DEAL_INFO[activeDeal].title}</span>
+            <span className="text-[#F8C21C]">{activeTabInfo.title}</span>
           </h1>
           <p className="text-sm sm:text-lg text-white/90 mb-2 max-w-3xl">
-            {DEAL_INFO[activeDeal].description}
+            {activeTabInfo.description}
           </p>
           <p className="text-xs sm:text-sm text-white/70 mb-5 sm:mb-6">
-            {filteredProjects.length} {activeDealLabel.toLowerCase()} properties across Pune, Mumbai &amp; KDMC
+            {filteredProjects.length} {activeTabLabel.toLowerCase()} properties across Pune, Mumbai &amp; KDMC
           </p>
 
-          {/* 🔹 Deal Tabs (Sale / Rent) — only deals with listings are shown */}
-          {availableDeals.length > 0 && (
+          {/* 🔹 Tabs (Resale / Rent / Warehouse / Industry) */}
+          {availableTabs.length > 0 && (
             <div className="-mx-4 px-4 sm:mx-0 sm:px-0 mb-5 sm:mb-6">
               <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-                {availableDeals.map((deal) => {
-                  const isActive = activeDeal === deal.id;
+                {availableTabs.map((tab) => {
+                  const isActive = activeTab === tab.id;
                   return (
                     <a
-                      key={deal.id}
-                      href={`/properties?deal=${deal.id}${preservedStr ? `&${preservedStr}` : ''}`}
+                      key={tab.id}
+                      href={`/properties?deal=${tab.id}${preservedStr ? `&${preservedStr}` : ''}`}
                       className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 whitespace-nowrap ${
                         isActive
                           ? 'bg-white text-[#005E60] shadow-lg'
                           : 'bg-white/10 text-white hover:bg-white/20'
                       }`}
                     >
-                      {deal.label}
+                      {tab.label}
                       <span className={`px-2 py-0.5 rounded-full text-xs ${
                         isActive ? 'bg-[#005E60]/10 text-[#005E60]' : 'bg-white/20'
                       }`}>
-                        {dealCounts[deal.id]}
+                        {tabCounts[tab.id]}
                       </span>
                     </a>
                   );
@@ -210,7 +231,7 @@ export default async function PropertiesPage({
               </svg>
             </div>
 
-            <input type="hidden" name="deal" value={activeDeal} />
+            <input type="hidden" name="deal" value={activeTab} />
             {typeFilter && <input type="hidden" name="type" value={typeFilter} />}
             <select name="location" defaultValue={cityFilter}
               className="px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-[#F8C21C]">
@@ -249,13 +270,17 @@ export default async function PropertiesPage({
 
       {/* 🔹 Sticky search/filter bar — sits under the site header on scroll (desktop) */}
       <Suspense fallback={null}>
-        <PropertiesStickySearch locations={locations} hiddenDeals={siteConfig.hiddenDeals} />
+        <PropertiesStickySearch
+          locations={locations}
+          hiddenDeals={siteConfig.hiddenDeals}
+          tabs={propertyTabs.map((t) => ({ id: t.id, label: t.label }))}
+        />
       </Suspense>
 
       {/* 🔹 Stats Bar */}
       <section className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap justify-center gap-4 sm:gap-6 text-xs sm:text-sm">
-          <span className="flex items-center gap-2 text-gray-600"><span className="w-2 h-2 rounded-full bg-[#005E60]"></span><strong className="text-gray-900">{filteredProjects.length}</strong> {activeDealLabel} Properties</span>
+          <span className="flex items-center gap-2 text-gray-600"><span className="w-2 h-2 rounded-full bg-[#005E60]"></span><strong className="text-gray-900">{filteredProjects.length}</strong> {activeTabLabel} Properties</span>
           <span className="flex items-center gap-2 text-gray-600"><span className="w-2 h-2 rounded-full bg-[#F8C21C]"></span><strong className="text-gray-900">{locations.length}</strong> Locations</span>
           <span className="flex items-center gap-2 text-gray-600"><span className="w-2 h-2 rounded-full bg-[#8B0000]"></span><strong className="text-gray-900">{builders.length}</strong> Builders</span>
         </div>
@@ -266,7 +291,7 @@ export default async function PropertiesPage({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {filteredProjects.length === 0 ? (
             <div className="text-center py-16">
-              <p className="text-gray-500 text-base sm:text-lg mb-4">No {activeDealLabel.toLowerCase()} properties match your filters.</p>
+              <p className="text-gray-500 text-base sm:text-lg mb-4">No {activeTabLabel.toLowerCase()} properties match your filters.</p>
               <a href={clearBase} className="text-[#005E60] hover:underline">Clear all filters</a>
             </div>
           ) : (

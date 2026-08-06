@@ -1,9 +1,10 @@
 'use client';
 /* eslint-disable @next/next/no-img-element */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Upload, X, Plus, Trash2 } from 'lucide-react';
 import { uploadImage } from '@/lib/upload-image';
+import { projectTypesOf, PROJECT_TYPES, type PropertyType } from '@/lib/categories';
 
 interface ProjectFormProps {
   initialData?: any;
@@ -15,6 +16,7 @@ export default function ProjectForm({ initialData, onSubmit, loading }: ProjectF
   const [formData, setFormData] = useState(initialData || {
     slug: '',
     name: '',
+    category: 'residential',
     location: 'pune',
     price: '',
     image: '',
@@ -50,6 +52,26 @@ export default function ProjectForm({ initialData, onSubmit, loading }: ProjectF
   });
 
   const [currentAmenity, setCurrentAmenity] = useState('');
+  // Category options come from the admin-managed master list (Settings). Seed with
+  // the built-in project types so the select is never empty before the fetch.
+  const [categoryOptions, setCategoryOptions] = useState<{ id: string; label: string }[]>(
+    PROJECT_TYPES.map((t) => ({ id: t.id, label: t.label })),
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch('/api/site-config');
+        const config = await res.json().catch(() => ({}));
+        const types: PropertyType[] = Array.isArray(config?.propertyTypes) ? config.propertyTypes : [];
+        if (!cancelled && types.length) {
+          setCategoryOptions(projectTypesOf(types).map((t) => ({ id: t.id, label: t.label })));
+        }
+      } catch { /* keep defaults */ }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -173,6 +195,15 @@ export default function ProjectForm({ initialData, onSubmit, loading }: ProjectF
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Slug *</label>
             <input type="text" name="slug" value={formData.slug} onChange={handleChange} required placeholder="e.g., mantra-1-residences" className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Category (Type) *</label>
+            <select name="category" value={formData.category || categoryOptions[0]?.id || 'residential'} onChange={handleChange} required className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]">
+              {categoryOptions.map((c) => (
+                <option key={c.id} value={c.id}>{c.label}</option>
+              ))}
+            </select>
+            <p className="text-xs text-gray-500 mt-1">Decides which Projects tab this appears under. Manage categories in Settings.</p>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Location *</label>

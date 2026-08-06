@@ -12,8 +12,7 @@ import {
 } from 'lucide-react';
 
 import {
-  PROJECT_TYPES, DEAL_TYPES, getProjectType,
-  type ProjectTypeId,
+  projectTypesOf, propertyTabsOf, type PropertyType,
 } from '@/lib/categories';
 
 // ✅ Brand Colors
@@ -41,10 +40,9 @@ function HeaderContent() {
   const [desktopDropdown, setDesktopDropdown] = useState<string | null>(null);
   const desktopTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Which project-types / deal-types actually have listings. `null` = not loaded
-  // yet, in which case we optimistically show every category (avoids an empty nav
-  // flash). Once loaded, categories with zero listings are hidden.
-  const [availableTypes, setAvailableTypes] = useState<Set<ProjectTypeId> | null>(null);
+  // Editable category master list (null until site-config loads → fall back to
+  // built-in defaults so the nav never flashes empty).
+  const [types, setTypes] = useState<PropertyType[] | null>(null);
 
   // Categories an admin has explicitly hidden from the public nav (site-config).
   const [hiddenTypes, setHiddenTypes] = useState<Set<string>>(new Set());
@@ -73,29 +71,21 @@ function HeaderContent() {
     return true;
   };
 
-  // Fetch listings once to determine which categories are non-empty.
+  // Fetch the admin's category-visibility settings so hidden nav items are removed.
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
-        const [propsRes, projectsRes, configRes] = await Promise.all([
-          fetch('/api/properties'),
-          fetch('/api/projects'),
-          fetch('/api/site-config'),
-        ]);
-        const props = await propsRes.json().catch(() => []);
-        const projects = await projectsRes.json().catch(() => []);
+        const configRes = await fetch('/api/site-config');
         const config = await configRes.json().catch(() => ({}));
-        const all = [
-          ...(Array.isArray(props) ? props : []),
-          ...(Array.isArray(projects) ? projects : []),
-        ];
         if (cancelled) return;
-        setAvailableTypes(new Set(all.map(getProjectType)));
+        if (Array.isArray(config?.propertyTypes) && config.propertyTypes.length) {
+          setTypes(config.propertyTypes);
+        }
         setHiddenTypes(new Set(Array.isArray(config?.hiddenTypes) ? config.hiddenTypes : []));
         setHiddenDeals(new Set(Array.isArray(config?.hiddenDeals) ? config.hiddenDeals : []));
       } catch {
-        // On failure leave both null so all categories remain visible.
+        // On failure leave both empty so all categories remain visible.
       }
     })();
     return () => { cancelled = true; };
@@ -128,33 +118,26 @@ function HeaderContent() {
     };
   }, [mobileMenuOpen]);
 
-  // Projects dropdown → Residential / Commercial / Plots (property TYPE).
-  // Restricted to these three types; empty categories are hidden once the
-  // listing data has loaded.
-  const PROJECTS_DROPDOWN_TYPES: ProjectTypeId[] = ['residential', 'commercial', 'plots'];
-  const projectsDropdown = PROJECT_TYPES
-    .filter(
-      (t) =>
-        PROJECTS_DROPDOWN_TYPES.includes(t.id) &&
-        (!availableTypes || availableTypes.has(t.id)) &&
-        !hiddenTypes.has(t.id)
-    )
+  // Projects dropdown → the "projects" section categories (Residential /
+  // Commercial / Plots + any admin-added ones); an admin can hide any via Settings.
+  const projectsDropdown = projectTypesOf(types ?? undefined)
+    .filter((t) => !hiddenTypes.has(t.id))
     .map((t) => ({
       label: t.label,
       href: `/projects?type=${t.id}`,
-      icon: TYPE_ICONS[t.id],
+      icon: TYPE_ICONS[t.id] || Tag,
       color: t.color,
     }));
 
-  // Properties dropdown → Sale / Rent (deal types). Both always appear as core
-  // options, only removed if an admin explicitly hides one.
-  const propertiesDropdown = DEAL_TYPES
-    .filter((d) => !hiddenDeals.has(d.id))
-    .map((d) => ({
-      label: d.label,
-      href: `/properties?deal=${d.id}`,
-      icon: TYPE_ICONS[d.id],
-      color: d.color,
+  // Properties dropdown → Resale / Rent (deal) + the "properties" section
+  // categories (Warehouse / Industry + any admin-added ones).
+  const propertiesDropdown = propertyTabsOf(types ?? undefined)
+    .filter((t) => !hiddenDeals.has(t.id))
+    .map((t) => ({
+      label: t.label,
+      href: `/properties?deal=${t.id}`,
+      icon: TYPE_ICONS[t.id] || Tag,
+      color: t.color,
     }));
 
   const navLinks = [

@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, ChevronLeft, ChevronRight, MapPin, Home } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import properties from '@/data/properties.json';
+import properties from '@/data/projects.json';
 import { isPubliclyVisible } from '@/lib/visibility';
 
 // ✅ ADD city PROP

@@ -1,10 +1,9 @@
 import { Metadata } from 'next';
-import BuilderProjectCard from '@/components/builder-page/BuilderProjectCard';
-import { getAllProperties, getAllProjects, getSiteConfig } from '@/lib/data-store';
+import ProjectCard from '@/components/builder-page/ProjectCard';
+import { getAllProjects, getSiteConfig } from '@/lib/data-store';
 import { isPubliclyVisible } from '@/lib/visibility';
 import {
-  PROJECT_TYPES, PROJECT_TYPE_IDS, getProjectType, computeTypeCounts,
-  type ProjectTypeId,
+  projectTypesOf, typeIdsOf, getProjectType, countByType, typeLabel,
 } from '@/lib/categories';
 import { matchesSearch } from '@/lib/search';
 
@@ -16,9 +15,9 @@ export const metadata: Metadata = {
   keywords: ['projects', 'Pune', 'Mumbai', 'KDMC', 'real estate', 'properties'],
 };
 
-// Category-specific hero copy shown on the Projects page. Keyed by project type
-// so /projects?type=residential (etc.) displays info relevant to that category.
-const TYPE_INFO: Record<ProjectTypeId, { title: string; description: string }> = {
+// Hero copy for the well-known project types. Admin-added categories fall back
+// to a generic title/description built from their label.
+const TYPE_INFO: Record<string, { title: string; description: string }> = {
   residential: {
     title: 'Residential Projects',
     description: 'Premium apartments, flats and villas from trusted developers — ready-to-move and under-construction homes across Pune, Mumbai & KDMC.',
@@ -30,14 +29,6 @@ const TYPE_INFO: Record<ProjectTypeId, { title: string; description: string }> =
   plots: {
     title: 'Plots & Land',
     description: 'NA-approved plots and residential land parcels in fast-growing corridors — build your dream home or invest for appreciation.',
-  },
-  warehouse: {
-    title: 'Warehousing',
-    description: 'Warehouses and godowns with excellent connectivity for storage, logistics and distribution needs.',
-  },
-  industry: {
-    title: 'Industrial Projects',
-    description: 'Factories and manufacturing units in established industrial zones with ready infrastructure.',
   },
 };
 
@@ -82,33 +73,40 @@ export default async function ProjectsPage({
   }>
 }) {
   const params = await searchParams;
-  // Active property-type tab (Residential / Commercial / Plots / Warehouse / Industry).
-  const activeType = (
-    PROJECT_TYPE_IDS.includes(params.type as ProjectTypeId) ? params.type : 'residential'
-  ) as ProjectTypeId;
 
-  const [properties, projects, siteConfig] = await Promise.all([
-    getAllProperties(),
+  const [projects, siteConfig] = await Promise.all([
     getAllProjects(),
     getSiteConfig(),
   ]);
 
+  // Dynamic (admin-managed) category lists.
+  const allTypeIds = typeIdsOf(siteConfig.propertyTypes);
+  const projectTypes = projectTypesOf(siteConfig.propertyTypes);
+  // Project-section tabs are always shown; only an admin hiding one removes it.
+  const availableTypes = projectTypes.filter((t) => !siteConfig.hiddenTypes.includes(t.id));
+
+  // Active property-type tab — the requested type if it's a real, visible tab,
+  // else the first available one.
+  const activeType =
+    availableTypes.find((t) => t.id === params.type)?.id ??
+    availableTypes[0]?.id ??
+    'residential';
+  const activeInfo = TYPE_INFO[activeType] ?? {
+    title: `${typeLabel(activeType, siteConfig.propertyTypes)} Projects`,
+    description: `Explore ${typeLabel(activeType, siteConfig.propertyTypes).toLowerCase()} projects across Pune, Mumbai & KDMC.`,
+  };
+
+  // Projects section shows ONLY projects (data store `projects.json`) — no merge
+  // with properties, so nothing double-shows across the Projects/Properties pages.
   // Only published listings are public; drop pending/hidden ones.
-  const allProjects = [
-    ...projects.filter(isPubliclyVisible).map(normalizeProject),
-    ...properties.filter(isPubliclyVisible).map(normalizeProject),
-  ];
-
-  // Remove duplicates based on slug
   const uniqueProjects = Array.from(
-    new Map(allProjects.map(p => [p.slug, p])).values()
+    new Map(
+      projects.filter(isPubliclyVisible).map(normalizeProject).map((p) => [p.slug, p]),
+    ).values(),
   );
 
-  // Only show tabs for property types that actually have listings.
-  const typeCounts = computeTypeCounts(uniqueProjects);
-  const availableTypes = PROJECT_TYPES.filter(
-    (t) => typeCounts[t.id] > 0 && !siteConfig.hiddenTypes.includes(t.id)
-  );
+  // Counts drive the tab badge numbers.
+  const typeCounts = countByType(uniqueProjects, projectTypes.map((t) => t.id), allTypeIds);
 
   // ✅ Get unique values for filters
   const getAllLocations = () => Array.from(new Set(uniqueProjects.map((p: any) => p.location).filter(Boolean)));
@@ -136,7 +134,7 @@ export default async function ProjectsPage({
     const builderName = project.developer?.name || '';
 
     // Property type (tab)
-    if (getProjectType(project) !== activeType) return false;
+    if (getProjectType(project, allTypeIds) !== activeType) return false;
 
     // Free-text search across all listing fields (name, location, builder,
     // type, BHK, amenities, price, RERA, synonyms, …).
@@ -193,13 +191,13 @@ export default async function ProjectsPage({
       <section className="bg-[#101C2E] text-white py-12 lg:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="page-title mb-3">
-            <span className="accent">{TYPE_INFO[activeType].title}</span>
+            <span className="accent">{activeInfo.title}</span>
           </h1>
           <p className="text-lg text-white/90 mb-2 max-w-3xl">
-            {TYPE_INFO[activeType].description}
+            {activeInfo.description}
           </p>
           <p className="text-sm text-white/70 mb-6">
-            {filteredProjects.length} {TYPE_INFO[activeType].title.toLowerCase()} across Pune, Mumbai &amp; KDMC
+            {filteredProjects.length} {activeInfo.title.toLowerCase()} across Pune, Mumbai &amp; KDMC
           </p>
 
           {/* 🔹 Property Type Tabs — only types that have listings are shown */}
@@ -269,7 +267,7 @@ export default async function ProjectsPage({
           {/* Active Filters */}
           {(params.q || params.location || params.builder || params.bhk) && (
             <div className="flex flex-wrap gap-2 mt-4">
-              {params.q && <span className="px-3 py-1 bg-white/10 rounded-full text-sm">Search: "{params.q}" <a href={`/projects?type=${activeType}`} className="hover:text-[#F8C21C]">×</a></span>}
+              {params.q && <span className="px-3 py-1 bg-white/10 rounded-full text-sm">Search: &quot;{params.q}&quot; <a href={`/projects?type=${activeType}`} className="hover:text-[#F8C21C]">×</a></span>}
               {params.location && <span className="px-3 py-1 bg-white/10 rounded-full text-sm">Location: {params.location} <a href={`/projects?type=${activeType}`} className="hover:text-[#F8C21C]">×</a></span>}
               {params.builder && <span className="px-3 py-1 bg-white/10 rounded-full text-sm">Builder: {params.builder} <a href={`/projects?type=${activeType}`} className="hover:text-[#F8C21C]">×</a></span>}
               {params.bhk && <span className="px-3 py-1 bg-white/10 rounded-full text-sm">BHK: {params.bhk} <a href={`/projects?type=${activeType}`} className="hover:text-[#F8C21C]">×</a></span>}
@@ -298,7 +296,7 @@ export default async function ProjectsPage({
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredProjects.map((project: any) => (
-                <BuilderProjectCard key={project.slug} project={project} />
+                <ProjectCard key={project.slug} project={project} />
               ))}
             </div>
           )}

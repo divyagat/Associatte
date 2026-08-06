@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import properties from "../../../data/properties.json";
+import properties from "../../../data/projects.json";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.associatte.com";
 

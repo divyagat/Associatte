@@ -6,24 +6,36 @@ import { Edit, MapPin, LayoutGrid, Search } from 'lucide-react';
 import DeleteButton from '@/components/admin/DeleteButton';
 import ApprovalControls from '@/components/admin/ApprovalControls';
 import { matchesSearch } from '@/lib/search';
+import { getDealType } from '@/lib/categories';
 
-// Category (property TYPE) filter — matches the values the PropertyForm can set
-// plus the legacy launch-status values (pre-launch / ready) still in the data.
-// Sale/Rent are a separate `dealType` dimension, not categories.
-const CATEGORIES = [
-  { value: 'all', label: 'All' },
-  { value: 'residential', label: 'Residential' },
-  { value: 'commercial', label: 'Commercial' },
-  { value: 'plots', label: 'Plots' },
-  { value: 'warehouse', label: 'Warehouse' },
-  { value: 'industry', label: 'Industry' },
-  { value: 'pre-launch', label: 'Pre-Launch' },
-  { value: 'ready', label: 'Ready' },
-];
+// Does a property belong under a given tab? Deal tabs (Resale/Rent) match by
+// dealType; type tabs (Warehouse/Industry/…) match by the property's category.
+const matchesTab = (p: any, tab: any) => {
+  if (tab.id === 'all') return true;
+  if (tab.kind === 'deal') return getDealType(p) === tab.id;
+  return (p.category || '') === tab.id;
+};
 
-export default function PropertiesListClient({ properties, projects, canEdit, canDelete, canApprove, isAdmin }: any) {
-  const [activeCategory, setActiveCategory] = useState('all');
+export default function PropertiesListClient({ properties, projects, tabs = [], canEdit, canDelete, canApprove, isAdmin }: any) {
+  const [activeTab, setActiveTab] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Tab row mirrors the public Properties page: All + Resale / Rent (deal) +
+  // Warehouse / Industry (+ any admin-added property types).
+  const tabRow = useMemo(
+    () => [{ id: 'all', label: 'All', kind: 'all', color: '#6b7280' }, ...tabs],
+    [tabs],
+  );
+  // Map tab/category id → colour for the badges.
+  const colorById = useMemo(() => {
+    const m: Record<string, string> = {};
+    tabs.forEach((t: any) => { m[t.id] = t.color; });
+    return m;
+  }, [tabs]);
+  const badgeStyle = (category?: string) => {
+    const color = (category && colorById[category]) || '#6b7280';
+    return { backgroundColor: `${color}22`, color };
+  };
 
   // Map project slugs to names for display
   const projectMap = useMemo(() => {
@@ -32,30 +44,17 @@ export default function PropertiesListClient({ properties, projects, canEdit, ca
     return map;
   }, [projects]);
 
-  // Filter properties based on category and search
+  const activeTabDef = useMemo(() => tabRow.find((t: any) => t.id === activeTab) || tabRow[0], [tabRow, activeTab]);
+
+  // Filter properties based on active tab and search
   const filteredProperties = useMemo(() => {
     return properties.filter((p: any) => {
-      const matchesCategory = activeCategory === 'all' || p.category === activeCategory;
       const projectName = p.project || projectMap[p.projectSlug] || '';
       // Broad free-text match across all fields, plus the linked project's name.
       const matches = matchesSearch({ ...p, tags: [...(p.tags || []), projectName] }, searchQuery);
-      return matchesCategory && matches;
+      return matchesTab(p, activeTabDef) && matches;
     });
-  }, [properties, activeCategory, searchQuery, projectMap]);
-
-  // Color coding for category badges
-  const getCategoryBadgeColor = (category: string) => {
-    switch (category) {
-      case 'residential': return 'bg-green-100 text-green-800';
-      case 'commercial': return 'bg-blue-100 text-blue-800';
-      case 'plots': return 'bg-orange-100 text-orange-800';
-      case 'warehouse': return 'bg-cyan-100 text-cyan-800';
-      case 'industry': return 'bg-indigo-100 text-indigo-800';
-      case 'pre-launch': return 'bg-yellow-100 text-yellow-800';
-      case 'ready': return 'bg-emerald-100 text-emerald-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
+  }, [properties, activeTabDef, searchQuery, projectMap]);
 
   return (
     <>
@@ -72,24 +71,24 @@ export default function PropertiesListClient({ properties, projects, canEdit, ca
           />
         </div>
 
-        {/* Category Tabs */}
+        {/* Tabs: All + Resale / Rent / Warehouse / Industry (+ custom) */}
         <div className="flex flex-wrap gap-2 border-b border-gray-200 pb-2">
-          {CATEGORIES.map((cat) => {
-            const count = cat.value === 'all' 
-              ? properties.length 
-              : properties.filter((p: any) => p.category === cat.value).length;
-            
+          {tabRow.map((tab: any) => {
+            const count = tab.id === 'all'
+              ? properties.length
+              : properties.filter((p: any) => matchesTab(p, tab)).length;
+
             return (
               <button
-                key={cat.value}
-                onClick={() => setActiveCategory(cat.value)}
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  activeCategory === cat.value
+                  activeTab === tab.id
                     ? 'bg-[#005E60] text-white'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
-                {cat.label}
+                {tab.label}
                 <span className="ml-2 text-xs opacity-75">({count})</span>
               </button>
             );
@@ -99,7 +98,7 @@ export default function PropertiesListClient({ properties, projects, canEdit, ca
 
       {filteredProperties.length === 0 ? (
         <div className="bg-white rounded-xl border border-gray-200 text-center py-12">
-          <p className="text-gray-500">No properties found for this category.</p>
+          <p className="text-gray-500">No properties here yet. Use “Add Property” to create one.</p>
         </div>
       ) : (
         <>
@@ -140,7 +139,7 @@ export default function PropertiesListClient({ properties, projects, canEdit, ca
                           </div>
                         </td>
                         <td className="px-6 py-4">
-                          <span className={`px-2.5 py-1 inline-flex text-xs font-semibold rounded-lg ${getCategoryBadgeColor(property.category)}`}>
+                          <span className="px-2.5 py-1 inline-flex text-xs font-semibold rounded-lg capitalize" style={badgeStyle(property.category)}>
                             {property.category ? property.category.replace('-', ' ') : 'Uncategorized'}
                           </span>
                         </td>
@@ -220,7 +219,7 @@ export default function PropertiesListClient({ properties, projects, canEdit, ca
                       </p>
                       <div className="flex items-center justify-between mt-2">
                         <p className="text-sm font-semibold text-[#8B0000]">{property.priceDetails?.range}</p>
-                        <span className={`px-2 py-0.5 text-[10px] font-semibold rounded ${getCategoryBadgeColor(property.category)}`}>
+                        <span className="px-2 py-0.5 text-[10px] font-semibold rounded capitalize" style={badgeStyle(property.category)}>
                           {property.category ? property.category.replace('-', ' ') : 'Uncategorized'}
                         </span>
                       </div>

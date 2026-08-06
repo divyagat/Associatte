@@ -7,7 +7,7 @@ import { MapPin, ChevronRight, ChevronLeft, Phone, Filter, X, TrendingUp, Award 
 import { motion, AnimatePresence } from 'framer-motion';
 
 import type { SearchFilters } from '../Home/Hero';
-import properties from '@/data/properties.json';
+import properties from '@/data/projects.json';
 import EnquiryPopup from '@/components/common/EnquiryPopup';
 
 export interface CardProject {

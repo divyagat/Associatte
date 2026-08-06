@@ -6,7 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 import type { SearchFilters } from '../Home/Hero';
-import rawProperties from '@/data/properties.json';
+import rawProperties from '@/data/projects.json';
 import { isPubliclyVisible } from '@/lib/visibility';
 
 // How recent a launch must be to still count as "Newly Launched" when it carries a

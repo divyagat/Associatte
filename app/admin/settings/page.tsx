@@ -21,10 +21,11 @@ export default async function SettingsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Site Settings</h1>
-        <p className="text-gray-600 mt-1">Control which categories appear on the public website.</p>
+        <p className="text-gray-600 mt-1">Add, delete, hide or recolour the categories that appear across the public website and admin panel.</p>
       </div>
 
       <CategoryVisibilityManager
+        initialTypes={config.propertyTypes}
         initialHiddenTypes={config.hiddenTypes}
         initialHiddenDeals={config.hiddenDeals}
       />

@@ -1,7 +1,7 @@
 // client/app/builders/page.tsx
 import { Metadata } from 'next';
 import BuilderSearchContainer from '@/components/builder-page/BuilderSearchContainer';
-import properties from '@/data/properties.json';
+import properties from '@/data/projects.json';
 import { getBuilderSlug, getBuilderYears, getBuilderLogo, getBuilderMetadata } from '@/lib/builder-slugs';
 
 export const metadata: Metadata = {

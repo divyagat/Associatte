@@ -3,6 +3,7 @@
 import type { IProperty } from './models/Property';
 import type { IBlog } from './models/Blog';
 import { readJson, writeJson } from './blob-store';
+import { DEFAULT_PROPERTY_TYPES, type PropertyType, type CategorySection } from './categories';
 
 /**
  * File-based data store.
@@ -326,29 +327,72 @@ export async function deleteBlog(slug: string): Promise<boolean> {
 }
 
 // ==================== SITE CONFIG ====================
-// Admin-controlled visibility of whole nav categories. `hiddenTypes` are
-// PROJECT_TYPE ids (residential/commercial/…) hidden from the Projects nav;
-// `hiddenDeals` are DEAL_TYPE ids (rental/resale) hidden from the Properties nav.
+// Admin-controlled category settings.
+//   • `propertyTypes` is the editable master list of property TYPES (each tagged
+//     with the nav section it appears under). Admins add/rename/delete these.
+//   • `hiddenTypes` are project-type ids hidden from the Projects nav.
+//   • `hiddenDeals` are Properties-tab ids (deal or type) hidden from that nav.
 export interface SiteConfig {
   hiddenTypes: string[];
   hiddenDeals: string[];
+  propertyTypes: PropertyType[];
 }
 
-const DEFAULT_SITE_CONFIG: SiteConfig = { hiddenTypes: [], hiddenDeals: [] };
+const DEFAULT_SITE_CONFIG: SiteConfig = {
+  hiddenTypes: [],
+  hiddenDeals: [],
+  propertyTypes: DEFAULT_PROPERTY_TYPES,
+};
+
+// Coerce persisted data into a clean PropertyType[]; falls back to defaults when
+// nothing valid is stored (so a fresh/empty config still behaves as before).
+function normalizePropertyTypes(raw: any): PropertyType[] {
+  if (!Array.isArray(raw)) return DEFAULT_PROPERTY_TYPES;
+  const cleaned = raw
+    .map((t: any) => {
+      const id = String(t?.id || '').toLowerCase().trim();
+      if (!id) return null;
+      const section: CategorySection = t?.section === 'properties' ? 'properties' : 'projects';
+      return {
+        id,
+        label: String(t?.label || id),
+        color: String(t?.color || '#005E60'),
+        section,
+      } as PropertyType;
+    })
+    .filter(Boolean) as PropertyType[];
+  // De-dupe by id, keep first occurrence.
+  const seen = new Set<string>();
+  const unique = cleaned.filter((t) => (seen.has(t.id) ? false : (seen.add(t.id), true)));
+  return unique.length ? unique : DEFAULT_PROPERTY_TYPES;
+}
 
 export async function getSiteConfig(): Promise<SiteConfig> {
   const data = await readJson<any>(SITE_CONFIG_FILE, { ...DEFAULT_SITE_CONFIG });
   return {
     hiddenTypes: Array.isArray(data?.hiddenTypes) ? data.hiddenTypes.map(String) : [],
     hiddenDeals: Array.isArray(data?.hiddenDeals) ? data.hiddenDeals.map(String) : [],
+    propertyTypes: normalizePropertyTypes(data?.propertyTypes),
   };
 }
 
 export async function updateSiteConfig(patch: Partial<SiteConfig>): Promise<SiteConfig> {
   const current = await getSiteConfig();
+  const propertyTypes = patch.propertyTypes !== undefined
+    ? normalizePropertyTypes(patch.propertyTypes)
+    : current.propertyTypes;
+  // Valid ids for hidden filtering = the (possibly new) type ids + deal ids.
+  const validHiddenTypeIds = new Set(propertyTypes.filter((t) => t.section === 'projects').map((t) => t.id));
+  const validHiddenDealIds = new Set([
+    'sale', 'rent',
+    ...propertyTypes.filter((t) => t.section === 'properties').map((t) => t.id),
+  ]);
   const next: SiteConfig = {
-    hiddenTypes: Array.isArray(patch.hiddenTypes) ? patch.hiddenTypes.map(String) : current.hiddenTypes,
-    hiddenDeals: Array.isArray(patch.hiddenDeals) ? patch.hiddenDeals.map(String) : current.hiddenDeals,
+    propertyTypes,
+    hiddenTypes: (Array.isArray(patch.hiddenTypes) ? patch.hiddenTypes.map(String) : current.hiddenTypes)
+      .filter((id) => validHiddenTypeIds.has(id)),
+    hiddenDeals: (Array.isArray(patch.hiddenDeals) ? patch.hiddenDeals.map(String) : current.hiddenDeals)
+      .filter((id) => validHiddenDealIds.has(id)),
   };
   await writeJson(SITE_CONFIG_FILE, next);
   return next;

@@ -28,16 +28,27 @@ async function dbConnect() {
     return cached.conn;
   }
 
-  const MONGODB_URI = process.env.MONGODB_URI;
-  if (!MONGODB_URI) {
+  const RAW_URI = process.env.MONGODB_URI;
+  if (!RAW_URI) {
     throw new Error(
       'MONGODB_URI is not set. Add it to your .env file and to your hosting provider\'s environment variables.',
     );
   }
 
+  // Guard against an invalid custom write-concern mode in the URI (a typo like
+  // `w=majoritypro`) which makes EVERY write fail with
+  // `UnknownReplWriteConcern: No write concern mode named 'majoritypro' found`.
+  // We rewrite any non-numeric `w=` value to the standard `majority`.
+  const MONGODB_URI = RAW_URI.replace(/([?&]w=)(?!majority(?:&|$))([A-Za-z][\w-]*)/gi, '$1majority');
+  if (MONGODB_URI !== RAW_URI) {
+    console.warn('⚠️ MONGODB_URI had a non-standard write concern; using w=majority. Fix the URI to remove this warning.');
+  }
+
   if (!cached.promise) {
     const opts = {
       bufferCommands: false,
+      // Force a valid write concern regardless of what the URI supplies.
+      writeConcern: { w: 'majority' as const },
     };
 
     console.log('🚀 Connecting to MongoDB Atlas...');

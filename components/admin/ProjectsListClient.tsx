@@ -1,6 +1,7 @@
 'use client';
+/* eslint-disable @next/next/no-img-element -- admin previews render arbitrary uploaded image URLs (incl. blob:) that next/image can't optimize */
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Edit, Trash2, LayoutGrid, Loader2 } from 'lucide-react';
 import ApprovalControls from '@/components/admin/ApprovalControls';
@@ -13,9 +14,34 @@ const getDeveloperName = (developer: any): string => {
   return '';
 };
 
-export default function ProjectsListClient({ initialProjects, canEdit, canDelete, canApprove, isAdmin }: any) {
-  const [projects, setProjects] = useState<any[]>(initialProjects || []);
+export default function ProjectsListClient({ initialProjects, categories = [], canEdit, canDelete, canApprove, isAdmin }: any) {
+  const [allProjects, setAllProjects] = useState<any[]>(initialProjects || []);
   const [deletingSlug, setDeletingSlug] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState('all');
+
+  // Category filter tabs from the admin-managed master list (Settings) + "All".
+  const categoryTabs = useMemo(
+    () => [{ value: 'all', label: 'All' }, ...categories.map((c: any) => ({ value: c.id, label: c.label }))],
+    [categories],
+  );
+  const colorById = useMemo(() => {
+    const m: Record<string, string> = {};
+    categories.forEach((c: any) => { m[c.id] = c.color; });
+    return m;
+  }, [categories]);
+  const badgeStyle = (category?: string) => {
+    const color = (category && colorById[category]) || '#6b7280';
+    return { backgroundColor: `${color}22`, color };
+  };
+  const labelFor = (category?: string) =>
+    categories.find((c: any) => c.id === category)?.label || category || 'Uncategorized';
+
+  const projects = useMemo(
+    () => (activeCategory === 'all'
+      ? allProjects
+      : allProjects.filter((p) => (p.category || 'residential') === activeCategory)),
+    [allProjects, activeCategory],
+  );
 
   const handleDelete = async (slug: string) => {
     if (!confirm('Are you sure you want to delete this project?')) return;
@@ -34,7 +60,7 @@ export default function ProjectsListClient({ initialProjects, canEdit, canDelete
       }
 
       // Only update UI if deletion was successful
-      setProjects((prev) => prev.filter((p) => p.slug !== slug));
+      setAllProjects((prev) => prev.filter((p) => p.slug !== slug));
     } catch (error) {
       console.error('❌ Error deleting project:', error);
       alert(error instanceof Error ? error.message : 'Failed to delete project. Please check the console for details.');
@@ -44,11 +70,36 @@ export default function ProjectsListClient({ initialProjects, canEdit, canDelete
   };
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div className="space-y-4">
+      {/* Category filter tabs */}
+      <div className="bg-white rounded-xl border border-gray-200 p-4">
+        <div className="flex flex-wrap gap-2">
+          {categoryTabs.map((cat: any) => {
+            const count = cat.value === 'all'
+              ? allProjects.length
+              : allProjects.filter((p) => (p.category || 'residential') === cat.value).length;
+            return (
+              <button
+                key={cat.value}
+                onClick={() => setActiveCategory(cat.value)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  activeCategory === cat.value ? 'bg-[#005E60] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                {cat.label}
+                <span className="ml-2 text-xs opacity-75">({count})</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
       <table className="w-full">
         <thead className="bg-gray-50 border-b border-gray-200">
           <tr>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Project Name</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Developer</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Approval</th>
@@ -58,21 +109,30 @@ export default function ProjectsListClient({ initialProjects, canEdit, canDelete
         <tbody className="divide-y divide-gray-200">
           {projects.length === 0 ? (
             <tr>
-              <td colSpan={5} className="px-6 py-12 text-center text-gray-500">No projects yet. Create your first project!</td>
+              <td colSpan={6} className="px-6 py-12 text-center text-gray-500">No projects in this category yet.</td>
             </tr>
           ) : (
             projects.map((project) => (
               <tr key={project.slug} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                      <LayoutGrid className="text-purple-600" size={20} />
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-gray-900">{project.name}</div>
-                      <div className="text-sm text-gray-500">{project.slug}</div>
+                    {project.image ? (
+                      <img src={project.image} alt={project.name} className="w-12 h-12 rounded-lg object-cover flex-shrink-0" />
+                    ) : (
+                      <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <LayoutGrid className="text-purple-600" size={20} />
+                      </div>
+                    )}
+                    <div className="min-w-0">
+                      <div className="text-sm font-medium text-gray-900 truncate">{project.name}</div>
+                      <div className="text-sm text-gray-500 truncate">{project.slug}</div>
                     </div>
                   </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span className="px-2.5 py-1 inline-flex text-xs font-semibold rounded-lg capitalize" style={badgeStyle(project.category)}>
+                    {labelFor(project.category)}
+                  </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">{project.location}</td>
 
@@ -117,6 +177,7 @@ export default function ProjectsListClient({ initialProjects, canEdit, canDelete
           )}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }

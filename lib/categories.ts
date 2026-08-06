@@ -1,16 +1,18 @@
 // lib/categories.ts
 //
-// Single source of truth for the two independent ways a listing is classified:
+// Single source of truth for how listings are classified across the site's two
+// public sections (Projects / Properties).
 //
-//   • PROJECT TYPE  (what it is)   — Residential, Commercial, Plots, Warehouse, Industry
-//     → drives the header "Projects" dropdown and the /projects page tabs.
+// Categories are DYNAMIC: an admin can add / rename / recolor / delete them in
+// Settings, and the master list is persisted in site-config (`propertyTypes`).
+// The constants below are only the DEFAULT seed (used when the store is empty),
+// plus pure helpers that derive the per-section lists from a master list.
 //
-//   • DEAL TYPE     (how it's offered) — Sale, Rent
-//     → drives the header "Properties" dropdown and the /properties page tabs.
-//
-// Both dimensions are derived from a listing so legacy records (which only carry
-// the older `category` field) still land in a sensible bucket, while records
-// saved from the admin panel set `category` + `dealType` explicitly.
+//   • PROJECTS section  → property types whose `section === 'projects'`
+//                          (Residential, Commercial, Plots …)
+//   • PROPERTIES section → the two deal tabs (Resale / Rent, built-in) PLUS
+//                          property types whose `section === 'properties'`
+//                          (Warehouse, Industry …)
 
 export interface CategoryDef {
   id: string;
@@ -18,43 +20,101 @@ export interface CategoryDef {
   color: string;
 }
 
+// A property TYPE in the editable master list. `section` decides which nav
+// section its tab appears under.
+export type CategorySection = 'projects' | 'properties';
+export interface PropertyType extends CategoryDef {
+  section: CategorySection;
+}
+
 // Brand palette (kept in sync with the header/pages)
 const BRAND = { green: '#005E60', red: '#8B0000', yellow: '#F8C21C' } as const;
 
-// ── Project type dimension (Header → Projects) ─────────────────────────────
-export const PROJECT_TYPES = [
-  { id: 'residential', label: 'Residential', color: BRAND.green },
-  { id: 'commercial', label: 'Commercial', color: BRAND.red },
-  { id: 'plots', label: 'Plots', color: BRAND.yellow },
-  { id: 'warehouse', label: 'Warehouse', color: BRAND.green },
-  { id: 'industry', label: 'Industry', color: BRAND.red },
-] as const;
+// Loose string aliases kept for back-compat with existing imports.
+export type ProjectTypeId = string;
+export type DealTypeId = string;
 
-export type ProjectTypeId = (typeof PROJECT_TYPES)[number]['id'];
-export const PROJECT_TYPE_IDS = PROJECT_TYPES.map((t) => t.id) as readonly ProjectTypeId[];
+// ── Default master list (seed) ─────────────────────────────────────────────
+export const DEFAULT_PROPERTY_TYPES: PropertyType[] = [
+  { id: 'residential', label: 'Residential', color: BRAND.green, section: 'projects' },
+  { id: 'commercial', label: 'Commercial', color: BRAND.red, section: 'projects' },
+  { id: 'plots', label: 'Plots', color: BRAND.yellow, section: 'projects' },
+  { id: 'warehouse', label: 'Warehouse', color: BRAND.green, section: 'properties' },
+  { id: 'industry', label: 'Industry', color: BRAND.red, section: 'properties' },
+];
 
-// ── Deal type dimension (Header → Properties) ──────────────────────────────
-// `sale` id is kept as the internal bucket (URLs, saved data, getDealType all
-// rely on it); the label is "Resale" because that's what Sale means on this site.
-export const DEAL_TYPES = [
+// ── Deal tabs (built-in) ───────────────────────────────────────────────────
+// Resale / Rent map to the `dealType` field. They are core options — hideable in
+// Settings but not deletable.
+export const DEAL_TYPES: CategoryDef[] = [
   { id: 'sale', label: 'Resale', color: BRAND.green },
   { id: 'rent', label: 'Rent', color: BRAND.red },
-] as const;
+];
+export const DEAL_TYPE_IDS = DEAL_TYPES.map((d) => d.id);
 
-export type DealTypeId = (typeof DEAL_TYPES)[number]['id'];
-export const DEAL_TYPE_IDS = DEAL_TYPES.map((t) => t.id) as readonly DealTypeId[];
+// A Properties-section tab is either a deal tab or a property-type tab.
+export type PropertyTabKind = 'deal' | 'type';
+export interface PropertyTabDef extends CategoryDef {
+  kind: PropertyTabKind;
+}
 
+// ── Derive per-section lists from a master list ────────────────────────────
+/** Types shown under the Projects section. */
+export function projectTypesOf(types: PropertyType[] = DEFAULT_PROPERTY_TYPES): PropertyType[] {
+  return types.filter((t) => t.section === 'projects');
+}
+
+/** Tabs shown under the Properties section (deal tabs + property-type tabs). */
+export function propertyTabsOf(types: PropertyType[] = DEFAULT_PROPERTY_TYPES): PropertyTabDef[] {
+  return [
+    ...DEAL_TYPES.map((d) => ({ ...d, kind: 'deal' as const })),
+    ...types
+      .filter((t) => t.section === 'properties')
+      .map((t) => ({ id: t.id, label: t.label, color: t.color, kind: 'type' as const })),
+  ];
+}
+
+/** All known type ids in a master list (used to honour explicit `category`). */
+export function typeIdsOf(types: PropertyType[] = DEFAULT_PROPERTY_TYPES): string[] {
+  return types.map((t) => t.id);
+}
+
+/** Human label for a type id (falls back to Title Case of the id). */
+export function typeLabel(id: string, types: PropertyType[] = DEFAULT_PROPERTY_TYPES): string {
+  const found = types.find((t) => t.id === id);
+  if (found) return found.label;
+  return id ? id.charAt(0).toUpperCase() + id.slice(1).replace(/-/g, ' ') : '';
+}
+
+/** Slugify a human label into a stable category id. */
+export function slugifyCategory(label: string): string {
+  return String(label)
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+// ── Back-compat static defaults (fallbacks / non-dynamic callers) ──────────
+export const ALL_PROPERTY_TYPES = DEFAULT_PROPERTY_TYPES;
+export const ALL_PROPERTY_TYPE_IDS = typeIdsOf();
+export const PROJECT_TYPES = projectTypesOf();
+export const PROJECT_TYPE_IDS = PROJECT_TYPES.map((t) => t.id);
+export const PROPERTY_TABS = propertyTabsOf();
+export const PROPERTY_TAB_IDS = PROPERTY_TABS.map((t) => t.id);
+
+// ── Classification ─────────────────────────────────────────────────────────
 /**
- * Resolve the PROJECT TYPE bucket for a listing.
- * Explicit `category` wins; otherwise we sniff the configurations / name.
+ * Resolve the property TYPE bucket for a listing. An explicit `category` that is
+ * one of the currently-known ids wins; otherwise (legacy / unknown values) we
+ * sniff the configurations + name. Pass `knownIds` so dynamically-added
+ * categories are honoured; it defaults to the built-in set.
  */
-export function getProjectType(item: any): ProjectTypeId {
+export function getProjectType(item: any, knownIds: string[] = ALL_PROPERTY_TYPE_IDS): string {
   const explicit = String(item?.category || item?.projectType || item?.propertyType || '')
     .toLowerCase()
     .trim();
-  if ((PROJECT_TYPE_IDS as readonly string[]).includes(explicit)) {
-    return explicit as ProjectTypeId;
-  }
+  if (explicit && knownIds.includes(explicit)) return explicit;
 
   const configs = item?.priceDetails?.configurations || [];
   const text = [
@@ -76,38 +136,58 @@ export function getProjectType(item: any): ProjectTypeId {
  * Resolve the DEAL TYPE bucket for a listing.
  * Explicit `dealType` wins; otherwise legacy `rent` category → rent, else sale.
  */
-export function getDealType(item: any): DealTypeId {
+export function getDealType(item: any): string {
   const explicit = String(item?.dealType || '').toLowerCase().trim();
-  if ((DEAL_TYPE_IDS as readonly string[]).includes(explicit)) {
-    return explicit as DealTypeId;
-  }
-  // Normalise older/synonym values that predate the sale/rent ids.
+  if (DEAL_TYPE_IDS.includes(explicit)) return explicit;
   if (explicit === 'rental' || explicit === 'lease') return 'rent';
   if (explicit === 'resale') return 'sale';
 
   const cat = String(item?.category || '').toLowerCase().trim();
   if (cat === 'rent' || cat === 'rental' || cat === 'lease') return 'rent';
   if (item?.isRental === true) return 'rent';
-  // resale, ready, pre-launch, sale, and everything else → sale
   return 'sale';
 }
 
-/** Count listings per project type. */
-export function computeTypeCounts(items: any[]): Record<ProjectTypeId, number> {
-  const counts = Object.fromEntries(PROJECT_TYPE_IDS.map((id) => [id, 0])) as Record<
-    ProjectTypeId,
-    number
-  >;
-  for (const item of items) counts[getProjectType(item)]++;
+/** Does a listing belong under a given Properties-section tab? */
+export function matchesPropertyTab(
+  item: any,
+  tab: PropertyTabDef,
+  knownIds?: string[],
+): boolean {
+  return tab.kind === 'deal'
+    ? getDealType(item) === tab.id
+    : getProjectType(item, knownIds) === tab.id;
+}
+
+/**
+ * Count listings for each id in `displayIds`. Classification uses `knownIds`
+ * (all type ids) so explicit categories are honoured, then only the requested
+ * display ids are tallied.
+ */
+export function countByType(
+  items: any[],
+  displayIds: string[],
+  knownIds: string[] = displayIds,
+): Record<string, number> {
+  const counts: Record<string, number> = Object.fromEntries(displayIds.map((id) => [id, 0]));
+  for (const item of items) {
+    const t = getProjectType(item, knownIds);
+    if (t in counts) counts[t]++;
+  }
   return counts;
 }
 
-/** Count listings per deal type. */
-export function computeDealCounts(items: any[]): Record<DealTypeId, number> {
-  const counts = Object.fromEntries(DEAL_TYPE_IDS.map((id) => [id, 0])) as Record<
-    DealTypeId,
-    number
-  >;
-  for (const item of items) counts[getDealType(item)]++;
+/** Count listings per Properties-section tab (a listing can match several). */
+export function countByTab(
+  items: any[],
+  tabs: PropertyTabDef[],
+  knownIds?: string[],
+): Record<string, number> {
+  const counts: Record<string, number> = Object.fromEntries(tabs.map((t) => [t.id, 0]));
+  for (const item of items) {
+    for (const tab of tabs) {
+      if (matchesPropertyTab(item, tab, knownIds)) counts[tab.id]++;
+    }
+  }
   return counts;
 }

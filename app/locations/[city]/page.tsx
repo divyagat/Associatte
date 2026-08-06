@@ -3,7 +3,7 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { CITY_METADATA } from "./cityMetadata";
-import properties from "../../../data/properties.json";
+import properties from "../../../data/projects.json";
 import Image from "next/image";
 import Link from "next/link";
 import { 

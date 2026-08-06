@@ -4,6 +4,7 @@
 import { useState, useEffect } from 'react';
 import { Upload, X, Plus, Trash2 } from 'lucide-react';
 import { uploadImage } from '@/lib/upload-image';
+import { ALL_PROPERTY_TYPES, type PropertyType } from '@/lib/categories';
 
 interface PropertyFormProps {
   initialData?: any;
@@ -16,7 +17,7 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
   const defaultFormData = {
     slug: '',
     name: '',
-    category: 'residential',
+    category: 'warehouse',
     dealType: 'sale',
     ageOfConstruction: '',
     builtUpArea: '',
@@ -84,6 +85,32 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
   const [projects, setProjects] = useState<any[]>([]);
   const [loadingProjects, setLoadingProjects] = useState(false);
   const [errorProjects, setErrorProjects] = useState<string | null>(null);
+  // Category options = the admin-managed PROPERTIES-section categories only
+  // (Warehouse / Industry + any added under Properties). Project types live on the
+  // Projects side. Seeded with built-ins until the fetch resolves.
+  const [categoryOptions, setCategoryOptions] = useState<{ id: string; label: string }[]>(
+    ALL_PROPERTY_TYPES.filter((t) => t.section === 'properties').map((t) => ({ id: t.id, label: t.label })),
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch('/api/site-config');
+        const config = await res.json().catch(() => ({}));
+        const types: PropertyType[] = Array.isArray(config?.propertyTypes) ? config.propertyTypes : [];
+        const opts = types.filter((t) => t.section === 'properties').map((t) => ({ id: t.id, label: t.label }));
+        if (!cancelled && opts.length) {
+          setCategoryOptions(opts);
+          // Keep the selected category valid against the available options.
+          setFormData((prev: any) =>
+            opts.some((o) => o.id === prev.category) ? prev : { ...prev, category: opts[0].id },
+          );
+        }
+      } catch { /* keep defaults */ }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   // Fetch projects to populate the dropdown
   useEffect(() => {
@@ -279,13 +306,11 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
               required
               className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]"
             >
-              <option value="residential">Residential</option>
-              <option value="commercial">Commercial</option>
-              <option value="plots">Plots</option>
-              <option value="warehouse">Warehouse</option>
-              <option value="industry">Industry</option>
+              {categoryOptions.map((c) => (
+                <option key={c.id} value={c.id}>{c.label}</option>
+              ))}
             </select>
-            <p className="text-xs text-gray-500 mt-1">Drives the Projects menu &amp; type tabs.</p>
+            <p className="text-xs text-gray-500 mt-1">Property type (e.g. Warehouse). Add more from the Properties page or Settings. Deal Type (Resale/Rent) is set below.</p>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Deal Type *</label>
