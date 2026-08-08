@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import properties from "../../../data/projects.json";
+import { getSeoOverride, keywordsToArray } from "@/lib/seo-store";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.associatte.com";
+
+export const dynamic = "force-dynamic";
 
 // The property page is a Client Component (interactive gallery, EMI calc, popups),
 // so it can't export metadata and its old `next/head` block was a no-op in the
@@ -35,15 +38,23 @@ export async function generateMetadata({
   const developer = project.developer?.name || "";
   const canonical = `/property/${slug}`;
 
-  const title = `${project.name}${configType ? ` - ${configType}` : ""} in ${area}, ${city}`;
+  // Admin SEO override (set in the admin SEO panel) wins over the derived defaults.
+  const override = await getSeoOverride(canonical);
+
+  const title =
+    override?.title?.trim() ||
+    `${project.name}${configType ? ` - ${configType}` : ""} in ${area}, ${city}`;
   const description =
-    `${project.name}${developer ? ` by ${developer}` : ""}.` +
-    `${configType ? ` ${configType}` : ""}${priceRange ? ` starting from ${priceRange}.` : ""} ` +
-    `${(project.about || "").substring(0, 150)}`.trim();
+    override?.description?.trim() ||
+    (`${project.name}${developer ? ` by ${developer}` : ""}.` +
+      `${configType ? ` ${configType}` : ""}${priceRange ? ` starting from ${priceRange}.` : ""} ` +
+      `${(project.about || "").substring(0, 150)}`).trim();
+  const keywords = keywordsToArray(override?.keywords);
 
   return {
     title,
     description,
+    ...(keywords ? { keywords } : {}),
     alternates: { canonical },
     openGraph: {
       type: "website",

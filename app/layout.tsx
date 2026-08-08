@@ -4,6 +4,8 @@ import { Montserrat, Jost, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ClientLayout from "@/components/ClientLayout";
 import GoogleAnalytics from "@/components/SEO/GoogleAnalytics";
+import { getSeoOverride, keywordsToArray } from "@/lib/seo-store";
+import { seoPageByPath } from "@/lib/seo-pages";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -41,22 +43,34 @@ const websiteJsonLd = {
   },
 };
 
-export const metadata: Metadata = {
+// The Home page ("/") has no page-level metadata of its own (it's a Client
+// Component), so its SEO is controlled here. The default title/description/
+// keywords come from the SEO_PAGES registry and merge any admin override for "/".
+// force-dynamic keeps admin SEO edits live without a rebuild.
+export const dynamic = "force-dynamic";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const home = seoPageByPath("/");
+  const override = await getSeoOverride("/");
+
+  const homeTitle =
+    override?.title?.trim() ||
+    home?.title ||
+    "Associatte PropTech | Buy Verified Properties in Pune, Mumbai & KDMC";
+  const homeDescription =
+    override?.description?.trim() ||
+    home?.description ||
+    "Find verified RERA-registered 1, 2, 3 & 4 BHK flats and projects across Pune, Mumbai and KDMC. Expert guidance, transparent pricing and free consultation with Associatte PropTech.";
+  const homeKeywords = keywordsToArray(override?.keywords) || home?.keywords;
+
+  return {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Associatte PropTech | Buy Verified Properties in Pune, Mumbai & KDMC",
+    default: homeTitle,
     template: "%s | Associatte PropTech",
   },
-  description:
-    "Find verified RERA-registered 1, 2, 3 & 4 BHK flats and projects across Pune, Mumbai and KDMC. Expert guidance, transparent pricing and free consultation with Associatte PropTech.",
-  keywords: [
-    "Associatte PropTech",
-    "properties in Pune",
-    "properties in Mumbai",
-    "flats in KDMC",
-    "RERA registered projects",
-    "buy property Maharashtra",
-  ],
+  description: homeDescription,
+  ...(homeKeywords ? { keywords: homeKeywords } : {}),
   authors: [{ name: "Associatte PropTech Pvt Ltd" }],
   robots: {
     index: true,
@@ -76,9 +90,8 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "Associatte PropTech",
-    title: "Associatte PropTech | Verified Properties in Pune, Mumbai & KDMC",
-    description:
-      "Find verified RERA-registered homes across Pune, Mumbai and KDMC with expert guidance and free consultation.",
+    title: homeTitle,
+    description: homeDescription,
     locale: "en_IN",
     url: SITE_URL,
     images: [
@@ -92,12 +105,12 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Associatte PropTech | Verified Properties in Pune, Mumbai & KDMC",
-    description:
-      "Find verified RERA-registered homes across Pune, Mumbai and KDMC with expert guidance and free consultation.",
+    title: homeTitle,
+    description: homeDescription,
     images: ["/Home/b4.webp"],
   },
-};
+  };
+}
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

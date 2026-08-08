@@ -1,11 +1,13 @@
 // app/privacy-policy/page.tsx
 import React from 'react';
 import type { Metadata } from 'next';
+import { pageMetadata } from '@/lib/seo-pages';
 
-export const metadata: Metadata = {
-  title: 'Privacy Policy | Associatte',
-  description: 'Privacy Policy for Associatte PropTech Pvt Ltd - Learn how we collect, protect, and use your personal information.',
-};
+export const dynamic = 'force-dynamic';
+
+export function generateMetadata(): Promise<Metadata> {
+  return pageMetadata('/privacy-policy');
+}
 
 export default function PrivacyPolicyPage() {
   const sections = [

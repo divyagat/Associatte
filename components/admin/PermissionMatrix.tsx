@@ -12,6 +12,7 @@ const SECTION_LABELS: Record<string, string> = {
   properties: 'Properties',
   projects: 'Projects',
   blogs: 'Blogs', // Kept for type safety, but won't render
+  seo: 'SEO (page meta tags)',
 };
 
 // Human-friendly labels + hints per action.

@@ -1,12 +1,42 @@
 /* eslint-disable @next/next/no-img-element */
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getProjectBySlug, getAllProperties } from '@/lib/data-store';
 import { isPubliclyVisible } from '@/lib/visibility';
 import { getAdminRole } from '@/lib/admin-auth';
+import { getSeoOverride, keywordsToArray } from '@/lib/seo-store';
 import { MapPin, Building2, Calendar, IndianRupee, Ruler, Sparkles, Phone, CheckCircle2, Navigation } from 'lucide-react';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
+
+// SEO for the project detail page. It shares its admin SEO override with the
+// polished /property/[slug] route (same project), so one entry controls both.
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const project: any = await getProjectBySlug(slug);
+  if (!project) return { title: 'Project Not Found', robots: { index: false, follow: false } };
+
+  const override = await getSeoOverride(`/property/${slug}`);
+  const area = project.fullLocation?.area || project.location || '';
+  const city = project.fullLocation?.city || '';
+  const developer = project.developer?.name || (typeof project.developer === 'string' ? project.developer : '');
+
+  const title =
+    override?.title?.trim() ||
+    `${project.name}${area ? ` in ${area}` : ''}${city ? `, ${city}` : ''} | Associatte PropTech`;
+  const description =
+    override?.description?.trim() ||
+    `${project.name}${developer ? ` by ${developer}` : ''}. ${(project.about || '').substring(0, 150)}`.trim();
+  const keywords = keywordsToArray(override?.keywords);
+
+  return {
+    title: { absolute: title },
+    description,
+    ...(keywords ? { keywords } : {}),
+    alternates: { canonical: `/projects/${slug}` },
+  };
+}
 
 // ✅ Helper function to normalize developer field
 const normalizeDeveloper = (developer: any) => {

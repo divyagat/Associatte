@@ -1,4 +1,4 @@
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import ProjectCard from '@/components/builder-page/ProjectCard';
 import PropertiesStickySearch from '@/components/properties/PropertiesStickySearch';
@@ -9,18 +9,17 @@ import {
   getProjectType, typeLabel,
 } from '@/lib/categories';
 import { matchesSearch } from '@/lib/search';
+import { pageMetadata } from '@/lib/seo-pages';
 
 // Read live from the file-based data store so anything added/edited in the admin
 // panel shows up here immediately (no rebuild required).
 export const dynamic = 'force-dynamic';
 
-export const metadata: Metadata = {
-  title: 'Properties | Residential, Commercial, Plots & More | Associatte PropTech',
-  description: 'Explore Residential, Commercial, Pre-Launch, Ready-to-Move, Rent, Plot & Resale properties in Pune, Mumbai & KDMC. Filter by type, location, budget & more.',
-  keywords: ['properties', 'residential', 'commercial', 'plots', 'rent', 'resale', 'Pune', 'Mumbai', 'KDMC', 'real estate'],
-  // Consolidate all ?type=/?location= filter permutations onto one canonical URL.
-  alternates: { canonical: '/properties' },
-};
+// Default SEO comes from the SEO_PAGES registry and merges any admin override;
+// the canonical is pinned to /properties so filter permutations don't split it.
+export function generateMetadata(): Promise<Metadata> {
+  return pageMetadata('/properties');
+}
 
 // Tab-specific hero copy shown on the Properties page. Keyed by tab id so each
 // of /properties?deal=sale|rent|warehouse|industry displays relevant info.

@@ -1,12 +1,13 @@
 // app/buy/page.tsx
 
-import { Metadata } from "next";
+import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo-pages";
 
-export const metadata: Metadata = {
-  title: "Buy Property | Associatte PropTech",
-  description:
-    "Explore flats, villas, and investment properties in Pune, Mumbai and KDMC. Find your dream home today.",
-};
+export const dynamic = "force-dynamic";
+
+export function generateMetadata(): Promise<Metadata> {
+  return pageMetadata("/buy");
+}
 
 export default function BuyPage() {
   return (

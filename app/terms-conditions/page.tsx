@@ -1,11 +1,13 @@
 // app/terms-conditions/page.tsx
 import React from 'react';
 import type { Metadata } from 'next';
+import { pageMetadata } from '@/lib/seo-pages';
 
-export const metadata: Metadata = {
-  title: 'Terms of Service | Associatte',
-  description: 'Terms of Service for Associatte PropTech Private Limited - Read our terms and conditions for using our website and services.',
-};
+export const dynamic = 'force-dynamic';
+
+export function generateMetadata(): Promise<Metadata> {
+  return pageMetadata('/terms-conditions');
+}
 
 export default function TermsConditionsPage() {
   const terms = [

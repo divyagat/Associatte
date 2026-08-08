@@ -36,6 +36,7 @@ function requirementFor(
     { prefix: '/admin/properties', section: 'properties' },
     { prefix: '/admin/projects', section: 'projects' },
     { prefix: '/admin/blogs', section: 'blogs' },
+    { prefix: '/admin/seo', section: 'seo' },
   ];
   for (const { prefix, section } of map) {
     if (pathname === prefix || pathname.startsWith(prefix + '/')) {

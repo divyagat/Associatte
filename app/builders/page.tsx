@@ -1,14 +1,15 @@
 // client/app/builders/page.tsx
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
 import BuilderSearchContainer from '@/components/builder-page/BuilderSearchContainer';
 import properties from '@/data/projects.json';
 import { getBuilderSlug, getBuilderYears, getBuilderLogo, getBuilderMetadata } from '@/lib/builder-slugs';
+import { pageMetadata } from '@/lib/seo-pages';
 
-export const metadata: Metadata = {
-  title: 'Know Your Developer | Trusted Builders in Pune, Mumbai & KDMC',
-  description: 'Explore verified projects from top developers like Mantra, Lodha, Paradise Group & more.',
-  keywords: ['builders', 'developers', 'Pune', 'Mumbai', 'KDMC', 'real estate'],
-};
+export const dynamic = 'force-dynamic';
+
+export function generateMetadata(): Promise<Metadata> {
+  return pageMetadata('/builders');
+}
 
 type Builder = {
   id: string;

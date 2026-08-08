@@ -16,6 +16,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     properties: hasSectionAccess(permissions, 'properties'),
     projects: hasSectionAccess(permissions, 'projects'),
     blogs: hasSectionAccess(permissions, 'blogs'),
+    seo: hasSectionAccess(permissions, 'seo'),
   };
 
   return <AdminShell role={role} access={access}>{children}</AdminShell>;

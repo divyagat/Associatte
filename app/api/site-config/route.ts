@@ -10,7 +10,7 @@ export async function GET() {
     return NextResponse.json(config);
   } catch (error: any) {
     console.error('Error fetching site config:', error);
-    return NextResponse.json({ hiddenTypes: [], hiddenDeals: [], propertyTypes: [] }, { status: 500 });
+    return NextResponse.json({ hiddenTypes: [], hiddenDeals: [], propertyTypes: [], hiddenSections: [] }, { status: 500 });
   }
 }
 
@@ -44,8 +44,9 @@ export async function PUT(request: NextRequest) {
     const propertyTypes = sanitizePropertyTypes(body?.propertyTypes);
     const hiddenTypes = Array.isArray(body?.hiddenTypes) ? body.hiddenTypes.map(String) : undefined;
     const hiddenDeals = Array.isArray(body?.hiddenDeals) ? body.hiddenDeals.map(String) : undefined;
+    const hiddenSections = Array.isArray(body?.hiddenSections) ? body.hiddenSections.map(String) : undefined;
     // updateSiteConfig re-validates hidden ids against the (possibly new) types.
-    const config = await updateSiteConfig({ propertyTypes, hiddenTypes, hiddenDeals });
+    const config = await updateSiteConfig({ propertyTypes, hiddenTypes, hiddenDeals, hiddenSections });
     return NextResponse.json(config);
   } catch (error: any) {
     console.error('Error updating site config:', error);

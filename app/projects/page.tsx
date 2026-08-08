@@ -1,4 +1,4 @@
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
 import ProjectCard from '@/components/builder-page/ProjectCard';
 import { getAllProjects, getSiteConfig } from '@/lib/data-store';
 import { isPubliclyVisible } from '@/lib/visibility';
@@ -6,14 +6,13 @@ import {
   projectTypesOf, typeIdsOf, getProjectType, countByType, typeLabel,
 } from '@/lib/categories';
 import { matchesSearch } from '@/lib/search';
+import { pageMetadata } from '@/lib/seo-pages';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata: Metadata = {
-  title: 'All Projects | Associatte PropTech',
-  description: 'Explore all premium residential & commercial projects in Pune, Mumbai & KDMC.',
-  keywords: ['projects', 'Pune', 'Mumbai', 'KDMC', 'real estate', 'properties'],
-};
+export function generateMetadata(): Promise<Metadata> {
+  return pageMetadata('/projects');
+}
 
 // Hero copy for the well-known project types. Admin-added categories fall back
 // to a generic title/description built from their label.

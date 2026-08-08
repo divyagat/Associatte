@@ -4,6 +4,7 @@ import type { IProperty } from './models/Property';
 import type { IBlog } from './models/Blog';
 import { readJson, writeJson } from './blob-store';
 import { DEFAULT_PROPERTY_TYPES, type PropertyType, type CategorySection } from './categories';
+import { MAIN_NAV_SECTION_IDS } from './nav-sections';
 
 /**
  * File-based data store.
@@ -336,12 +337,15 @@ export interface SiteConfig {
   hiddenTypes: string[];
   hiddenDeals: string[];
   propertyTypes: PropertyType[];
+  // Top-level public nav sections hidden from the header (ids in MAIN_NAV_SECTIONS).
+  hiddenSections: string[];
 }
 
 const DEFAULT_SITE_CONFIG: SiteConfig = {
   hiddenTypes: [],
   hiddenDeals: [],
   propertyTypes: DEFAULT_PROPERTY_TYPES,
+  hiddenSections: [],
 };
 
 // Coerce persisted data into a clean PropertyType[]; falls back to defaults when
@@ -373,6 +377,9 @@ export async function getSiteConfig(): Promise<SiteConfig> {
     hiddenTypes: Array.isArray(data?.hiddenTypes) ? data.hiddenTypes.map(String) : [],
     hiddenDeals: Array.isArray(data?.hiddenDeals) ? data.hiddenDeals.map(String) : [],
     propertyTypes: normalizePropertyTypes(data?.propertyTypes),
+    hiddenSections: Array.isArray(data?.hiddenSections)
+      ? data.hiddenSections.map(String).filter((id: string) => MAIN_NAV_SECTION_IDS.includes(id))
+      : [],
   };
 }
 
@@ -393,6 +400,8 @@ export async function updateSiteConfig(patch: Partial<SiteConfig>): Promise<Site
       .filter((id) => validHiddenTypeIds.has(id)),
     hiddenDeals: (Array.isArray(patch.hiddenDeals) ? patch.hiddenDeals.map(String) : current.hiddenDeals)
       .filter((id) => validHiddenDealIds.has(id)),
+    hiddenSections: (Array.isArray(patch.hiddenSections) ? patch.hiddenSections.map(String) : current.hiddenSections)
+      .filter((id) => MAIN_NAV_SECTION_IDS.includes(id)),
   };
   await writeJson(SITE_CONFIG_FILE, next);
   return next;

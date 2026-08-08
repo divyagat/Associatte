@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
 import { getBlogBySlug as getStaticBlog } from '@/lib/blog-data';
 import { getBlogBySlug as getAdminBlog } from '@/lib/data-store';
+import { getSeoOverride, keywordsToArray } from '@/lib/seo-store';
+
+export const dynamic = 'force-dynamic';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.associatte.com';
 const SITE_NAME = 'Associatte PropTech';
@@ -53,16 +56,20 @@ export async function generateMetadata({
     return { title: 'Article Not Found', robots: { index: false, follow: false } };
   }
 
-  const title = post.metaTitle?.trim() || `${post.title} | ${SITE_NAME}`;
+  // Admin SEO panel override (by path) wins over the post's own SEO fields.
+  const override = await getSeoOverride(`/blog/${slug}`);
+
+  const title = override?.title?.trim() || post.metaTitle?.trim() || `${post.title} | ${SITE_NAME}`;
   const description =
-    post.metaDescription?.trim() || post.excerpt?.trim() || `${post.title} — insights from ${SITE_NAME}.`;
+    override?.description?.trim() || post.metaDescription?.trim() || post.excerpt?.trim() || `${post.title} — insights from ${SITE_NAME}.`;
   const canonical = post.canonicalUrl?.trim() || `/blog/${slug}`;
   const ogImage = absUrl(post.socialImage) || absUrl(post.image2) || absUrl(post.image);
-  const keywords = post.metaKeywords?.trim()
-    ? post.metaKeywords.split(',').map((k: string) => k.trim()).filter(Boolean)
-    : Array.isArray(post.tags)
-      ? post.tags
-      : undefined;
+  const keywords = keywordsToArray(override?.keywords)
+    || (post.metaKeywords?.trim()
+      ? post.metaKeywords.split(',').map((k: string) => k.trim()).filter(Boolean)
+      : Array.isArray(post.tags)
+        ? post.tags
+        : undefined);
   const published = toISO(post.date);
   const modified = toISO(post.updatedAt) || published;
 

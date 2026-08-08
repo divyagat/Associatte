@@ -47,6 +47,8 @@ function HeaderContent() {
   // Categories an admin has explicitly hidden from the public nav (site-config).
   const [hiddenTypes, setHiddenTypes] = useState<Set<string>>(new Set());
   const [hiddenDeals, setHiddenDeals] = useState<Set<string>>(new Set());
+  // Whole top-level nav sections an admin has switched off (site-config).
+  const [hiddenSections, setHiddenSections] = useState<Set<string>>(new Set());
 
   const pathname = usePathname();
   const searchParams = useSearchParams(); // ✅ Added to properly read query params
@@ -84,6 +86,7 @@ function HeaderContent() {
         }
         setHiddenTypes(new Set(Array.isArray(config?.hiddenTypes) ? config.hiddenTypes : []));
         setHiddenDeals(new Set(Array.isArray(config?.hiddenDeals) ? config.hiddenDeals : []));
+        setHiddenSections(new Set(Array.isArray(config?.hiddenSections) ? config.hiddenSections : []));
       } catch {
         // On failure leave both empty so all categories remain visible.
       }
@@ -140,21 +143,24 @@ function HeaderContent() {
       color: t.color,
     }));
 
-  const navLinks = [
-    { name: 'Home', href: '/' },
+  const allNavLinks = [
+    { key: 'home', name: 'Home', href: '/' },
     {
+      key: 'projects',
       name: 'Projects',
       href: '/projects',
       ...(projectsDropdown.length ? { dropdown: projectsDropdown } : {}),
     },
     {
+      key: 'properties',
       name: 'Properties',
       href: '/properties',
       ...(propertiesDropdown.length ? { dropdown: propertiesDropdown } : {}),
     },
-    { name: 'About Us', href: '/about-us' },
-    { 
-      name: 'Services', 
+    { key: 'about', name: 'About Us', href: '/about-us' },
+    {
+      key: 'services',
+      name: 'Services',
       href: '/services',
       dropdown: [
         { label: 'Property Consultation', href: '/services#consultation', icon: Handshake, color: COLORS.green },
@@ -164,8 +170,9 @@ function HeaderContent() {
         { label: 'Investment Advisory', href: '/services#investment', icon: TrendingUp, color: COLORS.red },
       ]
     },
-    { 
-      name: 'Know Your Developer', 
+    {
+      key: 'builders',
+      name: 'Know Your Developer',
       href: '/builders',
       dropdown: [
         { label: 'All Builders', href: '/builders' },
@@ -174,9 +181,12 @@ function HeaderContent() {
         { label: 'KDMC Builders', href: '/builders?location=kdmc' },
       ]
     },
-    { name: 'Blog', href: '/blog' },
-    { name: 'Contact Us', href: '/contact-us' },
+    { key: 'blog', name: 'Blog', href: '/blog' },
+    { key: 'contact', name: 'Contact Us', href: '/contact-us' },
   ];
+
+  // Drop any top-level section an admin has switched off in Site Settings.
+  const navLinks = allNavLinks.filter((l) => !hiddenSections.has(l.key));
 
   const toggleMobileDropdown = (linkName: string) => {
     setOpenMobileDropdown(prev => prev === linkName ? null : linkName);

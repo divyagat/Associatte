@@ -28,6 +28,7 @@ export default async function SettingsPage() {
         initialTypes={config.propertyTypes}
         initialHiddenTypes={config.hiddenTypes}
         initialHiddenDeals={config.hiddenDeals}
+        initialHiddenSections={config.hiddenSections}
       />
     </div>
   );

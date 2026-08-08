@@ -1,11 +1,13 @@
 // app/cookie-policy/page.tsx
 import React from 'react';
 import type { Metadata } from 'next';
+import { pageMetadata } from '@/lib/seo-pages';
 
-export const metadata: Metadata = {
-  title: 'Cookie Policy | Associatte',
-  description: 'Cookie Policy for Associatte PropTech Private Limited - Learn about how we use cookies to improve your experience on our website.',
-};
+export const dynamic = 'force-dynamic';
+
+export function generateMetadata(): Promise<Metadata> {
+  return pageMetadata('/cookie-policy');
+}
 
 export default function CookiePolicyPage() {
   const sections = [

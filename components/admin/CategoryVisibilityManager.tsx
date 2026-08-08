@@ -6,11 +6,13 @@ import { Eye, EyeOff, Loader2, Plus, Trash2, Check } from 'lucide-react';
 import {
   DEAL_TYPES, slugifyCategory, type PropertyType, type CategorySection,
 } from '@/lib/categories';
+import { MAIN_NAV_SECTIONS } from '@/lib/nav-sections';
 
 interface CategoryVisibilityManagerProps {
   initialTypes: PropertyType[];
   initialHiddenTypes: string[];
   initialHiddenDeals: string[];
+  initialHiddenSections: string[];
 }
 
 // Preset colours offered when creating a category (brand palette + a few extras).
@@ -26,11 +28,13 @@ export default function CategoryVisibilityManager({
   initialTypes,
   initialHiddenTypes,
   initialHiddenDeals,
+  initialHiddenSections,
 }: CategoryVisibilityManagerProps) {
   const router = useRouter();
   const [types, setTypes] = useState<PropertyType[]>(initialTypes);
   const [hiddenTypes, setHiddenTypes] = useState<Set<string>>(new Set(initialHiddenTypes));
   const [hiddenDeals, setHiddenDeals] = useState<Set<string>>(new Set(initialHiddenDeals));
+  const [hiddenSections, setHiddenSections] = useState<Set<string>>(new Set(initialHiddenSections));
   const [busy, setBusy] = useState(false);
   const [saved, setSaved] = useState(false);
 
@@ -39,6 +43,7 @@ export default function CategoryVisibilityManager({
     nextTypes: PropertyType[],
     nextHiddenTypes: Set<string>,
     nextHiddenDeals: Set<string>,
+    nextHiddenSections: Set<string> = hiddenSections,
   ) => {
     setBusy(true);
     setSaved(false);
@@ -50,6 +55,7 @@ export default function CategoryVisibilityManager({
           propertyTypes: nextTypes,
           hiddenTypes: Array.from(nextHiddenTypes),
           hiddenDeals: Array.from(nextHiddenDeals),
+          hiddenSections: Array.from(nextHiddenSections),
         }),
       });
       if (!res.ok) {
@@ -60,6 +66,7 @@ export default function CategoryVisibilityManager({
       setTypes(result.propertyTypes || nextTypes);
       setHiddenTypes(new Set(result.hiddenTypes || []));
       setHiddenDeals(new Set(result.hiddenDeals || []));
+      setHiddenSections(new Set(result.hiddenSections || []));
       setSaved(true);
       router.refresh();
       return true;
@@ -81,6 +88,12 @@ export default function CategoryVisibilityManager({
     const next = new Set(hiddenDeals);
     if (next.has(id)) next.delete(id); else next.add(id);
     persist(types, hiddenTypes, next);
+  };
+
+  const toggleSectionHidden = (id: string) => {
+    const next = new Set(hiddenSections);
+    if (next.has(id)) next.delete(id); else next.add(id);
+    persist(types, hiddenTypes, hiddenDeals, next);
   };
 
   const addCategory = (label: string, color: string, section: CategorySection) => {
@@ -118,6 +131,26 @@ export default function CategoryVisibilityManager({
           <span className="text-gray-400">Changes save automatically.</span>
         )}
       </div>
+
+      {/* Main navigation sections */}
+      <section className="bg-white rounded-xl border border-gray-200 p-6">
+        <h2 className="text-lg font-bold text-gray-900 mb-1">Main navigation</h2>
+        <p className="text-sm text-gray-500 mb-4">
+          Turn whole top-level menu items on or off across the public site (Home always stays on).
+        </p>
+        <div className="space-y-2">
+          {MAIN_NAV_SECTIONS.map((s) => (
+            <Row
+              key={s.id}
+              color="#005E60"
+              label={s.label}
+              hidden={hiddenSections.has(s.id)}
+              busy={busy}
+              onToggle={() => toggleSectionHidden(s.id)}
+            />
+          ))}
+        </div>
+      </section>
 
       {/* Projects section */}
       <CategorySectionBlock
