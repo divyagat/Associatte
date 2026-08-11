@@ -11,7 +11,7 @@ import {
 import LogoutButton from './LogoutButton';
 
 type Role = 'admin' | 'employee';
-
+ 
 export interface NavAccess {
   properties: boolean;
   projects: boolean;
