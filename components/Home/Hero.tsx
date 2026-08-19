@@ -12,6 +12,7 @@ import { SearchBar } from './Hero/SearchBar';
 import { FilterPanel, type FilterPanelProps } from './Hero/FilterPanel';
 import { StickySearchBar } from './Hero/StickySearchBar';
 import cloudinaryLoader from '@/lib/cloudinary-loader';
+import { filterSuggestions } from '@/lib/search';
 
 export interface SearchFilters {
   bhk?: string[];
@@ -134,6 +135,22 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
   const dropdownCloseTimer = useRef<NodeJS.Timeout | null>(null);
   const debouncedSearchQuery = useDebounce(searchQuery, 250);
 
+  // Live suggestion pool (project & property names, builders, localities, cities,
+  // unit types) fetched once from the data store. Falls back to the static list
+  // until it loads, so the dropdown is never empty.
+  const [liveSuggestions, setLiveSuggestions] = useState<string[]>([]);
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch('/api/search-suggestions');
+        const data = await res.json().catch(() => []);
+        if (!cancelled && Array.isArray(data) && data.length) setLiveSuggestions(data);
+      } catch { /* keep the static fallback */ }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
   // Reveal the fixed sticky search only after the hero (and its own search bar)
   // has scrolled out of view, so the two search bars don't overlap.
   useScrollPosition((scrollY) => setShowStickySearch(scrollY > 420), 420);
@@ -198,7 +215,14 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
     navigateToProperties(queryParams);
   }, [filters, selectedCity, navigateToProperties]);
 
-  const filteredSuggestions = useMemo(() => { if (!debouncedSearchQuery) return SEARCH_SUGGESTIONS.slice(0, 4); return SEARCH_SUGGESTIONS.filter(s => s.toLowerCase().includes(debouncedSearchQuery.toLowerCase())).slice(0, 4); }, [debouncedSearchQuery]);
+  const filteredSuggestions = useMemo(() => {
+    // Prefer live data (project/builder/locality names); fall back to the static
+    // examples until the fetch resolves. Ranking + typo tolerance live in
+    // filterSuggestions so misspelled queries still surface the right options.
+    const source = liveSuggestions.length ? liveSuggestions : [...SEARCH_SUGGESTIONS];
+    if (!debouncedSearchQuery) return source.slice(0, 6);
+    return filterSuggestions(source, debouncedSearchQuery, 6);
+  }, [debouncedSearchQuery, liveSuggestions]);
 
   const handleSuggestionClick = useCallback((suggestion: string) => {
     setSearchQuery(suggestion); const newFilters: SearchFilters = { ...filters };

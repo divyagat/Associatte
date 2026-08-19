@@ -18,6 +18,8 @@ export interface Project {
   images?: string[];
   rating?: number;
   amenities?: string[];
+  // Extra admin-entered keywords the listing should surface for in site search.
+  searchKeywords?: string[];
   isTopSelling?: boolean;
   isFeatured?: boolean;
   launchDate?: string;

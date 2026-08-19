@@ -36,6 +36,7 @@ export default function ProjectForm({ initialData, onSubmit, loading }: ProjectF
     },
     about: '',
     amenities: [] as string[],
+    searchKeywords: [] as string[],
     floorPlans: [] as any[],
     possessionDate: '',
     reraNumber: '',
@@ -52,6 +53,7 @@ export default function ProjectForm({ initialData, onSubmit, loading }: ProjectF
   });
 
   const [currentAmenity, setCurrentAmenity] = useState('');
+  const [currentKeyword, setCurrentKeyword] = useState('');
   // Category options come from the admin-managed master list (Settings). Seed with
   // the built-in project types so the select is never empty before the fetch.
   const [categoryOptions, setCategoryOptions] = useState<{ id: string; label: string }[]>(
@@ -146,6 +148,25 @@ export default function ProjectForm({ initialData, onSubmit, loading }: ProjectF
     setFormData((prev: any) => ({
       ...prev,
       amenities: prev.amenities.filter((_: any, i: number) => i !== index)
+    }));
+  };
+
+  const addKeyword = () => {
+    const value = currentKeyword.trim();
+    if (!value) return;
+    setFormData((prev: any) => {
+      const existing: string[] = Array.isArray(prev.searchKeywords) ? prev.searchKeywords : [];
+      // Skip duplicates (case-insensitive) so the keyword list stays clean.
+      if (existing.some((k) => k.toLowerCase() === value.toLowerCase())) return prev;
+      return { ...prev, searchKeywords: [...existing, value] };
+    });
+    setCurrentKeyword('');
+  };
+
+  const removeKeyword = (index: number) => {
+    setFormData((prev: any) => ({
+      ...prev,
+      searchKeywords: (Array.isArray(prev.searchKeywords) ? prev.searchKeywords : []).filter((_: any, i: number) => i !== index)
     }));
   };
 
@@ -434,6 +455,26 @@ export default function ProjectForm({ initialData, onSubmit, loading }: ProjectF
             <div key={index} className="flex items-center gap-2 px-3 py-1.5 bg-[#005E60]/10 text-[#005E60] rounded-lg">
               <span className="text-sm">{amenity}</span>
               <button type="button" onClick={() => removeAmenity(index)} className="hover:text-red-600 transition-colors">
+                <X size={14} />
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Search Keywords */}
+      <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <h2 className="text-lg font-bold text-gray-900 mb-1">Search Keywords</h2>
+        <p className="text-xs text-gray-500 mb-4">Extra words visitors might type to find this project (e.g., area nicknames, nearby landmarks, builder aliases, "2bhk", "sea view"). These make the project show up in the site search even if the words aren&apos;t in its name or location.</p>
+        <div className="flex gap-2 mb-3">
+          <input type="text" value={currentKeyword} onChange={(e) => setCurrentKeyword(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addKeyword())} placeholder="Add keyword and press Enter" className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]" />
+          <button type="button" onClick={addKeyword} className="px-4 py-2 bg-[#005E60] text-white rounded-lg hover:bg-[#004a4d] transition-colors">Add</button>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {(formData.searchKeywords || []).map((keyword: string, index: number) => (
+            <div key={index} className="flex items-center gap-2 px-3 py-1.5 bg-[#005E60]/10 text-[#005E60] rounded-lg">
+              <span className="text-sm">{keyword}</span>
+              <button type="button" onClick={() => removeKeyword(index)} className="hover:text-red-600 transition-colors">
                 <X size={14} />
               </button>
             </div>

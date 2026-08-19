@@ -33,6 +33,8 @@ export interface IProperty extends Document {
   };
   about: string;
   amenities: string[];
+  // Extra admin-entered keywords the listing should surface for in site search.
+  searchKeywords?: string[];
   floorPlans: Array<{
     type: string;
     area: string;
