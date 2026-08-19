@@ -6,7 +6,7 @@ import { ReactNode, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  LayoutDashboard, Building2, FileText, Users, Home, Menu, X, Settings, Search,
+  LayoutDashboard, Building2, FileText, Users, Home, Menu, X, Settings, Search, MessageCircle,
 } from 'lucide-react';
 import LogoutButton from './LogoutButton';
 
@@ -32,6 +32,7 @@ const NAV: NavItem[] = [
   { href: '/admin/projects', label: 'Projects', icon: Building2, show: (_r, a) => a.projects },
   { href: '/admin/blogs', label: 'Blogs', icon: FileText, show: (_r, a) => a.blogs },
   { href: '/admin/seo', label: 'SEO', icon: Search, show: (role, a) => role === 'admin' || a.seo },
+  { href: '/admin/chatbot', label: 'AI Assistant', icon: MessageCircle, show: (role) => role === 'admin' },
   { href: '/admin/employees', label: 'Employees', icon: Users, show: (role) => role === 'admin' },
   { href: '/admin/settings', label: 'Settings', icon: Settings, show: (role) => role === 'admin' },
 ];

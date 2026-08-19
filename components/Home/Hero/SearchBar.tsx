@@ -4,6 +4,7 @@
 import { memo, useCallback } from 'react';
 import { Search, MapPin, ChevronDown, ArrowRight, CheckCircle2, Loader2, SlidersHorizontal, TrendingUp, Users } from 'lucide-react';
 import type { SearchFilters } from '../Hero';
+import VoiceButton from '@/components/common/VoiceButton';
 
 interface Category {
   id: string;
@@ -36,6 +37,8 @@ interface SearchBarProps {
   onSuggestionClick: (suggestion: string) => void;
   onFilterToggle: () => void;
   onSearch: () => void;
+  onVoiceInterim?: (text: string) => void;
+  onVoiceResult?: (text: string) => void;
 }
 
 export const SearchBar = memo(({
@@ -56,6 +59,8 @@ export const SearchBar = memo(({
   onSuggestionClick,
   onFilterToggle,
   onSearch,
+  onVoiceInterim,
+  onVoiceResult,
 }: SearchBarProps) => {
   
   const handleCitySelect = useCallback((city: string) => {
@@ -152,10 +157,18 @@ export const SearchBar = memo(({
             value={searchQuery}
             onChange={(e) => onSearchQueryChange(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Search projects, localities, builders..."
-            className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#005E60]/20 focus:border-[#005E60] transition-all text-sm"
+            placeholder="Search or speak: '2 BHK in Kothrud under 90 lakh'..."
+            className="w-full pl-11 pr-12 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#005E60]/20 focus:border-[#005E60] transition-all text-sm"
             aria-label="Search properties"
           />
+          {(onVoiceResult || onVoiceInterim) && (
+            <VoiceButton
+              onInterim={(t) => onVoiceInterim?.(t)}
+              onResult={(t) => onVoiceResult?.(t)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg"
+              title="Speak your property requirement"
+            />
+          )}
           
           {/* Suggestions Dropdown */}
           {showSuggestions && filteredSuggestions.length > 0 && (

@@ -13,6 +13,8 @@ import { FilterPanel, type FilterPanelProps } from './Hero/FilterPanel';
 import { StickySearchBar } from './Hero/StickySearchBar';
 import cloudinaryLoader from '@/lib/cloudinary-loader';
 import { filterSuggestions } from '@/lib/search';
+import { criteriaToPropertiesQuery } from '@/lib/ai-search/criteria';
+import VoiceButton from '@/components/common/VoiceButton';
 
 export interface SearchFilters {
   bhk?: string[];
@@ -173,6 +175,36 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
       try { await router.push(`/locations/${citySlug}`); onSearch?.({ city: selectedCity, query: '', filters: undefined }); } catch (error) { console.error('Location navigation error:', error); }
       finally { setTimeout(() => setIsSearching(false), 200); } return;
     }
+    // AI branch: parse the natural-language query into structured filters via the
+    // SAME shared engine the chatbot uses, then land on /properties with those
+    // filters. Falls through to the plain `q` search if the AI call fails.
+    if (hasSearchQuery) {
+      try {
+        const res = await fetch('/api/ai-search', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: searchQuery.trim(), context: { city: citySlug } }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const p = criteriaToPropertiesQuery(data.criteria || {});
+          if (!p.get('city')) p.set('city', citySlug);
+          if (filters.bhk?.length && !p.get('bhk')) p.set('bhk', filters.bhk[0]);
+          if (filters.builder?.length) p.set('builder', filters.builder.join(','));
+          if (filters.propertyType?.length && !p.get('type')) p.set('type', filters.propertyType[0]);
+          if (filters.priceRange && !p.get('maxPrice')) {
+            p.set('minPrice', filters.priceRange.min.toString());
+            p.set('maxPrice', filters.priceRange.max === Infinity ? '999999999' : filters.priceRange.max.toString());
+          }
+          await navigateToProperties(p);
+          onSearch?.({ city: selectedCity, query: searchQuery.trim(), filters: hasFilters ? filters : undefined });
+          setIsCityDropdownOpen(false);
+          setTimeout(() => setIsSearching(false), 200);
+          return;
+        }
+      } catch { /* fall through to plain search below */ }
+    }
+
     const queryParams = new URLSearchParams(); queryParams.append('city', citySlug);
     if (hasSearchQuery) queryParams.append('q', searchQuery.trim());
     if (filters.bhk?.length) queryParams.append('bhk', filters.bhk.join(','));
@@ -239,7 +271,7 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
   const handleApplyFilters = useCallback(() => { handleSearch(); }, [handleSearch]);
   const handleLocalityClick = useCallback((locality: string) => { setSearchQuery(locality); const targetCitySlug = LOCALITY_CITY_MAP[locality]; if (targetCitySlug) { const targetCity = CITIES.find(c => c.slug === targetCitySlug); if (targetCity) { navigateToLocation(targetCity.name); return; } } handleSearch(); }, [handleSearch, navigateToLocation]);
 
-  const searchBarProps = useMemo(() => ({ activeTab, selectedCity, searchQuery, filters, isCityDropdownOpen, showSuggestions: !!searchQuery && filteredSuggestions.length > 0, filteredSuggestions: [...filteredSuggestions], categories: CATEGORIES as unknown as readonly Category[], cities: CITIES as unknown as readonly City[], isSearching, onTabChange: handleCategorySelect, onCityChange: handleCityChange, onSearchQueryChange: setSearchQuery, onCityDropdownToggle: handleCityDropdownOpen, onSuggestionClick: handleSuggestionClick, onFilterToggle: () => setShowFilters(true), onSearch: handleSearch }), [activeTab, selectedCity, searchQuery, filters, isCityDropdownOpen, filteredSuggestions, isSearching, handleCityDropdownOpen, handleSuggestionClick, handleSearch, handleCityChange, handleCategorySelect]);
+  const searchBarProps = useMemo(() => ({ activeTab, selectedCity, searchQuery, filters, isCityDropdownOpen, showSuggestions: !!searchQuery && filteredSuggestions.length > 0, filteredSuggestions: [...filteredSuggestions], categories: CATEGORIES as unknown as readonly Category[], cities: CITIES as unknown as readonly City[], isSearching, onTabChange: handleCategorySelect, onCityChange: handleCityChange, onSearchQueryChange: setSearchQuery, onCityDropdownToggle: handleCityDropdownOpen, onSuggestionClick: handleSuggestionClick, onFilterToggle: () => setShowFilters(true), onSearch: handleSearch, onVoiceInterim: (t: string) => setSearchQuery(t), onVoiceResult: (t: string) => { setSearchQuery(t); setTimeout(() => handleSearch(), 50); } }), [activeTab, selectedCity, searchQuery, filters, isCityDropdownOpen, filteredSuggestions, isSearching, handleCityDropdownOpen, handleSuggestionClick, handleSearch, handleCityChange, handleCategorySelect]);
   const cityLocationOptions = useMemo(() => CITIES.map(c => ({ label: c.name, value: c.name })), []);
   const stickySearchProps = useMemo(() => ({ activeTab, selectedCity, searchQuery, categories: CATEGORIES as unknown as readonly Category[], isSearching, bhkOptions: BHK_OPTIONS, selectedBhk: filters.bhk?.[0] || '', onBhkChange: (bhk: string) => setFilters(f => ({ ...f, bhk: bhk ? [bhk] : undefined })), locationOptions: cityLocationOptions, selectedLocation: selectedCity, onLocationChange: (city: string) => handleCityChange(city as CityName), onTabChange: handleCategorySelect, onSearchQueryChange: setSearchQuery, onSearch: handleSearch }), [activeTab, selectedCity, searchQuery, isSearching, handleSearch, filters.bhk, handleCategorySelect, cityLocationOptions, handleCityChange]);
   const filterPanelProps: FilterPanelProps = useMemo(() => ({ filters, bhkOptions: BHK_OPTIONS, builderOptions: BUILDER_OPTIONS, propertyTypes: PROPERTY_TYPES, priceRanges: PRICE_RANGES, onFilterChange: handleFilterSelect, onClear: handleClearFilters, onApply: handleApplyFilters, onClose: () => setShowFilters(false), isNavigating: true }), [filters, handleFilterSelect, handleClearFilters, handleApplyFilters]);
@@ -388,6 +420,14 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
                       </div>
                     )}
                   </div>
+
+                  {/* Voice input */}
+                  <VoiceButton
+                    onInterim={(t) => setSearchQuery(t)}
+                    onResult={(t) => { setSearchQuery(t); setTimeout(() => handleSearch(), 50); }}
+                    className="flex-shrink-0 w-8 xs:w-9 sm:w-10 h-8 xs:h-9 sm:h-10 rounded-lg bg-slate-50 border-2 border-slate-200"
+                    title="Speak your property requirement"
+                  />
 
                   {/* Search Button - Compact */}
                   <button

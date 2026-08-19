@@ -21,6 +21,7 @@ export default function Footer() {
     { name: "Buy Property", href: "/properties?status=sale" },
     { name: "Rent Property", href: "/properties?status=rent" },
     { name: "New Projects", href: "/properties" },
+    { name: "EMI Calculator", href: "/calculator" },
     { name: "Contact Us", href: "/contact-us" },
   ];
 
