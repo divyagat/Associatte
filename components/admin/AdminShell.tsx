@@ -107,18 +107,20 @@ export default function AdminShell({
             )}
           </Link>
         ))}
-
-        <div className="pt-4 mt-4 border-t border-gray-200 space-y-1.5">
-          <Link
-            href="/"
-            className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-[#005E60]/5 hover:text-[#005E60] transition-colors font-medium"
-          >
-            <Home size={20} />
-            <span>View Site</span>
-          </Link>
-          <LogoutButton />
-        </div>
       </nav>
+
+      {/* Pinned footer — always visible so logout never scrolls off screen */}
+      <div className="shrink-0 p-4 border-t border-gray-200 space-y-1.5 bg-white">
+        <Link
+          href="/"
+          onClick={() => setOpen(false)}
+          className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-[#005E60]/5 hover:text-[#005E60] transition-colors font-medium"
+        >
+          <Home size={20} />
+          <span>View Site</span>
+        </Link>
+        <LogoutButton />
+      </div>
     </>
   );
 
