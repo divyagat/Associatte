@@ -22,7 +22,7 @@ function roleFromCookie(value: string | undefined): 'admin' | 'employee' | null 
 }
 
 // Routes only the main admin may ever reach.
-const ADMIN_ONLY = ['/admin/employees', '/admin/settings', '/admin/chatbot'];
+const ADMIN_ONLY = ['/admin/employees', '/admin/settings', '/admin/chatbot', '/admin/leads'];
 
 /**
  * Map a pathname to the permission it requires. `action: null` means "any

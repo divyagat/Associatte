@@ -30,6 +30,7 @@ const PROPERTIES_FILE = 'data/properties.json';
 const PROJECTS_FILE = 'data/projects.json';
 const BLOGS_FILE = 'data/blogs.json';
 const SITE_CONFIG_FILE = 'data/site-config.json';
+const LEADS_FILE = 'data/leads.json';
 
 // ==================== LOW-LEVEL FILE HELPERS ====================
 async function readArray<T = any>(file: string): Promise<T[]> {
@@ -324,6 +325,51 @@ export async function deleteBlog(slug: string): Promise<boolean> {
   const next = blogs.filter((b: any) => b.slug !== slug);
   if (next.length === blogs.length) return false;
   await writeArray(BLOGS_FILE, next);
+  return true;
+}
+
+// ==================== LEADS ====================
+// Phone leads captured from the site (e.g. the "Instant Property Alert" form on
+// the /calculator page). Persisted to `data/leads.json` and surfaced in the
+// admin panel under /admin/leads. Newest first.
+export interface ILead {
+  _id: string;
+  phone: string;
+  source: string;
+  intent: string;
+  capturedAt: string;
+  createdAt: string;
+}
+
+export async function getAllLeads(): Promise<ILead[]> {
+  const leads = await readArray<ILead>(LEADS_FILE);
+  // Defensive: always newest first regardless of stored order.
+  return [...leads].sort(
+    (a, b) => new Date(b.capturedAt || b.createdAt).getTime() - new Date(a.capturedAt || a.createdAt).getTime(),
+  );
+}
+
+export async function createLead(data: Partial<ILead>): Promise<ILead> {
+  const leads = await readArray<ILead>(LEADS_FILE);
+  const now = new Date().toISOString();
+  const lead: ILead = {
+    _id: `lead_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+    phone: String(data.phone ?? ''),
+    source: data.source || 'website',
+    intent: data.intent || 'general',
+    capturedAt: data.capturedAt || now,
+    createdAt: now,
+  };
+  leads.unshift(lead);
+  await writeArray(LEADS_FILE, leads);
+  return lead;
+}
+
+export async function deleteLead(id: string): Promise<boolean> {
+  const leads = await readArray<ILead>(LEADS_FILE);
+  const next = leads.filter((l) => l._id !== id);
+  if (next.length === leads.length) return false;
+  await writeArray(LEADS_FILE, next);
   return true;
 }
 
