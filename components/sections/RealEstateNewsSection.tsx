@@ -1,17 +1,35 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { Newspaper, ArrowRight, ArrowUpRight, CalendarDays } from 'lucide-react';
 import Reveal from '@/components/common/Reveal';
-import { getNewsByCity } from '@/lib/news-data';
+import SafeImage from '@/components/common/SafeImage';
+import { getNewsByCity, type NewsItem } from '@/lib/news-data';
 
 interface RealEstateNewsSectionProps {
   city: 'Pune' | 'Mumbai' | 'KDMC';
 }
 
+function forCity(list: NewsItem[], city: string): NewsItem[] {
+  return list.filter((n) => n.city === city || n.city === 'National').slice(0, 3);
+}
+
 export default function RealEstateNewsSection({ city }: RealEstateNewsSectionProps) {
-  const items = getNewsByCity(city, 3);
+  // Static defaults render instantly (SSR); the admin-managed list from
+  // /api/news swaps in once it loads.
+  const [items, setItems] = useState<NewsItem[]>(() => getNewsByCity(city, 3));
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/news')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!cancelled && Array.isArray(data)) setItems(forCity(data, city));
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [city]);
 
   if (items.length === 0) return null;
 
@@ -43,19 +61,18 @@ export default function RealEstateNewsSection({ city }: RealEstateNewsSectionPro
                   className="group flex flex-col h-full bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-xl hover:border-[#005E60]/30 hover:-translate-y-1 transition-all duration-300 overflow-hidden"
                 >
                   <div className="relative aspect-[16/10] overflow-hidden">
-                    <Image
+                    <SafeImage
                       src={item.image}
                       alt={item.title}
-                      fill
                       sizes="(max-width: 768px) 100vw, 33vw"
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="group-hover:scale-105 transition-transform duration-500"
                     />
-                    <div className="absolute top-3 left-3">
+                    <div className="absolute top-3 left-3 z-10">
                       <span className="text-xs font-semibold text-white bg-[#005E60]/90 backdrop-blur-sm px-2.5 py-1 rounded-full">
                         {item.category}
                       </span>
                     </div>
-                    <div className="absolute top-3 right-3">
+                    <div className="absolute top-3 right-3 z-10">
                       <span className="text-[10px] font-semibold text-[#8B0000] bg-[#F8C21C] px-2 py-1 rounded-full">
                         {item.city === 'National' ? 'India' : item.city}
                       </span>
