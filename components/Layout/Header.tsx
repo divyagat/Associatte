@@ -8,7 +8,8 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import {
   Building2, Phone, Menu, X, ChevronDown,
   Home, Building, KeyRound, Tag, MapPin, Warehouse, Factory,
-  Handshake, FileText, Scale, ClipboardList, TrendingUp
+  Handshake, FileText, Scale, ClipboardList, TrendingUp,
+  Trophy, Info
 } from 'lucide-react';
 
 import {
@@ -157,7 +158,15 @@ function HeaderContent() {
       href: '/properties',
       ...(propertiesDropdown.length ? { dropdown: propertiesDropdown } : {}),
     },
-    { key: 'about', name: 'About Us', href: '/about-us' },
+    {
+      key: 'about',
+      name: 'About Us',
+      href: '/about-us',
+      dropdown: [
+        { label: 'About Us', href: '/about-us', icon: Info, color: COLORS.green },
+        { label: 'Awards & Recognition', href: '/awards', icon: Trophy, color: COLORS.yellow },
+      ],
+    },
     {
       key: 'services',
       name: 'Services',
@@ -182,6 +191,7 @@ function HeaderContent() {
       ]
     },
     { key: 'blog', name: 'Blog', href: '/blog' },
+    { key: 'news', name: 'News', href: '/news' },
     { key: 'contact', name: 'Contact Us', href: '/contact-us' },
   ];
 

@@ -18,6 +18,9 @@ import TestimonialsAchievementsSection from '@/components/sections/TestimonialsA
 import InvestmentCtaSection from '@/components/sections/InvestmentCtaSection';
 import CtaFormSection from '@/components/sections/CtaFormSection';
 import BlogSection from '@/components/sections/BlogSection';
+import InstagramReelsSection from '@/components/sections/InstagramReelsSection';
+import RealEstateNewsSection from '@/components/sections/RealEstateNewsSection';
+import AwardsSection from '@/components/sections/AwardsSection';
 import EnquiryPopup from '@/components/common/EnquiryPopup';
 import FloatingVideoPlayer from '@/components/FloatingVideoPlayer';
 
@@ -223,6 +226,10 @@ function HomePageContent() {
           <FeaturedProjectsSection city={config.name} />
         </section>
 
+        <section aria-labelledby="awards-heading">
+          <AwardsSection showViewAllLink />
+        </section>
+
         {/* <section aria-labelledby="testimonials-heading">
           <TestimonialsAchievementsSection city={config.name} />
         </section> */}
@@ -243,6 +250,14 @@ function HomePageContent() {
             buttonText="Request Free Callback"
             formId={`cta-form-${city}`}
           />
+        </section>
+
+        <section aria-labelledby="news-heading">
+          <RealEstateNewsSection city={config.name} />
+        </section>
+
+        <section aria-labelledby="instagram-heading">
+          <InstagramReelsSection city={config.name} />
         </section>
 
         <section aria-labelledby="blog-heading">

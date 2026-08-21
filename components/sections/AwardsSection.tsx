@@ -2,8 +2,15 @@
 'use client';
 
 import { motion, useScroll, useTransform } from "framer-motion";
-import { Award, TrendingUp, Star, Building, Users, Trophy, Medal, Crown, Sparkles, ChevronRight, Ribbon, BadgeCheck } from "lucide-react";
+import { Award, TrendingUp, Star, Building, Users, Trophy, Medal, Crown, Sparkles, ChevronRight, Ribbon, BadgeCheck, ShieldCheck, ArrowRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { AWARDS, AWARD_STATS, type AwardIconName } from "@/lib/awards-data";
+
+// Map the icon names stored in lib/awards-data.ts to lucide components.
+const ICON: Record<AwardIconName, React.ComponentType<{ className?: string; strokeWidth?: number; size?: number; style?: React.CSSProperties }>> = {
+  TrendingUp, Star, Award, Building, Trophy, Medal, Users, Crown, ShieldCheck,
+};
 
 // --- Hook for Animated Numbers ---
 function useCountUp(targetValue: number, duration: number = 2000, startOnView: boolean = true) {
@@ -51,66 +58,16 @@ function useInView(ref: any, options: any) {
   return isInView;
 }
 
-// --- Data Configuration ---
-const awards = [
-  { 
-    id: 1, 
-    title: "Best Performance", 
-    subtitle: "Sales Excellence Award", 
-    description: "Recognized for outstanding sales achievement in Q4 2024 across all luxury segments.",
-    icon: TrendingUp,
-    metric: "Top 1%",
-    year: "2024",
-    gradient: "from-[#005E60] via-[#008B8B] to-[#00A8A8]",
-    glow: "shadow-[#005E60]/30",
-    ribbon: "bg-gradient-to-r from-[#F8C21C] to-[#DAA520]"
-  },
-  { 
-    id: 2, 
-    title: "Game Changer", 
-    subtitle: "Innovation Award", 
-    description: "Revolutionary approach to customer service that redefined industry standards.",
-    icon: Star,
-    metric: "Winner",
-    year: "2022",
-    gradient: "from-[#F8C21C] via-[#FFD700] to-[#DAA520]",
-    glow: "shadow-[#F8C21C]/40",
-    ribbon: "bg-gradient-to-r from-[#8B0000] to-[#A52A2A]"
-  },
-  { 
-    id: 3, 
-    title: "Platinum Star", 
-    subtitle: "Luxury Segment Leader", 
-    description: "Premium property sales excellence recognition for consecutive years.",
-    icon: Award,
-    metric: "Platinum",
-    year: "2023",
-    gradient: "from-[#8B0000] via-[#A52A2A] to-[#B22222]",
-    glow: "shadow-[#8B0000]/30",
-    ribbon: "bg-gradient-to-r from-[#005E60] to-[#008B8B]"
-  },
-  { 
-    id: 4, 
-    title: "Top Performer", 
-    subtitle: "Residential Category", 
-    description: "Leading residential property consultant with highest client satisfaction ratings.",
-    icon: Building,
-    metric: "#1 Ranked",
-    year: "2024",
-    gradient: "from-[#005E60] via-[#008B8B] to-[#00A8A8]",
-    glow: "shadow-[#005E60]/30",
-    ribbon: "bg-gradient-to-r from-[#F8C21C] to-[#DAA520]"
-  }
-];
+// --- Data Configuration (shared with the /awards page via lib/awards-data.ts) ---
+const awards = AWARDS;
+const stats = AWARD_STATS;
 
-const stats = [
-  { label: "Years of Excellence", value: 15, suffix: "+", icon: Trophy, accent: "#005E60", delay: 0 },
-  { label: "Awards Won", value: 50, suffix: "+", icon: Medal, accent: "#F8C21C", delay: 0.1 },
-  { label: "Happy Clients", value: 5000, suffix: "+", icon: Users, accent: "#8B0000", delay: 0.2 },
-  { label: "Projects Completed", value: 200, suffix: "+", icon: Building, accent: "#005E60", delay: 0.3 }
-];
+interface AwardsSectionProps {
+  /** Show a "View All Awards" button linking to /awards (used on the home page). */
+  showViewAllLink?: boolean;
+}
 
-export default function AwardsSection() {
+export default function AwardsSection({ showViewAllLink = false }: AwardsSectionProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -278,7 +235,7 @@ export default function AwardsSection() {
               {/* Stats Grid */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10">
                 {stats.map((stat, index) => (
-                  <StatCard key={index} {...stat} />
+                  <StatCard key={index} {...stat} delay={index * 0.1} />
                 ))}
               </div>
             </div>
@@ -291,19 +248,31 @@ export default function AwardsSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.4 }}
-          className="relative inline-flex mx-auto group"
+          className="flex flex-wrap items-center justify-center gap-4"
         >
-          {/* Decorative ribbon */}
-          <div className="absolute -inset-1 bg-gradient-to-r from-[#005E60] via-[#F8C21C] to-[#8B0000] rounded-full blur opacity-30 group-hover:opacity-50 transition-opacity" />
-          
-          <a 
-            href="/about"
-            className="relative inline-flex items-center gap-3 px-8 py-4 bg-gray-900 text-white font-semibold rounded-full hover:bg-gray-800 transition-all duration-300 shadow-xl hover:shadow-2xl group/btn"
-          >
-            <span>Discover Our Story</span>
-            <ChevronRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
-            <Sparkles className="w-4 h-4 text-[#F8C21C] animate-pulse" />
-          </a>
+          {showViewAllLink && (
+            <Link
+              href="/awards"
+              className="relative inline-flex items-center gap-2 px-8 py-4 bg-[#005E60] text-white font-semibold rounded-full hover:bg-[#004a4d] transition-all duration-300 shadow-xl hover:shadow-2xl group/all"
+            >
+              <span>View All Awards</span>
+              <ArrowRight size={18} className="group-hover/all:translate-x-1 transition-transform" />
+            </Link>
+          )}
+
+          <span className="relative inline-flex group">
+            {/* Decorative ribbon */}
+            <span className="absolute -inset-1 bg-gradient-to-r from-[#005E60] via-[#F8C21C] to-[#8B0000] rounded-full blur opacity-30 group-hover:opacity-50 transition-opacity" />
+
+            <a
+              href="/about-us"
+              className="relative inline-flex items-center gap-3 px-8 py-4 bg-gray-900 text-white font-semibold rounded-full hover:bg-gray-800 transition-all duration-300 shadow-xl hover:shadow-2xl group/btn"
+            >
+              <span>Discover Our Story</span>
+              <ChevronRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
+              <Sparkles className="w-4 h-4 text-[#F8C21C] animate-pulse" />
+            </a>
+          </span>
         </motion.div>
 
       </div>
@@ -315,7 +284,7 @@ export default function AwardsSection() {
 function AwardCard({ item, index }: { item: any; index: number }) {
   const [isHovered, setIsHovered] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
-  const Icon = item.icon;
+  const Icon = ICON[item.icon as AwardIconName];
 
   return (
     <motion.div
@@ -451,7 +420,8 @@ function AwardCard({ item, index }: { item: any; index: number }) {
 }
 
 // --- Premium Stat Card with Animation ---
-function StatCard({ label, value, suffix, icon: Icon, accent, delay }: any) {
+function StatCard({ label, value, suffix, icon, accent, delay }: any) {
+  const Icon = ICON[icon as AwardIconName];
   const { count, ref } = useCountUp(value, 2200);
   const [isHovered, setIsHovered] = useState(false);
   
