@@ -50,10 +50,10 @@ export default function CalculatorPage() {
               Apply for Loan
             </Link>
             <Link
-              href="/properties"
+              href="/projects"
               className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-white/10 text-white font-semibold rounded-lg border border-white/20 hover:bg-white/20 transition-colors"
             >
-              Browse Properties
+              Browse Projects
             </Link>
           </div>
         </div>
