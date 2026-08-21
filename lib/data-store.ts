@@ -334,9 +334,13 @@ export async function deleteBlog(slug: string): Promise<boolean> {
 // admin panel under /admin/leads. Newest first.
 export interface ILead {
   _id: string;
+  name?: string;
   phone: string;
+  email?: string;
+  message?: string;
+  project?: string;
   source: string;
-  intent: string;
+  intent?: string;
   capturedAt: string;
   createdAt: string;
 }
@@ -352,11 +356,19 @@ export async function getAllLeads(): Promise<ILead[]> {
 export async function createLead(data: Partial<ILead>): Promise<ILead> {
   const leads = await readArray<ILead>(LEADS_FILE);
   const now = new Date().toISOString();
+  const clean = (v: unknown) => {
+    const s = String(v ?? '').trim();
+    return s || undefined;
+  };
   const lead: ILead = {
     _id: `lead_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
-    phone: String(data.phone ?? ''),
+    name: clean(data.name),
+    phone: String(data.phone ?? '').trim(),
+    email: clean(data.email),
+    message: clean(data.message),
+    project: clean(data.project),
     source: data.source || 'website',
-    intent: data.intent || 'general',
+    intent: clean(data.intent),
     capturedAt: data.capturedAt || now,
     createdAt: now,
   };

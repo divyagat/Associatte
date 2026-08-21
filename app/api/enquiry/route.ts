@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { createLead } from "@/lib/data-store";
 
 // Your B2B Bricks Webhook URL
 const B2BBRICKS_WEBHOOK_URL = 'https://connector.b2bbricks.com/api/Integration/hook/81b9c640-c7cd-494d-993a-bf20b5445856';
@@ -82,6 +83,21 @@ export async function POST(request: NextRequest) {
       remark: enhancedRemark
     };
     
+    // Also save to the local leads store so it shows in the admin panel
+    // (/admin/leads), independent of the external CRM.
+    try {
+      await createLead({
+        name: crmData.name,
+        phone: last10Digits,
+        email: crmData.email,
+        project: project,
+        message: remark,
+        source: source || 'contact_us',
+      });
+    } catch (leadErr) {
+      console.error('⚠️ Failed to save enquiry to local leads store:', leadErr);
+    }
+
     console.log('📤 Sending to B2B Bricks CRM from Associatte:', {
       name: crmData.name,
       mobile: crmData.mobile,

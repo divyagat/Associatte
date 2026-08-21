@@ -61,21 +61,32 @@ export default function ContactForm({
 
     setSubmitting(true);
 
-    // Mock API call
-    await new Promise((r) => setTimeout(r, 1200));
+    try {
+      // Send to the server so it reaches the CRM + admin panel (/admin/leads).
+      await fetch("/api/enquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          countryCode,
+          project: propertyTitle || "Property Enquiry",
+          message: form.message,
+          source: "property_enquiry",
+          projectId: propertyId,
+        }),
+      });
+    } catch (err) {
+      console.error("Enquiry submit failed:", err);
+    }
 
-    // Store lead locally
-    const leads = JSON.parse(localStorage.getItem("propfinder_leads") || "[]");
-
-    leads.push({
-      ...form,
-      countryCode,
-      propertyId,
-      propertyTitle,
-      createdAt: new Date().toISOString(),
-    });
-
-    localStorage.setItem("propfinder_leads", JSON.stringify(leads));
+    // Keep a local copy as a backup for offline/debugging.
+    try {
+      const leads = JSON.parse(localStorage.getItem("propfinder_leads") || "[]");
+      leads.push({ ...form, countryCode, propertyId, propertyTitle, createdAt: new Date().toISOString() });
+      localStorage.setItem("propfinder_leads", JSON.stringify(leads));
+    } catch { /* localStorage unavailable — ignore */ }
 
     setSubmitting(false);
     setSubmitted(true);

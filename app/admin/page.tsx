@@ -1,8 +1,9 @@
 /* eslint-disable @next/next/no-img-element -- admin previews render arbitrary uploaded image URLs (incl. blob:) that next/image can't optimize */
-import { getAllProperties, getAllBlogs } from '@/lib/data-store';
+import Link from 'next/link';
+import { getAllProperties, getAllBlogs, getAllLeads } from '@/lib/data-store';
 import { getAdminRole, getPermissions } from '@/lib/admin-auth';
 import { hasSectionAccess } from '@/lib/admin-permissions';
-import { Building2, FileText, MapPin } from 'lucide-react';
+import { Building2, FileText, MapPin, Phone } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,10 +11,13 @@ export default async function AdminDashboard() {
   const [role, permissions] = await Promise.all([getAdminRole(), getPermissions()]);
   // Only show blog stats to accounts that can manage blogs.
   const showBlogs = hasSectionAccess(permissions, 'blogs');
+  // Leads/enquiries are admin-only (same gating as the /admin/leads page).
+  const showLeads = role === 'admin';
 
-  const [properties, blogs] = await Promise.all([
+  const [properties, blogs, leads] = await Promise.all([
     getAllProperties(),
     showBlogs ? getAllBlogs() : Promise.resolve([]),
+    showLeads ? getAllLeads() : Promise.resolve([]),
   ]);
 
   const puneCount = properties.filter(p => p.location === 'pune').length;
@@ -33,6 +37,13 @@ export default async function AdminDashboard() {
       icon: FileText,
       color: 'bg-[#F8C21C]',
       change: '+8%'
+    }] : []),
+    ...(showLeads ? [{
+      title: 'Leads & Enquiries',
+      value: leads.length,
+      icon: Phone,
+      color: 'bg-[#8B0000]',
+      change: 'New'
     }] : []),
     {
       title: 'Pune Properties',
@@ -123,6 +134,43 @@ export default async function AdminDashboard() {
         </div>
         )}
       </div>
+
+      {/* Recent Leads & Enquiries — admin only */}
+      {showLeads && (
+        <div className="bg-white rounded-xl border border-gray-200 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-gray-900">Recent Leads &amp; Enquiries</h2>
+            <Link href="/admin/leads" className="text-sm font-semibold text-[#005E60] hover:underline">
+              View all →
+            </Link>
+          </div>
+          {leads.length === 0 ? (
+            <p className="text-sm text-gray-500">No leads yet. Enquiries from the calculator, contact form and chatbot will appear here.</p>
+          ) : (
+            <div className="space-y-2">
+              {leads.slice(0, 6).map((lead) => (
+                <div key={lead._id} className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                  <div className="w-10 h-10 rounded-full bg-[#005E60]/10 flex items-center justify-center flex-shrink-0">
+                    <Phone size={16} className="text-[#005E60]" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-medium text-gray-900 truncate">
+                      {lead.name || lead.phone}
+                      {lead.name && <span className="ml-2 text-sm text-gray-500 font-normal">{lead.phone}</span>}
+                    </h3>
+                    <p className="text-sm text-gray-500 truncate">
+                      {lead.project || lead.message || 'Enquiry'}
+                    </p>
+                  </div>
+                  <span className="text-xs text-gray-400 whitespace-nowrap">
+                    {new Date(lead.capturedAt || lead.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

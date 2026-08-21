@@ -31,7 +31,7 @@ const NAV: NavItem[] = [
   { href: '/admin/properties', label: 'Properties', icon: Building2, show: (_r, a) => a.properties },
   { href: '/admin/projects', label: 'Projects', icon: Building2, show: (_r, a) => a.projects },
   { href: '/admin/blogs', label: 'Blogs', icon: FileText, show: (_r, a) => a.blogs },
-  { href: '/admin/leads', label: 'Property Alerts', icon: Phone, show: (role) => role === 'admin' },
+  { href: '/admin/leads', label: 'Leads & Enquiries', icon: Phone, show: (role) => role === 'admin' },
   { href: '/admin/seo', label: 'SEO', icon: Search, show: (role, a) => role === 'admin' || a.seo },
   { href: '/admin/chatbot', label: 'AI Assistant', icon: MessageCircle, show: (role) => role === 'admin' },
   { href: '/admin/employees', label: 'Employees', icon: Users, show: (role) => role === 'admin' },
@@ -143,7 +143,7 @@ export default function AdminShell({
       </header>
 
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex w-64 bg-white border-r border-gray-200 fixed h-full z-40 shadow-sm flex-col">
+      <aside className="hidden md:flex w-64 bg-white border-r border-gray-200 fixed top-0 left-0 h-screen z-40 shadow-sm flex-col">
         {SidebarContent}
       </aside>
 
@@ -155,7 +155,7 @@ export default function AdminShell({
             onClick={() => setOpen(false)}
             aria-hidden="true"
           />
-          <aside className="absolute left-0 top-0 h-full w-72 max-w-[85%] bg-white shadow-xl flex flex-col animate-[slideIn_0.2s_ease-out]">
+          <aside className="absolute left-0 top-0 h-full w-72 max-w-[85%] bg-white shadow-xl flex flex-col overflow-hidden animate-[slideIn_0.2s_ease-out]">
             <button
               type="button"
               onClick={() => setOpen(false)}

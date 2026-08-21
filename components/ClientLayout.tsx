@@ -2,6 +2,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import OrganizationSchema from '@/components/SEO/OrganizationSchema';
 import Header from '@/components/Layout/Header';
 import Footer from '@/components/Layout/Footer';
@@ -12,10 +13,19 @@ import EnquiryPopup from '@/components/common/EnquiryPopup';
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // The admin panel has its own chrome (AdminShell sidebar/header) and must NOT
+  // render the public site Header/Footer/Chatbot/popups on top of it.
+  const isAdmin = pathname?.startsWith('/admin');
+
+  if (isAdmin) {
+    return <Providers>{children}</Providers>;
+  }
 
   return (
     <>

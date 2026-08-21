@@ -11,9 +11,9 @@ export default function LeadCaptureForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const cleaned = phone.replace(/\D/g, '');
-    if (cleaned.length < 10) {
+    if (cleaned.length !== 10) {
       setStatus('error');
-      setErrorMsg('Please enter a valid 10-digit number.');
+      setErrorMsg('Please enter a valid 10-digit mobile number.');
       return;
     }
 
@@ -56,10 +56,15 @@ export default function LeadCaptureForm() {
           type="tel"
           inputMode="numeric"
           value={phone}
-          onChange={(e) => setPhone(e.target.value)}
+          onChange={(e) => {
+            // Accept digits only, capped at 10.
+            const digits = e.target.value.replace(/\D/g, '').slice(0, 10);
+            setPhone(digits);
+            if (status === 'error') setStatus('idle');
+          }}
           placeholder="Enter 10-digit mobile number"
           className="w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#005E60]/30 focus:border-[#005E60]"
-          maxLength={15}
+          maxLength={10}
           required
         />
       </div>

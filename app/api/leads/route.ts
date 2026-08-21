@@ -14,10 +14,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Invalid phone' }, { status: 400 });
     }
 
-    // Keep only digits and require a valid 10-digit Indian mobile number.
+    // Keep only digits and require exactly a 10-digit Indian mobile number.
     const cleaned = phone.replace(/\D/g, '');
-    if (cleaned.length < 10) {
-      return NextResponse.json({ error: 'Invalid phone' }, { status: 400 });
+    if (cleaned.length !== 10) {
+      return NextResponse.json({ error: 'Enter a valid 10-digit mobile number' }, { status: 400 });
     }
 
     await createLead({

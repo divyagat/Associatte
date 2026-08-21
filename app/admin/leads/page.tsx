@@ -20,9 +20,9 @@ export default async function AdminLeadsPage() {
           <Phone className="text-white" size={24} />
         </div>
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Property Alert Leads</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Leads &amp; Enquiries</h1>
           <p className="text-gray-600 mt-1">
-            Phone numbers captured from the Instant Property Alert form on the calculator page.
+            All enquiries captured from the calculator, contact form and chatbot.
             {leads.length > 0 && (
               <span className="ml-1 font-semibold text-gray-900">{leads.length} total.</span>
             )}
