@@ -1,9 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { Phone, CheckCircle2, Loader2 } from 'lucide-react';
+import { CheckCircle2, Loader2 } from 'lucide-react';
+import CountryCodeSelect from '@/components/common/CountryCodeSelect';
 
 export default function LeadCaptureForm() {
+  const [countryCode, setCountryCode] = useState('+91');
   const [phone, setPhone] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
@@ -23,7 +25,7 @@ export default function LeadCaptureForm() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          phone: cleaned,
+          phone: `${countryCode} ${cleaned}`,
           source: 'calculator_page',
           intent: 'home_loan_callback',
           capturedAt: new Date().toISOString(),
@@ -50,8 +52,8 @@ export default function LeadCaptureForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
-      <div className="relative">
-        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+      <div className="flex items-stretch gap-2">
+        <CountryCodeSelect value={countryCode} onChange={setCountryCode} />
         <input
           type="tel"
           inputMode="numeric"
@@ -62,8 +64,8 @@ export default function LeadCaptureForm() {
             setPhone(digits);
             if (status === 'error') setStatus('idle');
           }}
-          placeholder="Enter 10-digit mobile number"
-          className="w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#005E60]/30 focus:border-[#005E60]"
+          placeholder="10-digit mobile number"
+          className="w-full min-w-0 px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#005E60]/30 focus:border-[#005E60]"
           maxLength={10}
           required
         />

@@ -32,7 +32,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       <OrganizationSchema />
       <Header />
       <Providers>
-        <main className="min-h-screen">{children}</main>
+        <main className="min-h-screen overflow-x-clip">{children}</main>
       </Providers>
       <Footer />
       <StickyActions showScrollTop={true} />

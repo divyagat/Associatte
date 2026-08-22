@@ -64,10 +64,23 @@
   }
 }
 
+/* ✅ Never allow a horizontal scrollbar — the layout stays inside the viewport.
+   `clip` (not `hidden`) so it does NOT become a scroll container, which would
+   otherwise break the sticky header's `position: sticky`. */
+html, body {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-jost), "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+/* ✅ Guard against stray wide children forcing the page to overflow sideways */
+* {
+  min-width: 0;
 }
 
 /* ✅ All headings site-wide use Montserrat — single source of truth */
@@ -111,6 +124,22 @@ img {
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* ✅ Instagram embeds inject an iframe with a hardcoded min-width: 326px that
+   overflows narrow phones and forces a horizontal scrollbar. Constrain the
+   embed (and its rendered iframe) to its container so it stays responsive. */
+.instagram-media,
+.instagram-media-rendered {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  margin: 0 auto !important;
+}
+
+/* ✅ No embedded iframe may push the page wider than its column */
+iframe {
+  max-width: 100%;
 }
 
 /* ✅ Reduced motion */

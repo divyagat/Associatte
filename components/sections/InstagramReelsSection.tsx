@@ -54,7 +54,7 @@ export default function InstagramReelsSection({ city }: InstagramReelsSectionPro
   if (REELS.length === 0) return null;
 
   return (
-    <section className="py-10 md:py-14 bg-gradient-to-b from-white to-gray-50">
+    <section className="py-10 md:py-14 bg-gradient-to-b from-white to-gray-50 overflow-x-hidden">
       <Script
         src="https://www.instagram.com/embed.js"
         strategy="lazyOnload"
