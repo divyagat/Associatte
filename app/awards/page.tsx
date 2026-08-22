@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { AWARDS } from "@/lib/awards-data";
 
-// ✅ SEO Metadata for the Awards Page
+// ✅ SEO Metadata for the Awards Page (Must be a Server Component)
 export const metadata: Metadata = {
   title: 'Awards & Recognition | Associatte PropTech',
   description: 'Industry recognition earned by Associatte PropTech for sales excellence, innovation, and customer satisfaction across Pune, Mumbai & KDMC real estate.',
@@ -62,14 +62,37 @@ export default function AwardsPage() {
         </div>
       </div>
 
-      {/* All Awards Grid - Clean Design */}
+      {/* All Awards Grid - Clean Design (Server Rendered for SEO) */}
       <section className="py-20 md:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+          
+          {/* Awards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-16">
             {AWARDS.map((award, index) => (
               <AwardCard key={award.id} award={award} index={index} />
             ))}
           </div>
+
+          {/* Section Divider */}
+          <div className="relative my-16">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-200"></div>
+            </div>
+            <div className="relative flex justify-center">
+              <span className="bg-white px-6 text-gray-500 font-semibold">
+                More Awards & Recognition
+              </span>
+            </div>
+          </div>
+
+          {/* Additional Info / Trust Badge */}
+          <div className="text-center">
+            <div className="inline-flex items-center gap-2 px-6 py-3 bg-[#005E60]/5 text-[#005E60] rounded-full font-semibold border border-[#005E60]/10">
+              <Trophy className="w-5 h-5" />
+              <span>Proudly recognized by {AWARDS.length}+ industry leaders</span>
+            </div>
+          </div>
+
         </div>
       </section>
 
@@ -115,27 +138,25 @@ export default function AwardsPage() {
   );
 }
 
-// --- Clean Award Card Component (Matching your design) ---
+// --- Clean Award Card Component ---
 function AwardCard({ award, index }: { award: any; index: number }) {
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center group">
       {/* Framed Image */}
-      <div className="relative w-full aspect-[4/3] bg-white p-4 shadow-2xl mb-6">
-        <div className="relative w-full h-full border-4 border-gray-800 bg-white">
+      <div className="relative w-full aspect-[4/3] bg-white p-4 shadow-xl mb-6 transition-shadow duration-300 group-hover:shadow-2xl">
+        <div className="relative w-full h-full border-4 border-gray-800 bg-white overflow-hidden rounded-sm">
           <Image
             src={award.image}
             alt={award.title}
             fill
-            className="object-contain p-4"
+            className="object-contain p-4 transition-transform duration-500 group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         </div>
-        {/* Drop shadow effect */}
-        <div className="absolute inset-0 shadow-2xl pointer-events-none" />
       </div>
 
       {/* Award Name */}
-      <h3 className="text-xl font-bold text-gray-900 text-center mb-2">
+      <h3 className="text-xl font-bold text-gray-900 text-center mb-2 group-hover:text-[#005E60] transition-colors">
         {award.title}
       </h3>
 
