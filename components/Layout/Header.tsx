@@ -223,9 +223,9 @@ function HeaderContent() {
   return (
     <>
       <nav className="bg-white shadow-md sticky top-0 z-50">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-6 xl:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center gap-2 h-20 lg:h-24">
-            
+
             {/* Logo */}
             <div className="flex items-center flex-shrink-0">
               <Link href="/" className="flex items-center group" aria-label="Home">
@@ -256,7 +256,7 @@ function HeaderContent() {
             </div>
 
             {/* Desktop Menu */}
-            <div className="hidden xl:flex items-center justify-center flex-1 gap-1">
+            <div className="hidden lg:flex items-center flex-1 justify-center gap-0.5 xl:gap-1 min-w-0">
               {navLinks.map((link: any) => {
                 const isActive = isHrefActive(link.href);
                 const hasDropdown = link.dropdown?.length > 0;
@@ -274,7 +274,7 @@ function HeaderContent() {
                       <div className="flex items-center rounded-lg transition-colors hover:bg-gray-50">
                         <Link
                           href={link.href}
-                          className={`flex items-center whitespace-nowrap pl-2.5 pr-1 py-2 text-[15px] xl:text-base font-medium transition-colors rounded-l-lg ${
+                          className={`flex items-center gap-1 whitespace-nowrap pl-2 xl:pl-3 py-2 text-[13px] xl:text-[15px] font-medium transition-colors rounded-l-lg ${
                             isActive
                               ? 'text-[#F8C21C] bg-[#F8C21C]/10'
                               : 'text-gray-700 hover:text-[#005E60]'
@@ -284,14 +284,14 @@ function HeaderContent() {
                         </Link>
                         <button
                           onClick={() => setDesktopDropdown(isDropdownOpen ? null : link.name)}
-                          className={`pr-1.5 pl-0.5 py-2 rounded-r-lg transition-colors ${
+                          className={`px-1 py-2 rounded-r-lg transition-colors ${
                             isActive
                               ? 'text-[#F8C21C] bg-[#F8C21C]/10'
                               : 'text-gray-700 hover:text-[#005E60]'
                           }`}
                           aria-label={`Toggle ${link.name} menu`}
                         >
-                          <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                          <ChevronDown className={`w-3.5 h-3.5 xl:w-4 xl:h-4 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
                         </button>
                       </div>
                       
@@ -331,7 +331,7 @@ function HeaderContent() {
                   <Link
                     key={link.name}
                     href={link.href}
-                    className={`whitespace-nowrap px-2.5 py-2 text-[15px] xl:text-base font-medium transition-colors rounded-lg ${
+                    className={`whitespace-nowrap px-2 xl:px-3 py-2 text-[13px] xl:text-[15px] font-medium transition-colors rounded-lg ${
                       isActive
                         ? 'text-[#F8C21C] bg-[#F8C21C]/10'
                         : 'text-gray-700 hover:text-[#005E60] hover:bg-gray-50'
@@ -344,10 +344,10 @@ function HeaderContent() {
             </div>
 
             {/* Phone Button - Desktop */}
-            <div className="hidden xl:flex items-center flex-shrink-0">
+            <div className="hidden lg:flex items-center flex-shrink-0">
               <a
                 href="tel:+918881188181"
-                className="whitespace-nowrap px-4 py-2.5 rounded-lg flex items-center gap-2 font-medium text-sm shadow-md transition-all duration-300 hover:shadow-lg hover:scale-105"
+                className="px-3 xl:px-5 py-2.5 rounded-lg flex items-center gap-2 font-medium text-[13px] xl:text-sm whitespace-nowrap shadow-md transition-all duration-300 hover:shadow-lg hover:scale-105"
                 style={{ backgroundColor: COLORS.red, color: 'white' }}
               >
                 <Phone className="w-4 h-4 flex-shrink-0" />
@@ -356,7 +356,7 @@ function HeaderContent() {
             </div>
 
             {/* Mobile Menu Button */}
-            <div className="xl:hidden flex items-center">
+            <div className="lg:hidden flex items-center">
               <button 
                 id="mobile-menu-button"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)} 
@@ -373,7 +373,7 @@ function HeaderContent() {
 
       {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 xl:hidden">
+        <div className="fixed inset-0 z-40 lg:hidden">
           {/* Backdrop */}
           <div 
             className="fixed inset-0 bg-black/50 transition-opacity duration-300"

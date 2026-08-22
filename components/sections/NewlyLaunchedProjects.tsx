@@ -233,9 +233,9 @@ export default function NewlyLaunchedProjects({
               <Link
                 key={project.slug}
                 href={`/property/${project.slug}`}
-                className="group block"
+                className="group block flex-shrink-0 w-[85vw] max-w-[400px] sm:w-[400px] md:w-[420px]"
               >
-                <article className="group flex-shrink-0 w-[420px] bg-white rounded-xl p-4 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 cursor-pointer relative">
+                <article className="group w-full bg-white rounded-xl p-4 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 cursor-pointer relative">
                   {/* NEW LAUNCH Badge - Brand Gold */}
                   <div className="absolute top-4 left-4 z-10">
                     <span className="inline-block px-3 py-1 bg-[#F8C21C] text-[#1f2937] text-[10px] font-bold uppercase tracking-wider rounded-lg shadow-sm">

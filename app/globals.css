@@ -78,11 +78,6 @@ body {
   font-family: var(--font-jost), "Segoe UI", Helvetica, Arial, sans-serif;
 }
 
-/* ✅ Guard against stray wide children forcing the page to overflow sideways */
-* {
-  min-width: 0;
-}
-
 /* ✅ All headings site-wide use Montserrat — single source of truth */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-montserrat), "Segoe UI", Helvetica, Arial, sans-serif;

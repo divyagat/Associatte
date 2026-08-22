@@ -45,9 +45,9 @@ export default function BlogSection({ city }: BlogSectionProps) {
   return (
     <section className="pt-6 md:pt-14 pb-0 bg-background mb-10">
       <div className="container-site">
-        <div className="flex items-center gap-8 mb-8">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 sm:gap-8 mb-8">
           <h2 className="section-title text-blog-primary">Recent Articles in {city}</h2>
-          <div className="h-6 w-px bg-[var(--color-text-light)]/30" />
+          <div className="hidden sm:block h-6 w-px bg-[var(--color-text-light)]/30" />
           <span className="text-lg text-blog-text font-medium">Knowledge centre</span>
         </div>
 
@@ -57,8 +57,8 @@ export default function BlogSection({ city }: BlogSectionProps) {
             className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-4" 
           >
             {blogPosts.map((post) => (
-              <Link href={`/blog/${post.slug}`} key={post.id}>
-                <article className="group flex-shrink-0 w-[320px] bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer">
+              <Link href={`/blog/${post.slug}`} key={post.id} className="block flex-shrink-0 w-[80vw] max-w-[320px] sm:w-[320px]">
+                <article className="group w-full bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer">
                   <div className="relative aspect-[16/10] overflow-hidden">
                     <Image
                       src={post.image}
