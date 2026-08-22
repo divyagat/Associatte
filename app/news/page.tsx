@@ -1,11 +1,11 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import {
   Newspaper, CalendarDays, ArrowUpRight, ArrowRight, Building2,
 } from 'lucide-react';
+import SafeImage from '@/components/common/SafeImage';
 import { getAllNews, type NewsItem } from '@/lib/news-data';
 
 type CityFilter = 'All' | 'Pune' | 'Mumbai' | 'KDMC' | 'National';
@@ -20,7 +20,20 @@ const FILTERS: { id: CityFilter; label: string }[] = [
 
 export default function NewsPage() {
   const [filter, setFilter] = useState<CityFilter>('All');
-  const allNews = getAllNews();
+  // Static defaults render instantly; the admin-managed list from /api/news
+  // swaps in once it loads.
+  const [allNews, setAllNews] = useState<NewsItem[]>(() => getAllNews());
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/news')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!cancelled && Array.isArray(data)) setAllNews(data);
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
 
   const items = useMemo<NewsItem[]>(() => {
     if (filter === 'All') return allNews;
@@ -86,19 +99,18 @@ export default function NewsPage() {
                   className="group flex flex-col bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 h-full"
                 >
                   <div className="relative h-48 overflow-hidden">
-                    <Image
+                    <SafeImage
                       src={item.image}
                       alt={item.title}
-                      fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-cover group-hover:scale-110 transition-transform duration-500"
+                      className="group-hover:scale-110 transition-transform duration-500"
                     />
-                    <div className="absolute top-3 left-3">
+                    <div className="absolute top-3 left-3 z-10">
                       <span className="bg-[#8B0000] text-white px-2 py-1 rounded text-xs font-semibold">
                         {item.category}
                       </span>
                     </div>
-                    <div className="absolute top-3 right-3">
+                    <div className="absolute top-3 right-3 z-10">
                       <span className="bg-[#005E60]/90 backdrop-blur-sm text-white px-2 py-1 rounded text-xs">
                         {item.city === 'National' ? 'India' : item.city}
                       </span>
