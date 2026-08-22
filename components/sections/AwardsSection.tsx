@@ -1,77 +1,69 @@
-// @/components/sections/AwardsSection.tsx
 'use client';
 
 import { motion } from "framer-motion";
-import { Trophy, Sparkles, BadgeCheck, ArrowRight } from "lucide-react";
+import { Trophy, ArrowRight } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { AWARDS } from "@/lib/awards-data";
 
 export default function AwardsSection() {
-  // Show only first 3-4 awards on home page
+  // Show only first 4 awards on home page
   const featuredAwards = AWARDS.slice(0, 4);
 
   return (
-    <section className="py-20 md:py-28 bg-white relative overflow-hidden">
-      {/* Background Effects */}
+    <section className="py-10 md:py-14 bg-white relative overflow-hidden">
+      {/* Background Effects - Scaled down */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#005E60]/5 via-transparent to-transparent" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#F8C21C]/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-0 w-64 h-64 bg-[#F8C21C]/10 rounded-full blur-3xl" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
-        {/* Header */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+        {/* Header - Compact & Tight Spacing */}
         <motion.div 
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center max-w-3xl mx-auto mb-16"
+          className="text-center max-w-2xl mx-auto mb-6 md:mb-8"
         >
-          <div className="inline-flex items-center gap-2 bg-[#F8C21C] text-[#8B0000] px-4 py-2 rounded-full text-sm font-semibold mb-6">
-            <Trophy size={16} />
+          <div className="inline-flex items-center gap-1.5 bg-[#F8C21C]/15 text-[#8B0000] px-3 py-1 rounded-full text-xs font-bold mb-3">
+            <Trophy size={14} />
             <span>Awards & Recognition</span>
           </div>
           
-          <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-6">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2 tracking-tight">
             Celebrating a Legacy of{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#005E60] to-[#8B0000]">
               Excellence
             </span>
           </h2>
           
-          <p className="text-lg text-gray-600">
-            Industry recognition that reflects our commitment to sales excellence,
-            innovation and unmatched customer satisfaction.
+          <p className="text-sm md:text-base text-gray-600 px-2">
+            Industry recognition reflecting our commitment to sales excellence and customer satisfaction.
           </p>
-
-          <div className="mt-8 flex items-center justify-center gap-4">
-            <div className="h-px w-16 bg-gradient-to-r from-transparent via-[#005E60]/40 to-transparent" />
-            <BadgeCheck className="w-6 h-6 text-[#F8C21C]" />
-            <div className="h-px w-16 bg-gradient-to-l from-transparent via-[#8B0000]/40 to-transparent" />
-          </div>
         </motion.div>
 
-        {/* Awards Grid - Featured */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        {/* Awards Grid - 2 cols on mobile, 4 on desktop, tight gaps */}
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-8">
           {featuredAwards.map((award, index) => (
             <AwardCard key={award.id} award={award} index={index} />
           ))}
         </div>
 
-        {/* View All Link */}
+        {/* View All Link - Compact */}
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="text-center"
         >
           <Link
             href="/awards"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-[#005E60] text-white font-semibold rounded-full hover:bg-[#004a4d] transition-all duration-300 shadow-xl hover:shadow-2xl group"
+            className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#005E60] text-white text-sm font-semibold rounded-lg hover:bg-[#004a4d] transition-all duration-300 shadow-md hover:shadow-lg group"
           >
             <span>View All Awards</span>
-            <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+            <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
           </Link>
         </motion.div>
       </div>
@@ -84,49 +76,49 @@ function AwardCard({ award, index }: { award: any; index: number }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1, duration: 0.5 }}
+      transition={{ delay: index * 0.1, duration: 0.4 }}
       viewport={{ once: true }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className="group cursor-default"
     >
       <div className={`
-        relative bg-white rounded-xl p-4 h-full
+        relative bg-white rounded-lg p-3 h-full flex flex-col
         border border-gray-100
         transition-all duration-300
-        ${isHovered ? 'shadow-xl shadow-[#005E60]/10 -translate-y-1' : 'shadow-md'}
+        ${isHovered ? 'shadow-lg shadow-[#005E60]/10 -translate-y-0.5' : 'shadow-sm'}
       `}>
-        {/* Image Frame */}
-        <div className="relative mb-4 overflow-hidden rounded-lg bg-gray-50 border-2 border-gray-200">
-          <div className="aspect-[4/3] relative">
+        {/* Image Frame - Shorter aspect ratio (16:9) */}
+        <div className="relative mb-2 overflow-hidden rounded-md bg-gray-50 border border-gray-200">
+          <div className="aspect-video relative">
             <Image
               src={award.image}
               alt={award.title}
               fill
-              className="object-contain p-2 transition-transform duration-500 group-hover:scale-105"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+              className="object-contain p-1.5 transition-transform duration-500 group-hover:scale-105"
+              sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 25vw"
             />
           </div>
-          {/* Year Badge */}
-          <div className="absolute top-2 right-2 px-2 py-1 bg-[#005E60] text-white text-xs font-bold rounded-md shadow-md">
+          {/* Year Badge - Smaller */}
+          <div className="absolute top-1.5 right-1.5 px-1.5 py-0.5 bg-[#005E60] text-white text-[10px] font-bold rounded shadow-sm">
             {award.year}
           </div>
         </div>
 
-        {/* Content */}
-        <div>
-          <h3 className="text-base font-bold text-gray-900 mb-1 group-hover:text-[#005E60] transition-colors">
+        {/* Content - Tight typography */}
+        <div className="flex-1 flex flex-col">
+          <h3 className="text-sm font-bold text-gray-900 mb-0.5 group-hover:text-[#005E60] transition-colors line-clamp-2 leading-tight">
             {award.title}
           </h3>
-          <p className="text-xs font-semibold text-[#8B0000] mb-2">
+          <p className="text-[11px] font-semibold text-[#8B0000] mb-1.5 line-clamp-1">
             {award.subtitle}
           </p>
+          
+          {/* Accent Line - Pushed to bottom for uniform height */}
+          <div className="h-0.5 w-full bg-gradient-to-r from-[#005E60] to-[#F8C21C] mt-auto rounded-full" />
         </div>
-
-        {/* Accent Line */}
-        <div className="h-0.5 w-full bg-gradient-to-r from-[#005E60] to-[#F8C21C] mt-3 rounded-full" />
       </div>
     </motion.div>
   );

@@ -14,7 +14,7 @@ export default function Footer() {
     { icon: FaFacebookF, href: "https://www.facebook.com/AssociatteIndia/", label: "Facebook" },
     { icon: FaTwitter, href: "https://twitter.com/Associatte", label: "Twitter" },
     { icon: FaInstagram, href: "https://www.instagram.com/vikramm.associatte?igsh=MXM5aXhmNmZsYThicg==", label: "Instagram" },
-    { icon: FaLinkedinIn, href: "https://www.linkedin.com/company/associatte-proptech", label: "LinkedIn" },
+    { icon: FaLinkedinIn, href: "https://www.linkedin.com/company/associatteindia/posts/?feedView=all", label: "LinkedIn" },
   ];
 
   const quickLinks = [
