@@ -70,9 +70,11 @@ function looksLikePropertyQuery(text: string, hasContext: boolean): boolean {
   return false;
 }
 
-// AI girl assistant avatar shown for the chatbot. Swap this path to change the
-// face (any image under /public works).
-const ASSISTANT_AVATAR = "/chatbot-avatar.svg";
+// Girl assistant avatar shown for the chatbot. A real, friendly portrait
+// (Unsplash — face-cropped). Swap this URL/path to change the face; local
+// images under /public also work.
+const ASSISTANT_AVATAR =
+  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=256&h=256&fit=crop&crop=faces&q=80";
 
 // Unique message id even when two are appended within the same millisecond.
 let msgSeq = 0;
