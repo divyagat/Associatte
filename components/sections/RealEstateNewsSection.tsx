@@ -1,17 +1,38 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ArrowRight, CalendarDays, ArrowUpRight } from 'lucide-react';
 import Reveal from '@/components/common/Reveal';
 import SafeImage from '@/components/common/SafeImage';
-import { getNewsByCity, type NewsItem } from '@/lib/news-data';
+import { INITIAL_NEWS_ITEMS, type NewsItem } from '@/lib/news-data';
 
 interface RealEstateNewsSectionProps {
   city: 'Pune' | 'Mumbai' | 'KDMC';
 }
 
+// City news = items for this city plus 'National' items that apply everywhere.
+function forCity(list: NewsItem[], city: string, limit = 3): NewsItem[] {
+  return list.filter((n) => n.city === city || n.city === 'National').slice(0, limit);
+}
+
 export default function RealEstateNewsSection({ city }: RealEstateNewsSectionProps) {
-  const newsItems = getNewsByCity(city, 3);
+  // Seed with the static defaults for first paint, then swap in the
+  // admin-managed list from /api/news once it loads.
+  const [allNews, setAllNews] = useState<NewsItem[]>(INITIAL_NEWS_ITEMS);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/news')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!cancelled && Array.isArray(data)) setAllNews(data);
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
+
+  const newsItems = forCity(allNews, city, 3);
 
   if (newsItems.length === 0) return null;
 

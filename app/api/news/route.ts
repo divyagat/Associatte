@@ -1,41 +1,40 @@
 // app/api/news/route.ts
+//
+// Public GET → the Real Estate News list shown on the home page + /news.
+// Admin-only PUT → replace the whole list from the admin panel (/admin/news).
+
 import { NextRequest, NextResponse } from 'next/server';
-// import { getRoleFromRequest } from '@/lib/admin-auth';
+import { getRoleFromRequest } from '@/lib/admin-auth';
+import { getAllNews, saveAllNews } from '@/lib/news-store';
 
-// 👇 THIS LINE MUST SAY '@/lib/news-data', NOT '@/lib/news-store'
-import { getAllNews, saveAllNews, type NewsItem } from '@/lib/news-data';
-
+// Always reflect the current data store — no build-time caching.
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const news = getAllNews();
-    return NextResponse.json(news);
+    return NextResponse.json(await getAllNews());
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch news' }, { status: 500 });
+    console.error('❌ Error in GET /api/news:', error);
+    // Never break the site — return an empty list so the section falls back.
+    return NextResponse.json([], { status: 200 });
   }
 }
 
-export async function POST(request: NextRequest) {
+export async function PUT(request: NextRequest) {
+  // Managing news is a main-admin capability (like Awards/Settings).
+  if (getRoleFromRequest(request) !== 'admin') {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
   try {
     const body = await request.json();
-    
-    if (Array.isArray(body)) {
-      saveAllNews(body);
-    } else {
-      const currentNews = getAllNews();
-      const index = currentNews.findIndex((n) => n.id === body.id);
-      
-      if (index !== -1) {
-        currentNews[index] = { ...currentNews[index], ...body };
-      } else {
-        currentNews.push(body as NewsItem);
-      }
-      saveAllNews(currentNews);
-    }
-    
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to save news' }, { status: 500 });
+    const list = Array.isArray(body) ? body : body?.items;
+    const saved = await saveAllNews(list);
+    return NextResponse.json(saved);
+  } catch (error: any) {
+    console.error('❌ Error in PUT /api/news:', error);
+    return NextResponse.json(
+      { error: error?.message || 'Failed to save news' },
+      { status: 400 },
+    );
   }
 }

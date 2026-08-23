@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Newspaper, CalendarDays, ArrowUpRight, ArrowRight, Building2 } from 'lucide-react';
 import SafeImage from '@/components/common/SafeImage';
-import { getAllNews, type NewsItem } from '@/lib/news-data';
+import { INITIAL_NEWS_ITEMS, type NewsItem } from '@/lib/news-data';
 
 type CityFilter = 'All' | 'Pune' | 'Mumbai' | 'KDMC' | 'National';
 
@@ -18,7 +18,7 @@ const FILTERS: { id: CityFilter; label: string }[] = [
 
 export default function NewsPage() {
   const [filter, setFilter] = useState<CityFilter>('All');
-  const [allNews, setAllNews] = useState<NewsItem[]>(() => getAllNews());
+  const [allNews, setAllNews] = useState<NewsItem[]>(INITIAL_NEWS_ITEMS);
 
   useEffect(() => {
     let cancelled = false;

@@ -4,6 +4,10 @@ import { Trophy, Phone, ArrowRight, Award, Star, Building } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { AWARDS } from "@/lib/awards-data";
+import { getAllAwards } from "@/lib/awards-store";
+
+// Always reflect the admin-managed list from the data store.
+export const dynamic = 'force-dynamic';
 
 // ✅ SEO Metadata for the Awards Page (Must be a Server Component)
 export const metadata: Metadata = {
@@ -32,7 +36,11 @@ export const metadata: Metadata = {
   },
 };
 
-export default function AwardsPage() {
+export default async function AwardsPage() {
+  // Admin-managed awards from the store; fall back to the static seed list.
+  const stored = await getAllAwards();
+  const awards = stored.length ? stored : AWARDS;
+
   return (
     <main className="min-h-screen bg-white">
       {/* Hero Section */}
@@ -68,7 +76,7 @@ export default function AwardsPage() {
           
           {/* Awards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-16">
-            {AWARDS.map((award, index) => (
+            {awards.map((award, index) => (
               <AwardCard key={award.id} award={award} index={index} />
             ))}
           </div>
@@ -89,7 +97,7 @@ export default function AwardsPage() {
           <div className="text-center">
             <div className="inline-flex items-center gap-2 px-6 py-3 bg-[#005E60]/5 text-[#005E60] rounded-full font-semibold border border-[#005E60]/10">
               <Trophy className="w-5 h-5" />
-              <span>Proudly recognized by {AWARDS.length}+ industry leaders</span>
+              <span>Proudly recognized by {awards.length}+ industry leaders</span>
             </div>
           </div>
 

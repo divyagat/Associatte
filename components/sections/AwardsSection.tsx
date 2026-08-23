@@ -2,14 +2,29 @@
 
 import { motion } from "framer-motion";
 import { Trophy, ArrowRight } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { AWARDS } from "@/lib/awards-data";
+import { AWARDS, type AwardItem } from "@/lib/awards-data";
 
 export default function AwardsSection({ showViewAllLink = false }: { showViewAllLink?: boolean }) {
+  // Seed with the static defaults for first paint, then swap in the
+  // admin-managed list from /api/awards once it loads.
+  const [awards, setAwards] = useState<AwardItem[]>(AWARDS);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/awards')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!cancelled && Array.isArray(data) && data.length) setAwards(data);
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
+
   // Show only first 4 awards on home page
-  const featuredAwards = AWARDS.slice(0, 4);
+  const featuredAwards = awards.slice(0, 4);
 
   return (
     <section className="py-10 md:py-14 bg-white relative overflow-hidden">

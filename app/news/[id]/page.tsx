@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, CalendarDays, MapPin, Tag, ArrowRight, ExternalLink, Clock } from 'lucide-react';
 import SafeImage from '@/components/common/SafeImage';
-import { getAllNews } from '@/lib/news-data';
+import { getAllNews } from '@/lib/news-store';
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -10,7 +10,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props) {
   const { id } = await params;
-  const item = getAllNews().find((n) => n.id === id);
+  const item = (await getAllNews()).find((n) => n.id === id);
   if (!item) return { title: 'News Not Found' };
 
   return {
@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function NewsDetailsPage({ params }: Props) {
   const { id } = await params;
-  const allNews = getAllNews();
+  const allNews = await getAllNews();
   const item = allNews.find((n) => n.id === id);
 
   if (!item) notFound();

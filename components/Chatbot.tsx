@@ -70,9 +70,9 @@ function looksLikePropertyQuery(text: string, hasContext: boolean): boolean {
   return false;
 }
 
-// Girl assistant avatar shown for the chatbot. Swap this path to change the
+// AI girl assistant avatar shown for the chatbot. Swap this path to change the
 // face (any image under /public works).
-const ASSISTANT_AVATAR = "/Team/Pune/Neha.webp";
+const ASSISTANT_AVATAR = "/chatbot-avatar.svg";
 
 // Unique message id even when two are appended within the same millisecond.
 let msgSeq = 0;
@@ -559,7 +559,7 @@ export default function Chatbot() {
               alt="Live Assistance"
               width={64}
               height={64}
-              className="w-full h-full object-cover scale-[1.9] object-[48%_38%]"
+              className="w-full h-full object-cover"
             />
           </div>
           <div className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-white"></div>
@@ -612,7 +612,7 @@ export default function Chatbot() {
                       alt="Live Assistance"
                       width={36}
                       height={36}
-                      className="w-full h-full object-cover scale-[1.9] object-[48%_38%]"
+                      className="w-full h-full object-cover"
                     />
                   </button>
                   <div>
@@ -655,7 +655,7 @@ export default function Chatbot() {
                   <div className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}>
                     {!msg.isUser && (
                       <div className="w-6 h-6 rounded-full overflow-hidden mr-2 flex-shrink-0 mt-0.5">
-                        <Image src={ASSISTANT_AVATAR} alt="Assistant" width={24} height={24} className="w-full h-full object-cover scale-[1.9] object-[48%_38%]" />
+                        <Image src={ASSISTANT_AVATAR} alt="Assistant" width={24} height={24} className="w-full h-full object-cover" />
                       </div>
                     )}
                     <div className={`max-w-[80%] px-3 py-2 ${
@@ -725,7 +725,7 @@ export default function Chatbot() {
               {isTyping && (
                 <div className="flex justify-start animate-fade-in">
                   <div className="w-6 h-6 rounded-full overflow-hidden mr-2">
-                    <Image src={ASSISTANT_AVATAR} alt="Assistant" width={24} height={24} className="w-full h-full object-cover scale-[1.9] object-[48%_38%]" />
+                    <Image src={ASSISTANT_AVATAR} alt="Assistant" width={24} height={24} className="w-full h-full object-cover" />
                   </div>
                   <div className="bg-white px-4 py-2 rounded-lg shadow-sm">
                     <div className="flex gap-1">

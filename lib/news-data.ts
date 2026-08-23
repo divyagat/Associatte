@@ -1,3 +1,9 @@
+// lib/news-data.ts
+// Client-safe types + seed defaults for Real Estate News. This file must stay
+// free of `fs`/blob-store imports so it can be pulled into client components
+// (the /news page, the home "Latest in {city}" section). The actual persistence
+// (data/news.json) lives in lib/news-store.ts and is read through /api/news.
+
 export interface NewsItem {
   id: string;
   title: string;
@@ -12,7 +18,9 @@ export interface NewsItem {
   readTime?: string;
 }
 
-const INITIAL_NEWS_ITEMS: NewsItem[] = [
+// Seed list used as the SSR/fallback defaults until an admin saves their own
+// news from /admin/news (which then takes over via data/news.json).
+export const INITIAL_NEWS_ITEMS: NewsItem[] = [
   {
     id: 'n1',
     title: 'Pune Ring Road Phase 1 nears completion, boosting peripheral realty',
@@ -59,21 +67,3 @@ const INITIAL_NEWS_ITEMS: NewsItem[] = [
     readTime: '3 min read'
   }
 ];
-
-let newsStore: NewsItem[] = [...INITIAL_NEWS_ITEMS];
-
-export function getAllNews(): NewsItem[] {
-  return newsStore;
-}
-
-export function getNewsByCity(city: string, limit?: number): NewsItem[] {
-  const filtered = newsStore.filter(
-    (n) => n.city === city || n.city === 'National',
-  );
-  return typeof limit === 'number' ? filtered.slice(0, limit) : filtered;
-}
-
-// 👇 THIS IS THE EXACT EXPORT THE ERROR IS ASKING FOR
-export function saveAllNews(newItems: NewsItem[]): void {
-  newsStore = newItems;
-}
