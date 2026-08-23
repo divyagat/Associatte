@@ -25,6 +25,7 @@ export default function VoiceButton({
 }: VoiceButtonProps) {
   const [supported, setSupported] = useState(false);
   const [listening, setListening] = useState(false);
+  const [denied, setDenied] = useState(false);
   const recRef = useRef<any>(null);
 
   useEffect(() => {
@@ -40,6 +41,7 @@ export default function VoiceButton({
     if (!SR) return;
     if (listening) { try { recRef.current?.stop(); } catch { /* ignore */ } return; }
 
+    setDenied(false);
     const rec = new SR();
     recRef.current = rec;
     rec.lang = lang;
@@ -57,7 +59,14 @@ export default function VoiceButton({
       }
       onInterim?.(`${finalText} ${interim}`.trim());
     };
-    rec.onerror = () => setListening(false);
+    rec.onerror = (e: any) => {
+      setListening(false);
+      // Surface a blocked/denied mic so the user knows to allow it in the
+      // browser's site permissions (instead of the button silently doing nothing).
+      if (e?.error === 'not-allowed' || e?.error === 'service-not-allowed') {
+        setDenied(true);
+      }
+    };
     rec.onend = () => {
       setListening(false);
       const t = finalText.trim();
@@ -78,11 +87,15 @@ export default function VoiceButton({
     <button
       type="button"
       onClick={toggle}
-      title={title}
+      title={denied ? 'Microphone blocked — allow mic access in your browser’s site settings' : title}
       aria-label="Voice search"
       aria-pressed={listening}
       className={`inline-flex items-center justify-center transition-colors ${
-        listening ? 'text-red-600' : 'text-slate-400 hover:text-[#005E60]'
+        denied
+          ? 'text-amber-500 hover:text-amber-600'
+          : listening
+            ? 'text-red-600'
+            : 'text-slate-400 hover:text-[#005E60]'
       } ${className}`}
     >
       <span className="relative flex items-center justify-center">

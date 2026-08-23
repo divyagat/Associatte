@@ -100,8 +100,12 @@ const nextConfig = {
             value: 'strict-origin-when-cross-origin'
           },
           {
+            // Allow the microphone on our own origin so the voice-search button
+            // (Web Speech API in the search bar & chatbot) can access it.
+            // `microphone=()` here previously disabled the mic site-wide, which
+            // silently broke voice search. Camera stays fully disabled.
             key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=(self)'
+            value: 'camera=(), microphone=(self), geolocation=(self)'
           },
         ],
       },

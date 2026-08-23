@@ -15,6 +15,10 @@ interface SafeImageProps {
   /** Custom fallback rendered when there's no src or the image fails to load. */
   fallback?: ReactNode;
   sizes?: string;
+  /** Accepted for API parity with next/image; this component always fills its parent. */
+  fill?: boolean;
+  /** Load eagerly with high fetch priority (use for above-the-fold / LCP images). */
+  priority?: boolean;
 }
 
 /**
@@ -23,7 +27,7 @@ interface SafeImageProps {
  * image — so the layout always looks intentional. Same approach the blog list
  * already uses, extracted for reuse.
  */
-export default function SafeImage({ src, alt, className = '', fallback, sizes }: SafeImageProps) {
+export default function SafeImage({ src, alt, className = '', fallback, sizes, priority }: SafeImageProps) {
   const [errored, setErrored] = useState(false);
 
   if (!src || errored) {
@@ -43,7 +47,8 @@ export default function SafeImage({ src, alt, className = '', fallback, sizes }:
       src={src}
       alt={alt}
       sizes={sizes}
-      loading="lazy"
+      loading={priority ? 'eager' : 'lazy'}
+      fetchPriority={priority ? 'high' : 'auto'}
       onError={() => setErrored(true)}
       className={`absolute inset-0 w-full h-full object-cover ${className}`}
     />

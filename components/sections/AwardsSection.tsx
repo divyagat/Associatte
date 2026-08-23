@@ -8,7 +8,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { AWARDS } from "@/lib/awards-data";
 
-export default function AwardsSection() {
+export default function AwardsSection({ showViewAllLink = false }: { showViewAllLink?: boolean }) {
   // Show only first 3-4 awards on home page
   const featuredAwards = AWARDS.slice(0, 4);
 
@@ -60,20 +60,22 @@ export default function AwardsSection() {
         </div>
 
         {/* View All Link */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center"
-        >
-          <Link
-            href="/awards"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-[#005E60] text-white font-semibold rounded-full hover:bg-[#004a4d] transition-all duration-300 shadow-xl hover:shadow-2xl group"
+        {showViewAllLink && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center"
           >
-            <span>View All Awards</span>
-            <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-          </Link>
-        </motion.div>
+            <Link
+              href="/awards"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-[#005E60] text-white font-semibold rounded-full hover:bg-[#004a4d] transition-all duration-300 shadow-xl hover:shadow-2xl group"
+            >
+              <span>View All Awards</span>
+              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </motion.div>
+        )}
       </div>
     </section>
   );

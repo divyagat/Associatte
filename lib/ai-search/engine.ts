@@ -131,7 +131,7 @@ export function runSearch(listings: any[], criteria: SearchCriteria, opts?: { ma
   const relaxed: string[] = [];
 
   if (!results.length) {
-    let cur: SearchCriteria = { ...criteria };
+    const cur: SearchCriteria = { ...criteria };
     const steps: { label: string; apply: () => void }[] = [];
     if (cur.status) steps.push({ label: 'any construction status', apply: () => { delete cur.status; } });
     if (cur.keywords) steps.push({ label: 'a broader match', apply: () => { delete cur.keywords; } });

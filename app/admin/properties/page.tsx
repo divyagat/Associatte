@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element -- admin previews render arbitrary uploaded image URLs (incl. blob:) that next/image can't optimize */
 import Link from 'next/link';
 import { getAllProperties, getAllProjects, getSiteConfig } from '@/lib/data-store';
 import { getPermissions, getAdminRole } from '@/lib/admin-auth';

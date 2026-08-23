@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
     }
     
     // Extract ONLY the last 10 digits from mobile number
-    let mobileNumber = phone.trim();
+    const mobileNumber = phone.trim();
     const digitsOnly = mobileNumber.replace(/\D/g, '');
     const last10Digits = digitsOnly.slice(-10);
     
