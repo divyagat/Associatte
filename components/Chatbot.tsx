@@ -17,6 +17,7 @@ import {
   Mail,
   Zap
 } from "lucide-react";
+import Image from "next/image";
 import CountryCodeSelect from "@/components/common/CountryCodeSelect";
 import VoiceButton from "@/components/common/VoiceButton";
 import ProjectCard from "@/components/builder-page/ProjectCard";
@@ -69,6 +70,10 @@ function looksLikePropertyQuery(text: string, hasContext: boolean): boolean {
   return false;
 }
 
+// Girl assistant avatar shown for the chatbot. Swap this path to change the
+// face (any image under /public works).
+const ASSISTANT_AVATAR = "/Team/Pune/Neha.webp";
+
 // Unique message id even when two are appended within the same millisecond.
 let msgSeq = 0;
 const nextMsgId = () => `${Date.now()}-${msgSeq++}`;
@@ -113,6 +118,7 @@ export default function Chatbot() {
   const [errors, setErrors] = useState<{ name?: string; mobile?: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userIP, setUserIP] = useState("");
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const autoOpenTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -434,6 +440,89 @@ export default function Chatbot() {
     setIsSubmitting(false);
   };
 
+  // Pick a female ("girl") voice for the assistant. Voice lists load
+  // asynchronously, so callers pass the currently available list.
+  const pickFemaleVoice = (voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice | undefined => {
+    const named = voices.find((v) =>
+      /female|woman|zira|susan|samantha|google uk english female|google us english|aria|jenny|neerja|heera|priya|veena|salli|joanna|kendra/i.test(
+        v.name,
+      ),
+    );
+    if (named) return named;
+    // Prefer an Indian/English voice as a reasonable fallback.
+    return (
+      voices.find((v) => /en-IN/i.test(v.lang)) ||
+      voices.find((v) => /^en/i.test(v.lang)) ||
+      voices[0]
+    );
+  };
+
+  // Speak the given text aloud with a female voice (Web Speech API).
+  const speak = (text: string) => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+
+    const run = () => {
+      const utterance = new SpeechSynthesisUtterance(text);
+      const voice = pickFemaleVoice(window.speechSynthesis.getVoices());
+      if (voice) utterance.voice = voice;
+      utterance.lang = voice?.lang || 'en-IN';
+      utterance.rate = 1;
+      utterance.pitch = 1.15; // slightly higher → more feminine
+      utterance.onend = () => setIsSpeaking(false);
+      utterance.onerror = () => setIsSpeaking(false);
+
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utterance);
+      setIsSpeaking(true);
+    };
+
+    // Voices may not be ready on the first call; wait for them once.
+    if (window.speechSynthesis.getVoices().length === 0) {
+      window.speechSynthesis.onvoiceschanged = () => {
+        window.speechSynthesis.onvoiceschanged = null;
+        run();
+      };
+      // Trigger population in browsers that need it.
+      window.speechSynthesis.getVoices();
+    } else {
+      run();
+    }
+  };
+
+  const assistanceText = () =>
+    config.voiceAssistanceMessage ||
+    "Hi! I'm your live assistance. I can help you find properties, answer your questions, and connect you with a real estate expert. Just type or speak your requirement, and I'll assist you.";
+
+  // Click the assistant avatar → speak the assistance message aloud.
+  // Clicking again while talking stops it.
+  const handleSpeakAssistance = () => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+    if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+      return;
+    }
+    speak(assistanceText());
+  };
+
+  // Auto-greet with the female voice when the chat opens (girl interaction).
+  const spokenOnOpenRef = useRef(false);
+  useEffect(() => {
+    if (isOpen && !isMinimized && !showLeadForm && !spokenOnOpenRef.current) {
+      spokenOnOpenRef.current = true;
+      speak(config.welcomeMessage || assistanceText());
+    }
+    if (!isOpen) spokenOnOpenRef.current = false; // allow greeting again next open
+  }, [isOpen, isMinimized, showLeadForm]);
+
+  // Stop any ongoing speech when the chat is closed/minimized.
+  useEffect(() => {
+    if ((!isOpen || isMinimized) && typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+    }
+  }, [isOpen, isMinimized]);
+
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
   };
@@ -464,11 +553,16 @@ export default function Chatbot() {
       >
         <div className="relative">
           <div className="absolute inset-0 rounded-full bg-[var(--color-primary)] animate-ping opacity-40"></div>
-          <div className="relative bg-[var(--color-primary)] px-4 py-2.5 rounded-full shadow-lg flex items-center gap-2 hover:bg-[var(--color-primary-dark)] transition-all hover:scale-105">
-            <Headphones size={16} className="text-[var(--color-gold)]" />
-            <span className="text-white text-sm font-medium">Live Assistance</span>
-            <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white"></div>
+          <div className="relative w-16 h-16 rounded-full bg-white shadow-lg overflow-hidden border-2 border-[var(--color-primary)] flex items-center justify-center hover:scale-105 transition-all">
+            <Image
+              src={ASSISTANT_AVATAR}
+              alt="Live Assistance"
+              width={64}
+              height={64}
+              className="w-full h-full object-cover scale-[1.9] object-[48%_38%]"
+            />
           </div>
+          <div className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-white"></div>
         </div>
       </button>
     );
@@ -505,9 +599,22 @@ export default function Chatbot() {
             <div className="bg-[var(--color-primary)] px-4 py-3 rounded-t-lg">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
-                    <Headphones size={14} className="text-[var(--color-gold)]" />
-                  </div>
+                  <button
+                    onClick={handleSpeakAssistance}
+                    className={`w-9 h-9 rounded-full overflow-hidden bg-white/10 flex items-center justify-center transition-all hover:opacity-90 ${
+                      isSpeaking ? 'ring-2 ring-[var(--color-gold)] animate-pulse' : ''
+                    }`}
+                    aria-label={isSpeaking ? 'Stop assistance voice' : 'Hear assistance'}
+                    title={isSpeaking ? 'Tap to stop' : 'Tap to hear about assistance'}
+                  >
+                    <Image
+                      src={ASSISTANT_AVATAR}
+                      alt="Live Assistance"
+                      width={36}
+                      height={36}
+                      className="w-full h-full object-cover scale-[1.9] object-[48%_38%]"
+                    />
+                  </button>
                   <div>
                     <h3 className="font-semibold text-white text-sm">Live Assistance</h3>
                     <div className="flex items-center gap-2 mt-0.5">
@@ -547,8 +654,8 @@ export default function Chatbot() {
                 <div key={msg.id} className="animate-fade-in">
                   <div className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}>
                     {!msg.isUser && (
-                      <div className="w-6 h-6 rounded-full bg-[var(--color-primary)] flex items-center justify-center mr-2 flex-shrink-0 mt-0.5">
-                        <Headphones size={10} className="text-[var(--color-gold)]" />
+                      <div className="w-6 h-6 rounded-full overflow-hidden mr-2 flex-shrink-0 mt-0.5">
+                        <Image src={ASSISTANT_AVATAR} alt="Assistant" width={24} height={24} className="w-full h-full object-cover scale-[1.9] object-[48%_38%]" />
                       </div>
                     )}
                     <div className={`max-w-[80%] px-3 py-2 ${
@@ -617,8 +724,8 @@ export default function Chatbot() {
               ))}
               {isTyping && (
                 <div className="flex justify-start animate-fade-in">
-                  <div className="w-6 h-6 rounded-full bg-[var(--color-primary)] flex items-center justify-center mr-2">
-                    <Headphones size={10} className="text-[var(--color-gold)]" />
+                  <div className="w-6 h-6 rounded-full overflow-hidden mr-2">
+                    <Image src={ASSISTANT_AVATAR} alt="Assistant" width={24} height={24} className="w-full h-full object-cover scale-[1.9] object-[48%_38%]" />
                   </div>
                   <div className="bg-white px-4 py-2 rounded-lg shadow-sm">
                     <div className="flex gap-1">

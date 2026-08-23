@@ -38,6 +38,8 @@ export interface AiSettings {
 export interface ChatbotConfig {
   welcomeMessage: string;
   fallbackMessage: string;
+  // Spoken aloud (Web Speech API) when a visitor taps the assistant avatar.
+  voiceAssistanceMessage?: string;
   quickReplies: QuickReply[];
   faqs: FaqItem[];
   ai: AiSettings;
