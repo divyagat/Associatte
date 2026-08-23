@@ -7,13 +7,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { AWARDS } from "@/lib/awards-data";
 
-<<<<<<< HEAD
 export default function AwardsSection({ showViewAllLink = false }: { showViewAllLink?: boolean }) {
-  // Show only first 3-4 awards on home page
-=======
-export default function AwardsSection() {
   // Show only first 4 awards on home page
->>>>>>> 8680d5c4bcb6e4dccda1638dae894dab5a53453b
   const featuredAwards = AWARDS.slice(0, 4);
 
   return (
@@ -56,41 +51,23 @@ export default function AwardsSection() {
           ))}
         </div>
 
-<<<<<<< HEAD
-        {/* View All Link */}
+        {/* View All Link - Compact, shown only when requested (e.g. home page) */}
         {showViewAllLink && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="text-center"
           >
             <Link
               href="/awards"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-[#005E60] text-white font-semibold rounded-full hover:bg-[#004a4d] transition-all duration-300 shadow-xl hover:shadow-2xl group"
+              className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#005E60] text-white text-sm font-semibold rounded-lg hover:bg-[#004a4d] transition-all duration-300 shadow-md hover:shadow-lg group"
             >
               <span>View All Awards</span>
-              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
             </Link>
           </motion.div>
         )}
-=======
-        {/* View All Link - Compact */}
-        <motion.div 
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center"
-        >
-          <Link
-            href="/awards"
-            className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#005E60] text-white text-sm font-semibold rounded-lg hover:bg-[#004a4d] transition-all duration-300 shadow-md hover:shadow-lg group"
-          >
-            <span>View All Awards</span>
-            <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-          </Link>
-        </motion.div>
->>>>>>> 8680d5c4bcb6e4dccda1638dae894dab5a53453b
       </div>
     </section>
   );
