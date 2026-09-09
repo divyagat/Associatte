@@ -3,32 +3,44 @@ import fs from 'fs/promises';
 import path from 'path';
 
 /**
- * Whether the data layer is backed by a remote blob store (Vercel Blob) rather
- * than the local filesystem. This project uses the committed JSON seed files on
- * disk as the source of truth, so this is `false` unless a blob token is set —
- * but callers (e.g. admin-users) branch on it to decide whether to obfuscate
- * sensitive file names. Kept as a function so a future blob backend can flip it
- * via env without touching every call site.
+ * Persistence for the app's JSON "files" (data/*.json).
+ *
+ * Two backends:
+ *   • MongoDB (production) — when MONGODB_URI is set, each JSON document is
+ *     stored in the `jsondocs` collection keyed by its file path. This is
+ *     required on Vercel, whose serverless filesystem is READ-ONLY: writing to
+ *     `data/*.json` there throws `EROFS: read-only file system`, which made
+ *     every admin save fail with a 400. (Image uploads already use MongoDB for
+ *     the same reason — see app/api/upload/route.ts.)
+ *   • Local filesystem (dev) — when MONGODB_URI is not set, we read/write the
+ *     committed JSON seed files under the project root, as before.
+ *
+ * On the first read of a key that isn't in MongoDB yet, we fall back to the
+ * committed seed file on disk (reads are allowed even on Vercel), so existing
+ * seed data still appears until the first write migrates it into the DB.
  */
-export function usingBlob(): boolean {
-  return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+
+function usingMongo(): boolean {
+  return Boolean(process.env.MONGODB_URI);
 }
 
 /**
- * Reads and parses a JSON file from the project root. Returns `defaultValue`
- * (or null when omitted) if the file doesn't exist or can't be parsed, so
- * callers never have to handle a read failure themselves.
+ * Whether the data layer is backed by a remote store rather than the local
+ * filesystem. Callers (e.g. admin-users) branch on it to decide whether to
+ * obfuscate sensitive file names.
  */
-export async function readJson<T>(filePath: string, defaultValue: T): Promise<T>;
-export async function readJson<T>(filePath: string): Promise<T | null>;
-export async function readJson<T>(filePath: string, defaultValue?: T): Promise<T | null> {
-  const fallback = defaultValue ?? null;
+export function usingBlob(): boolean {
+  return usingMongo() || Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+}
+
+// ==================== FILESYSTEM BACKEND ====================
+async function readFileJson<T>(filePath: string, fallback: T | null): Promise<T | null> {
   try {
     const fullPath = path.join(process.cwd(), filePath);
     const fileContents = await fs.readFile(fullPath, 'utf-8');
     return JSON.parse(fileContents) as T;
   } catch (error: any) {
-    // If file doesn't exist yet, return the fallback gracefully.
+    // If the file doesn't exist yet, return the fallback gracefully.
     if (error.code === 'ENOENT') {
       return fallback;
     }
@@ -37,18 +49,77 @@ export async function readJson<T>(filePath: string, defaultValue?: T): Promise<T
   }
 }
 
+async function writeFileJson<T>(filePath: string, data: T): Promise<void> {
+  const fullPath = path.join(process.cwd(), filePath);
+  const dir = path.dirname(fullPath);
+  // Ensure the directory exists before writing (e.g., creates 'data/' folder).
+  await fs.mkdir(dir, { recursive: true });
+  await fs.writeFile(fullPath, JSON.stringify(data, null, 2), 'utf-8');
+}
+
+// ==================== MONGODB BACKEND ====================
+// Loaded lazily so local dev (no MONGODB_URI) never pulls in mongoose here.
+async function getMongoDeps() {
+  const [{ default: dbConnect }, { default: JsonDoc }] = await Promise.all([
+    import('./mongodb'),
+    import('./models/JsonDoc'),
+  ]);
+  await dbConnect();
+  return { JsonDoc };
+}
+
+async function readMongoJson<T>(filePath: string, fallback: T | null): Promise<T | null> {
+  const { JsonDoc } = await getMongoDeps();
+  const doc = await JsonDoc.findOne({ key: filePath }).lean<{ data: T } | null>();
+  if (doc && doc.data !== undefined && doc.data !== null) {
+    return doc.data as T;
+  }
+  // Not in the DB yet — fall back to the committed seed file on disk so existing
+  // seed data still shows up until the first write migrates it into MongoDB.
+  return readFileJson<T>(filePath, fallback);
+}
+
+async function writeMongoJson<T>(filePath: string, data: T): Promise<void> {
+  const { JsonDoc } = await getMongoDeps();
+  await JsonDoc.findOneAndUpdate(
+    { key: filePath },
+    { $set: { data } },
+    { upsert: true, new: true },
+  );
+}
+
+// ==================== PUBLIC API ====================
 /**
- * Writes data to a JSON file, creating directories if they don't exist.
+ * Reads and parses a JSON document. Returns `defaultValue` (or null when
+ * omitted) if it doesn't exist or can't be read, so callers never have to
+ * handle a read failure themselves.
+ */
+export async function readJson<T>(filePath: string, defaultValue: T): Promise<T>;
+export async function readJson<T>(filePath: string): Promise<T | null>;
+export async function readJson<T>(filePath: string, defaultValue?: T): Promise<T | null> {
+  const fallback = defaultValue ?? null;
+  if (usingMongo()) {
+    try {
+      return await readMongoJson<T>(filePath, fallback);
+    } catch (error) {
+      console.error(`Error reading ${filePath} from MongoDB:`, error);
+      // Last-ditch fallback to the on-disk seed so reads degrade gracefully.
+      return readFileJson<T>(filePath, fallback);
+    }
+  }
+  return readFileJson<T>(filePath, fallback);
+}
+
+/**
+ * Writes a JSON document, creating the backing store as needed.
  */
 export async function writeJson<T>(filePath: string, data: T): Promise<void> {
   try {
-    const fullPath = path.join(process.cwd(), filePath);
-    const dir = path.dirname(fullPath);
-    
-    // Ensure the directory exists before writing (e.g., creates 'data/' folder)
-    await fs.mkdir(dir, { recursive: true });
-    
-    await fs.writeFile(fullPath, JSON.stringify(data, null, 2), 'utf-8');
+    if (usingMongo()) {
+      await writeMongoJson(filePath, data);
+      return;
+    }
+    await writeFileJson(filePath, data);
   } catch (error) {
     console.error(`Error writing ${filePath}:`, error);
     throw error;
