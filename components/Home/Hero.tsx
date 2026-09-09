@@ -497,8 +497,6 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
         </div>
       </div>
 
-      {showStickySearch && <StickySearchBar {...stickySearchProps as any} />}
-
       {showFilters && (
         <>
           <div onClick={() => setShowFilters(false)} className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[55]" aria-hidden="true" />
