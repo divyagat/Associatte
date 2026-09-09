@@ -4,6 +4,7 @@ import { useState, FormEvent, ChangeEvent, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import CountryCodeSelect from "@/components/common/CountryCodeSelect";
+import ConsentCheckbox from "@/components/common/ConsentCheckbox";
 import { 
   MapPin, 
   Phone, 
@@ -98,6 +99,8 @@ export default function ContactUsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
   const [errors, setErrors] = useState<FormErrors>({});
+  const [consentGiven, setConsentGiven] = useState(false);
+  const [consentError, setConsentError] = useState("");
   const [locationSuggestions, setLocationSuggestions] = useState<string[]>([]);
   const [showLocationSuggestions, setShowLocationSuggestions] = useState(false);
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
@@ -189,9 +192,12 @@ export default function ContactUsPage() {
     
     if (!formData.propertyType) newErrors.propertyType = "Please select property type";
     if (!formData.budget) newErrors.budget = "Please select budget range";
-    
+
+    const consentOk = consentGiven;
+    setConsentError(consentOk ? "" : "Please provide your consent to proceed");
+
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return Object.keys(newErrors).length === 0 && consentOk;
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -483,6 +489,16 @@ export default function ContactUsPage() {
                     placeholder="Tell us about your requirements, preferred amenities, timeline..."
                   />
                 </div>
+
+                {/* Consent */}
+                <ConsentCheckbox
+                  checked={consentGiven}
+                  error={consentError}
+                  onChange={(v) => {
+                    setConsentGiven(v);
+                    if (consentError) setConsentError("");
+                  }}
+                />
 
                 {/* Submit Button */}
                 <button

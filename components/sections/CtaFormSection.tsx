@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Phone, Mail, MapPin, CheckCircle2, ArrowRight, Shield, Clock, Users } from 'lucide-react';
 import CountryCodeSelect from '@/components/common/CountryCodeSelect';
+import ConsentCheckbox from '@/components/common/ConsentCheckbox';
 
 interface CtaFormSectionProps {
   city: 'Pune' | 'Mumbai' | 'KDMC';
@@ -34,7 +35,8 @@ export default function CtaFormSection({ city, title, subtitle, buttonText, form
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [clientIp, setClientIp] = useState<string>('Unknown');
-  const [errors, setErrors] = useState<{ name?: string; phone?: string }>({});
+  const [consentGiven, setConsentGiven] = useState(false);
+  const [errors, setErrors] = useState<{ name?: string; phone?: string; consent?: string }>({});
 
   // ✅ Robust IP fetching with timeout and fallback
   useEffect(() => {
@@ -101,16 +103,20 @@ export default function CtaFormSection({ city, title, subtitle, buttonText, form
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const newErrors: { name?: string; phone?: string } = {};
-    
+    const newErrors: { name?: string; phone?: string; consent?: string } = {};
+
     if (!validateName(formData.name)) {
       newErrors.name = 'Please enter a valid name (only letters, min 2 characters)';
     }
-    
+
     if (!validatePhone(formData.phone)) {
       newErrors.phone = 'Please enter a valid 10-digit mobile number';
     }
-    
+
+    if (!consentGiven) {
+      newErrors.consent = 'Please provide your consent to proceed';
+    }
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
@@ -159,6 +165,7 @@ export default function CtaFormSection({ city, title, subtitle, buttonText, form
       setTimeout(() => {
         setIsSubmitted(false);
         setFormData({ name: '', phone: '', budget: '', propertyType: '', message: '' });
+        setConsentGiven(false);
       }, 3000);
       
     } catch (error) {
@@ -466,11 +473,15 @@ export default function CtaFormSection({ city, title, subtitle, buttonText, form
                       )}
                     </motion.button>
                     
-                    {/* Privacy Note */}
-                    <p className="text-xs text-gray-400 text-center">
-                      By submitting, you agree to our <a href="/privacy-policy" className="text-[#005E60] hover:underline">Privacy Policy</a>. 
-                      We'll never share your data.
-                    </p>
+                    {/* Consent */}
+                    <ConsentCheckbox
+                      checked={consentGiven}
+                      error={errors.consent}
+                      onChange={(v) => {
+                        setConsentGiven(v);
+                        if (errors.consent) setErrors((prev) => ({ ...prev, consent: undefined }));
+                      }}
+                    />
                   </form>
                 </>
               )}

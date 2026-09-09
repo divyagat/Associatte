@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import CountryCodeSelect from "@/components/common/CountryCodeSelect";
+import ConsentCheckbox from "@/components/common/ConsentCheckbox";
 import VoiceButton from "@/components/common/VoiceButton";
 import ProjectCard from "@/components/builder-page/ProjectCard";
 import { useRouter } from "next/navigation";
@@ -117,7 +118,8 @@ export default function Chatbot() {
     remark: ''
   });
   const [countryCode, setCountryCode] = useState("+91");
-  const [errors, setErrors] = useState<{ name?: string; mobile?: string }>({});
+  const [consentGiven, setConsentGiven] = useState(false);
+  const [errors, setErrors] = useState<{ name?: string; mobile?: string; consent?: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userIP, setUserIP] = useState("");
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -382,6 +384,10 @@ export default function Chatbot() {
     }
     if (!validateMobile(leadData.mobile)) {
       setErrors({ mobile: "10 digits required" });
+      return;
+    }
+    if (!consentGiven) {
+      setErrors({ consent: "Please provide your consent to proceed" });
       return;
     }
 
@@ -807,6 +813,14 @@ export default function Chatbot() {
                     value={leadData.email}
                     onChange={(e) => setLeadData({ ...leadData, email: e.target.value })}
                     className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all"
+                  />
+                  <ConsentCheckbox
+                    checked={consentGiven}
+                    error={errors.consent}
+                    onChange={(v) => {
+                      setConsentGiven(v);
+                      if (errors.consent) setErrors({});
+                    }}
                   />
                   <button
                     type="submit"

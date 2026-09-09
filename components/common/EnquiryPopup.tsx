@@ -6,6 +6,7 @@ import { X, Mail, Phone, User, CheckCircle, AlertCircle, ChevronDown } from 'luc
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { COUNTRY_CODES } from './CountryCodeSelect';
+import ConsentCheckbox from './ConsentCheckbox';
 
 interface TrackingData {
   source: string;
@@ -427,33 +428,15 @@ export default function EnquiryPopup({
                 </div>
 
                 {showLegalLinks && (
-                  <div className="space-y-3">
-                    <div className="flex items-start gap-3">
-                      <input
-                        type="checkbox"
-                        id="consent"
-                        checked={consentGiven}
-                        onChange={(e) => setConsentGiven(e.target.checked)}
-                        className="mt-1 w-4 h-4 text-[#F8C21C] border-gray-300 rounded focus:ring-[#F8C21C]"
-                      />
-                      <label htmlFor="consent" className={`text-xs ${isGradient ? 'text-white/80' : 'text-gray-600'} leading-relaxed`}>
-                        I agree to the{' '}
-                        <Link href="/terms-conditions" target="_blank" className={`${isGradient ? 'text-[#F8C21C]' : 'text-[#005E60]'} font-medium hover:underline`}>
-                          Terms & Conditions
-                        </Link>
-                        {' '}and{' '}
-                        <Link href="/privacy-policy" target="_blank" className={`${isGradient ? 'text-[#F8C21C]' : 'text-[#005E60]'} font-medium hover:underline`}>
-                          Privacy Policy
-                        </Link>
-                      </label>
-                    </div>
-                    {errors.consent && (
-                      <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
-                        <AlertCircle className="w-3 h-3" />
-                        {errors.consent}
-                      </p>
-                    )}
-                  </div>
+                  <ConsentCheckbox
+                    checked={consentGiven}
+                    error={errors.consent}
+                    variant={isGradient ? 'dark' : 'light'}
+                    onChange={(v) => {
+                      setConsentGiven(v);
+                      if (errors.consent) setErrors({ ...errors, consent: undefined });
+                    }}
+                  />
                 )}
 
                 <button

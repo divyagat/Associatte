@@ -5,6 +5,7 @@ import { Phone, Mail, User, MessageSquare, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import CountryCodeSelect from "@/components/common/CountryCodeSelect";
+import ConsentCheckbox from "@/components/common/ConsentCheckbox";
 
 interface ContactFormProps {
   propertyId?: string;
@@ -34,6 +35,7 @@ export default function ContactForm({
   });
 
   const [countryCode, setCountryCode] = useState("+91");
+  const [consentGiven, setConsentGiven] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -50,6 +52,8 @@ export default function ContactForm({
       e.phone = "Valid 10-digit mobile number required";
 
     if (!form.message.trim()) e.message = "Message is required";
+
+    if (!consentGiven) e.consent = "Please provide your consent to proceed";
 
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -109,6 +113,7 @@ export default function ContactForm({
           onClick={() => {
             setSubmitted(false);
             setForm({ name: "", email: "", phone: "", message: "" });
+            setConsentGiven(false);
           }}
           className="mt-4 text-sm text-primary-600 hover:underline"
         >
@@ -231,6 +236,16 @@ export default function ContactForm({
           )}
         </div>
       )}
+
+      {/* CONSENT */}
+      <ConsentCheckbox
+        checked={consentGiven}
+        error={errors.consent}
+        onChange={(v) => {
+          setConsentGiven(v);
+          setErrors({ ...errors, consent: "" });
+        }}
+      />
 
       {/* SUBMIT */}
       <button

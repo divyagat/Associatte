@@ -3,10 +3,13 @@
 import { useState } from 'react';
 import { CheckCircle2, Loader2 } from 'lucide-react';
 import CountryCodeSelect from '@/components/common/CountryCodeSelect';
+import ConsentCheckbox from '@/components/common/ConsentCheckbox';
 
 export default function LeadCaptureForm() {
   const [countryCode, setCountryCode] = useState('+91');
   const [phone, setPhone] = useState('');
+  const [consentGiven, setConsentGiven] = useState(false);
+  const [consentError, setConsentError] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -16,6 +19,11 @@ export default function LeadCaptureForm() {
     if (cleaned.length !== 10) {
       setStatus('error');
       setErrorMsg('Please enter a valid 10-digit mobile number.');
+      return;
+    }
+
+    if (!consentGiven) {
+      setConsentError('Please provide your consent to proceed');
       return;
     }
 
@@ -73,6 +81,14 @@ export default function LeadCaptureForm() {
       {status === 'error' && (
         <p className="text-xs text-red-600">{errorMsg}</p>
       )}
+      <ConsentCheckbox
+        checked={consentGiven}
+        error={consentError}
+        onChange={(v) => {
+          setConsentGiven(v);
+          if (consentError) setConsentError('');
+        }}
+      />
       <button
         type="submit"
         disabled={status === 'loading'}
