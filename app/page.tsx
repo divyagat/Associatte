@@ -14,6 +14,7 @@ import PropertyTypesSection from '@/components/sections/PropertyTypesSection';
 import CategorySection from '@/components/sections/CategorySection';
 import ServicesSection from '@/components/sections/ServicesSection';
 import FeaturedProjectsSection from '@/components/sections/FeaturedProjectsSection';
+import MappingSection from '@/components/sections/MappingSection';
 import TestimonialsAchievementsSection from '@/components/sections/TestimonialsAchievementsSection';
 import InvestmentCtaSection from '@/components/sections/InvestmentCtaSection';
 import CtaFormSection from '@/components/sections/CtaFormSection';
@@ -225,6 +226,8 @@ function HomePageContent() {
         <section aria-labelledby="featured-heading">
           <FeaturedProjectsSection city={config.name} />
         </section>
+
+        <MappingSection />
 
         {/* Awards & Recognition section hidden for now
         <section aria-labelledby="awards-heading">
