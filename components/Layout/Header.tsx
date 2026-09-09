@@ -54,6 +54,9 @@ function HeaderContent() {
   const pathname = usePathname();
   const searchParams = useSearchParams(); // ✅ Added to properly read query params
 
+  // Header is sticky everywhere except the home page (per request).
+  const isHomePage = pathname === '/';
+
   // Highlight a nav link / sub-link from the current path + query params, applying
   // each page's default tab when the relevant param is absent from the URL.
   const isHrefActive = (href: string): boolean => {
@@ -222,7 +225,7 @@ function HeaderContent() {
 
   return (
     <>
-      <nav className="bg-white shadow-md sticky top-0 z-50">
+      <nav className={`bg-white shadow-md z-50 ${isHomePage ? 'relative' : 'sticky top-0'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center gap-2 h-20 lg:h-24">
 

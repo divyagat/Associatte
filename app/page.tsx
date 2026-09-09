@@ -226,9 +226,11 @@ function HomePageContent() {
           <FeaturedProjectsSection city={config.name} />
         </section>
 
+        {/* Awards & Recognition section hidden for now
         <section aria-labelledby="awards-heading">
           <AwardsSection showViewAllLink />
         </section>
+        */}
 
         {/* <section aria-labelledby="testimonials-heading">
           <TestimonialsAchievementsSection city={config.name} />
@@ -252,9 +254,11 @@ function HomePageContent() {
           />
         </section>
 
+        {/* "Latest in {city}" news section hidden for now
         <section aria-labelledby="news-heading">
           <RealEstateNewsSection city={config.name} />
         </section>
+        */}
 
         <section aria-labelledby="instagram-heading">
           <InstagramReelsSection city={config.name} />
