@@ -1,0 +1,37 @@
+{
+  "propertyTypes": [
+    {
+      "id": "residential",
+      "label": "Residential",
+      "color": "#005E60",
+      "section": "projects"
+    },
+    {
+      "id": "commercial",
+      "label": "Commercial",
+      "color": "#8B0000",
+      "section": "projects"
+    },
+    {
+      "id": "plots",
+      "label": "Plots",
+      "color": "#F8C21C",
+      "section": "projects"
+    },
+    {
+      "id": "warehouse",
+      "label": "Warehouse",
+      "color": "#005E60",
+      "section": "properties"
+    },
+    {
+      "id": "industry",
+      "label": "Industry",
+      "color": "#8B0000",
+      "section": "properties"
+    }
+  ],
+  "hiddenTypes": [],
+  "hiddenDeals": [],
+  "hiddenSections": []
+}
