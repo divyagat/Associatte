@@ -39,7 +39,7 @@ export default function MappingSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="max-w-5xl mx-auto rounded-2xl overflow-hidden shadow-xl border border-gray-200 bg-white"
+          className="max-w-3xl mx-auto rounded-2xl overflow-hidden shadow-xl border border-gray-200 bg-white"
         >
           {/* Browser chrome bar */}
           <div className="flex items-center gap-2 px-3 sm:px-4 py-2.5 bg-slate-100 border-b border-gray-200">
@@ -64,7 +64,7 @@ export default function MappingSection() {
           </div>
 
           {/* Live embed — preserves the real website view */}
-          <div className="relative w-full h-[420px] sm:h-[520px] md:h-[600px] bg-white">
+          <div className="relative w-full h-[280px] sm:h-[340px] md:h-[400px] bg-white">
             {!isLoaded && (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-[var(--color-text-light)]">
                 <Loader2 className="w-6 h-6 animate-spin text-[var(--color-primary)]" />
