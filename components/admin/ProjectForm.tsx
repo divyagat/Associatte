@@ -319,7 +319,7 @@ export default function ProjectForm({ initialData, onSubmit, loading }: ProjectF
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Gallery Images</label>
-            <div className="grid grid-cols-4 gap-3 mb-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mb-3">
               {formData.gallery.map((img: string, index: number) => (
                 <div key={index} className="relative group">
                   <img src={img} alt={`Gallery ${index + 1}`} className="w-full h-24 object-cover rounded-lg" />
