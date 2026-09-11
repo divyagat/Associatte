@@ -114,11 +114,26 @@ export async function readJson<T>(filePath: string, defaultValue?: T): Promise<T
  * Writes a JSON document, creating the backing store as needed.
  */
 export async function writeJson<T>(filePath: string, data: T): Promise<void> {
-  try {
-    if (usingMongo()) {
+  if (usingMongo()) {
+    try {
       await writeMongoJson(filePath, data);
       return;
+    } catch (error) {
+      // Mongo write failed (e.g. bad-auth / cluster unreachable). Degrade to a
+      // local filesystem write so dev/self-hosted setups keep working. On a
+      // read-only host (Vercel) this fs write throws EROFS, so we rethrow the
+      // ORIGINAL Mongo error to surface the real cause instead of masking it.
+      console.error(`Error writing ${filePath} to MongoDB:`, error);
+      try {
+        await writeFileJson(filePath, data);
+        console.warn(`⚠️ Wrote ${filePath} to local filesystem as a fallback (MongoDB unavailable).`);
+        return;
+      } catch {
+        throw error;
+      }
     }
+  }
+  try {
     await writeFileJson(filePath, data);
   } catch (error) {
     console.error(`Error writing ${filePath}:`, error);
