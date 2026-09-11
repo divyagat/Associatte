@@ -63,8 +63,9 @@ export default function MappingSection() {
             </a>
           </div>
 
-          {/* Live embed — preserves the real website view */}
-          <div className="relative w-full h-[280px] sm:h-[340px] md:h-[400px] bg-white">
+          {/* Live embed — preserves the real website view. Shorter on mobile so
+              the whole frame fits neatly on small screens. */}
+          <div className="relative w-full h-[180px] sm:h-[280px] md:h-[400px] bg-white">
             {!isLoaded && (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-[var(--color-text-light)]">
                 <Loader2 className="w-6 h-6 animate-spin text-[var(--color-primary)]" />

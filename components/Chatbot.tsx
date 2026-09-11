@@ -556,7 +556,7 @@ export default function Chatbot() {
     return (
       <button
         onClick={handleManualOpen}
-        className="fixed left-4 bottom-4 z-50 group cursor-pointer"
+        className="fixed left-4 bottom-24 md:bottom-4 z-50 group cursor-pointer"
         aria-label="Open Live Assistance"
       >
         <div className="relative">
@@ -587,7 +587,9 @@ export default function Chatbot() {
       )}
 
       <div className={`fixed z-50 bg-white shadow-xl transition-all duration-300 ${
-        isMinimized ? 'left-4 bottom-4 rounded-full' : 'left-4 bottom-4 w-[380px] rounded-lg shadow-2xl'
+        isMinimized
+          ? 'left-4 bottom-24 md:bottom-4 rounded-full'
+          : 'left-4 right-4 bottom-24 md:right-auto md:bottom-4 w-auto md:w-[380px] max-w-[380px] rounded-lg shadow-2xl'
       }`}>
         {isMinimized ? (
           <button
@@ -602,7 +604,7 @@ export default function Chatbot() {
             <div className="w-2 h-2 bg-green-500 rounded-full"></div>
           </button>
         ) : (
-          <div className="flex flex-col h-[520px] w-full">
+          <div className="flex flex-col h-[520px] max-h-[calc(100vh-8rem)] w-full">
             {/* Header */}
             <div className="bg-[var(--color-primary)] px-4 py-3 rounded-t-lg">
               <div className="flex justify-between items-center">

@@ -272,8 +272,9 @@ function HomePageContent() {
         </section>
 
         <FloatingVideoPlayer
-          videoId="U03yryIhSE0"
-          title="Mantra 1 Residences Tour"
+          videoSrc="/videos/associatte-reel.mp4"
+          instagramUrl="https://www.instagram.com/reel/Dc3DOcuNigb/?utm_source=ig_web_copy_link&stkn=NTc4MTIwNjQ2YQ=="
+          title="Associatte on Instagram"
           position="bottom-right"
         />
 
