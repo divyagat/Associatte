@@ -4,6 +4,7 @@ import { Montserrat, Jost, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ClientLayout from "@/components/ClientLayout";
 import GoogleAnalytics from "@/components/SEO/GoogleAnalytics";
+import FacebookPixel from "@/components/SEO/FacebookPixel";
 import { getSeoOverride, keywordsToArray } from "@/lib/seo-store";
 import { seoPageByPath } from "@/lib/seo-pages";
 
@@ -135,6 +136,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       >
         <ClientLayout>{children}</ClientLayout>
         {GA_ID ? <GoogleAnalytics gaId={GA_ID} /> : null}
+        <FacebookPixel pixelId="443378928117403" />
       </body>
     </html>
   );
