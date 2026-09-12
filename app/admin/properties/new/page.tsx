@@ -3,12 +3,13 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import PropertyForm from '@/components/admin/PropertyForm';
+import type { Project } from '@/types/project';
 
 export default function NewPropertyPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: Partial<Project>) => {
     setLoading(true);
     try {
       const response = await fetch('/api/properties', {

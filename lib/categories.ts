@@ -14,6 +14,20 @@
 //                          property types whose `section === 'properties'`
 //                          (Warehouse, Industry …)
 
+// Structural subset of a listing the classifiers below need. Deliberately
+// loose (not the full `Project` type) so any listing-shaped object — the
+// shared `Project` record or a page-local duck-typed variant — can be passed
+// in without coupling every caller to the full listing shape.
+export interface ClassifiableListing {
+  category?: string;
+  propertyType?: string;
+  projectType?: string;
+  name?: string;
+  dealType?: string;
+  isRental?: boolean;
+  priceDetails?: { configurations?: Array<{ type?: string }> };
+}
+
 export interface CategoryDef {
   id: string;
   label: string;
@@ -110,7 +124,7 @@ export const PROPERTY_TAB_IDS = PROPERTY_TABS.map((t) => t.id);
  * sniff the configurations + name. Pass `knownIds` so dynamically-added
  * categories are honoured; it defaults to the built-in set.
  */
-export function getProjectType(item: any, knownIds: string[] = ALL_PROPERTY_TYPE_IDS): string {
+export function getProjectType(item: ClassifiableListing, knownIds: string[] = ALL_PROPERTY_TYPE_IDS): string {
   const explicit = String(item?.category || item?.projectType || item?.propertyType || '')
     .toLowerCase()
     .trim();
@@ -118,7 +132,7 @@ export function getProjectType(item: any, knownIds: string[] = ALL_PROPERTY_TYPE
 
   const configs = item?.priceDetails?.configurations || [];
   const text = [
-    ...configs.map((c: any) => c?.type || ''),
+    ...configs.map((c) => c?.type || ''),
     item?.propertyType || '',
     item?.name || '',
   ]
@@ -136,7 +150,7 @@ export function getProjectType(item: any, knownIds: string[] = ALL_PROPERTY_TYPE
  * Resolve the DEAL TYPE bucket for a listing.
  * Explicit `dealType` wins; otherwise legacy `rent` category → rent, else sale.
  */
-export function getDealType(item: any): string {
+export function getDealType(item: ClassifiableListing): string {
   const explicit = String(item?.dealType || '').toLowerCase().trim();
   if (DEAL_TYPE_IDS.includes(explicit)) return explicit;
   if (explicit === 'rental' || explicit === 'lease') return 'rent';
@@ -150,7 +164,7 @@ export function getDealType(item: any): string {
 
 /** Does a listing belong under a given Properties-section tab? */
 export function matchesPropertyTab(
-  item: any,
+  item: ClassifiableListing,
   tab: PropertyTabDef,
   knownIds?: string[],
 ): boolean {
@@ -165,7 +179,7 @@ export function matchesPropertyTab(
  * display ids are tallied.
  */
 export function countByType(
-  items: any[],
+  items: ClassifiableListing[],
   displayIds: string[],
   knownIds: string[] = displayIds,
 ): Record<string, number> {
@@ -179,7 +193,7 @@ export function countByType(
 
 /** Count listings per Properties-section tab (a listing can match several). */
 export function countByTab(
-  items: any[],
+  items: ClassifiableListing[],
   tabs: PropertyTabDef[],
   knownIds?: string[],
 ): Record<string, number> {

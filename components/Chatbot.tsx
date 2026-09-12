@@ -25,6 +25,7 @@ import ProjectCard from "@/components/builder-page/ProjectCard";
 import { useRouter } from "next/navigation";
 import { matchFaq, DEFAULT_CHATBOT_CONFIG, type ChatbotConfig } from "@/lib/chatbot-match";
 import { criteriaToPropertiesQuery, type SearchCriteria, type CriteriaPatch } from "@/lib/ai-search/criteria";
+import type { Project } from "@/types/project";
 
 // A refine chip either sends a natural phrase back through the pipeline or
 // applies a direct patch (e.g. clear the location) to the active criteria.
@@ -41,7 +42,7 @@ interface Message {
   isUser: boolean;
   timestamp: Date;
   // AI property results rendered as real cards inside the chat.
-  properties?: any[];
+  properties?: Project[];
   // Active-filter checklist (["Pune", "2 BHK", "Up to ₹90 Lakh"]).
   summary?: string[];
   // Refine buttons under an answer.
@@ -52,12 +53,19 @@ interface Message {
 
 // Apply a refine patch on the client (null clears a field), mirroring
 // mergeCriteria so the chip actions stay in sync with the server.
+function setCriteriaField<K extends keyof SearchCriteria>(
+  target: SearchCriteria,
+  key: K,
+  value: SearchCriteria[K] | null | undefined,
+) {
+  if (value === null || value === undefined || value === '') delete target[key];
+  else target[key] = value;
+}
+
 function applyPatch(prev: SearchCriteria, patch: CriteriaPatch): SearchCriteria {
   const out: SearchCriteria = { ...prev };
   (Object.keys(patch) as (keyof CriteriaPatch)[]).forEach((k) => {
-    const v = patch[k];
-    if (v === null || v === undefined || v === '') delete (out as any)[k];
-    else (out as any)[k] = v;
+    setCriteriaField(out, k, patch[k]);
   });
   return out;
 }
@@ -695,7 +703,7 @@ export default function Chatbot() {
                       chat so the visitor lands on the property detail page. */}
                   {msg.properties && msg.properties.length > 0 && (
                     <div className="ml-8 mt-2 space-y-3">
-                      {msg.properties.map((p: any) => (
+                      {msg.properties.map((p) => (
                         <div key={p.slug || p._id} onClick={handleClose}>
                           <ProjectCard project={p} />
                         </div>

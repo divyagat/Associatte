@@ -10,7 +10,7 @@ import {
   MapPin, Home, Bed, Square, ArrowRight, Filter, SlidersHorizontal, 
   Heart, GitCompare, Grid3X3, List, ChevronDown, Star, Sparkles, Phone, Building2, Eye, X, Maximize2
 } from "lucide-react";
-import EnquiryPopup from '@/components/common/EnquiryPopup';
+import EnquiryPopup, { type EnquiryPayload } from '@/components/common/EnquiryPopup';
 
 // Google Maps
 import { GoogleMap, useLoadScript, Marker, InfoWindow } from '@react-google-maps/api';
@@ -293,7 +293,7 @@ export default function CityPage() {
   const hasActiveFilters = priceMin > 0 || priceMax < 50000000 || selectedBhk.length > 0 || readyOnly;
 
   // Handle Form Submission
-  const handlePopupSubmit = (payload: any) => {
+  const handlePopupSubmit = (payload: EnquiryPayload) => {
     console.log('📩 Enquiry Submitted:', payload);
   };
 

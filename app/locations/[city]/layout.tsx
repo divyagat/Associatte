@@ -4,7 +4,7 @@ import { getSeoOverride, keywordsToArray } from "@/lib/seo-store";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.associatte.com";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 // The page itself is a Client Component (Google Maps + interactive filters),
 // so it cannot export metadata. This server layout supplies real per-city

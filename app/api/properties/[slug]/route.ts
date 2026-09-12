@@ -3,6 +3,7 @@ import { getPropertyBySlug, updateProperty, deleteProperty } from '@/lib/data-st
 import { getPermissionsFromRequest, getRoleFromRequest } from '@/lib/admin-auth';
 import { can } from '@/lib/admin-permissions';
 import { sanitizeStatus, allowedStatusTargets } from '@/lib/visibility';
+import type { Project } from '@/types/project';
 
 export async function GET(
   request: NextRequest,
@@ -15,9 +16,10 @@ export async function GET(
       return NextResponse.json({ error: 'Property not found' }, { status: 404 });
     }
     return NextResponse.json(property);
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error fetching property:', error);
-    return NextResponse.json({ error: error.message || 'Failed to fetch property' }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'Failed to fetch property';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 
@@ -30,7 +32,7 @@ export async function PUT(
   }
   try {
     const { slug } = await context.params;
-    const body = await request.json();
+    const body: Partial<Project> = await request.json();
     // Two-stage approval. A main admin may set any status. A manager may only
     // advance a submission to `manager_approved` (stage-1 approval) or hide it —
     // publishing is the admin's exclusive final gate. A non-approver's content
@@ -58,9 +60,10 @@ export async function PUT(
       return NextResponse.json({ error: 'Property not found' }, { status: 404 });
     }
     return NextResponse.json(property);
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error updating property:', error);
-    return NextResponse.json({ error: error.message || 'Failed to update property' }, { status: 400 });
+    const message = error instanceof Error ? error.message : 'Failed to update property';
+    return NextResponse.json({ error: message }, { status: 400 });
   }
 }
 
@@ -78,8 +81,9 @@ export async function DELETE(
       return NextResponse.json({ error: 'Property not found' }, { status: 404 });
     }
     return NextResponse.json({ success: true });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error deleting property:', error);
-    return NextResponse.json({ error: error.message || 'Failed to delete property' }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'Failed to delete property';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

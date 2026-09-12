@@ -65,8 +65,8 @@ export async function POST(request: NextRequest) {
 
     const url = `/api/images/${doc._id}`;
     return NextResponse.json({ url, filename });
-  } catch (error: any) {
-    const message: string = error?.message || String(error);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
     console.error('Upload error:', message, error);
     return NextResponse.json({ error: `Upload failed: ${message}` }, { status: 500 });
   }

@@ -10,7 +10,7 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface IDataDoc extends Document {
   key: string;
-  value: any;
+  value: unknown;
   updatedAt: Date;
 }
 

@@ -22,10 +22,32 @@ function getClientIp(request: NextRequest): string {
   return 'Unknown';
 }
 
+interface EnquiryBody {
+  name?: string;
+  fullName?: string;
+  phone?: string;
+  mobile?: string;
+  phoneNumber?: string;
+  email?: string;
+  project?: string;
+  projectName?: string;
+  projectId?: string;
+  remark?: string;
+  message?: string;
+  projectImage?: string;
+  projectLocation?: string | { area?: string; city?: string };
+  projectPrice?: string;
+  developer?: string;
+  source?: string;
+  campaign?: string;
+  city?: string;
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    
+    const body: EnquiryBody = await request.json();
+
+
     // Extract fields - handle multiple possible field names
     const name = body.name || body.fullName || '';
     const phone = body.phone || body.mobile || body.phoneNumber || '';
@@ -175,13 +197,14 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     );
     
-  } catch (error: any) {
+  } catch (error) {
     console.error('❌ Error sending to B2B Bricks from Associatte:', error);
-    
+
+    const message = error instanceof Error ? error.message : 'Failed to submit enquiry. Please try again later.';
     return NextResponse.json(
-      { 
-        success: false, 
-        error: error.message || 'Failed to submit enquiry. Please try again later.' 
+      {
+        success: false,
+        error: message
       },
       { status: 500 }
     );

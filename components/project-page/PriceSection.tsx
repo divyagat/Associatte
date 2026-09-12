@@ -1,4 +1,9 @@
-export default function PriceSection({ data }: any) {
+interface PriceSectionData {
+  priceFrom: string | number;
+  possession: string;
+}
+
+export default function PriceSection({ data }: { data: PriceSectionData }) {
   return (
     <section className="bg-gray-50 py-12">
       <div className="max-w-5xl mx-auto px-4">

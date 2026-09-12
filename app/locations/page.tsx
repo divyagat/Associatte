@@ -6,7 +6,7 @@ import { MapPin, ArrowRight, Star, Building2, Home, TrendingUp, Search, Phone, M
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
-import EnquiryPopup from "../../components/common/EnquiryPopup";
+import EnquiryPopup, { type EnquiryPayload } from "../../components/common/EnquiryPopup";
 
 interface LocationData {
   name: string;
@@ -115,7 +115,7 @@ export default function LocationsPage() {
     return a.name.localeCompare(b.name);
   });
 
-  const handlePopupSubmit = (payload: any) => {
+  const handlePopupSubmit = (payload: EnquiryPayload) => {
     console.log('📩 Enquiry Submitted from Locations Page:', payload);
   };
 

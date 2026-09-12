@@ -19,28 +19,34 @@ function str(v: unknown, max: number): string {
   return String(v ?? '').trim().slice(0, max);
 }
 
-function sanitizeItem(raw: any, i: number): NewsItem {
-  const city: NewsItem['city'] = CITIES.includes(raw?.city) ? raw.city : 'National';
+/** Narrow arbitrary/stored input into a plain object we can safely index. */
+function toRecord(v: unknown): Record<string, unknown> {
+  return v && typeof v === 'object' ? (v as Record<string, unknown>) : {};
+}
+
+function sanitizeItem(raw: unknown, i: number): NewsItem {
+  const rec = toRecord(raw);
+  const city: NewsItem['city'] = CITIES.includes(rec.city as NewsItem['city']) ? (rec.city as NewsItem['city']) : 'National';
   const item: NewsItem = {
-    id: str(raw?.id, 80) || `news_${Date.now()}_${i}`,
-    title: str(raw?.title, 200),
-    excerpt: str(raw?.excerpt, 600),
-    image: str(raw?.image, 1000),
-    category: str(raw?.category, 60) || 'News',
+    id: str(rec.id, 80) || `news_${Date.now()}_${i}`,
+    title: str(rec.title, 200),
+    excerpt: str(rec.excerpt, 600),
+    image: str(rec.image, 1000),
+    category: str(rec.category, 60) || 'News',
     city,
-    source: str(raw?.source, 120) || 'Associatte',
-    date: str(raw?.date, 40),
-    url: str(raw?.url, 1000) || undefined,
+    source: str(rec.source, 120) || 'Associatte',
+    date: str(rec.date, 40),
+    url: str(rec.url, 1000) || undefined,
   };
-  const content = str(raw?.content, 20000);
+  const content = str(rec.content, 20000);
   if (content) item.content = content;
-  const readTime = str(raw?.readTime, 40);
+  const readTime = str(rec.readTime, 40);
   if (readTime) item.readTime = readTime;
   return item;
 }
 
 /** Coerce arbitrary/stored input into a clean NewsItem[] (drops incomplete rows). */
-export function sanitizeNewsList(raw: any): NewsItem[] {
+export function sanitizeNewsList(raw: unknown): NewsItem[] {
   if (!Array.isArray(raw)) return [];
   return raw
     .map(sanitizeItem)
@@ -50,7 +56,7 @@ export function sanitizeNewsList(raw: any): NewsItem[] {
 
 /** Full news list. Falls back to the seed defaults until an admin saves. */
 export async function getAllNews(): Promise<NewsItem[]> {
-  const data = await readJson<any>(NEWS_FILE, null);
+  const data = await readJson<unknown>(NEWS_FILE, null);
   const list = sanitizeNewsList(data);
   return list.length ? list : INITIAL_NEWS_ITEMS;
 }
@@ -63,7 +69,7 @@ export async function getNewsByCity(city: string, limit?: number): Promise<NewsI
 }
 
 /** Replace the entire news list (admin panel save). */
-export async function saveAllNews(list: any): Promise<NewsItem[]> {
+export async function saveAllNews(list: unknown): Promise<NewsItem[]> {
   const clean = sanitizeNewsList(list);
   await writeJson(NEWS_FILE, clean);
   return clean;

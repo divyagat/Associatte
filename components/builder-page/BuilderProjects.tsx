@@ -4,10 +4,11 @@
 import ProjectCard from './ProjectCard';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import type { Project } from '@/types/project';
 
 interface BuilderProjectsProps {
   slug: string;
-  projects: any[];
+  projects: Project[];
 }
 
 export default function BuilderProjects({ slug, projects }: BuilderProjectsProps) {

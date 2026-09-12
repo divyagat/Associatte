@@ -6,11 +6,22 @@ import {
   Building2, MapPin, Award, Users, 
   Star
 } from 'lucide-react';
-import { getAllBlogs, type BlogPost } from '@/lib/blog-data';
+import { getAllBlogs, type BlogPost, type Author } from '@/lib/blog-data';
+import type { IBlog } from '@/lib/models/Blog';
 import EnquiryPopup from '../../components/common/EnquiryPopup';
 
+interface SafeImageProps {
+  src?: string;
+  alt: string;
+  fill?: boolean;
+  sizes?: string;
+  className?: string;
+  width?: number;
+  height?: number;
+}
+
 // ✅ BULLETPROOF IMAGE COMPONENT
-const SafeImage = ({ src, alt, fill, sizes, className, width, height }: any) => {
+const SafeImage = ({ src, alt, fill, sizes, className, width, height }: SafeImageProps) => {
   const [imgError, setImgError] = useState(false);
 
   if (!src || typeof src !== 'string' || imgError) {
@@ -35,7 +46,7 @@ const SafeImage = ({ src, alt, fill, sizes, className, width, height }: any) => 
 };
 
 // ✅ BULLETPROOF AVATAR COMPONENT
-const AuthorAvatar = ({ author }: { author: any }) => {
+const AuthorAvatar = ({ author }: { author: Author | string }) => {
   const [imgError, setImgError] = useState(false);
   const name = typeof author === 'string' ? author : (author?.name || 'Admin');
   const avatar = typeof author === 'object' && author !== null ? author?.avatar : null;
@@ -71,7 +82,7 @@ function BlogListingContent() {
 
     fetch('/api/blogs')
       .then((res) => (res.ok ? res.json() : []))
-      .then((dbBlogs: any[]) => {
+      .then((dbBlogs: IBlog[]) => {
         if (!Array.isArray(dbBlogs)) return;
         const mapped: BlogPost[] = dbBlogs.map((b) => ({
           ...b,
@@ -89,7 +100,7 @@ function BlogListingContent() {
   }, []);
 
   const featuredBlogs = allBlogs.slice(0, 2);
-  const authorName = (author: any) => typeof author === 'string' ? author : (author?.name || 'Admin');
+  const authorName = (author: Author | string) => typeof author === 'string' ? author : (author?.name || 'Admin');
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">

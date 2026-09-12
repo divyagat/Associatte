@@ -5,15 +5,49 @@ import { useState, useEffect } from 'react';
 import { Upload, X, Plus, Trash2 } from 'lucide-react';
 import { uploadImage } from '@/lib/upload-image';
 import { projectTypesOf, PROJECT_TYPES, type PropertyType } from '@/lib/categories';
+import type { Project, ProjectConfiguration, ProjectFloorPlan, ProjectNearbyPlace } from '@/types/project';
+
+type ProjectImageField = 'image' | 'gallery' | 'masterPlan' | 'locationMap';
+
+// The form's own working shape: every nested object the JSX binds to is always
+// present (never undefined) so inputs can read e.g. `formData.fullLocation.area`
+// directly. This mirrors `Project` but with those groups required instead of
+// optional; `[key: string]: unknown` lets extra record fields (id, _id, status,
+// etc.) from `initialData` pass through untouched.
+interface ProjectFormData {
+  slug: string;
+  name: string;
+  category: string;
+  location: string;
+  price: string;
+  image: string;
+  masterPlan: string;
+  locationMap: string;
+  fullLocation: { area: string; city: string; state: string; pincode: string; landmark: string };
+  priceDetails: { range: string; perSqft: string; configurations: ProjectConfiguration[] };
+  developer: { name: string; established: string; projectsCount: number; description: string };
+  about: string;
+  amenities: string[];
+  searchKeywords: string[];
+  floorPlans: ProjectFloorPlan[];
+  possessionDate: string;
+  reraNumber: string;
+  gallery: string[];
+  mapCoords: { lat: number; lng: number };
+  nearbyPlaces: ProjectNearbyPlace[];
+  emi: { startingFrom: string; downPayment: string; interestRate: string; tenure: string };
+  soldOut: boolean;
+  [key: string]: unknown;
+}
 
 interface ProjectFormProps {
-  initialData?: any;
-  onSubmit: (data: any) => Promise<void>;
+  initialData?: Partial<Project>;
+  onSubmit: (data: Partial<Project>) => Promise<void>;
   loading: boolean;
 }
 
 export default function ProjectForm({ initialData, onSubmit, loading }: ProjectFormProps) {
-  const [formData, setFormData] = useState(initialData || {
+  const [formData, setFormData] = useState<ProjectFormData>((initialData as ProjectFormData | undefined) || {
     slug: '',
     name: '',
     category: 'residential',
@@ -37,12 +71,12 @@ export default function ProjectForm({ initialData, onSubmit, loading }: ProjectF
     about: '',
     amenities: [] as string[],
     searchKeywords: [] as string[],
-    floorPlans: [] as any[],
+    floorPlans: [] as ProjectFloorPlan[],
     possessionDate: '',
     reraNumber: '',
     gallery: [] as string[],
     mapCoords: { lat: 0, lng: 0 },
-    nearbyPlaces: [] as any[],
+    nearbyPlaces: [] as ProjectNearbyPlace[],
     emi: {
       startingFrom: '',
       downPayment: '',
@@ -79,21 +113,21 @@ export default function ProjectForm({ initialData, onSubmit, loading }: ProjectF
     const { name, value } = e.target;
     const keys = name.split('.');
 
-    setFormData((prev: any) => {
-      const updated = { ...prev };
-      let current: any = updated;
+    setFormData((prev) => {
+      const updated: Record<string, unknown> = { ...prev };
+      let current: Record<string, unknown> = updated;
 
       for (let i = 0; i < keys.length - 1; i++) {
-        current[keys[i]] = { ...current[keys[i]] };
-        current = current[keys[i]];
+        current[keys[i]] = { ...(current[keys[i]] as Record<string, unknown>) };
+        current = current[keys[i]] as Record<string, unknown>;
       }
 
       current[keys[keys.length - 1]] = value;
-      return updated;
+      return updated as unknown as ProjectFormData;
     });
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: ProjectImageField) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -101,21 +135,21 @@ export default function ProjectForm({ initialData, onSubmit, loading }: ProjectF
       const url = await uploadImage(file);
 
       if (field === 'gallery') {
-        setFormData((prev: any) => ({
+        setFormData((prev) => ({
           ...prev,
           gallery: [...prev.gallery, url]
         }));
       } else {
-        setFormData((prev: any) => ({ ...prev, [field]: url }));
+        setFormData((prev) => ({ ...prev, [field]: url }));
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error('Upload failed:', error);
-      alert(error?.message || 'Image upload failed. Please try again.');
+      alert(error instanceof Error ? error.message : 'Image upload failed. Please try again.');
     }
   };
 
   const addConfiguration = () => {
-    setFormData((prev: any) => ({
+    setFormData((prev) => ({
       ...prev,
       priceDetails: {
         ...prev.priceDetails,
@@ -125,18 +159,18 @@ export default function ProjectForm({ initialData, onSubmit, loading }: ProjectF
   };
 
   const removeConfiguration = (index: number) => {
-    setFormData((prev: any) => ({
+    setFormData((prev) => ({
       ...prev,
       priceDetails: {
         ...prev.priceDetails,
-        configurations: prev.priceDetails.configurations.filter((_: any, i: number) => i !== index)
+        configurations: prev.priceDetails.configurations.filter((_, i: number) => i !== index)
       }
     }));
   };
 
   const addAmenity = () => {
     if (currentAmenity.trim()) {
-      setFormData((prev: any) => ({
+      setFormData((prev) => ({
         ...prev,
         amenities: [...prev.amenities, currentAmenity.trim()]
       }));
@@ -145,16 +179,16 @@ export default function ProjectForm({ initialData, onSubmit, loading }: ProjectF
   };
 
   const removeAmenity = (index: number) => {
-    setFormData((prev: any) => ({
+    setFormData((prev) => ({
       ...prev,
-      amenities: prev.amenities.filter((_: any, i: number) => i !== index)
+      amenities: prev.amenities.filter((_, i: number) => i !== index)
     }));
   };
 
   const addKeyword = () => {
     const value = currentKeyword.trim();
     if (!value) return;
-    setFormData((prev: any) => {
+    setFormData((prev) => {
       const existing: string[] = Array.isArray(prev.searchKeywords) ? prev.searchKeywords : [];
       // Skip duplicates (case-insensitive) so the keyword list stays clean.
       if (existing.some((k) => k.toLowerCase() === value.toLowerCase())) return prev;
@@ -164,37 +198,37 @@ export default function ProjectForm({ initialData, onSubmit, loading }: ProjectF
   };
 
   const removeKeyword = (index: number) => {
-    setFormData((prev: any) => ({
+    setFormData((prev) => ({
       ...prev,
-      searchKeywords: (Array.isArray(prev.searchKeywords) ? prev.searchKeywords : []).filter((_: any, i: number) => i !== index)
+      searchKeywords: (Array.isArray(prev.searchKeywords) ? prev.searchKeywords : []).filter((_, i: number) => i !== index)
     }));
   };
 
   const addFloorPlan = () => {
-    setFormData((prev: any) => ({
+    setFormData((prev) => ({
       ...prev,
       floorPlans: [...prev.floorPlans, { type: '', area: '', image: '' }]
     }));
   };
 
   const removeFloorPlan = (index: number) => {
-    setFormData((prev: any) => ({
+    setFormData((prev) => ({
       ...prev,
-      floorPlans: prev.floorPlans.filter((_: any, i: number) => i !== index)
+      floorPlans: prev.floorPlans.filter((_, i: number) => i !== index)
     }));
   };
 
   const addNearbyPlace = () => {
-    setFormData((prev: any) => ({
+    setFormData((prev) => ({
       ...prev,
       nearbyPlaces: [...prev.nearbyPlaces, { name: '', distance: '', type: '' }]
     }));
   };
 
   const removeNearbyPlace = (index: number) => {
-    setFormData((prev: any) => ({
+    setFormData((prev) => ({
       ...prev,
-      nearbyPlaces: prev.nearbyPlaces.filter((_: any, i: number) => i !== index)
+      nearbyPlaces: prev.nearbyPlaces.filter((_, i: number) => i !== index)
     }));
   };
 
@@ -256,7 +290,7 @@ export default function ProjectForm({ initialData, onSubmit, loading }: ProjectF
               </div>
               <button
                 type="button"
-                onClick={() => setFormData((prev: any) => ({ ...prev, soldOut: !prev.soldOut }))}
+                onClick={() => setFormData((prev) => ({ ...prev, soldOut: !prev.soldOut }))}
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#005E60] focus:ring-offset-2 ${
                   formData.soldOut ? 'bg-red-600' : 'bg-gray-300'
                 }`}
@@ -323,7 +357,7 @@ export default function ProjectForm({ initialData, onSubmit, loading }: ProjectF
               {formData.gallery.map((img: string, index: number) => (
                 <div key={index} className="relative group">
                   <img src={img} alt={`Gallery ${index + 1}`} className="w-full h-24 object-cover rounded-lg" />
-                  <button type="button" onClick={() => setFormData((prev: any) => ({ ...prev, gallery: prev.gallery.filter((_: any, i: number) => i !== index) }))} className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button type="button" onClick={() => setFormData((prev) => ({ ...prev, gallery: prev.gallery.filter((_, i: number) => i !== index) }))} className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
                     <X size={14} />
                   </button>
                 </div>
@@ -402,12 +436,12 @@ export default function ProjectForm({ initialData, onSubmit, loading }: ProjectF
           </button>
         </div>
         <div className="space-y-3">
-          {formData.priceDetails.configurations.map((config: any, index: number) => (
+          {formData.priceDetails.configurations.map((config: ProjectConfiguration, index: number) => (
             <div key={index} className="grid grid-cols-1 md:grid-cols-5 gap-3 p-4 bg-gray-50 rounded-lg">
-              <input type="text" placeholder="Type (e.g., 2 BHK)" value={config.type} onChange={(e) => { const updated = [...formData.priceDetails.configurations]; updated[index].type = e.target.value; setFormData((prev: any) => ({ ...prev, priceDetails: { ...prev.priceDetails, configurations: updated } })); }} className="px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]" />
-              <input type="text" placeholder="Area (sq.ft)" value={config.area} onChange={(e) => { const updated = [...formData.priceDetails.configurations]; updated[index].area = e.target.value; setFormData((prev: any) => ({ ...prev, priceDetails: { ...prev.priceDetails, configurations: updated } })); }} className="px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]" />
-              <input type="text" placeholder="Price" value={config.price} onChange={(e) => { const updated = [...formData.priceDetails.configurations]; updated[index].price = e.target.value; setFormData((prev: any) => ({ ...prev, priceDetails: { ...prev.priceDetails, configurations: updated } })); }} className="px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]" />
-              <input type="text" placeholder="Description" value={config.description} onChange={(e) => { const updated = [...formData.priceDetails.configurations]; updated[index].description = e.target.value; setFormData((prev: any) => ({ ...prev, priceDetails: { ...prev.priceDetails, configurations: updated } })); }} className="px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]" />
+              <input type="text" placeholder="Type (e.g., 2 BHK)" value={config.type} onChange={(e) => { const updated = [...formData.priceDetails.configurations]; updated[index].type = e.target.value; setFormData((prev) => ({ ...prev, priceDetails: { ...prev.priceDetails, configurations: updated } })); }} className="px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]" />
+              <input type="text" placeholder="Area (sq.ft)" value={config.area} onChange={(e) => { const updated = [...formData.priceDetails.configurations]; updated[index].area = e.target.value; setFormData((prev) => ({ ...prev, priceDetails: { ...prev.priceDetails, configurations: updated } })); }} className="px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]" />
+              <input type="text" placeholder="Price" value={config.price} onChange={(e) => { const updated = [...formData.priceDetails.configurations]; updated[index].price = e.target.value; setFormData((prev) => ({ ...prev, priceDetails: { ...prev.priceDetails, configurations: updated } })); }} className="px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]" />
+              <input type="text" placeholder="Description" value={config.description} onChange={(e) => { const updated = [...formData.priceDetails.configurations]; updated[index].description = e.target.value; setFormData((prev) => ({ ...prev, priceDetails: { ...prev.priceDetails, configurations: updated } })); }} className="px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]" />
               <button type="button" onClick={() => removeConfiguration(index)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
                 <Trash2 size={18} />
               </button>
@@ -425,14 +459,14 @@ export default function ProjectForm({ initialData, onSubmit, loading }: ProjectF
           </button>
         </div>
         <div className="space-y-3">
-          {formData.floorPlans.map((plan: any, index: number) => (
+          {formData.floorPlans.map((plan: ProjectFloorPlan, index: number) => (
             <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-3 p-4 bg-gray-50 rounded-lg items-center">
-              <input type="text" placeholder="Type (e.g., 2 BHK)" value={plan.type} onChange={(e) => { const updated = [...formData.floorPlans]; updated[index].type = e.target.value; setFormData((prev: any) => ({ ...prev, floorPlans: updated })); }} className="px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]" />
-              <input type="text" placeholder="Area (sq.ft)" value={plan.area} onChange={(e) => { const updated = [...formData.floorPlans]; updated[index].area = e.target.value; setFormData((prev: any) => ({ ...prev, floorPlans: updated })); }} className="px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]" />
+              <input type="text" placeholder="Type (e.g., 2 BHK)" value={plan.type} onChange={(e) => { const updated = [...formData.floorPlans]; updated[index].type = e.target.value; setFormData((prev) => ({ ...prev, floorPlans: updated })); }} className="px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]" />
+              <input type="text" placeholder="Area (sq.ft)" value={plan.area} onChange={(e) => { const updated = [...formData.floorPlans]; updated[index].area = e.target.value; setFormData((prev) => ({ ...prev, floorPlans: updated })); }} className="px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]" />
               <label className="cursor-pointer">
                 <div className="border border-gray-200 rounded-lg px-3 py-2 text-center hover:border-[#005E60] transition-colors text-sm">
                   {plan.image ? 'Change Image' : 'Upload Image'}
-                  <input type="file" accept="image/*" onChange={async (e) => { const file = e.target.files?.[0]; if (!file) return; try { const url = await uploadImage(file); const updated = [...formData.floorPlans]; updated[index].image = url; setFormData((prev: any) => ({ ...prev, floorPlans: updated })); } catch (err: any) { console.error('Upload failed:', err); alert(err?.message || 'Image upload failed. Please try again.'); } }} className="hidden" />
+                  <input type="file" accept="image/*" onChange={async (e) => { const file = e.target.files?.[0]; if (!file) return; try { const url = await uploadImage(file); const updated = [...formData.floorPlans]; updated[index].image = url; setFormData((prev) => ({ ...prev, floorPlans: updated })); } catch (err) { console.error('Upload failed:', err); alert(err instanceof Error ? err.message : 'Image upload failed. Please try again.'); } }} className="hidden" />
                 </div>
               </label>
               <button type="button" onClick={() => removeFloorPlan(index)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
@@ -491,11 +525,11 @@ export default function ProjectForm({ initialData, onSubmit, loading }: ProjectF
           </button>
         </div>
         <div className="space-y-3">
-          {formData.nearbyPlaces.map((place: any, index: number) => (
+          {formData.nearbyPlaces.map((place: ProjectNearbyPlace, index: number) => (
             <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-3 p-4 bg-gray-50 rounded-lg items-center">
-              <input type="text" placeholder="Name (e.g., School)" value={place.name} onChange={(e) => { const updated = [...formData.nearbyPlaces]; updated[index].name = e.target.value; setFormData((prev: any) => ({ ...prev, nearbyPlaces: updated })); }} className="px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]" />
-              <input type="text" placeholder="Type (School/Hospital/Mall)" value={place.type} onChange={(e) => { const updated = [...formData.nearbyPlaces]; updated[index].type = e.target.value; setFormData((prev: any) => ({ ...prev, nearbyPlaces: updated })); }} className="px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]" />
-              <input type="text" placeholder="Distance (e.g., 2 km)" value={place.distance} onChange={(e) => { const updated = [...formData.nearbyPlaces]; updated[index].distance = e.target.value; setFormData((prev: any) => ({ ...prev, nearbyPlaces: updated })); }} className="px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]" />
+              <input type="text" placeholder="Name (e.g., School)" value={place.name} onChange={(e) => { const updated = [...formData.nearbyPlaces]; updated[index].name = e.target.value; setFormData((prev) => ({ ...prev, nearbyPlaces: updated })); }} className="px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]" />
+              <input type="text" placeholder="Type (School/Hospital/Mall)" value={place.type} onChange={(e) => { const updated = [...formData.nearbyPlaces]; updated[index].type = e.target.value; setFormData((prev) => ({ ...prev, nearbyPlaces: updated })); }} className="px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]" />
+              <input type="text" placeholder="Distance (e.g., 2 km)" value={place.distance} onChange={(e) => { const updated = [...formData.nearbyPlaces]; updated[index].distance = e.target.value; setFormData((prev) => ({ ...prev, nearbyPlaces: updated })); }} className="px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]" />
               <button type="button" onClick={() => removeNearbyPlace(index)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
                 <Trash2 size={18} />
               </button>

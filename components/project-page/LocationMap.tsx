@@ -1,4 +1,8 @@
-export default function LocationMap({ data }: any) {
+interface LocationMapData {
+  locality: string;
+}
+
+export default function LocationMap({ data }: { data: LocationMapData }) {
   return (
     <section className="bg-gray-50 py-12">
       <div className="max-w-6xl mx-auto px-4">

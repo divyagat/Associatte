@@ -2,13 +2,20 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import ProjectForm from '@/components/admin/ProjectForm';
+import type { Project } from '@/types/project';
+
+// Raw project payload as returned by GET /api/projects/[slug] — shaped like
+// `Project` but not yet normalized for the form (e.g. `developer` may still
+// be a plain string, and nested objects may be missing).
+type RawProject = Partial<Project> & { developer?: Project['developer'] };
 
 // ✅ Normalize project data to ensure consistent structure
-const normalizeProject = (p: any) => {
-  if (!p) return null;
+const normalizeProject = (raw: unknown): Project | null => {
+  if (!raw || typeof raw !== 'object') return null;
+  const p = raw as RawProject;
 
   // Handle developer field - ensure it's always an object
-  let developer = p.developer;
+  let developer: Project['developer'] = p.developer;
   if (typeof developer === 'string') {
     developer = { name: developer, established: '', projectsCount: 0, description: '' };
   } else if (!developer || typeof developer !== 'object') {
@@ -44,13 +51,13 @@ const normalizeProject = (p: any) => {
     },
     gallery: p.gallery || [],
     mapCoords: p.mapCoords || { lat: 0, lng: 0 }
-  };
+  } as Project;
 };
 
 export default function EditProjectPage() {
   const router = useRouter();
   const params = useParams();
-  const [project, setProject] = useState<any>(null);
+  const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -95,7 +102,7 @@ export default function EditProjectPage() {
     }
   }, [params.slug]);
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: Partial<Project>) => {
     setSaving(true);
     setError(null);
     setSuccess(false);

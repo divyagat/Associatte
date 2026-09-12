@@ -3,8 +3,13 @@
 import { ArrowRight, Building2, CalendarClock, LayoutGrid } from 'lucide-react';
 import { useMemo } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import properties from '../../data/projects.json';
 import { getBuilderSlug, getBuilderLogo } from '@/lib/builder-slugs';
+
+interface RawProject {
+  developer?: { name?: string; established?: string; projectsCount?: number };
+}
 
 const toSlug = (str: string) =>
   str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
@@ -14,7 +19,6 @@ interface Developer {
   name: string;
   slug: string;
   logoSrc: string;
-  logoType: 'image' | 'text';
   established?: string;
   projectsCount?: number;
 }
@@ -23,29 +27,17 @@ interface TopDevelopersCarouselProps {
   city: 'Pune' | 'Mumbai' | 'KDMC';
 }
 
-export default function TopDevelopersCarousel({ city }: TopDevelopersCarouselProps) {
+export default function TopDevelopersCarousel({ city: _city }: TopDevelopersCarouselProps) {
   const developers: Developer[] = useMemo(() => {
     const devMap = new Map<string, Developer>();
 
-    properties.forEach((p: any) => {
+    (properties as RawProject[]).forEach((p) => {
       const name = p.developer?.name;
       if (!name) return;
 
       const navSlug = getBuilderSlug(name);
       const internalId = toSlug(name);
-      const logoConfig = getBuilderLogo(name);
-
-      let logoSrc = '';
-      let logoType: 'image' | 'text' = 'image';
-
-      if (typeof logoConfig === 'string') {
-        logoSrc = logoConfig;
-        logoType = 'image';
-      } else if (logoConfig && typeof logoConfig === 'object') {
-        const config = logoConfig as any;
-        logoSrc = config.src || '';
-        logoType = config.type === 'text' ? 'text' : 'image';
-      }
+      const logoSrc = getBuilderLogo(name);
 
       if (!devMap.has(internalId)) {
         devMap.set(internalId, {
@@ -53,7 +45,6 @@ export default function TopDevelopersCarousel({ city }: TopDevelopersCarouselPro
           name,
           slug: navSlug,
           logoSrc,
-          logoType,
           established: p.developer?.established,
           projectsCount: p.developer?.projectsCount,
         });
@@ -87,7 +78,7 @@ export default function TopDevelopersCarousel({ city }: TopDevelopersCarouselPro
       key={`${dev.id}-${index}`}
       className="flex-shrink-0 w-[170px] sm:w-[210px] md:w-[240px] px-2 sm:px-3 group"
     >
-      <a
+      <Link
         href={`/builders/${dev.slug}`}
         className="block bg-white rounded-2xl border border-[var(--color-accent)] p-3.5 sm:p-4 md:p-5 transition-all duration-300 hover:border-[var(--color-primary)] hover:shadow-xl hover:-translate-y-1.5 h-full flex flex-col"
       >
@@ -143,7 +134,7 @@ export default function TopDevelopersCarousel({ city }: TopDevelopersCarouselPro
             </span>
           )}
         </div>
-      </a>
+      </Link>
     </div>
     );
   };
@@ -158,7 +149,7 @@ export default function TopDevelopersCarousel({ city }: TopDevelopersCarouselPro
              {/* in {city} */}
           </h2>
           <p className="section-subtitle max-w-2xl mx-auto">
-            Partnering with India's most reputed and trusted real estate brands
+            Partnering with India&apos;s most reputed and trusted real estate brands
           </p>
         </div>
       </div>
@@ -178,10 +169,10 @@ export default function TopDevelopersCarousel({ city }: TopDevelopersCarouselPro
 
       {/* View All Button */}
       <div className="container-site text-center mt-6 md:mt-8">
-        <a href="/builders" className="btn-primary group">
+        <Link href="/builders" className="btn-primary group">
           <span>View All Developers</span>
           <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-        </a>
+        </Link>
       </div>
 
       {/* Custom Keyframes for Seamless Infinite Scroll */}

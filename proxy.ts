@@ -48,7 +48,7 @@ function requirementFor(
   return null;
 }
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const role = roleFromCookie(req.cookies.get(ADMIN_COOKIE)?.value);
   const isAuthed = role !== null;

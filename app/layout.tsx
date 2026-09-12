@@ -47,8 +47,10 @@ const websiteJsonLd = {
 // The Home page ("/") has no page-level metadata of its own (it's a Client
 // Component), so its SEO is controlled here. The default title/description/
 // keywords come from the SEO_PAGES registry and merge any admin override for "/".
-// force-dynamic keeps admin SEO edits live without a rebuild.
-export const dynamic = "force-dynamic";
+// Revalidate every 5 minutes so admin SEO edits go live without a rebuild,
+// while still letting Next.js cache and serve pages statically in between
+// instead of hitting MongoDB on every single request.
+export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
   const home = seoPageByPath("/");

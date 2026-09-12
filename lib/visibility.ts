@@ -22,14 +22,14 @@ export const LISTING_STATUSES: readonly ListingStatus[] = [
 ];
 
 /** Resolve a listing's status, defaulting legacy records to `published`. */
-export function getStatus(item: any): ListingStatus {
+export function getStatus(item: { status?: unknown } | null | undefined): ListingStatus {
   const s = String(item?.status || '').toLowerCase().trim();
   if (s === 'pending' || s === 'hidden' || s === 'manager_approved') return s;
   return 'published';
 }
 
 /** Whether a listing should appear anywhere on the public site. */
-export function isPubliclyVisible(item: any): boolean {
+export function isPubliclyVisible(item: { status?: unknown } | null | undefined): boolean {
   return getStatus(item) === 'published';
 }
 

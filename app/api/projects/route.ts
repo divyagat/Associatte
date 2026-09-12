@@ -5,6 +5,7 @@ import { getAllProjects } from '@/lib/data-store';
 import { getPermissionsFromRequest, getRoleFromRequest } from '@/lib/admin-auth';
 import { can } from '@/lib/admin-permissions';
 import { isPubliclyVisible, initialStatusForRole } from '@/lib/visibility';
+import type { Project } from '@/types/project';
 
 // Public GET returns only published projects. Admin pages read the data store
 // directly, so they still see pending/hidden ones.
@@ -30,7 +31,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
   try {
-    const data = await request.json();
+    const data: Partial<Project> = await request.json();
     console.log('📦 POST /api/projects - Creating project:', data);
     
     // Validate required fields
@@ -61,10 +62,11 @@ export async function POST(request: NextRequest) {
     
     console.log('✅ Project created successfully:', newProject.slug);
     return NextResponse.json(newProject, { status: 201 });
-  } catch (error: any) {
+  } catch (error) {
     console.error('❌ Error in POST /api/projects:', error);
+    const message = error instanceof Error ? error.message : 'Failed to create project';
     return NextResponse.json(
-      { error: error.message || 'Failed to create project' },
+      { error: message },
       { status: 400 }
     );
   }

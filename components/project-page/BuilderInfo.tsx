@@ -1,4 +1,8 @@
-export default function BuilderInfo({ data }: any) {
+interface BuilderInfoData {
+  builderName: string;
+}
+
+export default function BuilderInfo({ data }: { data: BuilderInfoData }) {
   return (
     <section className="max-w-6xl mx-auto py-12 px-4">
       <h2 className="text-2xl font-bold mb-4">About Builder</h2>

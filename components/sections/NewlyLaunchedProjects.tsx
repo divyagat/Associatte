@@ -8,6 +8,7 @@ import Image from 'next/image';
 import type { SearchFilters } from '../Home/Hero';
 import rawProperties from '@/data/projects.json';
 import { isPubliclyVisible } from '@/lib/visibility';
+import type { Project } from '@/types/project';
 
 // How recent a launch must be to still count as "Newly Launched" when it carries a
 // launchDate. Flagged properties without a parseable launchDate are always shown.
@@ -46,11 +47,11 @@ function parseLaunchTime(value: string | undefined | null): number | null {
   return isNaN(t) ? null : t;
 }
 
-function mapToCard(p: any): NewLaunchCard {
+function mapToCard(p: Project): NewLaunchCard {
   const configs = p.priceDetails?.configurations || [];
-  const bhkTypes = [...new Set(configs.map((c: any) => String(c.type || '').trim()).filter(Boolean))] as string[];
+  const bhkTypes = [...new Set(configs.map((c) => String(c.type || '').trim()).filter(Boolean))] as string[];
   const areas = configs
-    .map((c: any) => String(c.area || '').replace(/sq\.?\s?ft\.?/gi, '').trim())
+    .map((c) => String(c.area || '').replace(/sq\.?\s?ft\.?/gi, '').trim())
     .filter(Boolean);
 
   const sqft = areas.length
@@ -62,6 +63,8 @@ function mapToCard(p: any): NewLaunchCard {
     p.location ||
     '';
 
+  const developerName = typeof p.developer === 'string' ? undefined : p.developer?.name;
+
   return {
     slug: p.slug || '',
     name: String(p.name || 'Untitled Project'),
@@ -72,7 +75,7 @@ function mapToCard(p: any): NewLaunchCard {
     image: p.image || p.gallery?.[0] || FALLBACK_IMAGE,
     city: String(p.location || p.fullLocation?.city || '').toLowerCase(),
     priceNumeric: parsePriceToNumeric(p.priceDetails?.range || p.price),
-    builder: String(p.developer?.name || p.builder || '').toLowerCase(),
+    builder: String(developerName || p.builder || '').toLowerCase(),
     propertyType: String(p.category || p.propertyType || '').toLowerCase(),
     launchTime: parseLaunchTime(p.launchDate),
   };
@@ -95,7 +98,7 @@ export default function NewlyLaunchedProjects({
   // to a recent window when they carry a launchDate, then newest first.
   const newLaunchCards = useMemo(() => {
     const cutoff = Date.now() - RECENT_LAUNCH_MONTHS * 30 * 24 * 60 * 60 * 1000;
-    return (rawProperties as any[])
+    return (rawProperties as Project[])
       .filter((p) => p.isNewLaunch === true && isPubliclyVisible(p))
       .map(mapToCard)
       .filter((p) => p.launchTime === null || p.launchTime >= cutoff)

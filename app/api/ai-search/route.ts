@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     const seen = new Set<string>();
     const listings = [...properties, ...projects]
       .filter(isPubliclyVisible)
-      .filter((it: any) => {
+      .filter((it) => {
         const key = String(it?.slug || it?._id || '');
         if (!key || seen.has(key)) return false;
         seen.add(key);

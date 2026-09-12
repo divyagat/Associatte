@@ -1,6 +1,10 @@
 import Image from "next/image";
 
-export default function Gallery({ data }: any) {
+interface GalleryData {
+  images: string[];
+}
+
+export default function Gallery({ data }: { data: GalleryData }) {
   return (
     <section className="bg-gray-50 py-12">
       <div className="max-w-7xl mx-auto px-4">

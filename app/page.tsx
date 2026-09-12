@@ -22,8 +22,14 @@ import BlogSection from '@/components/sections/BlogSection';
 import InstagramReelsSection from '@/components/sections/InstagramReelsSection';
 import RealEstateNewsSection from '@/components/sections/RealEstateNewsSection';
 import AwardsSection from '@/components/sections/AwardsSection';
-import EnquiryPopup from '@/components/common/EnquiryPopup';
+import EnquiryPopup, { type EnquiryPayload } from '@/components/common/EnquiryPopup';
 import FloatingVideoPlayer from '@/components/FloatingVideoPlayer';
+
+declare global {
+  interface Window {
+    gtag?: (...args: unknown[]) => void;
+  }
+}
 
 // 🗺️ Location Configuration (FULL DATA PRESERVED)
 const LOCATION_CONFIG = {
@@ -153,8 +159,8 @@ function HomePageContent() {
   }), [heroFilters.city, heroFilters.filters]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', 'page_view', {
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'page_view', {
         page_title: `Properties in ${config.name}`,
         page_location: window.location.href,
         page_path: window.location.pathname,
@@ -163,7 +169,7 @@ function HomePageContent() {
     }
   }, [city, config.name]);
 
-  const handleEnquirySubmit = useCallback((payload: any) => {
+  const handleEnquirySubmit = useCallback((payload: EnquiryPayload) => {
     console.log('📩 Enquiry submitted:', payload);
     // TODO: Connect to your backend API here
   }, []);

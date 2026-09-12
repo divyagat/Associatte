@@ -23,6 +23,17 @@ const FIELDS: (keyof SearchCriteria)[] = [
   'city', 'location', 'bhk', 'minBudget', 'maxBudget', 'category', 'dealType', 'status', 'keywords',
 ];
 
+/** Apply one field of a patch, keeping the field/value types correlated via `K`. */
+function applyPatchField<K extends keyof SearchCriteria>(
+  out: SearchCriteria,
+  next: CriteriaPatch,
+  key: K,
+): void {
+  const v = next[key];
+  if (v === null || v === undefined || v === '') delete out[key];
+  else out[key] = v;
+}
+
 /**
  * Apply a patch onto existing criteria. Only fields present in `next` change;
  * `null`/''/undefined clears that field. This is how conversational refinement
@@ -31,11 +42,7 @@ const FIELDS: (keyof SearchCriteria)[] = [
 export function mergeCriteria(prev: SearchCriteria = {}, next: CriteriaPatch = {}): SearchCriteria {
   const out: SearchCriteria = { ...prev };
   for (const f of FIELDS) {
-    if (f in next) {
-      const v = (next as any)[f];
-      if (v === null || v === undefined || v === '') delete (out as any)[f];
-      else (out as any)[f] = v;
-    }
+    if (f in next) applyPatchField(out, next, f);
   }
   return out;
 }

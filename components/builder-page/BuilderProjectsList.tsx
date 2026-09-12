@@ -3,10 +3,11 @@
 
 import { Suspense } from 'react';
 import BuilderProjects from './BuilderProjects';
+import type { Project } from '@/types/project';
 
 interface BuilderProjectsListProps {
   initialSlug: string;
-  initialProjects?: any[];
+  initialProjects?: Project[];
 }
 
 // ✅ Renamed to Content component

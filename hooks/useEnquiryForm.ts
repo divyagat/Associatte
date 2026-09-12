@@ -13,11 +13,23 @@ interface EnquiryData {
   medium?: string;
   city?: string;
   preferredTime?: string;
-  [key: string]: any;
+  [key: string]: unknown;
+}
+
+interface EnquiryResponse {
+  [key: string]: unknown;
+}
+
+function hasErrorMessage(value: unknown): value is { error: string } {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    typeof (value as { error?: unknown }).error === 'string'
+  );
 }
 
 interface UseEnquiryFormReturn {
-  submitEnquiry: (data: EnquiryData) => Promise<any>;
+  submitEnquiry: (data: EnquiryData) => Promise<EnquiryResponse>;
   isSubmitting: boolean;
   submitSuccess: boolean;
   error: string | null;
@@ -41,10 +53,10 @@ export function useEnquiryForm(): UseEnquiryFormReturn {
         body: JSON.stringify(data),
       });
 
-      const result = await response.json();
+      const result: EnquiryResponse = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || 'Submission failed');
+        throw new Error(hasErrorMessage(result) ? result.error : 'Submission failed');
       }
       
       setSubmitSuccess(true);

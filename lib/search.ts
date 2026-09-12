@@ -6,6 +6,7 @@
 // match against a broad set of fields plus a few common synonyms, rather than
 // just name/location/builder.
 
+import type { Project } from '@/types/project';
 import { getProjectType, getDealType } from './categories';
 
 // Words that should surface a listing even though they aren't stored verbatim,
@@ -26,7 +27,7 @@ const DEAL_SYNONYMS: Record<string, string> = {
 };
 
 /** Build one lowercase text blob out of every searchable field on a listing. */
-export function buildSearchText(item: any): string {
+export function buildSearchText(item: Project): string {
   const configs = item?.priceDetails?.configurations || [];
   const nearby = item?.nearbyPlaces || [];
 
@@ -38,7 +39,7 @@ export function buildSearchText(item: any): string {
     item?.fullLocation?.area,
     item?.fullLocation?.city,
     item?.fullLocation?.state,
-    item?.fullLocation?.address,
+    (item?.fullLocation as { address?: string } | undefined)?.address,
     item?.builder,
     typeof item?.developer === 'string' ? item?.developer : item?.developer?.name,
     item?.propertyType,
@@ -62,8 +63,8 @@ export function buildSearchText(item: any): string {
       : typeof item?.searchKeywords === 'string'
         ? [item.searchKeywords]
         : []),
-    ...configs.map((c: any) => c?.type),
-    ...nearby.map((n: any) => (typeof n === 'string' ? n : n?.name)),
+    ...configs.map((c) => c?.type),
+    ...nearby.map((n) => (typeof n === 'string' ? n : n?.name)),
     // Synonym expansion from the resolved buckets.
     TYPE_SYNONYMS[getProjectType(item)],
     DEAL_SYNONYMS[getDealType(item)],
@@ -136,7 +137,7 @@ export function tokenMatches(text: string, token: string): boolean {
  * appear somewhere in the listing's searchable text (AND semantics). Matching is
  * typo-tolerant, so small misspellings still surface the right listing.
  */
-export function matchesSearch(item: any, query: string | undefined | null): boolean {
+export function matchesSearch(item: Project, query: string | undefined | null): boolean {
   const q = (query ?? '').trim().toLowerCase();
   if (!q) return true;
   const text = buildSearchText(item);

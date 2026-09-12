@@ -2,13 +2,14 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import ProjectForm from '@/components/admin/ProjectForm';
+import type { Project } from '@/types/project';
 
 export default function NewProjectPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: Partial<Project>) => {
     setLoading(true);
     setError(null);
     

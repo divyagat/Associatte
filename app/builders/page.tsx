@@ -4,8 +4,9 @@ import BuilderSearchContainer from '@/components/builder-page/BuilderSearchConta
 import properties from '@/data/projects.json';
 import { getBuilderSlug, getBuilderYears, getBuilderLogo, getBuilderMetadata } from '@/lib/builder-slugs';
 import { pageMetadata } from '@/lib/seo-pages';
+import type { Project } from '@/types/project';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 300;
 
 export function generateMetadata(): Promise<Metadata> {
   return pageMetadata('/builders');
@@ -18,16 +19,16 @@ type Builder = {
   years: string;
   logo: string;
   banner?: string;
-  projects: any[];
+  projects: Project[];
   locations: string[];
   totalProjects: number;
 };
 
 const getAllBuilders = (): Builder[] => {
   const builderMap = new Map<string, Builder>();
-  
-  properties.forEach((p: any) => {
-    const name = p.developer?.name;
+
+  (properties as Project[]).forEach((p) => {
+    const name = typeof p.developer === 'string' ? undefined : p.developer?.name;
     const location = p.location;
     if (!name) return;
 

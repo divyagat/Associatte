@@ -7,8 +7,23 @@ import {
 } from '@/lib/categories';
 import { matchesSearch } from '@/lib/search';
 import { pageMetadata } from '@/lib/seo-pages';
+import type { Project, ProjectConfiguration, ProjectFloorPlan, ProjectNearbyPlace } from '@/types/project';
 
-export const dynamic = 'force-dynamic';
+type NormalizedDeveloper = { name: string; established?: string; projectsCount?: number; description?: string };
+
+type NormalizedProject = Project & {
+  developer: NormalizedDeveloper;
+  soldOut: boolean;
+  amenities: string[];
+  floorPlans: ProjectFloorPlan[];
+  nearbyPlaces: ProjectNearbyPlace[];
+  emi: NonNullable<Project['emi']>;
+  masterPlan: string;
+  locationMap: string;
+  priceDetails: NonNullable<Project['priceDetails']>;
+};
+
+export const revalidate = 300;
 
 export function generateMetadata(): Promise<Metadata> {
   return pageMetadata('/projects');
@@ -32,7 +47,7 @@ const TYPE_INFO: Record<string, { title: string; description: string }> = {
 };
 
 // ✅ Helper function to normalize developer field
-const normalizeDeveloper = (developer: any) => {
+const normalizeDeveloper = (developer: Project['developer']): NormalizedDeveloper => {
   if (!developer) return { name: '', established: '', projectsCount: 0, description: '' };
   if (typeof developer === 'string') {
     return { name: developer, established: '', projectsCount: 0, description: '' };
@@ -41,7 +56,7 @@ const normalizeDeveloper = (developer: any) => {
 };
 
 // ✅ Helper function to normalize project data
-const normalizeProject = (p: any) => ({
+const normalizeProject = (p: Project): NormalizedProject => ({
   ...p,
   developer: normalizeDeveloper(p.developer),
   soldOut: p.soldOut || false,
@@ -108,20 +123,20 @@ export default async function ProjectsPage({
   const typeCounts = countByType(uniqueProjects, projectTypes.map((t) => t.id), allTypeIds);
 
   // ✅ Get unique values for filters
-  const getAllLocations = () => Array.from(new Set(uniqueProjects.map((p: any) => p.location).filter(Boolean)));
-  
+  const getAllLocations = () => Array.from(new Set(uniqueProjects.map((p) => p.location).filter(Boolean)));
+
   const getAllBuilders = () => Array.from(
     new Set(
       uniqueProjects
-        .map((p: any) => p.developer?.name)
-        .filter(Boolean)
+        .map((p) => p.developer.name)
+        .filter((name): name is string => Boolean(name))
     )
   );
-  
+
   const getAllBHKs = () => {
     const bhks = new Set<string>();
-    uniqueProjects.forEach((p: any) => {
-      p.priceDetails?.configurations?.forEach((c: any) => {
+    uniqueProjects.forEach((p) => {
+      p.priceDetails?.configurations?.forEach((c: ProjectConfiguration) => {
         if (c.type) bhks.add(c.type.split(' ')[0] + ' BHK');
       });
     });
@@ -129,8 +144,8 @@ export default async function ProjectsPage({
   };
 
   // 🔍 Filter projects
-  const filteredProjects = uniqueProjects.filter((project: any) => {
-    const builderName = project.developer?.name || '';
+  const filteredProjects = uniqueProjects.filter((project) => {
+    const builderName = project.developer.name || '';
 
     // Property type (tab)
     if (getProjectType(project, allTypeIds) !== activeType) return false;
@@ -155,7 +170,7 @@ export default async function ProjectsPage({
     // BHK filter
     if (params.bhk) {
       const bhkPattern = params.bhk.toLowerCase();
-      const hasBHK = project.priceDetails?.configurations?.some((c: any) =>
+      const hasBHK = project.priceDetails?.configurations?.some((c: ProjectConfiguration) =>
         c.type?.toLowerCase().includes(bhkPattern)
       );
       if (!hasBHK) return false;
@@ -294,7 +309,7 @@ export default async function ProjectsPage({
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredProjects.map((project: any) => (
+              {filteredProjects.map((project) => (
                 <ProjectCard key={project.slug} project={project} />
               ))}
             </div>

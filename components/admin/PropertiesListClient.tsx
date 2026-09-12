@@ -6,30 +6,54 @@ import { Edit, MapPin, LayoutGrid, Search } from 'lucide-react';
 import DeleteButton from '@/components/admin/DeleteButton';
 import ApprovalControls from '@/components/admin/ApprovalControls';
 import { matchesSearch } from '@/lib/search';
-import { getDealType } from '@/lib/categories';
+import { getDealType, type PropertyTabDef } from '@/lib/categories';
+import type { Project } from '@/types/project';
+
+// A property/listing record as rendered in this list — the canonical `Project`
+// shape plus the couple of extra fields properties carry to link back to a
+// parent project.
+type PropertyRecord = Project & {
+  project?: string;
+  projectSlug?: string;
+  tags?: string[];
+};
+
+// The synthetic "All" tab prepended to the admin-configured tab list.
+type AllTab = { id: 'all'; label: string; kind: 'all'; color: string };
+type TabItem = AllTab | PropertyTabDef;
 
 // Does a property belong under a given tab? Deal tabs (Resale/Rent) match by
 // dealType; type tabs (Warehouse/Industry/…) match by the property's category.
-const matchesTab = (p: any, tab: any) => {
+const matchesTab = (p: PropertyRecord, tab: TabItem) => {
   if (tab.id === 'all') return true;
   if (tab.kind === 'deal') return getDealType(p) === tab.id;
   return (p.category || '') === tab.id;
 };
 
-export default function PropertiesListClient({ properties, projects, tabs = [], canEdit, canDelete, canApprove, isAdmin }: any) {
+interface PropertiesListClientProps {
+  properties: PropertyRecord[];
+  projects: Project[];
+  tabs?: PropertyTabDef[];
+  canEdit: boolean;
+  canDelete: boolean;
+  canApprove: boolean;
+  isAdmin: boolean;
+}
+
+export default function PropertiesListClient({ properties, projects, tabs = [], canEdit, canDelete, canApprove, isAdmin }: PropertiesListClientProps) {
   const [activeTab, setActiveTab] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
   // Tab row mirrors the public Properties page: All + Resale / Rent (deal) +
   // Warehouse / Industry (+ any admin-added property types).
-  const tabRow = useMemo(
+  const tabRow = useMemo<TabItem[]>(
     () => [{ id: 'all', label: 'All', kind: 'all', color: '#6b7280' }, ...tabs],
     [tabs],
   );
   // Map tab/category id → colour for the badges.
   const colorById = useMemo(() => {
     const m: Record<string, string> = {};
-    tabs.forEach((t: any) => { m[t.id] = t.color; });
+    tabs.forEach((t) => { m[t.id] = t.color; });
     return m;
   }, [tabs]);
   const badgeStyle = (category?: string) => {
@@ -40,16 +64,16 @@ export default function PropertiesListClient({ properties, projects, tabs = [], 
   // Map project slugs to names for display
   const projectMap = useMemo(() => {
     const map: Record<string, string> = {};
-    projects.forEach((p: any) => { map[p.slug] = p.name; });
+    projects.forEach((p) => { map[p.slug] = p.name; });
     return map;
   }, [projects]);
 
-  const activeTabDef = useMemo(() => tabRow.find((t: any) => t.id === activeTab) || tabRow[0], [tabRow, activeTab]);
+  const activeTabDef = useMemo(() => tabRow.find((t) => t.id === activeTab) || tabRow[0], [tabRow, activeTab]);
 
   // Filter properties based on active tab and search
   const filteredProperties = useMemo(() => {
-    return properties.filter((p: any) => {
-      const projectName = p.project || projectMap[p.projectSlug] || '';
+    return properties.filter((p) => {
+      const projectName = p.project || projectMap[p.projectSlug || ''] || '';
       // Broad free-text match across all fields, plus the linked project's name.
       const matches = matchesSearch({ ...p, tags: [...(p.tags || []), projectName] }, searchQuery);
       return matchesTab(p, activeTabDef) && matches;
@@ -73,10 +97,10 @@ export default function PropertiesListClient({ properties, projects, tabs = [], 
 
         {/* Tabs: All + Resale / Rent / Warehouse / Industry (+ custom) */}
         <div className="flex flex-wrap gap-2 border-b border-gray-200 pb-2">
-          {tabRow.map((tab: any) => {
+          {tabRow.map((tab) => {
             const count = tab.id === 'all'
               ? properties.length
-              : properties.filter((p: any) => matchesTab(p, tab)).length;
+              : properties.filter((p) => matchesTab(p, tab)).length;
 
             return (
               <button
@@ -119,8 +143,8 @@ export default function PropertiesListClient({ properties, projects, tabs = [], 
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {filteredProperties.map((property: any) => {
-                    const projectName = property.project || projectMap[property.projectSlug] || 'Unassigned';
+                  {filteredProperties.map((property) => {
+                    const projectName = property.project || projectMap[property.projectSlug || ''] || 'Unassigned';
                     return (
                       <tr key={property.slug} className="hover:bg-gray-50 transition-colors">
                         <td className="px-6 py-4">
@@ -195,8 +219,8 @@ export default function PropertiesListClient({ properties, projects, tabs = [], 
 
           {/* Mobile cards */}
           <div className="md:hidden space-y-3">
-            {filteredProperties.map((property: any) => {
-              const projectName = property.project || projectMap[property.projectSlug] || 'Unassigned';
+            {filteredProperties.map((property) => {
+              const projectName = property.project || projectMap[property.projectSlug || ''] || 'Unassigned';
               return (
                 <div key={property.slug} className="bg-white rounded-xl border border-gray-200 p-4">
                   <div className="flex items-start gap-3">

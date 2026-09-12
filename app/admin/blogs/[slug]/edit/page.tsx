@@ -5,11 +5,12 @@ import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import BlogForm from '@/components/admin/BlogForm';
 import { ArrowLeft } from 'lucide-react';
+import type { IBlog } from '@/lib/models/Blog';
 
 export default function EditBlogPage() {
   const router = useRouter();
   const params = useParams();
-  const [blog, setBlog] = useState<any>(null);
+  const [blog, setBlog] = useState<IBlog | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -67,7 +68,7 @@ export default function EditBlogPage() {
     fetchBlog();
   }, [params.slug]);
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: Partial<IBlog>) => {
     setSaving(true);
     setError(null);
     setSuccess(false);

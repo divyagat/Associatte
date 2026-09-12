@@ -34,6 +34,20 @@ const TYPE_ICONS: Record<string, React.ComponentType<{ className?: string }>> = 
   rent: KeyRound,
 };
 
+interface NavDropdownItem {
+  label: string;
+  href: string;
+  icon?: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
+  color?: string;
+}
+
+interface NavLink {
+  key: string;
+  name: string;
+  href: string;
+  dropdown?: NavDropdownItem[];
+}
+
 // ✅ STEP 1: Renamed from Header to HeaderContent (removed 'export default')
 function HeaderContent() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -147,7 +161,7 @@ function HeaderContent() {
       color: t.color,
     }));
 
-  const allNavLinks = [
+  const allNavLinks: NavLink[] = [
     { key: 'home', name: 'Home', href: '/' },
     {
       key: 'projects',
@@ -260,9 +274,9 @@ function HeaderContent() {
 
             {/* Desktop Menu */}
             <div className="hidden lg:flex items-center flex-1 justify-center gap-0.5 xl:gap-1 min-w-0">
-              {navLinks.map((link: any) => {
+              {navLinks.map((link) => {
                 const isActive = isHrefActive(link.href);
-                const hasDropdown = link.dropdown?.length > 0;
+                const hasDropdown = (link.dropdown?.length ?? 0) > 0;
                 const isDropdownOpen = desktopDropdown === link.name;
                 
                 if (hasDropdown) {
@@ -304,7 +318,7 @@ function HeaderContent() {
                           onMouseEnter={() => handleDesktopDropdownEnter(link.name)}
                           onMouseLeave={handleDesktopDropdownLeave}
                         >
-                          {link.dropdown.map((item: any) => {
+                          {link.dropdown?.map((item) => {
                             const isSubActive = isHrefActive(item.href);
 
                             const Icon = item.icon;
@@ -389,9 +403,9 @@ function HeaderContent() {
             className="fixed top-20 left-0 right-0 bottom-0 bg-white shadow-xl overflow-y-auto animate-in slide-in-from-top-2 duration-300"
           >
             <div className="px-4 py-3 space-y-1">
-              {navLinks.map((link: any) => {
+              {navLinks.map((link) => {
                 const isActive = isHrefActive(link.href);
-                const hasDropdown = link.dropdown?.length > 0;
+                const hasDropdown = (link.dropdown?.length ?? 0) > 0;
                 const isMobileDropdownOpen = openMobileDropdown === link.name;
                 
                 return (
@@ -422,14 +436,14 @@ function HeaderContent() {
                         
                         {isMobileDropdownOpen && (
                           <div className="ml-4 mb-2 pl-4 border-l-2 border-[#F8C21C]/30 space-y-1 animate-in slide-in-from-left-2 duration-200">
-                            {link.dropdown.map((item: any) => {
+                            {link.dropdown?.map((item) => {
                               const isSubActive = isHrefActive(item.href);
 
                               const Icon = item.icon;
                               return (
-                                <Link 
-                                  key={item.href} 
-                                  href={item.href} 
+                                <Link
+                                  key={item.href}
+                                  href={item.href}
                                   onClick={closeMobileMenu}
                                   className={`flex items-center gap-3 px-4 py-3 text-sm rounded-lg transition-colors ${
                                     isSubActive 

@@ -5,16 +5,65 @@ import { useState, useEffect } from 'react';
 import { Upload, X, Plus, Trash2 } from 'lucide-react';
 import { uploadImage } from '@/lib/upload-image';
 import { ALL_PROPERTY_TYPES, type PropertyType } from '@/lib/categories';
+import type { Project, ProjectConfiguration, ProjectFloorPlan, ProjectNearbyPlace } from '@/types/project';
+
+type PropertyImageField = 'image' | 'gallery';
+
+// The form's own working shape: every nested object the JSX binds to is always
+// present (never undefined) so inputs can read e.g. `formData.fullLocation.area`
+// directly. This mirrors `Project` but with those groups required instead of
+// optional, plus a couple of property-listing-only fields (project, projectSlug,
+// isNewLaunch) that aren't part of the shared `Project` shape. `[key: string]:
+// unknown` lets extra record fields from `initialData` pass through untouched.
+interface PropertyFormData {
+  slug: string;
+  name: string;
+  category: string;
+  dealType: 'sale' | 'rent';
+  ageOfConstruction: string;
+  builtUpArea: string;
+  expectedPrice: string;
+  project: string;
+  projectSlug: string;
+  location: string;
+  price: string;
+  image: string;
+  masterPlan: string;
+  locationMap: string;
+  fullLocation: { area: string; city: string; state: string; pincode: string; landmark: string };
+  priceDetails: { range: string; perSqft: string; configurations: ProjectConfiguration[] };
+  developer: { name: string; established: string; projectsCount: number; description: string };
+  about: string;
+  amenities: string[];
+  searchKeywords: string[];
+  floorPlans: ProjectFloorPlan[];
+  possessionDate: string;
+  isNewLaunch: boolean;
+  launchDate: string;
+  reraNumber: string;
+  gallery: string[];
+  mapCoords: { lat: number; lng: number };
+  nearbyPlaces: ProjectNearbyPlace[];
+  emi: { startingFrom: string; downPayment: string; interestRate: string; tenure: string };
+  soldOut: boolean;
+  [key: string]: unknown;
+}
 
 interface PropertyFormProps {
-  initialData?: any;
-  onSubmit: (data: any) => Promise<void>;
+  initialData?: Partial<Project>;
+  onSubmit: (data: Partial<Project>) => Promise<void>;
   loading: boolean;
 }
 
 export default function PropertyForm({ initialData, onSubmit, loading }: PropertyFormProps) {
+  // The admin record we're editing is looser than the form's working shape
+  // (e.g. `developer` may be a plain string, `dealType` may be absent), so it's
+  // treated as an untrusted partial and merged field-by-field onto the defaults
+  // below rather than trusted as-is.
+  const initial = initialData as Partial<PropertyFormData> | undefined;
+
   // ✅ 1. Define default empty structure
-  const defaultFormData = {
+  const defaultFormData: PropertyFormData = {
     slug: '',
     name: '',
     category: 'warehouse',
@@ -44,14 +93,14 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
     about: '',
     amenities: [] as string[],
     searchKeywords: [] as string[],
-    floorPlans: [] as any[],
+    floorPlans: [] as ProjectFloorPlan[],
     possessionDate: '',
     isNewLaunch: false,
     launchDate: '',
     reraNumber: '',
     gallery: [] as string[],
     mapCoords: { lat: 0, lng: 0 },
-    nearbyPlaces: [] as any[],
+    nearbyPlaces: [] as ProjectNearbyPlace[],
     emi: {
       startingFrom: '',
       downPayment: '',
@@ -62,30 +111,30 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
   };
 
   // ✅ 2. Safely merge initialData with defaults to prevent "Cannot read properties of undefined"
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<PropertyFormData>({
     ...defaultFormData,
-    ...initialData,
-    fullLocation: { ...defaultFormData.fullLocation, ...(initialData?.fullLocation || {}) },
+    ...initial,
+    fullLocation: { ...defaultFormData.fullLocation, ...(initial?.fullLocation || {}) },
     priceDetails: {
       ...defaultFormData.priceDetails,
-      ...(initialData?.priceDetails || {}),
-      configurations: initialData?.priceDetails?.configurations?.length 
-        ? initialData.priceDetails.configurations 
+      ...(initial?.priceDetails || {}),
+      configurations: initial?.priceDetails?.configurations?.length
+        ? initial.priceDetails.configurations
         : defaultFormData.priceDetails.configurations
     },
-    developer: { ...defaultFormData.developer, ...(initialData?.developer || {}) },
-    emi: { ...defaultFormData.emi, ...(initialData?.emi || {}) },
-    mapCoords: { ...defaultFormData.mapCoords, ...(initialData?.mapCoords || {}) },
-    amenities: initialData?.amenities || [],
-    searchKeywords: initialData?.searchKeywords || [],
-    floorPlans: initialData?.floorPlans || [],
-    gallery: initialData?.gallery || [],
-    nearbyPlaces: initialData?.nearbyPlaces || []
+    developer: { ...defaultFormData.developer, ...(initial?.developer || {}) },
+    emi: { ...defaultFormData.emi, ...(initial?.emi || {}) },
+    mapCoords: { ...defaultFormData.mapCoords, ...(initial?.mapCoords || {}) },
+    amenities: initial?.amenities || [],
+    searchKeywords: initial?.searchKeywords || [],
+    floorPlans: initial?.floorPlans || [],
+    gallery: initial?.gallery || [],
+    nearbyPlaces: initial?.nearbyPlaces || []
   });
 
   const [currentAmenity, setCurrentAmenity] = useState('');
   const [currentKeyword, setCurrentKeyword] = useState('');
-  const [projects, setProjects] = useState<any[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [loadingProjects, setLoadingProjects] = useState(false);
   const [errorProjects, setErrorProjects] = useState<string | null>(null);
   // Category options = the admin-managed PROPERTIES-section categories only
@@ -106,7 +155,7 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
         if (!cancelled && opts.length) {
           setCategoryOptions(opts);
           // Keep the selected category valid against the available options.
-          setFormData((prev: any) =>
+          setFormData((prev) =>
             opts.some((o) => o.id === prev.category) ? prev : { ...prev, category: opts[0].id },
           );
         }
@@ -128,24 +177,25 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
           throw new Error(`Failed to fetch projects: ${response.status}`);
         }
         
-        const data = await response.json();
+        const data: unknown = await response.json();
         console.log('📋 PropertyForm: Projects data received:', data);
         console.log('📋 PropertyForm: Data type:', typeof data);
         console.log('📋 PropertyForm: Is array?', Array.isArray(data));
-        
+
         // ✅ Ensure we always have an array
-        let projectsArray: any[] = [];
-        
+        let projectsArray: Project[] = [];
+
         if (Array.isArray(data)) {
-          projectsArray = data;
+          projectsArray = data as Project[];
         } else if (data && typeof data === 'object') {
           // If it's an object with a projects property
-          if (data.projects && Array.isArray(data.projects)) {
-            projectsArray = data.projects;
+          const obj = data as Record<string, unknown>;
+          if (Array.isArray(obj.projects)) {
+            projectsArray = obj.projects as Project[];
           } else {
             // If it's a single project object, wrap it in an array
             console.warn('⚠️ PropertyForm: Data is a single object, wrapping in array');
-            projectsArray = [data];
+            projectsArray = [data as Project];
           }
         } else {
           console.warn('⚠️ PropertyForm: No valid projects data received');
@@ -170,24 +220,24 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     const keys = name.split('.');
-    
-    setFormData((prev: any) => {
-      const updated = { ...prev };
-      let current: any = updated;
-      
+
+    setFormData((prev) => {
+      const updated: Record<string, unknown> = { ...prev };
+      let current: Record<string, unknown> = updated;
+
       for (let i = 0; i < keys.length - 1; i++) {
         if (!current[keys[i]] || typeof current[keys[i]] !== 'object') {
           current[keys[i]] = {};
         }
-        current = current[keys[i]];
+        current = current[keys[i]] as Record<string, unknown>;
       }
-      
+
       current[keys[keys.length - 1]] = value;
-      return updated;
+      return updated as unknown as PropertyFormData;
     });
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: PropertyImageField) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -195,21 +245,21 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
       const url = await uploadImage(file);
 
       if (field === 'gallery') {
-        setFormData((prev: any) => ({
+        setFormData((prev) => ({
           ...prev,
           gallery: [...prev.gallery, url]
         }));
       } else {
-        setFormData((prev: any) => ({ ...prev, [field]: url }));
+        setFormData((prev) => ({ ...prev, [field]: url }));
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error('Upload failed:', error);
-      alert(error?.message || 'Image upload failed. Please try again.');
+      alert(error instanceof Error ? error.message : 'Image upload failed. Please try again.');
     }
   };
 
   const addConfiguration = () => {
-    setFormData((prev: any) => ({
+    setFormData((prev) => ({
       ...prev,
       priceDetails: {
         ...prev.priceDetails,
@@ -219,18 +269,18 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
   };
 
   const removeConfiguration = (index: number) => {
-    setFormData((prev: any) => ({
+    setFormData((prev) => ({
       ...prev,
       priceDetails: {
         ...prev.priceDetails,
-        configurations: prev.priceDetails.configurations.filter((_: any, i: number) => i !== index)
+        configurations: prev.priceDetails.configurations.filter((_, i: number) => i !== index)
       }
     }));
   };
 
   const addAmenity = () => {
     if (currentAmenity.trim()) {
-      setFormData((prev: any) => ({
+      setFormData((prev) => ({
         ...prev,
         amenities: [...prev.amenities, currentAmenity.trim()]
       }));
@@ -239,16 +289,16 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
   };
 
   const removeAmenity = (index: number) => {
-    setFormData((prev: any) => ({
+    setFormData((prev) => ({
       ...prev,
-      amenities: prev.amenities.filter((_: any, i: number) => i !== index)
+      amenities: prev.amenities.filter((_, i: number) => i !== index)
     }));
   };
 
   const addKeyword = () => {
     const value = currentKeyword.trim();
     if (!value) return;
-    setFormData((prev: any) => {
+    setFormData((prev) => {
       const existing: string[] = Array.isArray(prev.searchKeywords) ? prev.searchKeywords : [];
       // Skip duplicates (case-insensitive) so the keyword list stays clean.
       if (existing.some((k) => k.toLowerCase() === value.toLowerCase())) return prev;
@@ -258,9 +308,9 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
   };
 
   const removeKeyword = (index: number) => {
-    setFormData((prev: any) => ({
+    setFormData((prev) => ({
       ...prev,
-      searchKeywords: (Array.isArray(prev.searchKeywords) ? prev.searchKeywords : []).filter((_: any, i: number) => i !== index)
+      searchKeywords: (Array.isArray(prev.searchKeywords) ? prev.searchKeywords : []).filter((_, i: number) => i !== index)
     }));
   };
 
@@ -473,7 +523,7 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
               </div>
               <button
                 type="button"
-                onClick={() => setFormData((prev: any) => ({ ...prev, isNewLaunch: !prev.isNewLaunch }))}
+                onClick={() => setFormData((prev) => ({ ...prev, isNewLaunch: !prev.isNewLaunch }))}
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#005E60] focus:ring-offset-2 ${
                   formData.isNewLaunch ? 'bg-[#005E60]' : 'bg-gray-300'
                 }`}
@@ -494,7 +544,7 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
               </div>
               <button
                 type="button"
-                onClick={() => setFormData((prev: any) => ({ ...prev, soldOut: !prev.soldOut }))}
+                onClick={() => setFormData((prev) => ({ ...prev, soldOut: !prev.soldOut }))}
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#005E60] focus:ring-offset-2 ${
                   formData.soldOut ? 'bg-red-600' : 'bg-gray-300'
                 }`}
@@ -603,9 +653,9 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
                   <button
                     type="button"
                     onClick={() => {
-                      setFormData((prev: any) => ({
+                      setFormData((prev) => ({
                         ...prev,
-                        gallery: prev.gallery.filter((_: any, i: number) => i !== index)
+                        gallery: prev.gallery.filter((_, i: number) => i !== index)
                       }));
                     }}
                     className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
@@ -693,7 +743,7 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
           </button>
         </div>
         <div className="space-y-3">
-          {formData.priceDetails.configurations.map((config: any, index: number) => (
+          {formData.priceDetails.configurations.map((config: ProjectConfiguration, index: number) => (
             <div key={index} className="grid grid-cols-1 md:grid-cols-5 gap-3 p-4 bg-gray-50 rounded-lg">
               <input
                 type="text"
@@ -702,7 +752,7 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
                 onChange={(e) => {
                   const updated = [...formData.priceDetails.configurations];
                   updated[index].type = e.target.value;
-                  setFormData((prev: any) => ({
+                  setFormData((prev) => ({
                     ...prev,
                     priceDetails: { ...prev.priceDetails, configurations: updated }
                   }));
@@ -716,7 +766,7 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
                 onChange={(e) => {
                   const updated = [...formData.priceDetails.configurations];
                   updated[index].area = e.target.value;
-                  setFormData((prev: any) => ({
+                  setFormData((prev) => ({
                     ...prev,
                     priceDetails: { ...prev.priceDetails, configurations: updated }
                   }));
@@ -730,7 +780,7 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
                 onChange={(e) => {
                   const updated = [...formData.priceDetails.configurations];
                   updated[index].price = e.target.value;
-                  setFormData((prev: any) => ({
+                  setFormData((prev) => ({
                     ...prev,
                     priceDetails: { ...prev.priceDetails, configurations: updated }
                   }));
@@ -744,7 +794,7 @@ export default function PropertyForm({ initialData, onSubmit, loading }: Propert
                 onChange={(e) => {
                   const updated = [...formData.priceDetails.configurations];
                   updated[index].description = e.target.value;
-                  setFormData((prev: any) => ({
+                  setFormData((prev) => ({
                     ...prev,
                     priceDetails: { ...prev.priceDetails, configurations: updated }
                   }));

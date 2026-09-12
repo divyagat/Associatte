@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
+import type { ComponentProps } from 'react';
 import { Suspense } from 'react';
 import ProjectCard from '@/components/builder-page/ProjectCard';
 import PropertiesStickySearch from '@/components/properties/PropertiesStickySearch';
-import { getAllProperties, getSiteConfig } from '@/lib/data-store';
+import { getAllProjects, getAllProperties, getSiteConfig } from '@/lib/data-store';
 import { isPubliclyVisible } from '@/lib/visibility';
 import {
   propertyTabsOf, projectTypesOf, typeIdsOf, matchesPropertyTab, countByTab,
@@ -10,10 +11,13 @@ import {
 } from '@/lib/categories';
 import { matchesSearch } from '@/lib/search';
 import { pageMetadata } from '@/lib/seo-pages';
+import type { Project, ProjectConfiguration } from '@/types/project';
+
+type CardProject = ComponentProps<typeof ProjectCard>['project'];
 
 // Read live from the file-based data store so anything added/edited in the admin
 // panel shows up here immediately (no rebuild required).
-export const dynamic = 'force-dynamic';
+export const revalidate = 300;
 
 // Default SEO comes from the SEO_PAGES registry and merges any admin override;
 // the canonical is pinned to /properties so filter permutations don't split it.
@@ -42,13 +46,18 @@ const TAB_INFO: Record<string, { title: string; description: string }> = {
   },
 };
 
+// Real records sometimes store `developer` as a plain string rather than an
+// object — narrow before reading `.name` off it.
+const developerName = (developer: Project['developer']): string | undefined =>
+  typeof developer === 'string' ? undefined : developer?.name;
+
 // ✅ Get unique filter values from the supplied list
-const getAllLocations = (list: any[]) => Array.from(new Set(list.map((p: any) => p.location).filter(Boolean)));
-const getAllBuilders = (list: any[]) => Array.from(new Set(list.map((p: any) => p.developer?.name).filter(Boolean)));
-const getAllBHKs = (list: any[]) => {
+const getAllLocations = (list: Project[]) => Array.from(new Set(list.map((p) => p.location).filter(Boolean)));
+const getAllBuilders = (list: Project[]) => Array.from(new Set(list.map((p) => developerName(p.developer)).filter((name): name is string => Boolean(name))));
+const getAllBHKs = (list: Project[]) => {
   const bhks = new Set<string>();
-  list.forEach((p: any) => {
-    p.priceDetails?.configurations?.forEach((c: any) => {
+  list.forEach((p) => {
+    p.priceDetails?.configurations?.forEach((c: ProjectConfiguration) => {
       if (c.type) {
         const bhk = c.type.match(/\d+\s*[RB]HK/i)?.[0];
         if (bhk) bhks.add(bhk.toUpperCase());
@@ -78,10 +87,21 @@ export default async function PropertiesPage({
   // location filter so global searches land on the right results.
   const cityFilter = params.city || params.location;
 
-  // 📦 Live data from admin panel / data store — only published listings are
-  // public; pending (awaiting approval) and hidden ones are excluded.
-  const [allProperties, siteConfig] = await Promise.all([getAllProperties(), getSiteConfig()]);
-  const properties = allProperties.filter(isPubliclyVisible);
+  // 📦 Live data from admin panel / data store — merges projects.json (new
+  // launches) with properties.json (resale/rental listings admins add
+  // separately) into one searchable pool, since this page is the site's
+  // general "everything" search/filter destination (the home page search
+  // bar always lands here). De-duplicated by slug in case the same listing
+  // is ever entered in both stores. Only published listings are public;
+  // pending (awaiting approval) and hidden ones are excluded.
+  const [allProjects, allProperties, siteConfig] = await Promise.all([
+    getAllProjects(),
+    getAllProperties(),
+    getSiteConfig(),
+  ]);
+  const properties = Array.from(
+    new Map([...allProjects, ...allProperties].map((p) => [p.slug, p])).values(),
+  ).filter(isPubliclyVisible);
 
   // Dynamic (admin-managed) category lists.
   const allTypeIds = typeIdsOf(siteConfig.propertyTypes);
@@ -105,7 +125,7 @@ export default async function PropertiesPage({
     : undefined;
 
   // 🔍 Filter properties by the active tab + other params
-  const filteredProjects = properties.filter((project: any) => {
+  const filteredProjects = properties.filter((project: Project) => {
     if (!activeTabDef || !matchesPropertyTab(project, activeTabDef, allTypeIds)) return false;
     if (typeFilter && getProjectType(project, allTypeIds) !== typeFilter) return false;
 
@@ -119,7 +139,7 @@ export default async function PropertiesPage({
 
     if (params.builder) {
       const builderPattern = params.builder.toLowerCase();
-      const projectName = project.developer?.name?.toLowerCase() || '';
+      const projectName = (developerName(project.developer) || '').toLowerCase();
       if (!projectName.includes(builderPattern) && !builderPattern.includes(projectName)) {
         return false;
       }
@@ -127,7 +147,7 @@ export default async function PropertiesPage({
 
     if (params.bhk) {
       const bhkPattern = params.bhk.toLowerCase();
-      const hasBHK = project.priceDetails?.configurations?.some((c: any) =>
+      const hasBHK = project.priceDetails?.configurations?.some((c: ProjectConfiguration) =>
         c.type?.toLowerCase().includes(bhkPattern)
       );
       if (!hasBHK) return false;
@@ -295,8 +315,8 @@ export default async function PropertiesPage({
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-              {filteredProjects.map((project: any) => (
-                <ProjectCard key={project.slug} project={project} />
+              {filteredProjects.map((project) => (
+                <ProjectCard key={project.slug} project={project as unknown as CardProject} />
               ))}
             </div>
           )}

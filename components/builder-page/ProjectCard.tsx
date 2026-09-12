@@ -5,21 +5,27 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { MapPin, Bed, Square, Tag, ArrowRight, Building2, Clock, KeyRound } from 'lucide-react';
 import { typeLabel as resolveTypeLabel, getProjectType, getDealType } from '@/lib/categories';
+import type { Project as ListingProject } from '@/types/project';
 
-interface Project {
-  slug: string;
-  name: string;
-  location: string;
-  price: string;
-  image: string;
-  developer?: { name: string };
-  bhk?: string[];
+type Project = Pick<
+  ListingProject,
+  | 'slug'
+  | 'name'
+  | 'location'
+  | 'price'
+  | 'image'
+  | 'images'
+  | 'developer'
+  | 'bhk'
+  | 'priceDetails'
+  | 'fullLocation'
+  | 'soldOut'
+  | 'propertyType'
+  | 'ageOfConstruction'
+  | 'expectedPrice'
+> & {
   sqft?: string;
-  propertyType?: string;
-  configurations?: Array<{ type: string; area?: string }>;
-  soldOut?: boolean | string; // ✅ Added to handle Sold Out status
-  [key: string]: any;
-}
+};
 
 interface BuilderProjectCardProps {
   project: Project;
@@ -35,7 +41,7 @@ export default function BuilderProjectCard({ project }: BuilderProjectCardProps)
   }
 
   // ✅ Check for sold out status (handles both boolean true and string "true")
-  const isSoldOut = project.soldOut === true || project.soldOut === 'true';
+  const isSoldOut = project.soldOut === true || (project.soldOut as unknown) === 'true';
 
   // ✅ Safe data extraction with fallbacks
   const displayName = project.name;
@@ -45,22 +51,22 @@ export default function BuilderProjectCard({ project }: BuilderProjectCardProps)
   
   // ✅ Extract BHK from configurations OR bhk array
   const configBHKs = project.priceDetails?.configurations
-    ?.map((c: any) => c.type?.match(/\d+\s*[RB]HK/i)?.[0])
-    .filter(Boolean)
-    .map((b: string) => b.toUpperCase()) || [];
-  
+    ?.map((c) => c.type?.match(/\d+\s*[RB]HK/i)?.[0])
+    .filter((t): t is string => Boolean(t))
+    .map((b) => b.toUpperCase()) || [];
+
   const displayBHK = project.bhk?.length ? project.bhk : configBHKs;
-  
+
   // ✅ Extract area/sqft
   const areas = project.priceDetails?.configurations
-    ?.map((c: any) => c.area)
-    .filter((a: any) => a && !isNaN(a));
-  
-  const displaySqft = areas?.length 
-    ? `${Math.min(...areas)} - ${Math.max(...areas)} SQ.FT.`
+    ?.map((c) => c.area)
+    .filter((a): a is string => Boolean(a) && !isNaN(Number(a)));
+
+  const displaySqft = areas?.length
+    ? `${Math.min(...areas.map(Number))} - ${Math.max(...areas.map(Number))} SQ.FT.`
     : project.sqft || project.priceDetails?.configurations?.[0]?.area || null;
 
-  const displayBuilder = project.developer?.name || null;
+  const displayBuilder = (typeof project.developer === 'string' ? undefined : project.developer?.name) || null;
 
   // ✅ Resolve the normalized project type + deal type for badges / facts.
   const projectTypeId = getProjectType(project);

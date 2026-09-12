@@ -20,7 +20,7 @@ async function run() {
 
   for (const post of posts) {
     // `id` only exists in the static data; the DB uses its own _id.
-    const { id, ...data } = post as any;
+    const { id: _id, ...data } = post;
     const res = await Blog.updateOne(
       { slug: post.slug },
       { $set: data },

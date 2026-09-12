@@ -1,6 +1,25 @@
 'use client';
 
-const PropertySchema = ({ property }: { property: any }) => {
+interface PropertySchemaData {
+  name: string;
+  images?: string[];
+  description?: string;
+  builder?: string;
+  price: number;
+  status?: string;
+  slug: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
+  latitude?: number;
+  longitude?: number;
+  area?: string | number;
+  bhk?: string | number;
+  amenities?: string[];
+}
+
+const PropertySchema = ({ property }: { property: PropertySchemaData }) => {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product", // or "Residence" / "Place"

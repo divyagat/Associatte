@@ -1,13 +1,13 @@
 // app/awards/page.tsx
 import type { Metadata } from 'next';
-import { Trophy, Phone, ArrowRight, Award, Star, Building } from "lucide-react";
+import { Trophy, Phone, ArrowRight, Award, Star, Building, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { AWARDS } from "@/lib/awards-data";
+import { AWARDS, type AwardItem } from "@/lib/awards-data";
 import { getAllAwards } from "@/lib/awards-store";
 
 // Always reflect the admin-managed list from the data store.
-export const dynamic = 'force-dynamic';
+export const revalidate = 300;
 
 // ✅ SEO Metadata for the Awards Page (Must be a Server Component)
 export const metadata: Metadata = {
@@ -147,7 +147,7 @@ export default async function AwardsPage() {
 }
 
 // --- Clean Award Card Component ---
-function AwardCard({ award, index }: { award: any; index: number }) {
+function AwardCard({ award }: { award: AwardItem; index: number }) {
   return (
     <div className="flex flex-col items-center group">
       {/* Framed Image */}
@@ -177,7 +177,7 @@ function AwardCard({ award, index }: { award: any; index: number }) {
 }
 
 // --- Stats Component ---
-function StatItem({ label, value, icon: Icon }: { label: string; value: string; icon: any }) {
+function StatItem({ label, value, icon: Icon }: { label: string; value: string; icon: LucideIcon }) {
   return (
     <div className="text-center p-6">
       <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-[#005E60] to-[#8B0000] text-white mb-4 shadow-xl mx-auto">

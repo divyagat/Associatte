@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getBlogBySlug, updateBlog, deleteBlog, getAllBlogs } from '@/lib/data-store';
 import { getPermissionsFromRequest } from '@/lib/admin-auth';
 import { can } from '@/lib/admin-permissions';
+import type { IBlog } from '@/lib/models/Blog';
 
 export async function GET(
   request: NextRequest,
@@ -47,10 +48,11 @@ export async function GET(
     console.log(`❌ Blog not found with slug: "${slug}"`);
     console.log(`=========================================\n`);
     return NextResponse.json({ error: 'Blog not found' }, { status: 404 });
-    
-  } catch (error: any) {
+
+  } catch (error) {
     console.error('❌ Error in GET /api/blogs/[slug]:', error);
-    return NextResponse.json({ error: error.message || 'Failed to fetch blog' }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'Failed to fetch blog';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 
@@ -63,8 +65,8 @@ export async function PUT(
   }
   try {
     const { slug } = await context.params;
-    const body = await request.json();
-    
+    const body: Partial<IBlog> = await request.json();
+
     console.log(`\n📝 ========== PUT /api/blogs/${slug} ==========`);
     console.log(`📝 Updating blog: "${slug}"`);
     console.log(`📝 Request body:`, JSON.stringify(body, null, 2));
@@ -90,11 +92,12 @@ export async function PUT(
     console.log(`✅ Blog updated successfully: ${blog.title}`);
     console.log(`=========================================\n`);
     return NextResponse.json(blog);
-    
-  } catch (error: any) {
+
+  } catch (error) {
     console.error('❌ Error in PUT /api/blogs/[slug]:', error);
     console.log(`=========================================\n`);
-    return NextResponse.json({ error: error.message || 'Failed to update blog' }, { status: 400 });
+    const message = error instanceof Error ? error.message : 'Failed to update blog';
+    return NextResponse.json({ error: message }, { status: 400 });
   }
 }
 
@@ -121,10 +124,11 @@ export async function DELETE(
     console.log(`✅ Blog deleted successfully: "${slug}"`);
     console.log(`=========================================\n`);
     return NextResponse.json({ success: true });
-    
-  } catch (error: any) {
+
+  } catch (error) {
     console.error('❌ Error in DELETE /api/blogs/[slug]:', error);
     console.log(`=========================================\n`);
-    return NextResponse.json({ error: error.message || 'Failed to delete blog' }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'Failed to delete blog';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

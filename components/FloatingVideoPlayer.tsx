@@ -39,10 +39,13 @@ export default function FloatingVideoPlayer({
   const [fileFailed, setFileFailed] = useState(false);
 
   useEffect(() => {
-    const w = window as Window & { requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number };
+    const w = window as Window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+      cancelIdleCallback?: (id: number) => void;
+    };
     if (typeof w.requestIdleCallback === 'function') {
       const id = w.requestIdleCallback(() => setShowEmbed(true), { timeout: 3500 });
-      return () => (w as any).cancelIdleCallback?.(id);
+      return () => w.cancelIdleCallback?.(id);
     }
     const t = setTimeout(() => setShowEmbed(true), 2500);
     return () => clearTimeout(t);

@@ -30,10 +30,11 @@ export async function PUT(request: NextRequest) {
     const list = Array.isArray(body) ? body : body?.items;
     const saved = await saveAllAwards(list);
     return NextResponse.json(saved);
-  } catch (error: any) {
+  } catch (error) {
     console.error('❌ Error in PUT /api/awards:', error);
+    const message = error instanceof Error ? error.message : 'Failed to save awards';
     return NextResponse.json(
-      { error: error?.message || 'Failed to save awards' },
+      { error: message },
       { status: 400 },
     );
   }

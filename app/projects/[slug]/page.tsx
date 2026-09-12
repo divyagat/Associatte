@@ -5,22 +5,23 @@ import { getProjectBySlug, getAllProperties } from '@/lib/data-store';
 import { isPubliclyVisible } from '@/lib/visibility';
 import { getAdminRole } from '@/lib/admin-auth';
 import { getSeoOverride, keywordsToArray } from '@/lib/seo-store';
-import { MapPin, Building2, Calendar, IndianRupee, Ruler, Sparkles, Phone, CheckCircle2, Navigation } from 'lucide-react';
+import type { Project, ProjectConfiguration, ProjectFloorPlan, ProjectNearbyPlace } from '@/types/project';
+import { MapPin, Building2, Calendar, IndianRupee, Phone, CheckCircle2, Navigation } from 'lucide-react';
 import Link from 'next/link';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 300;
 
 // SEO for the project detail page. It shares its admin SEO override with the
 // polished /property/[slug] route (same project), so one entry controls both.
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const project: any = await getProjectBySlug(slug);
+  const project = await getProjectBySlug(slug);
   if (!project) return { title: 'Project Not Found', robots: { index: false, follow: false } };
 
   const override = await getSeoOverride(`/property/${slug}`);
   const area = project.fullLocation?.area || project.location || '';
   const city = project.fullLocation?.city || '';
-  const developer = project.developer?.name || (typeof project.developer === 'string' ? project.developer : '');
+  const developer = typeof project.developer === 'string' ? project.developer : project.developer?.name || '';
 
   const title =
     override?.title?.trim() ||
@@ -39,7 +40,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 // ✅ Helper function to normalize developer field
-const normalizeDeveloper = (developer: any) => {
+const normalizeDeveloper = (developer: Project['developer']) => {
   if (!developer) return { name: 'Unknown Developer', established: '', projectsCount: 0, description: '' };
   if (typeof developer === 'string') {
     return { name: developer, established: '', projectsCount: 0, description: '' };
@@ -59,7 +60,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   
   if (!project) {
     const properties = await getAllProperties();
-    project = properties.find((p: any) => p.slug === slug) || null;
+    project = properties.find((p) => p.slug === slug) || null;
   }
 
   if (!project) notFound();
@@ -184,11 +185,11 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             )}
 
             {/* Configurations */}
-            {normalizedProject.priceDetails.configurations?.length > 0 && (
+            {(normalizedProject.priceDetails?.configurations?.length ?? 0) > 0 && (
               <div className="bg-white rounded-2xl border border-gray-200 p-6">
                 <h2 className="text-xl font-bold text-gray-900 mb-4">Configurations</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {normalizedProject.priceDetails.configurations.map((config: any, idx: number) => (
+                  {normalizedProject.priceDetails?.configurations?.map((config: ProjectConfiguration, idx: number) => (
                     <div key={idx} className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
                       <div className="w-10 h-10 bg-[#005E60]/10 rounded-lg flex items-center justify-center flex-shrink-0">
                         <Building2 className="text-[#005E60]" size={20} />
@@ -226,7 +227,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
               <div className="bg-white rounded-2xl border border-gray-200 p-6">
                 <h2 className="text-xl font-bold text-gray-900 mb-4">Floor Plans</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {normalizedProject.floorPlans.map((plan: any, idx: number) => (
+                  {normalizedProject.floorPlans.map((plan: ProjectFloorPlan, idx: number) => (
                     <div key={idx} className="border border-gray-200 rounded-xl overflow-hidden">
                       {plan.image && (
                         <img src={plan.image} alt={`${plan.type} Floor Plan`} className="w-full h-48 object-cover" />
@@ -267,7 +268,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
               <div className="bg-white rounded-2xl border border-gray-200 p-6">
                 <h2 className="text-xl font-bold text-gray-900 mb-4">Nearby Places</h2>
                 <div className="space-y-2">
-                  {normalizedProject.nearbyPlaces.map((place: any, idx: number) => (
+                  {normalizedProject.nearbyPlaces.map((place: ProjectNearbyPlace, idx: number) => (
                     <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                       <div className="flex items-center gap-3">
                         <Navigation className="w-4 h-4 text-[#005E60]" />

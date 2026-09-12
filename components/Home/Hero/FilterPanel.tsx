@@ -11,7 +11,7 @@ export interface FilterPanelProps {
   builderOptions: readonly string[];
   propertyTypes: readonly string[];
   priceRanges: ReadonlyArray<{ label: string; min: number; max: number }>;
-  onFilterChange: (filterType: keyof SearchFilters, value: any) => void;
+  onFilterChange: (filterType: keyof SearchFilters, value: string | { min: number; max: number }) => void;
   onClear: () => void;
   onApply: () => void;
   onClose: () => void;

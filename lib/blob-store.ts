@@ -36,12 +36,15 @@ export function usingBlob(): boolean {
 // ==================== FILESYSTEM BACKEND ====================
 async function readFileJson<T>(filePath: string, fallback: T | null): Promise<T | null> {
   try {
-    const fullPath = path.join(process.cwd(), filePath);
+    // turbopackIgnore: this reads/writes a plain JSON seed file — it's never a
+  // require()/import() target, so tracing it as one only pulls the whole
+  // project into this route's bundle for no reason.
+  const fullPath = path.join(/*turbopackIgnore: true*/ process.cwd(), filePath);
     const fileContents = await fs.readFile(fullPath, 'utf-8');
     return JSON.parse(fileContents) as T;
-  } catch (error: any) {
+  } catch (error) {
     // If the file doesn't exist yet, return the fallback gracefully.
-    if (error.code === 'ENOENT') {
+    if (error instanceof Error && (error as NodeJS.ErrnoException).code === 'ENOENT') {
       return fallback;
     }
     console.error(`Error reading ${filePath}:`, error);
@@ -50,7 +53,10 @@ async function readFileJson<T>(filePath: string, fallback: T | null): Promise<T 
 }
 
 async function writeFileJson<T>(filePath: string, data: T): Promise<void> {
-  const fullPath = path.join(process.cwd(), filePath);
+  // turbopackIgnore: this reads/writes a plain JSON seed file — it's never a
+  // require()/import() target, so tracing it as one only pulls the whole
+  // project into this route's bundle for no reason.
+  const fullPath = path.join(/*turbopackIgnore: true*/ process.cwd(), filePath);
   const dir = path.dirname(fullPath);
   // Ensure the directory exists before writing (e.g., creates 'data/' folder).
   await fs.mkdir(dir, { recursive: true });

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import BlogForm from '@/components/admin/BlogForm';
+import type { IBlog } from '@/lib/models/Blog';
 
 export default function NewBlogPage() {
   const router = useRouter();
@@ -10,7 +11,7 @@ export default function NewBlogPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: Partial<IBlog>) => {
     setLoading(true);
     setError(null);
     setSuccess(false);

@@ -4,11 +4,10 @@ import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { MapPin, ChevronRight, ChevronLeft, Phone, Filter, X, TrendingUp, Award } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 
 import type { SearchFilters } from '../Home/Hero';
 import properties from '@/data/projects.json';
-import EnquiryPopup from '@/components/common/EnquiryPopup';
+import EnquiryPopup, { type EnquiryPayload } from '@/components/common/EnquiryPopup';
 
 export interface CardProject {
   slug: string;
@@ -57,19 +56,52 @@ function parsePriceToNumeric(priceStr: string | undefined | null): number {
   return !isNaN(num) ? num : 0;
 }
 
-function toSafeLowerString(value: any): string {
+// Shape of a raw entry in data/projects.json, limited to the fields this
+// component actually reads (the file also carries much more editorial copy).
+interface RawProjectConfiguration {
+  type?: string;
+  area?: string;
+  price?: string;
+  description?: string;
+}
+
+interface RawProject {
+  slug?: string;
+  name?: string;
+  location?: string;
+  price?: string;
+  image?: string;
+  images?: string[];
+  rating?: number;
+  isTopSelling?: boolean;
+  trending?: boolean;
+  launchDate?: string;
+  possessionDate?: string;
+  amenities?: string[];
+  description?: string;
+  builder?: string | { name?: string; label?: string };
+  developer?: string | { name?: string; label?: string };
+  company?: string | { name?: string; label?: string };
+  propertyType?: string | { name?: string; label?: string };
+  category?: string | { name?: string; label?: string };
+  fullLocation?: { area?: string; city?: string };
+  priceDetails?: { range?: string; configurations?: RawProjectConfiguration[] };
+}
+
+function toSafeLowerString(value: unknown): string {
   if (!value) return '';
   if (typeof value === 'string') return value.toLowerCase().trim();
   if (typeof value === 'object' && value !== null) {
-    if (value.name) return String(value.name).toLowerCase().trim();
-    if (value.label) return String(value.label).toLowerCase().trim();
+    const obj = value as { name?: unknown; label?: unknown };
+    if (obj.name) return String(obj.name).toLowerCase().trim();
+    if (obj.label) return String(obj.label).toLowerCase().trim();
     return String(value).toLowerCase().trim();
   }
   return String(value).toLowerCase().trim();
 }
 
-function mapProjectToCard(project: any): CardProject {
-  const areas = project.priceDetails?.configurations?.map((c: any) =>
+function mapProjectToCard(project: RawProject): CardProject {
+  const areas = project.priceDetails?.configurations?.map((c) =>
     String(c.area || '').replace(' sq.ft', '').replace(' sq. ft', '').trim()
   ) || [];
 
@@ -77,9 +109,9 @@ function mapProjectToCard(project: any): CardProject {
     ? `${areas[0]} to ${areas[areas.length - 1]} sq.ft`
     : areas[0] || 'Area On Request';
 
-  const bhkTypes = project.priceDetails?.configurations?.map((c: any) => c.type) || [];
+  const bhkTypes = project.priceDetails?.configurations?.map((c) => c.type) || [];
   const bhkValues: string[] = [...new Set(bhkTypes)]
-    .map((t: any) => String(t || '').trim())
+    .map((t) => String(t || '').trim())
     .filter(Boolean) as string[];
 
   const builder = toSafeLowerString(project.builder || project.developer || project.company);
@@ -124,6 +156,11 @@ export default function TopSellingProjects({
   className = ''
 }: TopSellingProjectsProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
+  // Must start at a fixed value (not window.innerWidth) so the server-rendered
+  // HTML and the client's first render match — reading window.innerWidth in
+  // the initializer would use the real viewport on the client but a guess on
+  // the server, causing a hydration mismatch. The effect below corrects it
+  // immediately after mount, once hydration has already reconciled.
   const [viewportWidth, setViewportWidth] = useState(1280);
   const carouselRef = useRef<HTMLDivElement>(null);
   const [touchStart, setTouchStart] = useState(0);
@@ -133,12 +170,13 @@ export default function TopSellingProjects({
   const [selectedProject, setSelectedProject] = useState<CardProject | null>(null);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setViewportWidth(window.innerWidth);
-      const handleResize = () => setViewportWidth(window.innerWidth);
-      window.addEventListener('resize', handleResize);
-      return () => window.removeEventListener('resize', handleResize);
-    }
+    // Sync to the real viewport now that we're past hydration (see the
+    // useState above for why this can't happen in the initializer instead).
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setViewportWidth(window.innerWidth);
+    const handleResize = () => setViewportWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const itemsPerView = useMemo(() => {
@@ -155,7 +193,7 @@ export default function TopSellingProjects({
 
   const allCardProjects = useMemo(() =>
     (properties || []).map(mapProjectToCard),
-    [properties]);
+    []);
 
   const filteredProjects = useMemo(() => {
     let projects = [...allCardProjects];
@@ -250,9 +288,14 @@ export default function TopSellingProjects({
     setCurrentSlide(Math.max(0, Math.min(index, maxSlide)));
   }, [maxSlide]);
 
-  useEffect(() => {
+  // Reset to the first slide whenever the city/filters selection changes,
+  // without an extra render pass through an effect (see
+  // https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes).
+  const [prevResetKey, setPrevResetKey] = useState({ city, filters });
+  if (prevResetKey.city !== city || prevResetKey.filters !== filters) {
+    setPrevResetKey({ city, filters });
     setCurrentSlide(0);
-  }, [city, filters]);
+  }
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStart(e.touches[0].clientX);
@@ -292,7 +335,7 @@ export default function TopSellingProjects({
     setSelectedProject(null);
   };
 
-  const handleFormSubmit = (payload: any) => {
+  const handleFormSubmit = (payload: EnquiryPayload) => {
     console.log('Enquiry submitted:', payload);
     // You can add API call here to send the enquiry
   };

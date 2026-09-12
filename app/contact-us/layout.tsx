@@ -4,7 +4,7 @@
 import type { Metadata } from 'next';
 import { pageMetadata } from '@/lib/seo-pages';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 300;
 
 export function generateMetadata(): Promise<Metadata> {
   return pageMetadata('/contact-us');

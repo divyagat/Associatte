@@ -21,25 +21,31 @@ function str(v: unknown, max: number): string {
   return String(v ?? '').trim().slice(0, max);
 }
 
-function sanitizeItem(raw: any, i: number): AwardItem {
-  const icon: AwardIconName = AWARD_ICON_NAMES.includes(raw?.icon) ? raw.icon : 'Trophy';
+/** Narrow arbitrary/stored input into a plain object we can safely index. */
+function toRecord(v: unknown): Record<string, unknown> {
+  return v && typeof v === 'object' ? (v as Record<string, unknown>) : {};
+}
+
+function sanitizeItem(raw: unknown, i: number): AwardItem {
+  const rec = toRecord(raw);
+  const icon: AwardIconName = AWARD_ICON_NAMES.includes(rec.icon as AwardIconName) ? (rec.icon as AwardIconName) : 'Trophy';
 
   // Frame accent: accept explicit Tailwind class strings if present, otherwise
   // resolve from a preset theme id, otherwise fall back to the default theme.
-  const themeById = AWARD_THEMES.find((t) => t.id === raw?.theme);
-  const gradient = str(raw?.gradient, 200) || themeById?.gradient || DEFAULT_THEME.gradient;
-  const glow = str(raw?.glow, 120) || themeById?.glow || DEFAULT_THEME.glow;
-  const ribbon = str(raw?.ribbon, 200) || themeById?.ribbon || DEFAULT_THEME.ribbon;
+  const themeById = AWARD_THEMES.find((t) => t.id === rec.theme);
+  const gradient = str(rec.gradient, 200) || themeById?.gradient || DEFAULT_THEME.gradient;
+  const glow = str(rec.glow, 120) || themeById?.glow || DEFAULT_THEME.glow;
+  const ribbon = str(rec.ribbon, 200) || themeById?.ribbon || DEFAULT_THEME.ribbon;
 
   return {
-    id: str(raw?.id, 60) || `award_${Date.now()}_${i}`,
-    title: str(raw?.title, 120),
-    subtitle: str(raw?.subtitle, 160),
-    description: str(raw?.description, 600),
-    image: str(raw?.image, 1000),
+    id: str(rec.id, 60) || `award_${Date.now()}_${i}`,
+    title: str(rec.title, 120),
+    subtitle: str(rec.subtitle, 160),
+    description: str(rec.description, 600),
+    image: str(rec.image, 1000),
     icon,
-    metric: str(raw?.metric, 40),
-    year: str(raw?.year, 12),
+    metric: str(rec.metric, 40),
+    year: str(rec.year, 12),
     gradient,
     glow,
     ribbon,
@@ -47,7 +53,7 @@ function sanitizeItem(raw: any, i: number): AwardItem {
 }
 
 /** Coerce arbitrary/stored input into a clean AwardItem[] (drops incomplete rows). */
-export function sanitizeAwardsList(raw: any): AwardItem[] {
+export function sanitizeAwardsList(raw: unknown): AwardItem[] {
   if (!Array.isArray(raw)) return [];
   return raw
     .map(sanitizeItem)
@@ -56,12 +62,12 @@ export function sanitizeAwardsList(raw: any): AwardItem[] {
 }
 
 export async function getAllAwards(): Promise<AwardItem[]> {
-  const data = await readJson<any>(AWARDS_FILE, []);
+  const data = await readJson<unknown>(AWARDS_FILE, []);
   return sanitizeAwardsList(data);
 }
 
 /** Replace the entire awards list (admin panel save). */
-export async function saveAllAwards(list: any): Promise<AwardItem[]> {
+export async function saveAllAwards(list: unknown): Promise<AwardItem[]> {
   const clean = sanitizeAwardsList(list);
   await writeJson(AWARDS_FILE, clean);
   return clean;

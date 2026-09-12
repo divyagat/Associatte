@@ -4,15 +4,56 @@
 import { useState } from 'react';
 import { Upload, X, Plus, Trash2 } from 'lucide-react';
 import { uploadImage } from '@/lib/upload-image';
+import type { IBlog } from '@/lib/models/Blog';
+
+type BlogFAQ = NonNullable<IBlog['faqs']>[number];
+type BlogImageField = 'image' | 'image2' | 'socialImage';
+
+// The form's own working shape: a superset of `IBlog` with everything the JSX
+// binds to required (never undefined), plus a handful of admin-only fields
+// (Locality, meta*/social/canonical SEO fields) that aren't part of the
+// persisted blog record type but are read directly off it elsewhere (see
+// app/blog/[slug]/layout.tsx). Extending `Partial<IBlog>` keeps this assignable
+// back to it, and lets fields like `_id`/`createdAt` ride along from `initialData`.
+interface BlogFormData extends Partial<IBlog> {
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  image: string;
+  image2: string;
+  category: string;
+  city: string;
+  Locality: string;
+  date: string;
+  readTime: string;
+  tags: string[];
+  author: {
+    name: string;
+    role: string;
+    avatar: string;
+    bio: string;
+  };
+  courtesy: string;
+  faqs: BlogFAQ[];
+  relatedSlugs: string[];
+  recentPostSlugs: string[];
+  overlayText: string;
+  metaTitle: string;
+  metaDescription: string;
+  metaKeywords: string;
+  socialImage: string;
+  canonicalUrl: string;
+}
 
 interface BlogFormProps {
-  initialData?: any;
-  onSubmit: (data: any) => Promise<void>;
+  initialData?: Partial<IBlog>;
+  onSubmit: (data: Partial<IBlog>) => Promise<void>;
   loading: boolean;
 }
 
 export default function BlogForm({ initialData, onSubmit, loading }: BlogFormProps) {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<BlogFormData>({
     slug: '',
     title: '',
     excerpt: '',
@@ -32,7 +73,7 @@ export default function BlogForm({ initialData, onSubmit, loading }: BlogFormPro
       bio: ''
     },
     courtesy: '',
-    faqs: [] as any[],
+    faqs: [] as BlogFAQ[],
     relatedSlugs: [] as string[],
     recentPostSlugs: [] as string[],
     overlayText: '',
@@ -43,7 +84,7 @@ export default function BlogForm({ initialData, onSubmit, loading }: BlogFormPro
     metaKeywords: '',
     socialImage: '',
     canonicalUrl: '',
-    ...(initialData || {}),
+    ...(initialData as Partial<BlogFormData> || {}),
   });
 
   const [currentTag, setCurrentTag] = useState('');
@@ -52,36 +93,36 @@ export default function BlogForm({ initialData, onSubmit, loading }: BlogFormPro
     const { name, value } = e.target;
     const keys = name.split('.');
 
-    setFormData((prev: any) => {
-      const updated = { ...prev };
-      let current: any = updated;
+    setFormData((prev) => {
+      const updated: Record<string, unknown> = { ...prev };
+      let current: Record<string, unknown> = updated;
 
       for (let i = 0; i < keys.length - 1; i++) {
-        current[keys[i]] = { ...current[keys[i]] };
-        current = current[keys[i]];
+        current[keys[i]] = { ...(current[keys[i]] as Record<string, unknown>) };
+        current = current[keys[i]] as Record<string, unknown>;
       }
 
       current[keys[keys.length - 1]] = value;
-      return updated;
+      return updated as unknown as BlogFormData;
     });
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: BlogImageField) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     try {
       const url = await uploadImage(file);
-      setFormData((prev: any) => ({ ...prev, [field]: url }));
-    } catch (error: any) {
+      setFormData((prev) => ({ ...prev, [field]: url }));
+    } catch (error) {
       console.error('Upload failed:', error);
-      alert(error?.message || 'Image upload failed. Please try again.');
+      alert(error instanceof Error ? error.message : 'Image upload failed. Please try again.');
     }
   };
 
   const addTag = () => {
     if (currentTag.trim()) {
-      setFormData((prev: any) => ({
+      setFormData((prev) => ({
         ...prev,
         tags: [...prev.tags, currentTag.trim()]
       }));
@@ -90,23 +131,23 @@ export default function BlogForm({ initialData, onSubmit, loading }: BlogFormPro
   };
 
   const removeTag = (index: number) => {
-    setFormData((prev: any) => ({
+    setFormData((prev) => ({
       ...prev,
-      tags: prev.tags.filter((_: any, i: number) => i !== index)
+      tags: prev.tags.filter((_, i: number) => i !== index)
     }));
   };
 
   const addFAQ = () => {
-    setFormData((prev: any) => ({
+    setFormData((prev) => ({
       ...prev,
       faqs: [...prev.faqs, { question: '', answer: '' }]
     }));
   };
 
   const removeFAQ = (index: number) => {
-    setFormData((prev: any) => ({
+    setFormData((prev) => ({
       ...prev,
-      faqs: prev.faqs.filter((_: any, i: number) => i !== index)
+      faqs: prev.faqs.filter((_, i: number) => i !== index)
     }));
   };
 
@@ -395,7 +436,7 @@ export default function BlogForm({ initialData, onSubmit, loading }: BlogFormPro
           </button>
         </div>
         <div className="space-y-3">
-          {formData.faqs.map((faq: any, index: number) => (
+          {formData.faqs.map((faq: BlogFAQ, index: number) => (
             <div key={index} className="p-4 bg-gray-50 rounded-lg space-y-3">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 space-y-2">
@@ -406,7 +447,7 @@ export default function BlogForm({ initialData, onSubmit, loading }: BlogFormPro
                     onChange={(e) => {
                       const updated = [...formData.faqs];
                       updated[index].question = e.target.value;
-                      setFormData((prev: any) => ({ ...prev, faqs: updated }));
+                      setFormData((prev) => ({ ...prev, faqs: updated }));
                     }}
                     className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]"
                   />
@@ -416,7 +457,7 @@ export default function BlogForm({ initialData, onSubmit, loading }: BlogFormPro
                     onChange={(e) => {
                       const updated = [...formData.faqs];
                       updated[index].answer = e.target.value;
-                      setFormData((prev: any) => ({ ...prev, faqs: updated }));
+                      setFormData((prev) => ({ ...prev, faqs: updated }));
                     }}
                     rows={3}
                     className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#005E60]"

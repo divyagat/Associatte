@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import properties from "../../../data/projects.json";
 import { getSeoOverride, keywordsToArray } from "@/lib/seo-store";
+import type { Project } from "@/types/project";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.associatte.com";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 // The property page is a Client Component (interactive gallery, EMI calc, popups),
 // so it can't export metadata and its old `next/head` block was a no-op in the
@@ -16,7 +17,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const project = (properties as any[]).find((p) => p?.slug === slug);
+  const project = (properties as Project[]).find((p) => p?.slug === slug);
 
   if (!project) {
     return {
@@ -35,7 +36,7 @@ export async function generateMetadata({
         : "Kalyan");
   const configType = project.priceDetails?.configurations?.[0]?.type || "";
   const priceRange = project.priceDetails?.range || project.price || "";
-  const developer = project.developer?.name || "";
+  const developer = (typeof project.developer === 'string' ? undefined : project.developer?.name) || "";
   const canonical = `/property/${slug}`;
 
   // Admin SEO override (set in the admin SEO panel) wins over the derived defaults.

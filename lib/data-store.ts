@@ -1,7 +1,7 @@
 // lib/data-store.ts
 
-import type { IProperty } from './models/Property';
 import type { IBlog } from './models/Blog';
+import type { Project } from '@/types/project';
 import { readJson, writeJson } from './blob-store';
 import { DEFAULT_PROPERTY_TYPES, type PropertyType, type CategorySection } from './categories';
 import { MAIN_NAV_SECTION_IDS } from './nav-sections';
@@ -33,36 +33,36 @@ const SITE_CONFIG_FILE = 'data/site-config.json';
 const LEADS_FILE = 'data/leads.json';
 
 // ==================== LOW-LEVEL FILE HELPERS ====================
-async function readArray<T = any>(file: string): Promise<T[]> {
+async function readArray<T>(file: string): Promise<T[]> {
   const data = await readJson<T[]>(file, []);
   return Array.isArray(data) ? data : [];
 }
 
-async function writeArray<T = any>(file: string, data: T[]): Promise<void> {
+async function writeArray<T>(file: string, data: T[]): Promise<void> {
   await writeJson(file, data);
 }
 
 // Ensure every record has a stable id (admin/blog UIs use `_id`).
 function withId<T extends { slug?: string; _id?: string }>(record: T): T {
-  return { ...record, _id: record._id || record.slug } as T;
+  return { ...record, _id: record._id || record.slug };
 }
 
 // ==================== PROPERTIES ====================
-export async function getAllProperties(): Promise<IProperty[]> {
-  const properties = await readArray(PROPERTIES_FILE);
-  return properties.map(withId) as any;
+export async function getAllProperties(): Promise<Project[]> {
+  const properties = await readArray<Project>(PROPERTIES_FILE);
+  return properties.map(withId);
 }
 
-export async function getPropertyBySlug(slug: string): Promise<IProperty | null> {
-  const properties = await readArray(PROPERTIES_FILE);
-  const property = properties.find((p: any) => p.slug === slug);
-  return property ? (withId(property) as any) : null;
+export async function getPropertyBySlug(slug: string): Promise<Project | null> {
+  const properties = await readArray<Project>(PROPERTIES_FILE);
+  const property = properties.find((p) => p.slug === slug);
+  return property ? withId(property) : null;
 }
 
-export async function createProperty(propertyData: Partial<IProperty>): Promise<IProperty> {
-  const properties = await readArray(PROPERTIES_FILE);
+export async function createProperty(propertyData: Partial<Project>): Promise<Project> {
+  const properties = await readArray<Project>(PROPERTIES_FILE);
 
-  if (properties.some((p: any) => p.slug === propertyData.slug)) {
+  if (properties.some((p) => p.slug === propertyData.slug)) {
     throw new Error('Property with this slug already exists');
   }
 
@@ -71,17 +71,17 @@ export async function createProperty(propertyData: Partial<IProperty>): Promise<
     ...propertyData,
     createdAt: now,
     updatedAt: now,
-  } as any);
+  } as Project);
 
   // Newest first so it surfaces at the top of the projects grid.
   properties.unshift(property);
   await writeArray(PROPERTIES_FILE, properties);
-  return property as any;
+  return property;
 }
 
-export async function updateProperty(slug: string, updates: Partial<IProperty>): Promise<IProperty | null> {
-  const properties = await readArray(PROPERTIES_FILE);
-  const index = properties.findIndex((p: any) => p.slug === slug);
+export async function updateProperty(slug: string, updates: Partial<Project>): Promise<Project | null> {
+  const properties = await readArray<Project>(PROPERTIES_FILE);
+  const index = properties.findIndex((p) => p.slug === slug);
   if (index === -1) return null;
 
   const updated = withId({
@@ -92,89 +92,89 @@ export async function updateProperty(slug: string, updates: Partial<IProperty>):
   });
   properties[index] = updated;
   await writeArray(PROPERTIES_FILE, properties);
-  return updated as any;
+  return updated;
 }
 
 export async function deleteProperty(slug: string): Promise<boolean> {
-  const properties = await readArray(PROPERTIES_FILE);
-  const next = properties.filter((p: any) => p.slug !== slug);
+  const properties = await readArray<Project>(PROPERTIES_FILE);
+  const next = properties.filter((p) => p.slug !== slug);
   if (next.length === properties.length) return false;
   await writeArray(PROPERTIES_FILE, next);
   return true;
 }
 
 // ==================== PROJECTS ====================
-export async function getAllProjects(): Promise<any[]> {
-  const projects = await readArray(PROJECTS_FILE);
+export async function getAllProjects(): Promise<Project[]> {
+  const projects = await readArray<Project>(PROJECTS_FILE);
   console.log(`📊 getAllProjects: Found ${projects.length} projects`);
-  return projects.map(withId) as any;
+  return projects.map(withId);
 }
 
-export async function getProjectBySlug(slug: string): Promise<any | null> {
+export async function getProjectBySlug(slug: string): Promise<Project | null> {
   console.log('🔍 getProjectBySlug called with slug:', slug);
   console.log('🔍 Slug type:', typeof slug);
   console.log('🔍 Slug length:', slug?.length);
-  
+
   // Decode the slug (handles URL encoding)
   const decodedSlug = decodeURIComponent(slug).trim();
   console.log('📝 Decoded slug:', decodedSlug);
-  
-  const projects = await readArray(PROJECTS_FILE);
+
+  const projects = await readArray<Project>(PROJECTS_FILE);
   console.log(`📦 Total projects in file: ${projects.length}`);
-  
+
   if (projects.length === 0) {
     console.log('⚠️ No projects found in the file');
     return null;
   }
-  
-  console.log('📋 Available projects:', projects.map((p: any) => ({ 
-    slug: p.slug, 
+
+  console.log('📋 Available projects:', projects.map((p) => ({
+    slug: p.slug,
     name: p.name,
-    id: p._id || p.id 
+    id: p._id || p.id
   })));
-  
+
   // Try multiple matching strategies
-  let project = null;
-  
+  let project: Project | undefined;
+
   // 1. Direct match (exact)
-  project = projects.find((p: any) => p.slug === decodedSlug);
+  project = projects.find((p) => p.slug === decodedSlug);
   if (project) {
     console.log('✅ Found project with direct match');
   }
-  
+
   // 2. Case-insensitive match
   if (!project) {
-    project = projects.find((p: any) => 
+    project = projects.find((p) =>
       p.slug?.toLowerCase() === decodedSlug.toLowerCase()
     );
     if (project) {
       console.log('✅ Found project with case-insensitive match');
     }
   }
-  
+
   // 3. Try matching by ID (if slug looks like an ID)
   if (!project) {
-    project = projects.find((p: any) => 
+    project = projects.find((p) =>
       p._id === decodedSlug || p.id === decodedSlug
     );
     if (project) {
       console.log('✅ Found project by ID');
     }
   }
-  
+
   // 4. Try matching by name (if slug is actually a name)
   if (!project) {
-    project = projects.find((p: any) => 
+    project = projects.find((p) =>
       p.name?.toLowerCase() === decodedSlug.toLowerCase()
     );
     if (project) {
       console.log('✅ Found project by name');
     }
   }
-  
+
   // 5. Try partial match (if slug contains part of the name)
   if (!project) {
-    project = projects.find((p: any) => 
+    project = projects.find((p) =>
       p.name?.toLowerCase().includes(decodedSlug.toLowerCase()) ||
       decodedSlug.toLowerCase().includes(p.name?.toLowerCase())
     );
@@ -182,26 +182,26 @@ export async function getProjectBySlug(slug: string): Promise<any | null> {
       console.log('✅ Found project by partial name match');
     }
   }
-  
+
   if (project) {
     console.log('✅ Project found:', project.name, 'with slug:', project.slug);
-    return withId(project) as any;
+    return withId(project);
   } else {
     console.log('❌ No project found with slug:', decodedSlug);
-    console.log('💡 Available slugs:', projects.map((p: any) => p.slug).join(', '));
+    console.log('💡 Available slugs:', projects.map((p) => p.slug).join(', '));
     return null;
   }
 }
 
-export async function createProject(projectData: any): Promise<any> {
+export async function createProject(projectData: Partial<Project>): Promise<Project> {
   // ✅ FIX: Clean the slug before saving to ensure consistency with getProjectBySlug
   if (projectData.slug) {
     projectData.slug = decodeURIComponent(projectData.slug).trim();
   }
 
-  const projects = await readArray(PROJECTS_FILE);
+  const projects = await readArray<Project>(PROJECTS_FILE);
 
-  if (projects.some((p: any) => p.slug === projectData.slug)) {
+  if (projects.some((p) => p.slug === projectData.slug)) {
     throw new Error('Project with this slug already exists');
   }
 
@@ -210,30 +210,30 @@ export async function createProject(projectData: any): Promise<any> {
     ...projectData,
     createdAt: now,
     updatedAt: now,
-  } as any);
+  } as Project);
 
   // Newest first
   projects.unshift(project);
   await writeArray(PROJECTS_FILE, projects);
   console.log('✅ Created new project:', project.name, 'with slug:', project.slug);
-  return project as any;
+  return project;
 }
 
-export async function updateProject(slug: string, updates: any): Promise<any | null> {
+export async function updateProject(slug: string, updates: Partial<Project>): Promise<Project | null> {
   // ✅ FIX: Decode and trim the slug to match getProjectBySlug behavior
   const decodedSlug = decodeURIComponent(slug).trim();
   console.log('🔄 updateProject called with slug:', decodedSlug);
-  
-  const projects = await readArray(PROJECTS_FILE);
-  
+
+  const projects = await readArray<Project>(PROJECTS_FILE);
+
   // ✅ FIX: Use case-insensitive match just in case
-  const index = projects.findIndex((p: any) => 
+  const index = projects.findIndex((p) =>
     p.slug === decodedSlug || p.slug?.toLowerCase() === decodedSlug.toLowerCase()
   );
-  
+
   if (index === -1) {
     console.log('❌ Project not found for update with slug:', decodedSlug);
-    console.log('💡 Available slugs:', projects.map((p: any) => p.slug).join(', '));
+    console.log('💡 Available slugs:', projects.map((p) => p.slug).join(', '));
     return null;
   }
 
@@ -246,24 +246,24 @@ export async function updateProject(slug: string, updates: any): Promise<any | n
   projects[index] = updated;
   await writeArray(PROJECTS_FILE, projects);
   console.log('✅ Updated project:', updated.name);
-  return updated as any;
+  return updated;
 }
 
 export async function deleteProject(slug: string): Promise<boolean> {
   // ✅ FIX: Decode and trim the slug to match getProjectBySlug behavior
   const decodedSlug = decodeURIComponent(slug).trim();
   console.log('🗑️ deleteProject called with slug:', decodedSlug);
-  
-  const projects = await readArray(PROJECTS_FILE);
-  
+
+  const projects = await readArray<Project>(PROJECTS_FILE);
+
   // ✅ FIX: Use case-insensitive match to ensure it actually deletes
-  const next = projects.filter((p: any) => 
+  const next = projects.filter((p) =>
     p.slug !== decodedSlug && p.slug?.toLowerCase() !== decodedSlug.toLowerCase()
   );
-  
+
   if (next.length === projects.length) {
     console.log('❌ Project not found for deletion with slug:', decodedSlug);
-    console.log('💡 Available slugs:', projects.map((p: any) => p.slug).join(', '));
+    console.log('💡 Available slugs:', projects.map((p) => p.slug).join(', '));
     return false;
   }
   await writeArray(PROJECTS_FILE, next);
@@ -273,20 +273,20 @@ export async function deleteProject(slug: string): Promise<boolean> {
 
 // ==================== BLOGS ====================
 export async function getAllBlogs(): Promise<IBlog[]> {
-  const blogs = await readArray(BLOGS_FILE);
-  return blogs.map(withId) as any;
+  const blogs = await readArray<IBlog>(BLOGS_FILE);
+  return blogs.map(withId);
 }
 
 export async function getBlogBySlug(slug: string): Promise<IBlog | null> {
-  const blogs = await readArray(BLOGS_FILE);
-  const blog = blogs.find((b: any) => b.slug === slug);
-  return blog ? (withId(blog) as any) : null;
+  const blogs = await readArray<IBlog>(BLOGS_FILE);
+  const blog = blogs.find((b) => b.slug === slug);
+  return blog ? withId(blog) : null;
 }
 
 export async function createBlog(blogData: Partial<IBlog>): Promise<IBlog> {
-  const blogs = await readArray(BLOGS_FILE);
+  const blogs = await readArray<IBlog>(BLOGS_FILE);
 
-  if (blogs.some((b: any) => b.slug === blogData.slug)) {
+  if (blogs.some((b) => b.slug === blogData.slug)) {
     throw new Error('Blog with this slug already exists');
   }
 
@@ -297,16 +297,16 @@ export async function createBlog(blogData: Partial<IBlog>): Promise<IBlog> {
     relatedSlugs: blogData.relatedSlugs || [],
     createdAt: now,
     updatedAt: now,
-  } as any);
+  } as IBlog);
 
   blogs.unshift(blog);
   await writeArray(BLOGS_FILE, blogs);
-  return blog as any;
+  return blog;
 }
 
 export async function updateBlog(slug: string, updates: Partial<IBlog>): Promise<IBlog | null> {
-  const blogs = await readArray(BLOGS_FILE);
-  const index = blogs.findIndex((b: any) => b.slug === slug);
+  const blogs = await readArray<IBlog>(BLOGS_FILE);
+  const index = blogs.findIndex((b) => b.slug === slug);
   if (index === -1) return null;
 
   const updated = withId({
@@ -317,12 +317,12 @@ export async function updateBlog(slug: string, updates: Partial<IBlog>): Promise
   });
   blogs[index] = updated;
   await writeArray(BLOGS_FILE, blogs);
-  return updated as any;
+  return updated;
 }
 
 export async function deleteBlog(slug: string): Promise<boolean> {
-  const blogs = await readArray(BLOGS_FILE);
-  const next = blogs.filter((b: any) => b.slug !== slug);
+  const blogs = await readArray<IBlog>(BLOGS_FILE);
+  const next = blogs.filter((b) => b.slug !== slug);
   if (next.length === blogs.length) return false;
   await writeArray(BLOGS_FILE, next);
   return true;
@@ -408,10 +408,10 @@ const DEFAULT_SITE_CONFIG: SiteConfig = {
 
 // Coerce persisted data into a clean PropertyType[]; falls back to defaults when
 // nothing valid is stored (so a fresh/empty config still behaves as before).
-function normalizePropertyTypes(raw: any): PropertyType[] {
+function normalizePropertyTypes(raw: unknown): PropertyType[] {
   if (!Array.isArray(raw)) return DEFAULT_PROPERTY_TYPES;
-  const cleaned = raw
-    .map((t: any) => {
+  const cleaned = (raw as Array<Partial<PropertyType> | null | undefined>)
+    .map((t) => {
       const id = String(t?.id || '').toLowerCase().trim();
       if (!id) return null;
       const section: CategorySection = t?.section === 'properties' ? 'properties' : 'projects';
@@ -422,7 +422,7 @@ function normalizePropertyTypes(raw: any): PropertyType[] {
         section,
       } as PropertyType;
     })
-    .filter(Boolean) as PropertyType[];
+    .filter((t): t is PropertyType => t !== null);
   // De-dupe by id, keep first occurrence.
   const seen = new Set<string>();
   const unique = cleaned.filter((t) => (seen.has(t.id) ? false : (seen.add(t.id), true)));
@@ -430,7 +430,7 @@ function normalizePropertyTypes(raw: any): PropertyType[] {
 }
 
 export async function getSiteConfig(): Promise<SiteConfig> {
-  const data = await readJson<any>(SITE_CONFIG_FILE, { ...DEFAULT_SITE_CONFIG });
+  const data = await readJson<Partial<SiteConfig>>(SITE_CONFIG_FILE, { ...DEFAULT_SITE_CONFIG });
   return {
     hiddenTypes: Array.isArray(data?.hiddenTypes) ? data.hiddenTypes.map(String) : [],
     hiddenDeals: Array.isArray(data?.hiddenDeals) ? data.hiddenDeals.map(String) : [],
@@ -466,33 +466,33 @@ export async function updateSiteConfig(patch: Partial<SiteConfig>): Promise<Site
 }
 
 // ==================== HELPER FUNCTIONS ====================
-export async function getPropertiesByLocation(location: string): Promise<IProperty[]> {
+export async function getPropertiesByLocation(location: string): Promise<Project[]> {
   const properties = await getAllProperties();
-  return properties.filter((p: any) => p.location === location) as any;
+  return properties.filter((p) => p.location === location);
 }
 
 export async function getBlogsByCategory(category: string): Promise<IBlog[]> {
   const blogs = await getAllBlogs();
-  return blogs.filter((b: any) => b.category === category) as any;
+  return blogs.filter((b) => b.category === category);
 }
 
-export async function searchProperties(query: string): Promise<IProperty[]> {
+export async function searchProperties(query: string): Promise<Project[]> {
   const q = query.toLowerCase();
   const properties = await getAllProperties();
-  return properties.filter((p: any) =>
+  return properties.filter((p) =>
     p.name?.toLowerCase().includes(q) ||
     p.fullLocation?.area?.toLowerCase().includes(q) ||
-    p.developer?.name?.toLowerCase().includes(q)
-  ) as any;
+    (typeof p.developer === 'string' ? p.developer : p.developer?.name)?.toLowerCase().includes(q)
+  );
 }
 
 export async function searchBlogs(query: string): Promise<IBlog[]> {
   const q = query.toLowerCase();
   const blogs = await getAllBlogs();
-  return blogs.filter((b: any) =>
+  return blogs.filter((b) =>
     b.title?.toLowerCase().includes(q) ||
     b.excerpt?.toLowerCase().includes(q) ||
     b.category?.toLowerCase().includes(q) ||
     (Array.isArray(b.tags) && b.tags.some((t: string) => t.toLowerCase().includes(q)))
-  ) as any;
+  );
 }

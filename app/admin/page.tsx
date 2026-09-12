@@ -103,9 +103,9 @@ export default async function AdminDashboard() {
                 />
                 <div className="flex-1 min-w-0">
                   <h3 className="font-medium text-gray-900 truncate">{property.name}</h3>
-                  <p className="text-sm text-gray-500">{property.fullLocation.area}, {property.fullLocation.city}</p>
+                  <p className="text-sm text-gray-500">{property.fullLocation?.area}, {property.fullLocation?.city}</p>
                 </div>
-                <span className="text-sm font-semibold text-[#005E60]">{property.priceDetails.range}</span>
+                <span className="text-sm font-semibold text-[#005E60]">{property.priceDetails?.range}</span>
               </div>
             ))}
           </div>

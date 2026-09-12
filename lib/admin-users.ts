@@ -38,16 +38,18 @@ const USERS_FILE =
     ? `data/admin-users-${process.env.BLOB_DATA_SECRET}.json`
     : 'data/admin-users.json';
 
+type RawEmployee = Record<string, unknown>;
+
 async function readUsers(): Promise<Employee[]> {
-  const data = await readJson<any[]>(USERS_FILE, []);
+  const data = await readJson<RawEmployee[]>(USERS_FILE, []);
   if (!Array.isArray(data)) return [];
   // Backfill permissions for records saved before per-section access existed.
-  return data.map((u: any) => ({
+  return data.map((u) => ({
     ...u,
     permissions: u.permissions
       ? sanitizePermissions(u.permissions)
       : DEFAULT_EMPLOYEE_PERMISSIONS,
-  }));
+  })) as Employee[];
 }
 
 async function writeUsers(users: Employee[]): Promise<void> {

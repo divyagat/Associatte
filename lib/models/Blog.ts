@@ -1,6 +1,11 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 
-export interface IBlog extends Document {
+// A plain, JSON-serializable blog record — this is what's actually persisted
+// (see lib/data-store.ts, which reads/writes data/blogs.json directly and
+// never touches the Mongoose model below), so `_id`/`createdAt`/`updatedAt`
+// are plain strings rather than the ObjectId/Date a live Document would have.
+export interface IBlog {
+  _id?: string;
   slug: string;
   title: string;
   excerpt: string;
@@ -27,11 +32,11 @@ export interface IBlog extends Document {
   relatedSlugs: string[];
   recentPostSlugs?: string[];
   overlayText?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
-const BlogSchema = new Schema<IBlog>(
+const BlogSchema = new Schema<IBlog & Document>(
   {
     slug: { type: String, required: true, unique: true, index: true },
     title: { type: String, required: true, index: true },
@@ -65,6 +70,6 @@ const BlogSchema = new Schema<IBlog>(
   }
 );
 
-const Blog: Model<IBlog> = mongoose.models.Blog || mongoose.model<IBlog>('Blog', BlogSchema);
+const Blog: Model<IBlog & Document> = mongoose.models.Blog || mongoose.model<IBlog & Document>('Blog', BlogSchema);
 
 export default Blog;

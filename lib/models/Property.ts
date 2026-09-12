@@ -1,6 +1,11 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 
-export interface IProperty extends Document {
+// A plain, JSON-serializable property record — lib/data-store.ts reads/writes
+// data/properties.json directly and never touches the Mongoose model below,
+// so `_id`/`createdAt`/`updatedAt` are plain strings, not a live Document's
+// ObjectId/Date.
+export interface IProperty {
+  _id?: string;
   slug: string;
   name: string;
   location: 'pune' | 'mumbai' | 'kdmc';
@@ -58,11 +63,11 @@ export interface IProperty extends Document {
     interestRate: string;
     tenure: string;
   };
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
-const PropertySchema = new Schema<IProperty>(
+const PropertySchema = new Schema<IProperty & Document>(
   {
     slug: { type: String, required: true, unique: true, index: true },
     name: { type: String, required: true },
@@ -130,6 +135,6 @@ const PropertySchema = new Schema<IProperty>(
   }
 );
 
-const Property: Model<IProperty> = mongoose.models.Property || mongoose.model<IProperty>('Property', PropertySchema);
+const Property: Model<IProperty & Document> = mongoose.models.Property || mongoose.model<IProperty & Document>('Property', PropertySchema);
 
 export default Property;

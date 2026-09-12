@@ -33,15 +33,16 @@ export function normalizeSeoPath(path: string): string {
 }
 
 /** Trim + cap a stored SEO override so nothing absurd is persisted. */
-function sanitizeOverride(raw: any): SeoOverride {
+function sanitizeOverride(raw: unknown): SeoOverride {
+  const src = raw && typeof raw === 'object' ? (raw as Record<string, unknown>) : {};
   const clean = (v: unknown, max: number): string | undefined => {
     const s = String(v ?? '').trim();
     return s ? s.slice(0, max) : undefined;
   };
   const out: SeoOverride = {
-    title: clean(raw?.title, 200),
-    description: clean(raw?.description, 400),
-    keywords: clean(raw?.keywords, 500),
+    title: clean(src.title, 200),
+    description: clean(src.description, 400),
+    keywords: clean(src.keywords, 500),
   };
   // Drop empty keys so an all-blank override is stored as {} (and can be pruned).
   (Object.keys(out) as (keyof SeoOverride)[]).forEach((k) => out[k] === undefined && delete out[k]);

@@ -15,6 +15,15 @@ interface TrackingData {
   city?: string;
 }
 
+export interface EnquiryPayload {
+  name: string;
+  phone: string;
+  email: string;
+  project?: string;
+  remark: string;
+  trackingData?: TrackingData;
+}
+
 interface EnquiryPopupProps {
   isOpen?: boolean;
   onClose?: () => void;
@@ -23,7 +32,7 @@ interface EnquiryPopupProps {
   theme?: 'default' | 'gradient';
   showLegalLinks?: boolean;
   formName?: string;
-  onSubmit?: (payload: any) => void;
+  onSubmit?: (payload: EnquiryPayload) => void;
   trackingData?: TrackingData;
   autoPopup?: boolean;
   popupDelay?: number;
@@ -288,7 +297,7 @@ export default function EnquiryPopup({
               {submitSuccess && (
                 <div className="mx-4 mt-4 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2">
                   <CheckCircle className="w-5 h-5 text-green-500" />
-                  <span className="text-sm text-green-700">Thank you! We'll contact you soon.</span>
+                  <span className="text-sm text-green-700">Thank you! We&apos;ll contact you soon.</span>
                 </div>
               )}
 

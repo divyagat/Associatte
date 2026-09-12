@@ -117,7 +117,7 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
     return initialCity as CityName;
   });
 
-  const [activeTab, setActiveTab] = useState<'residential' | 'commercial' | 'underConstruction' | 'readyToMove'>(() => (searchParams?.get('tab') as any) || 'residential');
+  const [activeTab, setActiveTab] = useState<'residential' | 'commercial' | 'underConstruction' | 'readyToMove'>(() => (searchParams?.get('tab') as 'residential' | 'commercial' | 'underConstruction' | 'readyToMove' | null) || 'residential');
   const [showStickySearch, setShowStickySearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState(() => searchParams?.get('q') || '');
   const [filters, setFilters] = useState<SearchFilters>(() => {
@@ -271,7 +271,7 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
   const handleApplyFilters = useCallback(() => { handleSearch(); }, [handleSearch]);
   const handleLocalityClick = useCallback((locality: string) => { setSearchQuery(locality); const targetCitySlug = LOCALITY_CITY_MAP[locality]; if (targetCitySlug) { const targetCity = CITIES.find(c => c.slug === targetCitySlug); if (targetCity) { navigateToLocation(targetCity.name); return; } } handleSearch(); }, [handleSearch, navigateToLocation]);
 
-  const searchBarProps = useMemo(() => ({ activeTab, selectedCity, searchQuery, filters, isCityDropdownOpen, showSuggestions: !!searchQuery && filteredSuggestions.length > 0, filteredSuggestions: [...filteredSuggestions], categories: CATEGORIES as unknown as readonly Category[], cities: CITIES as unknown as readonly City[], isSearching, onTabChange: handleCategorySelect, onCityChange: handleCityChange, onSearchQueryChange: setSearchQuery, onCityDropdownToggle: handleCityDropdownOpen, onSuggestionClick: handleSuggestionClick, onFilterToggle: () => setShowFilters(true), onSearch: handleSearch, onVoiceInterim: (t: string) => setSearchQuery(t), onVoiceResult: (t: string) => { setSearchQuery(t); setTimeout(() => handleSearch(), 50); } }), [activeTab, selectedCity, searchQuery, filters, isCityDropdownOpen, filteredSuggestions, isSearching, handleCityDropdownOpen, handleSuggestionClick, handleSearch, handleCityChange, handleCategorySelect]);
+  const searchBarProps = useMemo(() => ({ activeTab, selectedCity, searchQuery, filters, isCityDropdownOpen, showSuggestions: !!searchQuery && filteredSuggestions.length > 0, filteredSuggestions: [...filteredSuggestions], categories: CATEGORIES as unknown as readonly Category[], cities: CITIES as unknown as readonly City[], isSearching, onTabChange: handleCategorySelect as (tab: string) => void, onCityChange: handleCityChange as (city: string) => void, onSearchQueryChange: setSearchQuery, onCityDropdownToggle: handleCityDropdownOpen, onSuggestionClick: handleSuggestionClick, onFilterToggle: () => setShowFilters(true), onSearch: handleSearch, onVoiceInterim: (t: string) => setSearchQuery(t), onVoiceResult: (t: string) => { setSearchQuery(t); setTimeout(() => handleSearch(), 50); } }), [activeTab, selectedCity, searchQuery, filters, isCityDropdownOpen, filteredSuggestions, isSearching, handleCityDropdownOpen, handleSuggestionClick, handleSearch, handleCityChange, handleCategorySelect]);
   const cityLocationOptions = useMemo(() => CITIES.map(c => ({ label: c.name, value: c.name })), []);
   const stickySearchProps = useMemo(() => ({ activeTab, selectedCity, searchQuery, categories: CATEGORIES as unknown as readonly Category[], isSearching, bhkOptions: BHK_OPTIONS, selectedBhk: filters.bhk?.[0] || '', onBhkChange: (bhk: string) => setFilters(f => ({ ...f, bhk: bhk ? [bhk] : undefined })), locationOptions: cityLocationOptions, selectedLocation: selectedCity, onLocationChange: (city: string) => handleCityChange(city as CityName), onTabChange: handleCategorySelect, onSearchQueryChange: setSearchQuery, onSearch: handleSearch }), [activeTab, selectedCity, searchQuery, isSearching, handleSearch, filters.bhk, handleCategorySelect, cityLocationOptions, handleCityChange]);
   const filterPanelProps: FilterPanelProps = useMemo(() => ({ filters, bhkOptions: BHK_OPTIONS, builderOptions: BUILDER_OPTIONS, propertyTypes: PROPERTY_TYPES, priceRanges: PRICE_RANGES, onFilterChange: handleFilterSelect, onClear: handleClearFilters, onApply: handleApplyFilters, onClose: () => setShowFilters(false), isNavigating: true }), [filters, handleFilterSelect, handleClearFilters, handleApplyFilters]);
@@ -394,7 +394,7 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
                       style={{
                         borderColor: '#e2e8f0',
                         '--tw-ring-color': `${BRAND.green}30`
-                      } as any}
+                      } as React.CSSProperties & { '--tw-ring-color'?: string }}
                       onFocus={(e) => {
                         e.target.style.borderColor = BRAND.green;
                         e.target.style.boxShadow = `0 0 0 3px ${BRAND.green}20`;
@@ -456,7 +456,7 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
                       return (
                         <button
                           key={category.id}
-                          onClick={() => handleCategorySelect(category.id as any)}
+                          onClick={() => handleCategorySelect(category.id)}
                           className={`flex-shrink-0 flex items-center gap-0.5 xs:gap-1 px-2 xs:px-2.5 sm:px-3 py-1 xs:py-1.5 sm:py-2 rounded-md xs:rounded-lg text-[9px] xs:text-[10px] sm:text-xs font-semibold transition-all whitespace-nowrap ${
                             isActive
                               ? 'text-white shadow-sm'
@@ -491,7 +491,7 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
 
             {/* Desktop Search */}
             <div className="hidden lg:block">
-              <SearchBar {...searchBarProps as any} />
+              <SearchBar {...searchBarProps} />
             </div>
           </div>
         </div>

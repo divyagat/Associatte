@@ -8,7 +8,7 @@ export async function GET() {
   try {
     const config = await getSiteConfig();
     return NextResponse.json(config);
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error fetching site config:', error);
     return NextResponse.json({ hiddenTypes: [], hiddenDeals: [], propertyTypes: [], hiddenSections: [] }, { status: 500 });
   }
@@ -19,7 +19,7 @@ function sanitizePropertyTypes(raw: unknown): PropertyType[] | undefined {
   if (!Array.isArray(raw)) return undefined;
   const out: PropertyType[] = [];
   const seen = new Set<string>();
-  for (const t of raw as any[]) {
+  for (const t of raw as Array<Partial<PropertyType> | null | undefined>) {
     const label = String(t?.label || '').trim();
     const id = String(t?.id || '').toLowerCase().trim() || slugifyCategory(label);
     if (!id || !label || seen.has(id)) continue;
@@ -27,11 +27,18 @@ function sanitizePropertyTypes(raw: unknown): PropertyType[] | undefined {
     out.push({
       id,
       label,
-      color: /^#[0-9a-fA-F]{3,8}$/.test(String(t?.color)) ? String(t.color) : '#005E60',
+      color: /^#[0-9a-fA-F]{3,8}$/.test(String(t?.color)) ? String(t?.color) : '#005E60',
       section: t?.section === 'properties' ? 'properties' : 'projects',
     });
   }
   return out;
+}
+
+interface UpdateSiteConfigBody {
+  propertyTypes?: unknown;
+  hiddenTypes?: unknown;
+  hiddenDeals?: unknown;
+  hiddenSections?: unknown;
 }
 
 // Admin only: manage the category master list + which categories are hidden.
@@ -40,7 +47,7 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
   try {
-    const body = await request.json();
+    const body: UpdateSiteConfigBody = await request.json();
     const propertyTypes = sanitizePropertyTypes(body?.propertyTypes);
     const hiddenTypes = Array.isArray(body?.hiddenTypes) ? body.hiddenTypes.map(String) : undefined;
     const hiddenDeals = Array.isArray(body?.hiddenDeals) ? body.hiddenDeals.map(String) : undefined;
@@ -48,8 +55,9 @@ export async function PUT(request: NextRequest) {
     // updateSiteConfig re-validates hidden ids against the (possibly new) types.
     const config = await updateSiteConfig({ propertyTypes, hiddenTypes, hiddenDeals, hiddenSections });
     return NextResponse.json(config);
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error updating site config:', error);
-    return NextResponse.json({ error: error.message || 'Failed to update site config' }, { status: 400 });
+    const message = error instanceof Error ? error.message : 'Failed to update site config';
+    return NextResponse.json({ error: message }, { status: 400 });
   }
 }

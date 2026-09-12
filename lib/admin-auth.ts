@@ -11,7 +11,7 @@ import {
 /**
  * Admin session helpers.
  *
- * Auth is cookie-based (see middleware.ts + /api/admin/login). The cookie VALUE
+ * Auth is cookie-based (see proxy.ts + /api/admin/login). The cookie VALUE
  * is the signed-in role: `admin` (full access) or `employee` (limited access).
  * Older sessions stored the literal string `authenticated` — we treat that as
  * `admin` for backwards compatibility so existing logins aren't kicked out.

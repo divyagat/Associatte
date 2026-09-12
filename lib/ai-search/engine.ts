@@ -5,6 +5,7 @@
 // same published listings the rest of the site reads, and reuses the shared
 // fuzzy text matcher (lib/search) so typed and spoken queries behave identically.
 
+import type { Project } from '@/types/project';
 import { matchesSearch, buildSearchText } from '../search';
 import { getProjectType, getDealType } from '../categories';
 import type { SearchCriteria } from './criteria';
@@ -16,7 +17,7 @@ export interface Facets {
 }
 
 /** Derive recognisable areas/builders/cities from live listings (DB-driven). */
-export function buildFacets(listings: any[]): Facets {
+export function buildFacets(listings: Project[]): Facets {
   const areas = new Set<string>();
   const builders = new Set<string>();
   const cities = new Set<string>();
@@ -47,7 +48,7 @@ export function parsePriceNumber(text?: string | number | null): number | null {
   return null;
 }
 
-function listingPrice(item: any): number | null {
+function listingPrice(item: Project): number | null {
   return (
     parsePriceNumber(item?.priceDetails?.range) ??
     parsePriceNumber(item?.price) ??
@@ -55,7 +56,7 @@ function listingPrice(item: any): number | null {
   );
 }
 
-function listingBHKs(item: any): number[] {
+function listingBHKs(item: Project): number[] {
   const out = new Set<number>();
   for (const cfg of item?.priceDetails?.configurations || []) {
     const mm = String(cfg?.type || '').match(/(\d+)\s*[rb]hk/i);
@@ -68,20 +69,20 @@ function listingBHKs(item: any): number[] {
   return [...out];
 }
 
-function statusText(item: any): string {
+function statusText(item: Project): string {
   return `${item?.possessionDate || ''} ${item?.about || ''} ${item?.ageOfConstruction || ''}`.toLowerCase();
 }
-function isReadyLike(item: any): boolean {
+function isReadyLike(item: Project): boolean {
   if (/ready to move|ready possession|ready-to-move|move[- ]?in|immediate possession|possession ready/.test(statusText(item))) return true;
   return !!item?.ageOfConstruction; // resale listings carry an age = already built
 }
-function isUnderConstructionLike(item: any): boolean {
+function isUnderConstructionLike(item: Project): boolean {
   if (item?.isNewLaunch) return true;
   return /under[- ]?construction|pre[- ]?launch|prelaunch|new launch|upcoming|launching/.test(statusText(item));
 }
 
 /** Whether a single listing satisfies every set criterion. */
-export function matchesCriteria(item: any, c: SearchCriteria): boolean {
+export function matchesCriteria(item: Project, c: SearchCriteria): boolean {
   if (c.city && String(item?.location || '').toLowerCase() !== c.city.toLowerCase()) return false;
 
   const text = buildSearchText(item);
@@ -108,12 +109,12 @@ export function matchesCriteria(item: any, c: SearchCriteria): boolean {
 }
 
 /** All listings matching the criteria (no relaxation). */
-export function searchListings(listings: any[], c: SearchCriteria): any[] {
+export function searchListings(listings: Project[], c: SearchCriteria): Project[] {
   return listings.filter((x) => matchesCriteria(x, c));
 }
 
 export interface RunResult {
-  results: any[];      // sliced to maxResults for display
+  results: Project[];  // sliced to maxResults for display
   total: number;       // total matches before slicing
   isAlternative: boolean;
   relaxed: string[];   // which constraints were relaxed to find alternatives
@@ -124,7 +125,7 @@ export interface RunResult {
  * keywords → location → budget → BHK) so the user always gets useful nearby
  * options, clearly flagged as alternatives (point 18: no-results handling).
  */
-export function runSearch(listings: any[], criteria: SearchCriteria, opts?: { maxResults?: number }): RunResult {
+export function runSearch(listings: Project[], criteria: SearchCriteria, opts?: { maxResults?: number }): RunResult {
   const max = Math.max(1, opts?.maxResults ?? 6);
   let results = searchListings(listings, criteria);
   let isAlternative = false;

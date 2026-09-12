@@ -1,4 +1,8 @@
-export default function Amenities({ data }: any) {
+interface AmenitiesData {
+  amenities: string[];
+}
+
+export default function Amenities({ data }: { data: AmenitiesData }) {
   return (
     <section className="max-w-6xl mx-auto py-12 px-4">
       <h2 className="text-2xl font-bold mb-6">Amenities</h2>

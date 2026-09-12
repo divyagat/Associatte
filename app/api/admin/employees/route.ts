@@ -9,9 +9,17 @@ export async function GET(request: NextRequest) {
   try {
     const employees = await getEmployees();
     return NextResponse.json(employees);
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'Failed to load employees' }, { status: 500 });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Failed to load employees';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
+}
+
+interface CreateEmployeeBody {
+  name: string;
+  email: string;
+  password: string;
+  permissions?: unknown;
 }
 
 export async function POST(request: NextRequest) {
@@ -19,10 +27,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
   try {
-    const body = await request.json();
+    const body: CreateEmployeeBody = await request.json();
     const employee = await createEmployee(body);
     return NextResponse.json(employee, { status: 201 });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'Failed to create employee' }, { status: 400 });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Failed to create employee';
+    return NextResponse.json({ error: message }, { status: 400 });
   }
 }

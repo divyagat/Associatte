@@ -11,7 +11,7 @@ export async function PATCH(
   }
   try {
     const { id } = await context.params;
-    const body = await request.json();
+    const body: { name?: string; permissions?: unknown } = await request.json();
     const employee = await updateEmployee(id, {
       name: body.name,
       permissions: body.permissions,
@@ -20,8 +20,9 @@ export async function PATCH(
       return NextResponse.json({ error: 'Employee not found' }, { status: 404 });
     }
     return NextResponse.json(employee);
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'Failed to update employee' }, { status: 400 });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Failed to update employee';
+    return NextResponse.json({ error: message }, { status: 400 });
   }
 }
 
@@ -39,7 +40,8 @@ export async function DELETE(
       return NextResponse.json({ error: 'Employee not found' }, { status: 404 });
     }
     return NextResponse.json({ success: true });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'Failed to delete employee' }, { status: 500 });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Failed to delete employee';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

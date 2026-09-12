@@ -1,7 +1,18 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const data: any = {
+interface BuilderProject {
+  name: string;
+  slug: string;
+  city: string;
+}
+
+interface Builder {
+  name: string;
+  projects: BuilderProject[];
+}
+
+const data: Record<string, Builder> = {
   mantra: {
     name: "Mantra",
     projects: [

@@ -8,7 +8,7 @@ import {
   ArrowRight, Check, Home, Key, TrendingUp, Clock,
   Globe, Mail, Phone, Award, Target, Share2,
 } from 'lucide-react';
-import EnquiryPopup from '@/components/common/EnquiryPopup';
+import EnquiryPopup, { type EnquiryPayload } from '@/components/common/EnquiryPopup';
 
 // ✅ Brand Colors - Solid individual colors (no mixed gradients)
 const COLORS = {
@@ -119,7 +119,7 @@ const teams = [
 
   const handleOpenPopup = () => setIsPopupOpen(true);
   const handleClosePopup = () => setIsPopupOpen(false);
-  const handleFormSubmit = (payload: any) => {
+  const handleFormSubmit = (payload: EnquiryPayload) => {
     console.log('Enquiry submitted:', payload);
   };
 

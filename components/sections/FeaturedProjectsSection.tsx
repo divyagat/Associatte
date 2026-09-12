@@ -7,6 +7,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import properties from '@/data/projects.json';
 import { isPubliclyVisible } from '@/lib/visibility';
+import type { Project } from '@/types/project';
 
 // ✅ ADD city PROP
 interface FeaturedProjectsSectionProps {
@@ -24,8 +25,8 @@ interface FeaturedProject {
   badgeColor: string;
 }
 
-function mapProjectToFeatured(project: any): FeaturedProject {
-  const getBadge = (p: any) => {
+function mapProjectToFeatured(project: Project): FeaturedProject {
+  const getBadge = (p: Project) => {
     const possession = p.possessionDate?.toLowerCase() || '';
     if (possession.includes('ready') || possession.includes('dec 2024') || possession.includes('jan 2025')) {
       return { text: 'Ready to Move', color: 'bg-[#005E60]' };
@@ -37,8 +38,8 @@ function mapProjectToFeatured(project: any): FeaturedProject {
   };
 
   const { text: badgeText, color: badgeColor } = getBadge(project);
-  const bhkTypes = project.priceDetails?.configurations?.map((c: any) => c.type) || [];
-  const uniqueBhk = Array.from(new Set(bhkTypes.map((t: any) => String(t || '').trim()))).filter(Boolean).join(', ') || 'TBA';
+  const bhkTypes = project.priceDetails?.configurations?.map((c) => c.type) || [];
+  const uniqueBhk = Array.from(new Set(bhkTypes.map((t) => String(t || '').trim()))).filter(Boolean).join(', ') || 'TBA';
 
   return {
     slug: project.slug,
@@ -66,8 +67,8 @@ export default function FeaturedProjectsSection({ city }: FeaturedProjectsSectio
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const featuredProjects = useMemo(() => {
-    return properties
-      .filter((p: any) => p.image && p.priceDetails?.range && isPubliclyVisible(p))
+    return (properties as Project[])
+      .filter((p) => p.image && p.priceDetails?.range && isPubliclyVisible(p))
       .slice(0, MAX_FEATURED_PROJECTS)
       .map(mapProjectToFeatured);
   }, []);

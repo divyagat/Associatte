@@ -61,8 +61,8 @@ export default function ChatbotManager({ initialConfig }: ChatbotManagerProps) {
       setFaqs(data.faqs || []);
       if (data.ai) setAi(data.ai);
       setStatus({ type: 'ok', text: 'Saved. The assistant is updated on the live site.' });
-    } catch (err: any) {
-      setStatus({ type: 'err', text: err?.message || 'Failed to save' });
+    } catch (err) {
+      setStatus({ type: 'err', text: err instanceof Error ? err.message : 'Failed to save' });
     } finally {
       setSaving(false);
     }

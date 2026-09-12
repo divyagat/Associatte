@@ -5,28 +5,39 @@ import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Edit, Trash2, LayoutGrid, Loader2 } from 'lucide-react';
 import ApprovalControls from '@/components/admin/ApprovalControls';
+import type { Project } from '@/types/project';
+import type { PropertyType } from '@/lib/categories';
 
 // ✅ Helper to safely extract developer name
-const getDeveloperName = (developer: any): string => {
+const getDeveloperName = (developer: Project['developer']): string => {
   if (!developer) return '';
   if (typeof developer === 'string') return developer;
   if (typeof developer === 'object' && developer.name) return developer.name;
   return '';
 };
 
-export default function ProjectsListClient({ initialProjects, categories = [], canEdit, canDelete, canApprove, isAdmin }: any) {
-  const [allProjects, setAllProjects] = useState<any[]>(initialProjects || []);
+interface ProjectsListClientProps {
+  initialProjects: Project[];
+  categories?: PropertyType[];
+  canEdit: boolean;
+  canDelete: boolean;
+  canApprove: boolean;
+  isAdmin: boolean;
+}
+
+export default function ProjectsListClient({ initialProjects, categories = [], canEdit, canDelete, canApprove, isAdmin }: ProjectsListClientProps) {
+  const [allProjects, setAllProjects] = useState<Project[]>(initialProjects || []);
   const [deletingSlug, setDeletingSlug] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState('all');
 
   // Category filter tabs from the admin-managed master list (Settings) + "All".
   const categoryTabs = useMemo(
-    () => [{ value: 'all', label: 'All' }, ...categories.map((c: any) => ({ value: c.id, label: c.label }))],
+    () => [{ value: 'all', label: 'All' }, ...categories.map((c) => ({ value: c.id, label: c.label }))],
     [categories],
   );
   const colorById = useMemo(() => {
     const m: Record<string, string> = {};
-    categories.forEach((c: any) => { m[c.id] = c.color; });
+    categories.forEach((c) => { m[c.id] = c.color; });
     return m;
   }, [categories]);
   const badgeStyle = (category?: string) => {
@@ -34,7 +45,7 @@ export default function ProjectsListClient({ initialProjects, categories = [], c
     return { backgroundColor: `${color}22`, color };
   };
   const labelFor = (category?: string) =>
-    categories.find((c: any) => c.id === category)?.label || category || 'Uncategorized';
+    categories.find((c) => c.id === category)?.label || category || 'Uncategorized';
 
   const projects = useMemo(
     () => (activeCategory === 'all'
@@ -74,7 +85,7 @@ export default function ProjectsListClient({ initialProjects, categories = [], c
       {/* Category filter tabs */}
       <div className="bg-white rounded-xl border border-gray-200 p-4">
         <div className="flex flex-wrap gap-2">
-          {categoryTabs.map((cat: any) => {
+          {categoryTabs.map((cat) => {
             const count = cat.value === 'all'
               ? allProjects.length
               : allProjects.filter((p) => (p.category || 'residential') === cat.value).length;

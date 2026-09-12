@@ -21,29 +21,38 @@ function str(v: unknown, max: number): string {
   return String(v ?? '').trim().slice(0, max);
 }
 
-function sanitizeQuickReplies(raw: any): QuickReply[] {
+/** Narrow arbitrary/stored input into a plain object we can safely index. */
+function toRecord(v: unknown): Record<string, unknown> {
+  return v && typeof v === 'object' ? (v as Record<string, unknown>) : {};
+}
+
+function sanitizeQuickReplies(raw: unknown): QuickReply[] {
   if (!Array.isArray(raw)) return [];
   return raw
-    .map((r) => ({ text: str(r?.text, 60), project: str(r?.project, 80) || str(r?.text, 80) }))
+    .map((r) => {
+      const rec = toRecord(r);
+      return { text: str(rec.text, 60), project: str(rec.project, 80) || str(rec.text, 80) };
+    })
     .filter((r) => r.text)
     .slice(0, 8);
 }
 
-function sanitizeFaqs(raw: any): FaqItem[] {
+function sanitizeFaqs(raw: unknown): FaqItem[] {
   if (!Array.isArray(raw)) return [];
   return raw
     .map((f, i) => {
-      const keywords = Array.isArray(f?.keywords)
-        ? f.keywords.map((k: unknown) => str(k, 40)).filter(Boolean).slice(0, 20)
-        : typeof f?.keywords === 'string'
-          ? f.keywords.split(',').map((k: string) => k.trim()).filter(Boolean).slice(0, 20)
+      const rec = toRecord(f);
+      const keywords = Array.isArray(rec.keywords)
+        ? rec.keywords.map((k: unknown) => str(k, 40)).filter(Boolean).slice(0, 20)
+        : typeof rec.keywords === 'string'
+          ? rec.keywords.split(',').map((k: string) => k.trim()).filter(Boolean).slice(0, 20)
           : [];
       return {
-        id: str(f?.id, 40) || `faq-${Date.now()}-${i}`,
-        question: str(f?.question, 300),
-        answer: str(f?.answer, 2000),
+        id: str(rec.id, 40) || `faq-${Date.now()}-${i}`,
+        question: str(rec.question, 300),
+        answer: str(rec.answer, 2000),
         keywords,
-        enabled: f?.enabled !== false,
+        enabled: rec.enabled !== false,
       } as FaqItem;
     })
     // Keep only complete entries — an answer needs a question to match against.
@@ -51,39 +60,41 @@ function sanitizeFaqs(raw: any): FaqItem[] {
     .slice(0, 200);
 }
 
-function sanitizeAi(raw: any): AiSettings {
+function sanitizeAi(raw: unknown): AiSettings {
   const d = DEFAULT_AI_SETTINGS;
   if (!raw || typeof raw !== 'object') return { ...d };
-  const maxResults = Number(raw.maxResults);
+  const rec = raw as Record<string, unknown>;
+  const maxResults = Number(rec.maxResults);
   return {
-    searchEnabled: raw.searchEnabled !== false,
-    chatbotEnabled: raw.chatbotEnabled !== false,
+    searchEnabled: rec.searchEnabled !== false,
+    chatbotEnabled: rec.chatbotEnabled !== false,
     maxResults: Number.isFinite(maxResults) ? Math.min(24, Math.max(1, Math.round(maxResults))) : d.maxResults,
     // Only 'rule-based' is wired up today; ignore anything else until an LLM is added.
-    provider: str(raw.provider, 40) || d.provider,
-    systemPrompt: str(raw.systemPrompt, 4000) || d.systemPrompt,
+    provider: str(rec.provider, 40) || d.provider,
+    systemPrompt: str(rec.systemPrompt, 4000) || d.systemPrompt,
   };
 }
 
 /** Coerce arbitrary/stored input into a clean, complete ChatbotConfig. */
-function sanitize(raw: any): ChatbotConfig {
+function sanitize(raw: unknown): ChatbotConfig {
+  const rec = toRecord(raw);
   return {
-    welcomeMessage: str(raw?.welcomeMessage, 500) || DEFAULT_CHATBOT_CONFIG.welcomeMessage,
-    fallbackMessage: str(raw?.fallbackMessage, 500) || DEFAULT_CHATBOT_CONFIG.fallbackMessage,
-    quickReplies: raw?.quickReplies !== undefined
-      ? sanitizeQuickReplies(raw.quickReplies)
+    welcomeMessage: str(rec.welcomeMessage, 500) || DEFAULT_CHATBOT_CONFIG.welcomeMessage,
+    fallbackMessage: str(rec.fallbackMessage, 500) || DEFAULT_CHATBOT_CONFIG.fallbackMessage,
+    quickReplies: rec.quickReplies !== undefined
+      ? sanitizeQuickReplies(rec.quickReplies)
       : DEFAULT_CHATBOT_CONFIG.quickReplies,
-    faqs: sanitizeFaqs(raw?.faqs),
-    ai: sanitizeAi(raw?.ai),
+    faqs: sanitizeFaqs(rec.faqs),
+    ai: sanitizeAi(rec.ai),
   };
 }
 
 export async function getChatbotConfig(): Promise<ChatbotConfig> {
-  const data = await readJson<any>(CHATBOT_FILE, DEFAULT_CHATBOT_CONFIG);
+  const data = await readJson<unknown>(CHATBOT_FILE, DEFAULT_CHATBOT_CONFIG);
   return sanitize(data);
 }
 
-export async function saveChatbotConfig(patch: any): Promise<ChatbotConfig> {
+export async function saveChatbotConfig(patch: unknown): Promise<ChatbotConfig> {
   const clean = sanitize(patch);
   await writeJson(CHATBOT_FILE, clean);
   return clean;

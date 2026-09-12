@@ -1,6 +1,8 @@
 import { MetadataRoute } from 'next'
 import { getAllProperties, getAllProjects, getAllBlogs } from '@/lib/data-store'
 import { isPubliclyVisible } from '@/lib/visibility'
+import type { Project } from '@/types/project'
+import type { IBlog } from '@/lib/models/Blog'
 
 // Regenerate the sitemap periodically so newly added properties/blogs get indexed.
 export const revalidate = 3600;
@@ -44,8 +46,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   const propertyPages: MetadataRoute.Sitemap = properties
-    .filter((p: any) => p?.slug && isPubliclyVisible(p))
-    .map((p: any) => ({
+    .filter((p: Project) => p?.slug && isPubliclyVisible(p))
+    .map((p: Project) => ({
       url: `${baseUrl}/property/${p.slug}`,
       lastModified: lastModified(p.updatedAt),
       changeFrequency: 'weekly',
@@ -53,8 +55,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }));
 
   const projectPages: MetadataRoute.Sitemap = projects
-    .filter((p: any) => p?.slug && isPubliclyVisible(p))
-    .map((p: any) => ({
+    .filter((p: Project) => p?.slug && isPubliclyVisible(p))
+    .map((p: Project) => ({
       // Route is /projects/[slug] (plural) — the old sitemap used /project/ and 404'd.
       url: `${baseUrl}/projects/${p.slug}`,
       lastModified: lastModified(p.updatedAt),
@@ -63,8 +65,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }));
 
   const blogPages: MetadataRoute.Sitemap = blogs
-    .filter((b: any) => b?.slug)
-    .map((b: any) => ({
+    .filter((b: IBlog) => b?.slug)
+    .map((b: IBlog & { publishedAt?: string }) => ({
       url: `${baseUrl}/blog/${b.slug}`,
       lastModified: lastModified(b.updatedAt || b.date || b.publishedAt),
       changeFrequency: 'monthly',

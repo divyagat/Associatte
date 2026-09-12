@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
   try {
     const overrides = await getAllSeoOverrides();
     return NextResponse.json({ overrides });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error reading SEO overrides:', error);
     return NextResponse.json({ error: 'Failed to read SEO overrides' }, { status: 500 });
   }
@@ -37,7 +37,7 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
   try {
-    const body = await req.json();
+    const body: Partial<SeoOverride> & { path?: string } = await req.json();
     const path = String(body?.path || '').trim();
     if (!path) {
       return NextResponse.json({ error: 'A page path is required' }, { status: 400 });
@@ -49,9 +49,10 @@ export async function PUT(req: NextRequest) {
     };
     const overrides = await setSeoOverride(path, data);
     return NextResponse.json({ overrides });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error saving SEO override:', error);
-    return NextResponse.json({ error: error.message || 'Failed to save SEO override' }, { status: 400 });
+    const message = error instanceof Error ? error.message : 'Failed to save SEO override';
+    return NextResponse.json({ error: message }, { status: 400 });
   }
 }
 
@@ -68,8 +69,9 @@ export async function DELETE(req: NextRequest) {
     }
     const overrides = await deleteSeoOverride(path);
     return NextResponse.json({ overrides });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error deleting SEO override:', error);
-    return NextResponse.json({ error: error.message || 'Failed to delete SEO override' }, { status: 400 });
+    const message = error instanceof Error ? error.message : 'Failed to delete SEO override';
+    return NextResponse.json({ error: message }, { status: 400 });
   }
 }

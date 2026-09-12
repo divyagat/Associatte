@@ -1,9 +1,25 @@
 import type { Metadata } from 'next';
-import { getBlogBySlug as getStaticBlog } from '@/lib/blog-data';
+import { getBlogBySlug as getStaticBlog, type BlogPost, type FAQ } from '@/lib/blog-data';
 import { getBlogBySlug as getAdminBlog } from '@/lib/data-store';
+import type { IBlog } from '@/lib/models/Blog';
 import { getSeoOverride, keywordsToArray } from '@/lib/seo-store';
 
-export const dynamic = 'force-dynamic';
+// The admin BlogForm persists a few extra SEO fields onto the record that
+// neither canonical blog type declares (see the comment above), and static
+// posts (BlogPost) don't carry `updatedAt` at all — model both explicitly
+// rather than widening the whole record to `any`.
+type BlogExtraFields = {
+  metaTitle?: string;
+  metaDescription?: string;
+  metaKeywords?: string;
+  socialImage?: string;
+  canonicalUrl?: string;
+  updatedAt?: string;
+};
+
+type ResolvedBlog = (BlogPost | IBlog) & BlogExtraFields;
+
+export const revalidate = 300;
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.associatte.com';
 const SITE_NAME = 'Associatte PropTech';
@@ -16,7 +32,7 @@ const ORG_LOGO = `${SITE_URL}/logos/Asoociattelogo.jpg`;
 // added in the admin BlogForm (metaTitle, metaDescription, metaKeywords,
 // socialImage, canonicalUrl) win over the sensible fallbacks.
 
-async function resolveBlog(slug: string): Promise<any | null> {
+async function resolveBlog(slug: string): Promise<ResolvedBlog | null> {
   // Static posts first (matches the page's resolution order), then admin posts.
   const staticPost = getStaticBlog(slug);
   if (staticPost) return staticPost;
@@ -32,7 +48,7 @@ function absUrl(src?: string): string | undefined {
   return src.startsWith('http') ? src : `${SITE_URL}${src.startsWith('/') ? '' : '/'}${src}`;
 }
 
-function authorName(post: any): string {
+function authorName(post: ResolvedBlog | null | undefined): string {
   if (!post?.author) return 'Associatte PropTech';
   if (typeof post.author === 'string') return post.author;
   return post.author.name || 'Associatte PropTech';
@@ -109,7 +125,7 @@ export default async function BlogLayout({
   const { slug } = await params;
   const post = await resolveBlog(slug);
 
-  const schema: any[] = [];
+  const schema: Record<string, unknown>[] = [];
 
   if (post) {
     const canonical = post.canonicalUrl?.trim() || `/blog/${slug}`;
@@ -143,8 +159,8 @@ export default async function BlogLayout({
         '@context': 'https://schema.org',
         '@type': 'FAQPage',
         mainEntity: post.faqs
-          .filter((f: any) => f?.question && f?.answer)
-          .map((f: any) => ({
+          .filter((f: FAQ) => f?.question && f?.answer)
+          .map((f: FAQ) => ({
             '@type': 'Question',
             name: f.question,
             acceptedAnswer: { '@type': 'Answer', text: f.answer },

@@ -30,10 +30,11 @@ export async function PUT(request: NextRequest) {
     const list = Array.isArray(body) ? body : body?.items;
     const saved = await saveAllNews(list);
     return NextResponse.json(saved);
-  } catch (error: any) {
+  } catch (error) {
     console.error('❌ Error in PUT /api/news:', error);
+    const message = error instanceof Error ? error.message : 'Failed to save news';
     return NextResponse.json(
-      { error: error?.message || 'Failed to save news' },
+      { error: message },
       { status: 400 },
     );
   }

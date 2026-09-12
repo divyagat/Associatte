@@ -8,6 +8,7 @@ export * from './criteria';
 export * from './parser';
 export * from './engine';
 
+import type { Project } from '@/types/project';
 import type { SearchCriteria } from './criteria';
 import { mergeCriteria, criteriaSummary } from './criteria';
 import { parseRequirement, detectReset } from './parser';
@@ -16,7 +17,7 @@ import { buildFacets, runSearch } from './engine';
 export interface AssistResult {
   criteria: SearchCriteria;
   summary: string[];
-  results: any[];
+  results: Project[];
   total: number;
   isAlternative: boolean;
   relaxed: string[];
@@ -28,7 +29,7 @@ export interface AssistResult {
  * patch already folded into `context`.
  */
 export function assist(
-  listings: any[],
+  listings: Project[],
   text: string,
   context: SearchCriteria = {},
   opts?: { maxResults?: number },

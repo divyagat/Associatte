@@ -32,13 +32,13 @@ export default async function AdminSeoPage() {
   // Merge static + admin blogs (de-duped by slug) for the blog detail list.
   const blogMap = new Map<string, string>();
   for (const b of getStaticBlogs()) if (b?.slug) blogMap.set(b.slug, b.title || b.slug);
-  for (const b of adminBlogs as any[]) if (b?.slug) blogMap.set(b.slug, b.title || b.slug);
+  for (const b of adminBlogs) if (b?.slug) blogMap.set(b.slug, b.title || b.slug);
 
   const detailGroups: SeoDetailGroup[] = [
     {
       key: 'projects',
       label: 'Projects / Properties',
-      items: (projects as any[])
+      items: projects
         .filter((p) => p?.slug)
         .map((p) => ({ label: p.name || p.slug, path: `/property/${p.slug}` })),
     },
@@ -55,7 +55,7 @@ export default async function AdminSeoPage() {
       label: 'Location pages',
       items: Object.entries(CITY_METADATA)
         .filter(([city]) => city !== 'default')
-        .map(([city, data]) => ({ label: (data as any)?.title || city, path: `/locations/${city}` })),
+        .map(([city, data]) => ({ label: data?.title || city, path: `/locations/${city}` })),
     },
   ];
 

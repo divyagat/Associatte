@@ -12,8 +12,19 @@ import { useState, useEffect, useRef } from 'react';
 import EnquiryPopup from '../../../components/common/EnquiryPopup';
 import { getBlogBySlug, getRelatedPosts, getRecentPosts, type BlogPost } from '@/lib/blog-data';
 
+interface SafeImageProps {
+  src?: string;
+  alt: string;
+  fill?: boolean;
+  sizes?: string;
+  className?: string;
+  width?: number;
+  height?: number;
+  priority?: boolean;
+}
+
 // ✅ BULLETPROOF IMAGE: Uses native <img> to prevent Next.js "Invalid URL" render crashes
-const SafeImage = ({ src, alt, fill, sizes, className, width, height, priority }: any) => {
+const SafeImage = ({ src, alt, fill, sizes, className, width, height }: SafeImageProps) => {
   const [imgError, setImgError] = useState(false);
 
   if (!src || typeof src !== 'string' || imgError) {
@@ -37,8 +48,17 @@ const SafeImage = ({ src, alt, fill, sizes, className, width, height, priority }
   );
 };
 
+interface SafeAvatarProps {
+  src?: string | null;
+  alt?: string;
+  width?: number;
+  height?: number;
+  className?: string;
+  size?: number;
+}
+
 // ✅ BULLETPROOF AVATAR: Uses native <img> to prevent crashes on missing/invalid author avatars
-const SafeAvatar = ({ src, alt, width, height, className, size = 36 }: any) => {
+const SafeAvatar = ({ src, alt, width, height, className, size = 36 }: SafeAvatarProps) => {
   const [imgError, setImgError] = useState(false);
   const name = alt || 'Author';
 

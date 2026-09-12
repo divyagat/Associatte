@@ -5,6 +5,7 @@ import { getProjectBySlug, updateProject, deleteProject } from '@/lib/data-store
 import { getPermissionsFromRequest, getRoleFromRequest } from '@/lib/admin-auth';
 import { can } from '@/lib/admin-permissions';
 import { sanitizeStatus, allowedStatusTargets } from '@/lib/visibility';
+import type { Project } from '@/types/project';
 
 // ✅ GET - Fixed for Next.js 15/16
 export async function GET(
@@ -48,12 +49,12 @@ export async function PUT(
   console.log('📥 PUT /api/projects/[slug] - Slug:', slug);
   
   try {
-    const data = await request.json();
+    const data: Partial<Project> = await request.json();
     console.log('📦 Update data:', data);
-    
+
     // Merge only the keys that were actually sent so partial updates (e.g. a
     // status-only approve/hide action) don't clobber existing fields.
-    const projectData: any = { ...data };
+    const projectData: Partial<Project> = { ...data };
     // Full form saves send `soldOut`; default it there. Absent = leave as-is.
     if ('soldOut' in data) {
       projectData.soldOut = data.soldOut !== undefined ? data.soldOut : false;
@@ -95,10 +96,11 @@ export async function PUT(
     
     console.log('✅ Project updated successfully');
     return NextResponse.json(project);
-  } catch (error: any) {
+  } catch (error) {
     console.error('❌ Error in PUT /api/projects/[slug]:', error);
+    const message = error instanceof Error ? error.message : 'Failed to update project';
     return NextResponse.json(
-      { error: error.message || 'Failed to update project' },
+      { error: message },
       { status: 400 }
     );
   }

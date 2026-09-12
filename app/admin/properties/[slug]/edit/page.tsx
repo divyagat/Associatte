@@ -3,11 +3,12 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import PropertyForm from '@/components/admin/PropertyForm';
+import type { Project } from '@/types/project';
 
 export default function EditPropertyPage() {
   const router = useRouter();
   const params = useParams();
-  const [property, setProperty] = useState<any>(null);
+  const [property, setProperty] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -27,7 +28,7 @@ export default function EditPropertyPage() {
     fetchProperty();
   }, [params.slug]);
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: Partial<Project>) => {
     setSaving(true);
     try {
       const response = await fetch(`/api/properties/${params.slug}`, {

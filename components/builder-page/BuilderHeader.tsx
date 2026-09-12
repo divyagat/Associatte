@@ -3,10 +3,11 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import type { Project } from '@/types/project';
 
 interface BuilderHeaderProps {
   slug: string;
-  projects: any[];
+  projects: Project[];
   builderName: string;
   logo: string;
   banner?: string | null;

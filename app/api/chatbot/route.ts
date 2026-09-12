@@ -30,10 +30,11 @@ export async function PUT(request: NextRequest) {
     const body = await request.json();
     const saved = await saveChatbotConfig(body);
     return NextResponse.json(saved);
-  } catch (error: any) {
+  } catch (error) {
     console.error('❌ Error in PUT /api/chatbot:', error);
+    const message = error instanceof Error ? error.message : 'Failed to save chatbot config';
     return NextResponse.json(
-      { error: error?.message || 'Failed to save chatbot config' },
+      { error: message },
       { status: 400 },
     );
   }

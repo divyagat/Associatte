@@ -8,6 +8,36 @@
 import { useEffect, useRef, useState } from 'react';
 import { Mic } from 'lucide-react';
 
+interface SpeechRecognitionEventLike extends Event {
+  resultIndex: number;
+  results: SpeechRecognitionResultList;
+}
+
+interface SpeechRecognitionErrorEventLike extends Event {
+  error: string;
+}
+
+interface SpeechRecognitionInstance extends EventTarget {
+  lang: string;
+  interimResults: boolean;
+  continuous: boolean;
+  maxAlternatives: number;
+  onresult: ((event: SpeechRecognitionEventLike) => void) | null;
+  onerror: ((event: SpeechRecognitionErrorEventLike) => void) | null;
+  onend: (() => void) | null;
+  start: () => void;
+  stop: () => void;
+}
+
+interface SpeechRecognitionConstructor {
+  new (): SpeechRecognitionInstance;
+}
+
+type SpeechRecognitionWindow = Window & {
+  SpeechRecognition?: SpeechRecognitionConstructor;
+  webkitSpeechRecognition?: SpeechRecognitionConstructor;
+};
+
 interface VoiceButtonProps {
   onResult: (text: string) => void;        // final transcript when the user stops
   onInterim?: (text: string) => void;      // live partial transcript while speaking
@@ -26,18 +56,18 @@ export default function VoiceButton({
   const [supported, setSupported] = useState(false);
   const [listening, setListening] = useState(false);
   const [denied, setDenied] = useState(false);
-  const recRef = useRef<any>(null);
+  const recRef = useRef<SpeechRecognitionInstance | null>(null);
 
   useEffect(() => {
     const SR = (typeof window !== 'undefined')
-      ? (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+      ? (window as SpeechRecognitionWindow).SpeechRecognition || (window as SpeechRecognitionWindow).webkitSpeechRecognition
       : null;
     setSupported(!!SR);
     return () => { try { recRef.current?.stop(); } catch { /* ignore */ } };
   }, []);
 
   const toggle = () => {
-    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const SR = (window as SpeechRecognitionWindow).SpeechRecognition || (window as SpeechRecognitionWindow).webkitSpeechRecognition;
     if (!SR) return;
     if (listening) { try { recRef.current?.stop(); } catch { /* ignore */ } return; }
 
@@ -50,7 +80,7 @@ export default function VoiceButton({
     rec.maxAlternatives = 1;
 
     let finalText = '';
-    rec.onresult = (e: any) => {
+    rec.onresult = (e: SpeechRecognitionEventLike) => {
       let interim = '';
       for (let i = e.resultIndex; i < e.results.length; i++) {
         const r = e.results[i];
@@ -59,7 +89,7 @@ export default function VoiceButton({
       }
       onInterim?.(`${finalText} ${interim}`.trim());
     };
-    rec.onerror = (e: any) => {
+    rec.onerror = (e: SpeechRecognitionErrorEventLike) => {
       setListening(false);
       // Surface a blocked/denied mic so the user knows to allow it in the
       // browser's site permissions (instead of the button silently doing nothing).

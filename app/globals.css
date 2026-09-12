@@ -32,6 +32,11 @@
   --font-sans: var(--font-jost);
   --font-heading: var(--font-montserrat);
   --font-mono: var(--font-geist-mono);
+
+  /* Extra-small breakpoint for small phones, below Tailwind's default `sm`
+     (640px). Several components (Hero search bar, contact page) already use
+     `xs:` variant classes; without this they silently do nothing. */
+  --breakpoint-xs: 400px;
   
   /* ✅ Blog Theme Extensions */
   --color-blog-primary: var(--color-primary);

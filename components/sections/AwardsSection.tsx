@@ -88,7 +88,7 @@ export default function AwardsSection({ showViewAllLink = false }: { showViewAll
   );
 }
 
-function AwardCard({ award, index }: { award: any; index: number }) {
+function AwardCard({ award, index }: { award: AwardItem; index: number }) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (

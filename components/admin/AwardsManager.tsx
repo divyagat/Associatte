@@ -76,8 +76,8 @@ export default function AwardsManager({ initialItems }: { initialItems: AwardIte
       setNotice('Saved. Changes are live on the site.');
       setTimeout(() => setNotice(null), 3000);
       return true;
-    } catch (e: any) {
-      setError(e?.message || 'Failed to save');
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to save');
       return false;
     } finally {
       setSaving(false);
@@ -91,8 +91,8 @@ export default function AwardsManager({ initialItems }: { initialItems: AwardIte
     try {
       const url = await uploadImage(file);
       set({ image: url });
-    } catch (e: any) {
-      setError(e?.message || 'Image upload failed');
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Image upload failed');
     } finally {
       setUploading(false);
     }

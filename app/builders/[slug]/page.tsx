@@ -4,31 +4,30 @@ import BuilderHeader from '@/components/builder-page/BuilderHeader';
 import BuilderProjectsList from '@/components/builder-page/BuilderProjectsList';
 import properties from '../../../data/projects.json';
 import { BUILDER_SLUG_MAP, getBuilderYears, getBuilderLogo, getBuilderBanner } from '@/lib/builder-slugs';
+import type { Project } from '@/types/project';
 
-// ✅ ADD THIS: Forces dynamic rendering to bypass useSearchParams() prerender errors
-export const dynamic = 'force-dynamic';
+export const revalidate = 300;
 
 const LOCATION_SLUGS = ['pune', 'mumbai', 'kdmc'];
 
-const normalize = (str: string) => 
+const normalize = (str: string) =>
   str.toLowerCase().replace(/[^a-z0-9]/g, '').replace(/\s+/g, '');
-
-// ❌ REMOVED generateStaticParams() - conflicts with force-dynamic
 
 export default async function BuilderPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const decodedSlug = decodeURIComponent(slug).toLowerCase();
   const builderPatterns = BUILDER_SLUG_MAP[decodedSlug];
   
-  const initialProjects = properties.filter((p: any) => {
-    if (!p?.developer?.name) return false;
-    
+  const initialProjects = (properties as Project[]).filter((p) => {
+    const devName0 = typeof p?.developer === 'string' ? undefined : p?.developer?.name;
+    if (!devName0) return false;
+
     if (LOCATION_SLUGS.includes(decodedSlug)) {
       return p.location?.toLowerCase() === decodedSlug;
     }
-    
+
     if (builderPatterns) {
-      const devName = normalize(p.developer.name);
+      const devName = normalize(devName0);
       return builderPatterns.some(pattern => {
         const normPattern = normalize(pattern);
         return devName.includes(normPattern) || normPattern.includes(devName);
@@ -44,7 +43,9 @@ export default async function BuilderPage({ params }: { params: Promise<{ slug: 
 
   // ✅ Compute these values on the SERVER, then pass as plain data props
   const firstProject = initialProjects[0];
-  const builderName = firstProject?.developer?.name || decodedSlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  const firstDeveloper = firstProject?.developer;
+  const builderName = (typeof firstDeveloper === 'string' ? undefined : firstDeveloper?.name)
+    || decodedSlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   const logo = getBuilderLogo(builderName);
   const banner = getBuilderBanner(builderName);
   const years = getBuilderYears(builderName);

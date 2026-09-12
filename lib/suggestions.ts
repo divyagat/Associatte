@@ -5,6 +5,8 @@
 // whatever an admin adds becomes searchable/suggestable immediately — project &
 // property names, builders/developers, localities, cities and unit types.
 
+import type { Project } from '@/types/project';
+
 // City slugs → display labels used across the site.
 const CITY_LABELS: Record<string, string> = {
   pune: 'Pune',
@@ -28,7 +30,7 @@ function add(seen: Set<string>, out: string[], value: unknown): void {
  * most useful buckets (names first, then builders, then places) surface first
  * when the query is empty.
  */
-export function buildSuggestions(listings: any[]): string[] {
+export function buildSuggestions(listings: Project[]): string[] {
   const seen = new Set<string>();
   const names: string[] = [];
   const builders: string[] = [];
