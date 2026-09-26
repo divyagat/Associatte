@@ -80,7 +80,11 @@ async function dbConnect() {
     );
   }
 
-  const MONGODB_URI = RAW_URI.replace(/([?&]w=)(?!majority(?:&|$))([A-Za-z][\w-]*)/gi, '$1majority');
+  const MONGODB_URI = RAW_URI
+    // Non-standard write concern value (e.g. w=1majority) -> normalize to majority.
+    .replace(/([?&]w=)(?!majority(?:&|$))([A-Za-z][\w-]*)/gi, '$1majority')
+    // Empty or missing write concern value (e.g. w= or bare w) -> majority.
+    .replace(/([?&])w=?(?=&|$)/gi, '$1w=majority');
   if (MONGODB_URI !== RAW_URI) {
     console.warn('⚠️ MONGODB_URI had a non-standard write concern; using w=majority. Fix the URI to remove this warning.');
   }
