@@ -58,6 +58,15 @@ const nextConfig = {
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
 
+  // lib/blob-store reads data/*.json from disk at runtime (the fallback when
+  // MongoDB has no copy yet). Those reads are marked turbopackIgnore, so the
+  // files are never traced — on Vercel they're missing from every serverless
+  // function and all projects/properties/blogs come back empty. Ship them.
+  outputFileTracingIncludes: {
+    '/*': ['./data/**/*.json'],
+    '/**': ['./data/**/*.json'],
+  },
+
   // Compression for faster loading
   compress: true,
 
