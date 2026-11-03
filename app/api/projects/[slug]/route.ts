@@ -1,5 +1,6 @@
 // app/api/projects/[slug]/route.ts
 
+import { revalidateListing } from '@/lib/seo/revalidate';
 import { NextRequest, NextResponse } from 'next/server';
 import { getProjectBySlug, updateProject, deleteProject } from '@/lib/data-store';
 import { getPermissionsFromRequest, getRoleFromRequest } from '@/lib/admin-auth';
@@ -86,6 +87,7 @@ export async function PUT(
     }
 
     const project = await updateProject(slug, projectData);
+    revalidateListing(project?.slug ?? slug);
     
     if (!project) {
       return NextResponse.json(
@@ -119,6 +121,7 @@ export async function DELETE(
   
   try {
     const deleted = await deleteProject(slug);
+    revalidateListing(slug);
     
     if (!deleted) {
       return NextResponse.json(

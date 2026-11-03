@@ -4,7 +4,7 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.associatte.com
 const SITE_NAME = 'Associatte PropTech';
 
 export const metadata: Metadata = {
-  title: 'Real Estate News & Market Updates | Associatte PropTech',
+  title: { absolute: 'Real Estate News & Market Updates | Associatte PropTech' },
   description:
     'Latest real estate news, market trends, infrastructure updates and RERA policy changes across Pune, Mumbai & KDMC. Stay informed with Associatte PropTech.',
   keywords: [
@@ -24,6 +24,7 @@ export const metadata: Metadata = {
     url: `${SITE_URL}/news`,
     siteName: SITE_NAME,
     locale: 'en_IN',
+    images: [{ url: '/Home/b4.webp' }],
   },
   twitter: {
     card: 'summary_large_image',

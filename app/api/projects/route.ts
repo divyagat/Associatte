@@ -1,5 +1,6 @@
 // app/api/projects/route.ts
 
+import { revalidateListing } from '@/lib/seo/revalidate';
 import { NextRequest, NextResponse } from 'next/server';
 import { getAllProjects } from '@/lib/data-store';
 import { getPermissionsFromRequest, getRoleFromRequest } from '@/lib/admin-auth';
@@ -59,6 +60,7 @@ export async function POST(request: NextRequest) {
     // Add the project
     const { createProject } = await import('@/lib/data-store');
     const newProject = await createProject(data);
+    revalidateListing(newProject?.slug);
     
     console.log('✅ Project created successfully:', newProject.slug);
     return NextResponse.json(newProject, { status: 201 });

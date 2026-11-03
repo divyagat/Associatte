@@ -1,12 +1,13 @@
-// app/layout.tsx (simplified)
+// app/layout.tsx
 import type { Metadata } from "next";
 import { Montserrat, Jost, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ClientLayout from "@/components/ClientLayout";
 import GoogleAnalytics from "@/components/SEO/GoogleAnalytics";
 import FacebookPixel from "@/components/SEO/FacebookPixel";
-import { getSeoOverride, keywordsToArray } from "@/lib/seo-store";
+import { getSeoOverride } from "@/lib/seo-store";
 import { seoPageByPath } from "@/lib/seo-pages";
+import { SITE_URL, SITE_NAME, ORG_LEGAL_NAME, DEFAULT_OG_IMAGE } from "@/lib/seo/site";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -26,105 +27,90 @@ const geistMono = Geist_Mono({
   display: "swap"
 });
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.associatte.com";
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 const GOOGLE_SITE_VERIFICATION = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
 
-// WebSite structured data — enables the Google sitelinks search box and
-// reinforces the canonical site name in search results.
+// WebSite node. Linked to the Organization node (components/SEO/OrganizationSchema)
+// by @id. The old SearchAction was dropped: Google retired the sitelinks search box.
 const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  name: "Associatte PropTech",
+  "@id": `${SITE_URL}/#website`,
+  name: SITE_NAME,
+  alternateName: "Associatte",
   url: SITE_URL,
-  potentialAction: {
-    "@type": "SearchAction",
-    target: `${SITE_URL}/properties?q={search_term_string}`,
-    "query-input": "required name=search_term_string",
-  },
+  inLanguage: "en-IN",
+  publisher: { "@id": `${SITE_URL}/#organization` },
 };
 
-// The Home page ("/") has no page-level metadata of its own (it's a Client
-// Component), so its SEO is controlled here. The default title/description/
-// keywords come from the SEO_PAGES registry and merge any admin override for "/".
-// Revalidate every 5 minutes so admin SEO edits go live without a rebuild,
-// while still letting Next.js cache and serve pages statically in between
-// instead of hitting MongoDB on every single request.
+// Revalidate every 5 minutes so admin SEO edits go live without a rebuild.
 export const revalidate = 300;
 
+// Site-wide defaults only. Deliberately NO canonical or og:url here: every page
+// sets its own, and a root-level canonical "/" was being inherited by pages that
+// didn't (builders, 404s), telling Google they were duplicates of the homepage.
 export async function generateMetadata(): Promise<Metadata> {
   const home = seoPageByPath("/");
   const override = await getSeoOverride("/");
-
-  const homeTitle =
+  const defaultTitle =
     override?.title?.trim() ||
     home?.title ||
     "Associatte PropTech | Buy Verified Properties in Pune, Mumbai & KDMC";
-  const homeDescription =
+  const defaultDescription =
     override?.description?.trim() ||
     home?.description ||
-    "Find verified RERA-registered 1, 2, 3 & 4 BHK flats and projects across Pune, Mumbai and KDMC. Expert guidance, transparent pricing and free consultation with Associatte PropTech.";
-  const homeKeywords = keywordsToArray(override?.keywords) || home?.keywords;
+    "Find verified RERA-registered 1, 2, 3 & 4 BHK flats and projects across Pune, Mumbai and KDMC.";
 
   return {
-  metadataBase: new URL(SITE_URL),
-  title: {
-    default: homeTitle,
-    template: "%s | Associatte PropTech",
-  },
-  description: homeDescription,
-  ...(homeKeywords ? { keywords: homeKeywords } : {}),
-  authors: [{ name: "Associatte PropTech Pvt Ltd" }],
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
+    metadataBase: new URL(SITE_URL),
+    title: {
+      default: defaultTitle,
+      template: `%s | ${SITE_NAME}`,
+    },
+    description: defaultDescription,
+    applicationName: SITE_NAME,
+    authors: [{ name: ORG_LEGAL_NAME }],
+    robots: {
       index: true,
       follow: true,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-      "max-video-preview": -1,
-    },
-  },
-  alternates: { canonical: "/" },
-  ...(GOOGLE_SITE_VERIFICATION
-    ? { verification: { google: GOOGLE_SITE_VERIFICATION } }
-    : {}),
-  openGraph: {
-    type: "website",
-    siteName: "Associatte PropTech",
-    title: homeTitle,
-    description: homeDescription,
-    locale: "en_IN",
-    url: SITE_URL,
-    images: [
-      {
-        url: "/Home/b4.webp",
-        width: 1200,
-        height: 630,
-        alt: "Associatte PropTech — verified properties in Pune, Mumbai & KDMC",
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
       },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: homeTitle,
-    description: homeDescription,
-    images: ["/Home/b4.webp"],
-  },
+    },
+    ...(GOOGLE_SITE_VERIFICATION
+      ? { verification: { google: GOOGLE_SITE_VERIFICATION } }
+      : {}),
+    openGraph: {
+      type: "website",
+      siteName: SITE_NAME,
+      locale: "en_IN",
+      images: [
+        {
+          url: DEFAULT_OG_IMAGE,
+          alt: "Associatte PropTech — verified properties in Pune, Mumbai & KDMC",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      images: [DEFAULT_OG_IMAGE],
+    },
   };
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
-      lang="en"
+      lang="en-IN"
       suppressHydrationWarning
       data-scroll-behavior="smooth"
     >
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* Fonts are self-hosted by next/font, so no Google Fonts preconnect is needed. */}
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
         <meta name="theme-color" content="#005E60" />
         <script

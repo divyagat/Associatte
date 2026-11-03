@@ -10,8 +10,7 @@
 
 import type { Metadata } from 'next';
 import { getSeoOverride, keywordsToArray } from './seo-store';
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.associatte.com';
+import { DEFAULT_OG_IMAGE, SITE_NAME } from './seo/site';
 
 export interface SeoPageDef {
   path: string;          // canonical route, e.g. "/buy"
@@ -19,6 +18,7 @@ export interface SeoPageDef {
   title: string;         // default meta title
   description: string;   // default meta description
   keywords?: string[];   // default meta keywords
+  noindex?: boolean;     // keep the page live but out of search results / sitemap
 }
 
 // Keep this list in sync with the public nav. Order = display order in the panel.
@@ -28,7 +28,7 @@ export const SEO_PAGES: SeoPageDef[] = [
     label: 'Home',
     title: 'Associatte PropTech | Buy Verified Properties in Pune, Mumbai & KDMC',
     description:
-      'Find verified RERA-registered 1, 2, 3 & 4 BHK flats and projects across Pune, Mumbai and KDMC. Expert guidance, transparent pricing and free consultation with Associatte PropTech.',
+      'Verified RERA-registered 1–4 BHK flats and new projects in Pune, Navi Mumbai & Kalyan-Dombivli. Compare prices, floor plans and builders. Free consultation.',
     keywords: [
       'Associatte PropTech',
       'properties in Pune',
@@ -41,9 +41,18 @@ export const SEO_PAGES: SeoPageDef[] = [
   {
     path: '/projects',
     label: 'Projects',
-    title: 'All Projects | Associatte PropTech',
-    description: 'Explore all premium residential & commercial projects in Pune, Mumbai & KDMC.',
-    keywords: ['projects', 'Pune', 'Mumbai', 'KDMC', 'real estate', 'properties'],
+    title: 'New Residential Projects in Pune, Navi Mumbai & KDMC | Associatte',
+    description:
+      'Browse new launch, under-construction and ready-to-move projects in Pune, Navi Mumbai and Kalyan-Dombivli from Mantra, Lodha, Birla, Shapoorji Pallonji & more.',
+    keywords: ['new projects in Pune', 'new residential projects Pune', 'new projects Navi Mumbai', 'new launch projects', 'RERA registered projects Pune'],
+  },
+  {
+    path: '/locations',
+    label: 'Locations',
+    title: 'Properties by City – Pune, Navi Mumbai & Kalyan-Dombivli | Associatte',
+    description:
+      'Explore new flats and residential projects city by city — Pune, Navi Mumbai and Kalyan-Dombivli (KDMC). See live project counts, localities and price ranges.',
+    keywords: ['properties by city', 'flats in Pune', 'flats in Navi Mumbai', 'flats in Kalyan Dombivli'],
   },
   {
     path: '/properties',
@@ -56,6 +65,8 @@ export const SEO_PAGES: SeoPageDef[] = [
   {
     path: '/buy',
     label: 'Buy Property',
+    // Thin page (a hero banner only) that overlaps /projects — not indexed.
+    noindex: true,
     title: 'Buy Property | Associatte PropTech',
     description:
       'Explore flats, villas, and investment properties in Pune, Mumbai and KDMC. Find your dream home today.',
@@ -145,18 +156,21 @@ export async function pageMetadata(path: string): Promise<Metadata> {
     description,
     ...(keywords ? { keywords } : {}),
     alternates: { canonical },
+    ...(def?.noindex ? { robots: { index: false, follow: true } } : {}),
     openGraph: {
       type: 'website',
       title,
       description,
-      url: `${SITE_URL}${canonical === '/' ? '' : canonical}`,
-      siteName: 'Associatte PropTech',
+      url: canonical,
+      siteName: SITE_NAME,
       locale: 'en_IN',
+      images: [{ url: DEFAULT_OG_IMAGE, alt: title }],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
+      images: [DEFAULT_OG_IMAGE],
     },
   };
 }

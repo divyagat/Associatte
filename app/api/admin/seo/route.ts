@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { getPermissionsFromRequest } from '@/lib/admin-auth';
 import { can } from '@/lib/admin-permissions';
 import {
@@ -17,6 +18,18 @@ function authorized(req: NextRequest): boolean {
 }
 
 // GET → all stored overrides, keyed by path.
+// Make the saved override visible immediately instead of after the cache window.
+function refresh(path: string) {
+  try {
+    const p = path.startsWith('/') ? path : `/${path}`;
+    // The home override also feeds the site-wide default title in the root layout.
+    if (p === '/') revalidatePath('/', 'layout');
+    else revalidatePath(p);
+  } catch (error) {
+    console.error('SEO revalidate failed:', error);
+  }
+}
+
 export async function GET(req: NextRequest) {
   if (!authorized(req)) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
@@ -48,6 +61,7 @@ export async function PUT(req: NextRequest) {
       keywords: body?.keywords,
     };
     const overrides = await setSeoOverride(path, data);
+    refresh(path);
     return NextResponse.json({ overrides });
   } catch (error) {
     console.error('Error saving SEO override:', error);
@@ -68,6 +82,7 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'A page path is required' }, { status: 400 });
     }
     const overrides = await deleteSeoOverride(path);
+    refresh(path);
     return NextResponse.json({ overrides });
   } catch (error) {
     console.error('Error deleting SEO override:', error);

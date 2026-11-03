@@ -125,6 +125,7 @@ const FAQItem = ({ question, answer }: { question: string; answer: string }) => 
     <div className="border border-gray-200 rounded-xl overflow-hidden mb-3 transition-all hover:shadow-md">
       <button
         onClick={() => setIsOpen(!isOpen)}
+        aria-expanded={isOpen}
         className="w-full flex items-center justify-between p-4 sm:p-5 text-left bg-white hover:bg-gray-50 transition-colors"
       >
         <span className="font-semibold text-[var(--color-text)] pr-4 text-sm sm:text-base">{question}</span>
@@ -134,23 +135,29 @@ const FAQItem = ({ question, answer }: { question: string; answer: string }) => 
           <ChevronDown size={20} className="text-gray-400 flex-shrink-0" />
         )}
       </button>
-      {isOpen && (
-        <div className="px-4 sm:px-5 pb-4 sm:pb-5 bg-gray-50 border-t border-gray-100">
-          <p className="text-gray-700 leading-relaxed pt-4 text-sm sm:text-base">{answer}</p>
-        </div>
-      )}
+      {/* Always in the DOM (hidden until opened) so the answer text is crawlable. */}
+      <div hidden={!isOpen} className="px-4 sm:px-5 pb-4 sm:pb-5 bg-gray-50 border-t border-gray-100">
+        <p className="text-gray-700 leading-relaxed pt-4 text-sm sm:text-base">{answer}</p>
+      </div>
     </div>
   );
 };
 
-export default function BlogDetailPage() {
+interface BlogDetailClientProps {
+  // Supplied by the server page so the article is in the initial HTML.
+  initialPost?: BlogPost | null;
+  initialRelated?: BlogPost[];
+  initialRecent?: BlogPost[];
+}
+
+export default function BlogDetailClient({ initialPost = null, initialRelated, initialRecent }: BlogDetailClientProps) {
   const params = useParams();
   const slug = params.slug as string;
-  const [post, setPost] = useState<BlogPost | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [post, setPost] = useState<BlogPost | null>(initialPost);
+  const [loading, setLoading] = useState(!initialPost);
   const [notFound, setNotFound] = useState(false);
-  const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>([]);
-  const [recentPosts, setRecentPosts] = useState<BlogPost[]>([]);
+  const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>(initialRelated || []);
+  const [recentPosts, setRecentPosts] = useState<BlogPost[]>(initialRecent || []);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [showShare, setShowShare] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -200,10 +207,12 @@ export default function BlogDetailPage() {
       setLoading(false);
       setLikesCount(Math.floor(Math.random() * 200) + 50);
 
-      if (blogPost.relatedSlugs && blogPost.relatedSlugs.length > 0) {
+      if (initialRelated) {
+        setRelatedPosts(initialRelated);
+      } else if (blogPost.relatedSlugs && blogPost.relatedSlugs.length > 0) {
         setRelatedPosts(getRelatedPosts(blogPost.relatedSlugs, 3));
       }
-      setRecentPosts(getRecentPosts(slug, 4));
+      setRecentPosts(initialRecent || getRecentPosts(slug, 4));
 
       const bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
       setIsBookmarked(bookmarks.includes(slug));
@@ -213,6 +222,11 @@ export default function BlogDetailPage() {
       if (active) {
         setLoading(true);
         setNotFound(false);
+      }
+
+      if (initialPost && initialPost.slug === slug) {
+        applyPost(initialPost);
+        return;
       }
 
       const staticPost = getBlogBySlug(slug);
@@ -248,7 +262,7 @@ export default function BlogDetailPage() {
     return () => {
       active = false;
     };
-  }, [slug]);
+  }, [slug, initialPost, initialRelated, initialRecent]);
 
   useEffect(() => {
     if (contentRef.current) {

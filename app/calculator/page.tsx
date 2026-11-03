@@ -14,7 +14,7 @@ import LeadCaptureForm from '@/components/calculator/LeadCaptureForm';
 import WhatsAppFloat from '@/components/common/WhatsAppFloat';
 
 export const metadata: Metadata = {
-  title: 'Home Loan EMI Calculator | Associatte',
+  title: 'Home Loan EMI Calculator',
   description:
     'Calculate your monthly home loan EMI, total interest and payment breakdown instantly. Free EMI calculator for properties in Pune, Mumbai & KDMC.',
   alternates: { canonical: '/calculator' },

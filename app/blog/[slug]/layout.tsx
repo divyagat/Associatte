@@ -1,64 +1,27 @@
+// app/blog/[slug]/layout.tsx
+//
+// Per-article metadata + JSON-LD, derived from the same post the page renders
+// (static posts in lib/blog-data, admin posts in the data store). Admin SEO
+// panel overrides win, then the post's own SEO fields, then sensible defaults.
+// New posts get all of this automatically the moment they're saved.
+
 import type { Metadata } from 'next';
-import { getBlogBySlug as getStaticBlog, type BlogPost, type FAQ } from '@/lib/blog-data';
-import { getBlogBySlug as getAdminBlog } from '@/lib/data-store';
-import type { IBlog } from '@/lib/models/Blog';
 import { getSeoOverride, keywordsToArray } from '@/lib/seo-store';
-
-// The admin BlogForm persists a few extra SEO fields onto the record that
-// neither canonical blog type declares (see the comment above), and static
-// posts (BlogPost) don't carry `updatedAt` at all — model both explicitly
-// rather than widening the whole record to `any`.
-type BlogExtraFields = {
-  metaTitle?: string;
-  metaDescription?: string;
-  metaKeywords?: string;
-  socialImage?: string;
-  canonicalUrl?: string;
-  updatedAt?: string;
-};
-
-type ResolvedBlog = (BlogPost | IBlog) & BlogExtraFields;
+import {
+  blogCanonicalPath,
+  blogAuthorName,
+  blogDates,
+  blogDescription,
+  blogEligibility,
+  blogImage,
+  blogJsonLd,
+  blogPath,
+  findBlog,
+} from '@/lib/seo/blogs';
+import { JsonLd, breadcrumbJsonLd } from '@/lib/seo/jsonld';
+import { SITE_NAME } from '@/lib/seo/site';
 
 export const revalidate = 300;
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.associatte.com';
-const SITE_NAME = 'Associatte PropTech';
-const ORG_LOGO = `${SITE_URL}/logos/Asoociattelogo.jpg`;
-
-// The blog detail page is a Client Component (interactive TOC, share, reading
-// progress, popups) so it can't export metadata. This server layout derives real
-// per-post SEO tags + JSON-LD from the SAME data the page renders: static posts
-// (lib/blog-data) and admin posts (data/blogs.json via the data store). SEO fields
-// added in the admin BlogForm (metaTitle, metaDescription, metaKeywords,
-// socialImage, canonicalUrl) win over the sensible fallbacks.
-
-async function resolveBlog(slug: string): Promise<ResolvedBlog | null> {
-  // Static posts first (matches the page's resolution order), then admin posts.
-  const staticPost = getStaticBlog(slug);
-  if (staticPost) return staticPost;
-  try {
-    return await getAdminBlog(slug);
-  } catch {
-    return null;
-  }
-}
-
-function absUrl(src?: string): string | undefined {
-  if (!src || typeof src !== 'string') return undefined;
-  return src.startsWith('http') ? src : `${SITE_URL}${src.startsWith('/') ? '' : '/'}${src}`;
-}
-
-function authorName(post: ResolvedBlog | null | undefined): string {
-  if (!post?.author) return 'Associatte PropTech';
-  if (typeof post.author === 'string') return post.author;
-  return post.author.name || 'Associatte PropTech';
-}
-
-function toISO(date?: string): string | undefined {
-  if (!date) return undefined;
-  const d = new Date(date);
-  return isNaN(d.getTime()) ? undefined : d.toISOString();
-}
 
 export async function generateMetadata({
   params,
@@ -66,51 +29,50 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const post = await resolveBlog(slug);
-
+  const post = await findBlog(slug);
   if (!post) {
-    return { title: 'Article Not Found', robots: { index: false, follow: false } };
+    return { title: 'Article not found', robots: { index: false, follow: false }, alternates: { canonical: null } };
   }
 
-  // Admin SEO panel override (by path) wins over the post's own SEO fields.
-  const override = await getSeoOverride(`/blog/${slug}`);
-
+  const override = await getSeoOverride(blogPath(slug));
   const title = override?.title?.trim() || post.metaTitle?.trim() || `${post.title} | ${SITE_NAME}`;
-  const description =
-    override?.description?.trim() || post.metaDescription?.trim() || post.excerpt?.trim() || `${post.title} — insights from ${SITE_NAME}.`;
-  const canonical = post.canonicalUrl?.trim() || `/blog/${slug}`;
-  const ogImage = absUrl(post.socialImage) || absUrl(post.image2) || absUrl(post.image);
-  const keywords = keywordsToArray(override?.keywords)
-    || (post.metaKeywords?.trim()
-      ? post.metaKeywords.split(',').map((k: string) => k.trim()).filter(Boolean)
-      : Array.isArray(post.tags)
-        ? post.tags
-        : undefined);
-  const published = toISO(post.date);
-  const modified = toISO(post.updatedAt) || published;
+  const description = override?.description?.trim() || blogDescription(post);
+  const canonical = blogCanonicalPath(post);
+  const image = blogImage(post);
+  const keywords =
+    keywordsToArray(override?.keywords) ||
+    keywordsToArray(post.metaKeywords) ||
+    (Array.isArray(post.tags) && post.tags.length ? post.tags : undefined);
+  const { published, modified } = blogDates(post);
+  const author = blogAuthorName(post);
+  const { indexable } = blogEligibility(post);
 
   return {
-    title,
+    title: { absolute: title },
     description,
-    keywords,
+    ...(keywords ? { keywords } : {}),
+    ...(author ? { authors: [{ name: author }] } : {}),
     alternates: { canonical },
+    robots: indexable ? { index: true, follow: true } : { index: false, follow: true },
     openGraph: {
       type: 'article',
       title,
       description,
-      url: `${SITE_URL}${canonical.startsWith('/') ? '' : '/'}${canonical}`,
+      url: canonical,
       siteName: SITE_NAME,
       locale: 'en_IN',
-      images: ogImage ? [{ url: ogImage, width: 1200, height: 630, alt: post.title }] : undefined,
+      images: image ? [{ url: image, alt: post.title }] : undefined,
       publishedTime: published,
       modifiedTime: modified,
-      authors: [authorName(post)],
+      ...(author ? { authors: [author] } : {}),
+      ...(post.category ? { section: post.category } : {}),
+      ...(Array.isArray(post.tags) && post.tags.length ? { tags: post.tags } : {}),
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: ogImage ? [ogImage] : undefined,
+      images: image ? [image] : undefined,
     },
   };
 }
@@ -123,72 +85,19 @@ export default async function BlogLayout({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = await resolveBlog(slug);
+  const post = await findBlog(slug);
 
-  const schema: Record<string, unknown>[] = [];
+  if (!post) return children;
 
-  if (post) {
-    const canonical = post.canonicalUrl?.trim() || `/blog/${slug}`;
-    const pageUrl = `${SITE_URL}${canonical.startsWith('/') ? '' : '/'}${canonical}`;
-    const image = absUrl(post.socialImage) || absUrl(post.image2) || absUrl(post.image);
-    const published = toISO(post.date);
-
-    // Article schema
-    schema.push({
-      '@context': 'https://schema.org',
-      '@type': 'BlogPosting',
-      headline: post.title,
-      description: post.metaDescription?.trim() || post.excerpt || '',
-      image: image ? [image] : undefined,
-      datePublished: published,
-      dateModified: toISO(post.updatedAt) || published,
-      author: { '@type': 'Person', name: authorName(post) },
-      publisher: {
-        '@type': 'Organization',
-        name: SITE_NAME,
-        logo: { '@type': 'ImageObject', url: ORG_LOGO },
-      },
-      mainEntityOfPage: { '@type': 'WebPage', '@id': pageUrl },
-      keywords: Array.isArray(post.tags) ? post.tags.join(', ') : undefined,
-      articleSection: post.category || undefined,
-    });
-
-    // FAQ schema (rich result eligibility) when the post has FAQs
-    if (Array.isArray(post.faqs) && post.faqs.length > 0) {
-      schema.push({
-        '@context': 'https://schema.org',
-        '@type': 'FAQPage',
-        mainEntity: post.faqs
-          .filter((f: FAQ) => f?.question && f?.answer)
-          .map((f: FAQ) => ({
-            '@type': 'Question',
-            name: f.question,
-            acceptedAnswer: { '@type': 'Answer', text: f.answer },
-          })),
-      });
-    }
-
-    // Breadcrumbs
-    schema.push({
-      '@context': 'https://schema.org',
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
-        { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE_URL}/blog` },
-        { '@type': 'ListItem', position: 3, name: post.title, item: pageUrl },
-      ],
-    });
-  }
+  const { article, faq } = blogJsonLd(post);
+  const breadcrumb = breadcrumbJsonLd([
+    { name: 'Blog', path: '/blog' },
+    { name: post.title, path: blogCanonicalPath(post) },
+  ]);
 
   return (
     <>
-      {schema.map((entry, i) => (
-        <script
-          key={i}
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(entry) }}
-        />
-      ))}
+      <JsonLd data={faq ? [article, faq, breadcrumb] : [article, breadcrumb]} />
       {children}
     </>
   );

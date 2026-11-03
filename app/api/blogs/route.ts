@@ -1,3 +1,4 @@
+import { revalidateBlog } from '@/lib/seo/revalidate';
 import { NextRequest, NextResponse } from 'next/server';
 import { getAllBlogs, createBlog } from '@/lib/data-store';
 import { getPermissionsFromRequest } from '@/lib/admin-auth';
@@ -47,6 +48,7 @@ export async function POST(request: NextRequest) {
 
     // 3. Pass the guaranteed-unique slug to createBlog
     const blog = await createBlog({ ...body, slug: finalSlug });
+    revalidateBlog(blog?.slug);
 
     return NextResponse.json(blog, { status: 201 });
   } catch (error) {

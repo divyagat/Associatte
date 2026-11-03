@@ -5,6 +5,8 @@ export default function OrganizationSchema() {
   const schema = {
     "@context": "https://schema.org",
     "@type": "RealEstateAgent",
+    // Referenced by the WebSite node (app/layout.tsx) and article publishers.
+    "@id": "https://www.associatte.com/#organization",
     "name": "Associatte PropTech Pvt Ltd",
     "alternateName": "Associatte",
     "url": "https://www.associatte.com",

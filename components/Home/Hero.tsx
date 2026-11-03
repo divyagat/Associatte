@@ -332,11 +332,11 @@ export default function Hero({ initialCity = 'Pune', onSearch, onFilterChange }:
             <div className="lg:hidden w-full">
               {/* Minimal heading */}
               <div className="text-center mb-3 sm:mb-4">
-                <h1 className="text-xl xs:text-2xl sm:text-3xl font-extrabold text-white leading-[1.1] drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)]">
+                <p className="text-xl xs:text-2xl sm:text-3xl font-extrabold text-white leading-[1.1] drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)]">
                   <span className="block">Find Your</span>
                   <span className="block text-2xl xs:text-3xl sm:text-4xl" style={{ color: BRAND.yellow, textShadow: '0 2px 10px rgba(0,0,0,0.9)' }}>Dream Home</span>
                   <span className="block text-[11px] xs:text-xs sm:text-sm font-medium text-white mt-1 drop-shadow-[0_1px_4px_rgba(0,0,0,0.95)]">in {selectedCity}</span>
-                </h1>
+                </p>
               </div>
 
               {/* Ultra Compact Search Card */}

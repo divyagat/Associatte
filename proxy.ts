@@ -48,8 +48,21 @@ function requirementFor(
   return null;
 }
 
+// Public detail routes whose slugs are always lowercase. Mixed-case variants
+// (/property/Mantra-One) get an immediate 308 to the one canonical URL.
+const LOWERCASE_PREFIXES = ['/property/', '/locations/', '/builders/'];
+
 export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
+
+  if (!pathname.startsWith('/admin')) {
+    if (LOWERCASE_PREFIXES.some((p) => pathname.startsWith(p)) && /[A-Z]/.test(pathname)) {
+      const url = req.nextUrl.clone();
+      url.pathname = pathname.toLowerCase();
+      return NextResponse.redirect(url, 308);
+    }
+    return NextResponse.next();
+  }
   const role = roleFromCookie(req.cookies.get(ADMIN_COOKIE)?.value);
   const isAuthed = role !== null;
 
@@ -92,5 +105,5 @@ export function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: ['/admin/:path*', '/property/:path*', '/locations/:path*', '/builders/:path*'],
 };

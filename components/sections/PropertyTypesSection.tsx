@@ -5,6 +5,7 @@ import { MapPin, ArrowRight, Star } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { liveProjectCount, locationHref } from "@/lib/location-cards";
 
 // ✅ ADD city PROP
 interface PropertyTypesSectionProps {
@@ -40,8 +41,12 @@ export default function PropertyTypesSection({ city }: PropertyTypesSectionProps
     }
   };
 
-  // Sort cities to show popular ones first
-  const sortedCities = [...cities].sort((a, b) => {
+  // Real counts; cities with no live projects are hidden (they had no page to link to).
+  // Then sort popular ones first.
+  const sortedCities = cities
+    .map((c) => ({ ...c, projects: liveProjectCount(c.slug) }))
+    .filter((c) => c.projects > 0)
+    .sort((a, b) => {
     if (a.popular && !b.popular) return -1;
     if (!a.popular && b.popular) return 1;
     return 0;
@@ -95,7 +100,7 @@ export default function PropertyTypesSection({ city }: PropertyTypesSectionProps
                 onMouseLeave={() => setActiveCity(null)}
                 className="group cursor-pointer"
               >
-                <Link href={`/locations/${cityItem.slug}`}>
+                <Link href={locationHref(cityItem.slug)}>
                   <div className={`
                     relative aspect-[3/4] rounded-2xl overflow-hidden
                     border-2 transition-all duration-300
@@ -154,7 +159,7 @@ export default function PropertyTypesSection({ city }: PropertyTypesSectionProps
           className="mt-12 text-center"
         >
           <p className="text-sm text-gray-500">
-            Can&apos;t find your city? <Link href="/contact" className="text-[#005E60] font-medium hover:underline">Contact us</Link> and we&apos;ll help you explore more locations.
+            Can&apos;t find your city? <Link href="/contact-us" className="text-[#005E60] font-medium hover:underline">Contact us</Link> and we&apos;ll help you explore more locations.
           </p>
         </motion.div>
       </div>

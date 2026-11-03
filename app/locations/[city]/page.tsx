@@ -120,45 +120,20 @@ const MAP_OPTIONS: google.maps.MapOptions = {
 };
 
 // 🏙️ Location Schema Component (JSON-LD)
-function LocationSchema({ city, projects }: { city: string; projects: Project[] }) {
-  const cityData = CITY_METADATA[city.toLowerCase()] || CITY_METADATA.default;
-  const startingPrice = projects.length > 0 
-    ? Math.min(...projects.map(p => parsePrice(p.price) || Infinity)) 
-    : 7500000;
-
+// A plain ItemList of the project pages shown here. Projects are not marked up
+// as Products/Offers: listing prices are "onwards" estimates, not exact offers.
+function LocationSchema({ projects }: { projects: Project[] }) {
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.associatte.com').replace(/\/+$/, '');
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    "itemListElement": projects.slice(0, 10).map((project: Project, index: number) => ({
+    "numberOfItems": projects.length,
+    "itemListElement": projects.slice(0, 30).map((project: Project, index: number) => ({
       "@type": "ListItem",
       "position": index + 1,
-      "item": {
-        "@type": "Product",
-        "name": project.name,
-        "image": project.image,
-        "description": project.about,
-        "offers": {
-          "@type": "Offer",
-          "priceCurrency": "INR",
-          "price": parsePrice(project.price),
-          "availability": project.possessionDate?.toLowerCase().includes('ready') 
-            ? "https://schema.org/InStock" 
-            : "https://schema.org/PreOrder"
-        },
-        "address": {
-          "@type": "PostalAddress",
-          "addressLocality": cityData.title.split('|')[0].replace('Properties in ', '').trim(),
-          "addressRegion": "Maharashtra",
-          "addressCountry": "IN"
-        }
-      }
+      "name": project.name,
+      "url": `${siteUrl}/property/${project.slug}`,
     })),
-    "provider": {
-      "@type": "Organization",
-      "name": "Associatte PropTech Pvt Ltd",
-      "url": "https://www.associatte.com",
-      "logo": "https://www.associatte.com/logos/associattewhitelogo.webp"
-    }
   };
 
   return (
@@ -205,7 +180,10 @@ function PlaceSchema({ city }: { city: string }) {
 export default function CityPage() {
   const { city } = useParams<{ city: string }>();
   const cityName = city?.toLowerCase() || '';
-  const cityDisplayName = cityName.charAt(0).toUpperCase() + cityName.slice(1).replace('-', ' ');
+  const cityDisplayName =
+    cityName === 'kdmc'
+      ? 'Kalyan-Dombivli'
+      : cityName.charAt(0).toUpperCase() + cityName.slice(1).replace('-', ' ');
   
   // Get city-specific metadata
   const cityData = CITY_METADATA[cityName] || CITY_METADATA.default;
@@ -329,7 +307,7 @@ export default function CityPage() {
           generateMetadata (app/locations/[city]/layout.tsx). JSON-LD is emitted
           here in the body — Google reads structured data from anywhere. */}
       <PlaceSchema city={cityName} />
-      <LocationSchema city={cityName} projects={filteredProjects} />
+      <LocationSchema projects={filteredProjects} />
 
       <div className="min-h-screen bg-gray-50">
         

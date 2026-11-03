@@ -49,7 +49,16 @@ interface NavLink {
 }
 
 // ✅ STEP 1: Renamed from Header to HeaderContent (removed 'export default')
-function HeaderContent() {
+type SearchParamsLike = { get(key: string): string | null };
+const EMPTY_PARAMS: SearchParamsLike = new URLSearchParams();
+
+// Reads the live query string; only used inside the Suspense boundary below.
+function HeaderWithSearchParams() {
+  const searchParams = useSearchParams();
+  return <HeaderContent searchParams={searchParams} />;
+}
+
+function HeaderContent({ searchParams }: { searchParams: SearchParamsLike }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openMobileDropdown, setOpenMobileDropdown] = useState<string | null>(null);
   const [desktopDropdown, setDesktopDropdown] = useState<string | null>(null);
@@ -66,7 +75,6 @@ function HeaderContent() {
   const [hiddenSections, setHiddenSections] = useState<Set<string>>(new Set());
 
   const pathname = usePathname();
-  const searchParams = useSearchParams(); // ✅ Added to properly read query params
 
   // Header is sticky everywhere except the home page (per request).
   const isHomePage = pathname === '/';
@@ -508,8 +516,11 @@ function HeaderContent() {
 // ✅ STEP 2: New default export wraps HeaderContent in Suspense
 export default function Header() {
   return (
-    <Suspense fallback={null}>
-      <HeaderContent />
+    // The fallback is the full header (minus query-based link highlighting), so
+    // the navigation links are in the server HTML on statically rendered pages
+    // instead of the header being client-only.
+    <Suspense fallback={<HeaderContent searchParams={EMPTY_PARAMS} />}>
+      <HeaderWithSearchParams />
     </Suspense>
   );
 }

@@ -1,4 +1,7 @@
-// app/page.tsx
+// components/Home/HomePageClient.tsx
+// Interactive homepage. Rendered by the server page app/page.tsx, which is
+// dynamic so useSearchParams() resolves on the server and the full page is in
+// the initial HTML (it previously bailed out to client-only rendering).
 'use client';
 
 import { useState, useCallback, useMemo, useEffect, Suspense } from 'react';
@@ -69,40 +72,6 @@ const LOCATION_CONFIG = {
 } as const;
 
 type CitySlug = keyof typeof LOCATION_CONFIG;
-
-// 🎯 SEO Component
-interface HomePageSEOProps {
-  city: CitySlug;
-}
-
-// NOTE: This is a Client Component, so it cannot use the App Router Metadata API
-// (generateMetadata) or `next/head` — `next/head` is a no-op in the App Router and
-// was silently dropping all of these tags. The page-level title/description/OG tags
-// are provided by the static metadata in `app/layout.tsx`. Here we emit valid
-// JSON-LD structured data, which Google reads from anywhere in the document and
-// which meaningfully improves rich-result eligibility.
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.associatte.com';
-
-const HomePageSEO: React.FC<HomePageSEOProps> = ({ city }) => {
-  const config = LOCATION_CONFIG[city];
-
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'RealEstateAgent',
-    name: 'Associatte PropTech Pvt Ltd',
-    url: `${SITE_URL}/?city=${config.slug}`,
-    description: config.metaDescription,
-    areaServed: { '@type': 'City', name: config.name, address: { '@type': 'PostalAddress', addressRegion: 'Maharashtra', addressCountry: 'IN' } },
-    priceRange: `${config.priceRange.min} - ${config.priceRange.max}`,
-  };
-
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-    />
-  );
-};
 
 // 🏠 Main HomePage Component
 function HomePageContent() {
@@ -176,8 +145,6 @@ function HomePageContent() {
 
   return (
     <>
-      <HomePageSEO city={city} />
-
       <main className="min-h-screen bg-slate-50">
 
         {/* Hero Section */}

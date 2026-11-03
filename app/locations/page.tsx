@@ -7,6 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import EnquiryPopup, { type EnquiryPayload } from "../../components/common/EnquiryPopup";
+import { liveProjectCount, locationHref } from "@/lib/location-cards";
 
 interface LocationData {
   name: string;
@@ -100,7 +101,10 @@ export default function LocationsPage() {
   };
 
   // Filter locations based on search and popular filter
-  const filteredLocations = locations.filter(loc => {
+  const filteredLocations = locations
+    .map((loc) => ({ ...loc, projects: liveProjectCount(loc.slug) }))
+    .filter((loc) => loc.projects > 0)
+    .filter(loc => {
     const matchesSearch = loc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           loc.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           loc.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -247,7 +251,7 @@ export default function LocationsPage() {
                   variants={itemVariants}
                   className="group"
                 >
-                  <Link href={`/locations/${location.slug}`}>
+                  <Link href={locationHref(location.slug)}>
                     <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
                       {/* Image Section */}
                       <div className="relative h-56 overflow-hidden">
@@ -274,7 +278,7 @@ export default function LocationsPage() {
                         <div className="absolute bottom-4 left-4">
                           <div className="flex items-center gap-1 bg-black/50 backdrop-blur-sm px-3 py-1 rounded-full">
                             <Building2 size={14} className="text-[#F8C21C]" />
-                            <span className="text-white text-sm font-medium">{location.projects}+ Projects</span>
+                            <span className="text-white text-sm font-medium">{location.projects} {location.projects === 1 ? 'Project' : 'Projects'}</span>
                           </div>
                         </div>
                       </div>

@@ -11,7 +11,7 @@ export const revalidate = 300;
 
 // ✅ SEO Metadata for the Awards Page (Must be a Server Component)
 export const metadata: Metadata = {
-  title: 'Awards & Recognition | Associatte PropTech',
+  title: { absolute: 'Awards & Recognition | Associatte PropTech' },
   description: 'Industry recognition earned by Associatte PropTech for sales excellence, innovation, and customer satisfaction across Pune, Mumbai & KDMC real estate.',
   keywords: [
     'Associatte awards',
@@ -28,6 +28,7 @@ export const metadata: Metadata = {
     url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.associatte.com'}/awards`,
     siteName: 'Associatte PropTech',
     locale: 'en_IN',
+    images: [{ url: '/Home/b4.webp' }],
   },
   twitter: {
     card: 'summary_large_image',

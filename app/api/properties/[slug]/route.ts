@@ -1,3 +1,4 @@
+import { revalidateListing } from '@/lib/seo/revalidate';
 import { NextRequest, NextResponse } from 'next/server';
 import { getPropertyBySlug, updateProperty, deleteProperty } from '@/lib/data-store';
 import { getPermissionsFromRequest, getRoleFromRequest } from '@/lib/admin-auth';
@@ -56,6 +57,7 @@ export async function PUT(
       body.status = 'pending';
     }
     const property = await updateProperty(slug, body);
+    revalidateListing(slug);
     if (!property) {
       return NextResponse.json({ error: 'Property not found' }, { status: 404 });
     }
@@ -77,6 +79,7 @@ export async function DELETE(
   try {
     const { slug } = await context.params;
     const success = await deleteProperty(slug);
+    revalidateListing(slug);
     if (!success) {
       return NextResponse.json({ error: 'Property not found' }, { status: 404 });
     }

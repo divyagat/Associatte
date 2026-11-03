@@ -8,16 +8,7 @@ type Props = {
   params: Promise<{ id: string }>;
 };
 
-export async function generateMetadata({ params }: Props) {
-  const { id } = await params;
-  const item = (await getAllNews()).find((n) => n.id === id);
-  if (!item) return { title: 'News Not Found' };
-
-  return {
-    title: `${item.title} | Real Estate News`,
-    description: item.excerpt,
-  };
-}
+// Metadata lives in ./layout.tsx so it also applies to the 404 response.
 
 export default async function NewsDetailsPage({ params }: Props) {
   const { id } = await params;

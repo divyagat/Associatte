@@ -1,3 +1,4 @@
+import { revalidateListing } from '@/lib/seo/revalidate';
 import { NextRequest, NextResponse } from 'next/server';
 import { getAllProperties, createProperty } from '@/lib/data-store';
 import { getPermissionsFromRequest, getRoleFromRequest } from '@/lib/admin-auth';
@@ -31,6 +32,7 @@ export async function POST(request: NextRequest) {
     const isManager = !isAdmin && can(getPermissionsFromRequest(request), 'properties', 'approve');
     body.status = initialStatusForRole(isAdmin ? 'admin' : isManager ? 'manager' : 'employee');
     const property = await createProperty(body);
+    revalidateListing(property?.slug);
     return NextResponse.json(property, { status: 201 });
   } catch (error) {
     console.error('Error creating property:', error);

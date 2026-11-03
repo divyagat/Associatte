@@ -72,11 +72,13 @@ const AuthorAvatar = ({ author }: { author: Author | string }) => {
 };
 
 // ✅ MAIN CONTENT - All your existing code
-function BlogListingContent() {
-  const [allBlogs, setAllBlogs] = useState<BlogPost[]>([]);
+function BlogListingContent({ initialBlogs }: { initialBlogs?: BlogPost[] }) {
+  const [allBlogs, setAllBlogs] = useState<BlogPost[]>(initialBlogs || []);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   useEffect(() => {
+    // The server page already merged static + admin posts.
+    if (initialBlogs) return;
     const staticBlogs = getAllBlogs();
     setAllBlogs(staticBlogs);
 
@@ -97,7 +99,7 @@ function BlogListingContent() {
         setAllBlogs(Array.from(bySlug.values()));
       })
       .catch(() => {});
-  }, []);
+  }, [initialBlogs]);
 
   const featuredBlogs = allBlogs.slice(0, 2);
   const authorName = (author: Author | string) => typeof author === 'string' ? author : (author?.name || 'Admin');
@@ -114,7 +116,7 @@ function BlogListingContent() {
               <span>Channel Partner Exclusive</span>
             </div>
             <h1 className="page-title text-white mb-4">
-              Explore <span className="accent">Premium</span> Real Estate Projects
+              Real Estate <span className="accent">Insights</span> &amp; Buying Guides
             </h1>
             <p className="text-lg text-white/90">
               Expert reviews, investment insights, and exclusive offers across Pune, Mumbai & KDMC
@@ -309,10 +311,10 @@ function BlogListingContent() {
 }
 
 // ✅ DEFAULT EXPORT - Wraps everything in Suspense
-export default function BlogListingClient() {
+export default function BlogListingClient({ initialBlogs }: { initialBlogs?: BlogPost[] }) {
   return (
     <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#005E60]"></div></div>}>
-      <BlogListingContent />
+      <BlogListingContent initialBlogs={initialBlogs} />
     </Suspense>
   );
 }

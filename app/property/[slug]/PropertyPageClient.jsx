@@ -1,9 +1,10 @@
-// client/app/property/[slug]/page.jsx
+// app/property/[slug]/PropertyPageClient.jsx
+// Interactive project page. The server page (page.tsx) loads the listing and
+// passes it in as `initialProject`, so the full content is in the initial HTML.
 'use client';
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import Head from 'next/head';
 import Link from 'next/link';
 import EnquiryPopup from '@/components/common/EnquiryPopup';
 import { getBuilderLogo, getBuilderSlug } from '../../../lib/builder-slugs';
@@ -34,7 +35,8 @@ function transformProject(project) {
   return {
     title: project.name,
     slug: project.slug,
-    rera: !!project.reraNumber,
+    // Real MahaRERA numbers only (some records hold placeholders like "Comming Soon").
+    rera: /\d{6,}/.test(String(project.reraNumber || '')),
     soldOut: project.soldOut === true || project.soldOut === 'true',
     priceRange: project.priceDetails?.range || project.price,
     pricePerSqft: project.priceDetails?.perSqft,
@@ -111,113 +113,6 @@ function transformProject(project) {
   };
 }
 
-// ==================== 🚀 SEO SCHEMA GENERATORS ====================
-
-// Generate Property JSON-LD Schema for Rich Snippets
-function generatePropertySchema(propertyData, canonicalUrl) {
-  if (!propertyData) return null;
-  
-  // Extract numeric values from strings
-  const priceMatch = propertyData.priceRange?.match(/(\d+(?:\.\d+)?)/);
-  const priceValue = priceMatch ? priceMatch[1] : null;
-  
-  const areaMatch = propertyData.configurations?.[0]?.area?.match(/(\d+)/);
-  const areaValue = areaMatch ? areaMatch[1] : null;
-  
-  const bedroomMatch = propertyData.configurations?.[0]?.type?.match(/(\d+)/);
-  const bedroomCount = bedroomMatch ? bedroomMatch[1] : null;
-  
-  return {
-    "@context": "https://schema.org",
-    "@type": "RealEstateListing",
-    "name": propertyData.title,
-    "description": propertyData.about?.substring(0, 200),
-    "url": canonicalUrl,
-    "image": propertyData.image || propertyData.gallery?.[0],
-    "datePosted": new Date().toISOString(),
-    "offers": {
-      "@type": "Offer",
-      "price": priceValue,
-      "priceCurrency": "INR",
-      "availability": "https://schema.org/InStock",
-      "validFrom": new Date().toISOString()
-    },
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": propertyData.location?.area,
-      "addressLocality": propertyData.location?.city,
-      "addressRegion": "Maharashtra",
-      "addressCountry": "IN"
-    },
-    "numberOfRooms": bedroomCount,
-    "floorSize": {
-      "@type": "QuantitativeValue",
-      "value": areaValue,
-      "unitCode": "SQM",
-      "unitText": "square feet"
-    },
-    "seller": {
-      "@type": "RealEstateAgent",
-      "name": propertyData.developer
-    }
-  };
-}
-
-// Generate RERA Schema
-function generateReraSchema(propertyData) {
-  if (!propertyData?.reraNumber) return null;
-  
-  return {
-    "@context": "https://schema.org",
-    "@type": "GovernmentPermit",
-    "name": "RERA Registration",
-    "identifier": propertyData.reraNumber,
-    "issuedBy": {
-      "@type": "GovernmentOrganization",
-      "name": "Maharashtra Real Estate Regulatory Authority",
-      "url": "https://maharera.mahaonline.gov.in"
-    },
-    "issuedFor": {
-      "@type": "RealEstateListing",
-      "name": propertyData.title
-    },
-    "validFrom": new Date().toISOString()
-  };
-}
-
-// Generate Breadcrumb Schema
-function generateBreadcrumbSchema(propertyData, canonicalUrl) {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://propfinder.in';
-  const cityName = propertyData?.location?.city?.toLowerCase() || 'pune';
-  
-  return {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": baseUrl
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": `${propertyData?.location?.city} Properties`,
-        "item": `${baseUrl}/locations/${cityName}`
-      },
-      {
-        "@type": "ListItem",
-        "position": 3,
-        "name": propertyData?.title,
-        "item": canonicalUrl
-      }
-    ]
-  };
-}
-
-// ==================== ICONS COMPONENTS ====================
-
 const Icons = {
   Location: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>,
   Calendar: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>,
@@ -233,7 +128,7 @@ const Icons = {
 };
 
 // ==================== GALLERY MODAL ====================
-function GalleryModal({ images, initialIndex, onClose }) {
+function GalleryModal({ images, initialIndex, onClose, title = 'Project' }) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
 
   useEffect(() => {
@@ -273,7 +168,7 @@ function GalleryModal({ images, initialIndex, onClose }) {
       </div>
 
       <div className="w-full h-full flex items-center justify-center p-4 cursor-pointer" onClick={(e) => e.stopPropagation()}>
-        <img src={images[currentIndex]} alt={`Gallery image ${currentIndex + 1}`} className="max-w-full max-h-full object-contain select-none" />
+        <img src={images[currentIndex]} alt={`${title} – photo ${currentIndex + 1} of ${images.length}`} className="max-w-full max-h-full object-contain select-none" />
       </div>
 
       {images.length > 1 && (
@@ -371,10 +266,13 @@ function EmiCalculatorPopup({ onClose }) {
 }
 
 // ==================== MAIN COMPONENT ====================
-export default function PropertyPage() {
-  const [propertyData, setPropertyData] = useState(null);
-  const [similarProjects, setSimilarProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
+/**
+ * @param {{ initialProject?: Record<string, any> | null, initialSimilar?: Array<Record<string, any>> | null, cityPage?: string | null }} props
+ */
+export default function PropertyPageClient({ initialProject = null, initialSimilar = null, cityPage = null }) {
+  const [propertyData, setPropertyData] = useState(() => transformProject(initialProject));
+  const [similarProjects, setSimilarProjects] = useState(initialSimilar || []);
+  const [loading, setLoading] = useState(!initialProject);
   const [showPopup, setShowPopup] = useState(false);
   const [showEmiPopup, setShowEmiPopup] = useState(false);
   const [galleryModalOpen, setGalleryModalOpen] = useState(false);
@@ -385,6 +283,8 @@ export default function PropertyPage() {
   const slug = params?.slug;
 
   useEffect(() => {
+    // Server already supplied the data — no client fetch needed.
+    if (initialProject) return;
     if (!slug) {
       setLoading(false);
       return;
@@ -450,7 +350,7 @@ export default function PropertyPage() {
     };
 
     fetchProjectData();
-  }, [slug]);
+  }, [slug, initialProject]);
 
   const getIcon = (iconName) => {
     const iconMap = {
@@ -541,81 +441,8 @@ export default function PropertyPage() {
     );
   }
 
-  // ==================== SEO VARIABLES ====================
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://propfinder.in';
-  const canonicalUrl = `${baseUrl}/property/${propertyData.slug}`;
-  
-  const seoTitle = `${propertyData.title} - ${propertyData.configurations?.[0]?.type || ''} in ${propertyData.location.area}, ${propertyData.location.city} | Associatte PropTech`;
-  const seoDescription = `${propertyData.title} by ${propertyData.developer}. ${propertyData.configurations?.[0]?.type} starting from ${propertyData.priceRange}. ${propertyData.about?.substring(0, 150)}...`;
-  
-  // Generate all schemas
-  const propertySchema = generatePropertySchema(propertyData, canonicalUrl);
-  const reraSchema = generateReraSchema(propertyData);
-  const breadcrumbSchema = generateBreadcrumbSchema(propertyData, canonicalUrl);
-
   return (
     <>
-      <Head>
-        {/* Primary Meta Tags */}
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDescription} />
-        <meta name="keywords" content={`${propertyData.title}, ${propertyData.bhk} ${propertyData.location.area}, ${propertyData.developer}, property in ${propertyData.location.city}, real estate ${propertyData.location.city}, PropFinder, Associatte PropTech`} />
-        <meta name="robots" content="index, follow" />
-        <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-        
-        {/* Canonical URL */}
-        <link rel="canonical" href={canonicalUrl} />
-        
-        {/* Alternate URLs */}
-        <link rel="alternate" href={canonicalUrl} hrefLang="en-in" />
-        
-        {/* Open Graph / Facebook */}
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content={canonicalUrl} />
-        <meta property="og:title" content={seoTitle} />
-        <meta property="og:description" content={seoDescription} />
-        <meta property="og:image" content={propertyData.image || `${baseUrl}/og-image.jpg`} />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta property="og:site_name" content="Associatte PropTech" />
-        <meta property="og:locale" content="en_IN" />
-        
-        {/* Twitter Card */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={seoTitle} />
-        <meta name="twitter:description" content={seoDescription} />
-        <meta name="twitter:image" content={propertyData.image || `${baseUrl}/og-image.jpg`} />
-        <meta name="twitter:site" content="@associatte" />
-        
-        {/* Additional SEO Meta Tags */}
-        <meta name="author" content="Associatte PropTech" />
-        <meta name="distribution" content="global" />
-        <meta name="rating" content="general" />
-        <meta name="revisit-after" content="1 days" />
-        <meta name="language" content="English" />
-        
-        {/* JSON-LD Structured Data for Rich Snippets */}
-        {propertySchema && (
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(propertySchema) }}
-          />
-        )}
-        
-        {reraSchema && (
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(reraSchema) }}
-          />
-        )}
-        
-        {breadcrumbSchema && (
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-          />
-        )}
-      </Head>
 
       <div className="min-h-screen bg-gray-50">
         {/* Header Section */}
@@ -624,9 +451,13 @@ export default function PropertyPage() {
             <nav className="flex items-center text-sm text-gray-500 mb-3" aria-label="Breadcrumb">
               <Link href="/" className="hover:text-[#F8C21C] transition-colors">Home</Link>
               <Icons.ChevronRight />
-              <Link href={`/locations/${propertyData.location.city.toLowerCase()}`} className="hover:text-[#F8C21C] transition-colors capitalize">
-                {propertyData.location.city}
-              </Link>
+              {cityPage ? (
+                <Link href={`/locations/${cityPage}`} className="hover:text-[#F8C21C] transition-colors capitalize">
+                  {propertyData.location.city}
+                </Link>
+              ) : (
+                <span className="capitalize">{propertyData.location.city}</span>
+              )}
               <Icons.ChevronRight />
               <span className="text-gray-900 font-medium truncate" aria-current="page">{propertyData.title}</span>
             </nav>
@@ -668,7 +499,7 @@ export default function PropertyPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 cursor-pointer" onClick={() => openGallery(0)}>
                 <div className="relative aspect-video bg-gradient-to-br from-[#005E60] to-[#003d40] rounded-2xl overflow-hidden group">
-                  <img src={propertyData.image} alt={propertyData.title} className="absolute inset-0 w-full h-full object-cover" loading="eager" />
+                  <img src={propertyData.image} alt={propertyData.title} className="absolute inset-0 w-full h-full object-cover" loading="eager" fetchPriority="high" decoding="async" />
                   <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
                     <span className="px-4 py-2 bg-[#F8C21C] text-[#005E60] font-bold rounded-lg shadow-lg">
                       {propertyData.location.area}
@@ -854,8 +685,15 @@ export default function PropertyPage() {
               <section id="brochure" className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 scroll-mt-24">
                 <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2"><span className="w-1.5 h-6 bg-[#F8C21C] rounded-full"></span>RERA Details</h2>
                 <div className="bg-[#005E60]/5 border border-[#005E60]/20 rounded-xl p-4">
-                  <div className="font-mono font-semibold text-gray-900">{propertyData.reraNumber || 'P51800012345'}</div>
-                  <div className="text-sm text-gray-600 mt-1">Registered with MahaRERA</div>
+                  {/* Only show a registration claim for a real MahaRERA number (never a placeholder). */}
+                  {propertyData.rera ? (
+                    <>
+                      <div className="font-mono font-semibold text-gray-900">{propertyData.reraNumber}</div>
+                      <div className="text-sm text-gray-600 mt-1">Registered with MahaRERA</div>
+                    </>
+                  ) : (
+                    <div className="text-sm text-gray-700">RERA registration details are awaited. Contact us for the latest status.</div>
+                  )}
                 </div>
               </section>
             </div>
@@ -999,7 +837,7 @@ export default function PropertyPage() {
 
       {/* Modals */}
       {galleryModalOpen && propertyData.gallery && propertyData.gallery.length > 0 && (
-        <GalleryModal images={propertyData.gallery} initialIndex={galleryStartIndex} onClose={() => setGalleryModalOpen(false)} />
+        <GalleryModal images={propertyData.gallery} title={propertyData.title} initialIndex={galleryStartIndex} onClose={() => setGalleryModalOpen(false)} />
       )}
 
       <EnquiryPopup

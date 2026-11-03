@@ -1,3 +1,4 @@
+import { revalidateBlog } from '@/lib/seo/revalidate';
 import { NextRequest, NextResponse } from 'next/server';
 import { getBlogBySlug, updateBlog, deleteBlog, getAllBlogs } from '@/lib/data-store';
 import { getPermissionsFromRequest } from '@/lib/admin-auth';
@@ -83,6 +84,7 @@ export async function PUT(
     
     // Update the blog
     const blog = await updateBlog(slug, body);
+    revalidateBlog(slug);
     if (!blog) {
       console.log(`❌ updateBlog returned null/undefined`);
       console.log(`=========================================\n`);
@@ -115,6 +117,7 @@ export async function DELETE(
     console.log(`🗑️ Deleting blog: "${slug}"`);
     
     const success = await deleteBlog(slug);
+    revalidateBlog(slug);
     if (!success) {
       console.log(`❌ Blog not found for deletion: "${slug}"`);
       console.log(`=========================================\n`);
