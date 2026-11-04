@@ -3,7 +3,7 @@
 // layout: default from the SEO_PAGES registry, merged with any admin override.
 import type { Metadata } from 'next';
 import { pageMetadata } from '@/lib/seo-pages';
-
+// ok
 export const revalidate = 300;
 
 export function generateMetadata(): Promise<Metadata> {
